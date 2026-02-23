@@ -1,41 +1,47 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  fetchShops, 
-  fetchShopById, 
-  createShop, 
-  updateShop, 
-  deleteShop 
+import {
+  fetchShops,
+  fetchShopById,
+  createShop,
+  updateShop,
+  deleteShop
 } from '@/features/shops/services/shopService';
-import { 
-  fetchShopCategories, 
-  createShopCategory, 
-  updateShopCategory, 
-  deleteShopCategory 
+import {
+  fetchShopCategories,
+  createShopCategory,
+  updateShopCategory,
+  deleteShopCategory
 } from '@/features/shops/services/shopCategoryService';
-import { 
-  fetchShopProducts, 
-  createShopProduct, 
-  updateShopProduct, 
-  deleteShopProduct 
+import {
+  fetchShopProducts,
+  createShopProduct,
+  updateShopProduct,
+  deleteShopProduct
 } from '@/features/shops/services/shopProductService';
-import { 
-  Shop, 
-  ShopFormData, 
-  ShopCategory, 
-  ShopCategoryFormData, 
-  ShopProduct, 
-  ShopProductFormData 
+import {
+  Shop,
+  ShopFormData,
+  ShopCategory,
+  ShopCategoryFormData,
+  ShopProduct,
+  ShopProductFormData
 } from '@/types/shop';
 import { toast } from 'sonner';
 
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+
 export const useShops = () => {
   const queryClient = useQueryClient();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Shop queries
   const shopsQuery = useQuery({
-    queryKey: ['shops'],
-    queryFn: fetchShops
+    queryKey: ['shops', hotelId, isSuperAdmin],
+    queryFn: () => {
+      if (!hotelId && !isSuperAdmin) return [];
+      return fetchShops(hotelId, isSuperAdmin);
+    }
   });
 
   const shopQuery = (id: string) => useQuery({
@@ -46,7 +52,7 @@ export const useShops = () => {
 
   // Shop mutations
   const createShopMutation = useMutation({
-    mutationFn: (shopData: ShopFormData) => createShop(shopData),
+    mutationFn: (shopData: ShopFormData) => createShop(shopData), // hotel_id set by DB trigger
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shops'] });
       toast.success('Boutique créée avec succès');
@@ -71,8 +77,11 @@ export const useShops = () => {
 
   // Category queries
   const categoriesQuery = useQuery({
-    queryKey: ['shopCategories'],
-    queryFn: fetchShopCategories
+    queryKey: ['shopCategories', hotelId, isSuperAdmin],
+    queryFn: () => {
+      if (!hotelId && !isSuperAdmin) return [];
+      return fetchShopCategories(hotelId, isSuperAdmin);
+    }
   });
 
   // Category mutations
@@ -102,13 +111,16 @@ export const useShops = () => {
 
   // Product queries
   const productsQuery = (shopId?: string) => useQuery({
-    queryKey: ['shopProducts', shopId],
-    queryFn: () => fetchShopProducts(shopId)
+    queryKey: ['shopProducts', hotelId, shopId],
+    queryFn: () => {
+      if (!hotelId && !shopId) return [];
+      return fetchShopProducts(shopId, hotelId);
+    }
   });
 
   // Product mutations
   const createProductMutation = useMutation({
-    mutationFn: (productData: ShopProductFormData) => createShopProduct(productData),
+    mutationFn: (productData: ShopProductFormData) => createShopProduct(productData), // hotel_id set by DB trigger
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shopProducts'] });
       toast.success('Produit créé avec succès');
@@ -139,14 +151,14 @@ export const useShops = () => {
     createShop: createShopMutation.mutate,
     updateShop: updateShopMutation.mutate,
     deleteShop: deleteShopMutation.mutate,
-    
+
     // Categories
     categories: categoriesQuery.data || [],
     isLoadingCategories: categoriesQuery.isLoading,
     createCategory: createCategoryMutation.mutate,
     updateCategory: updateCategoryMutation.mutate,
     deleteCategory: deleteCategoryMutation.mutate,
-    
+
     // Products
     productsQuery,
     createProduct: createProductMutation.mutate,

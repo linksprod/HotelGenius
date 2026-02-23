@@ -4,23 +4,35 @@ import { supabase } from '@/integrations/supabase/client';
 import { Story } from '@/types/event';
 import { useToast } from './use-toast';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export const useStories = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Utiliser React Query pour la mise en cache et les états de chargement
   const { data: stories = [], isLoading: loading, refetch } = useQuery({
-    queryKey: ['stories'],
+    queryKey: ['stories', hotelId, isSuperAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) {
+        return [];
+      }
+
+      let query = supabase
         .from('stories')
-        .select('*')
+        .select('*');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query
         .order('created_at', { ascending: false })
-        .limit(10); // Limiter à 10 stories pour améliorer les performances
+        .limit(20);
 
       if (error) throw error;
-      
+
       return data as Story[];
     },
     staleTime: 1000 * 60 * 5, // Cache pendant 5 minutes
@@ -35,6 +47,7 @@ export const useStories = () => {
         ...story,
         eventId: story.eventId && story.eventId.trim() !== '' ? story.eventId : null,
         seen: false
+        // hotel_id set by DB trigger
       };
 
       const { data, error } = await supabase
@@ -43,15 +56,15 @@ export const useStories = () => {
         .select();
 
       if (error) throw error;
-      
+
       return data[0] as Story;
     },
     onSuccess: (newStory) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) => 
+      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
         [newStory, ...oldStories]
       );
-      
+
       toast({
         title: 'Success',
         description: 'Story created successfully',
@@ -86,15 +99,15 @@ export const useStories = () => {
         .select();
 
       if (error) throw error;
-      
+
       return data[0] as Story;
     },
     onSuccess: (updatedStory) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) => 
+      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
         oldStories.map(s => s.id === updatedStory.id ? updatedStory : s)
       );
-      
+
       toast({
         title: 'Success',
         description: 'Story updated successfully',
@@ -123,15 +136,15 @@ export const useStories = () => {
         .eq('id', id);
 
       if (error) throw error;
-      
+
       return id;
     },
     onSuccess: (id) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) => 
+      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
         oldStories.filter(s => s.id !== id)
       );
-      
+
       toast({
         title: 'Success',
         description: 'Story deleted successfully',
@@ -160,12 +173,12 @@ export const useStories = () => {
         .eq('id', id);
 
       if (error) throw error;
-      
+
       return id;
     },
     onSuccess: (id) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) => 
+      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
         oldStories.map(s => s.id === id ? { ...s, seen: true } : s)
       );
     }

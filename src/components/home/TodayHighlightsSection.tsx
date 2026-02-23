@@ -9,10 +9,12 @@ import { useTodayHighlights } from '@/hooks/useTodayHighlights';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const TodayHighlightsSection = () => {
   const { t } = useTranslation();
   const { todayEvents, loading } = useTodayHighlights();
+  const { resolvePath } = useHotelPath();
 
   if (loading) {
     return (
@@ -50,7 +52,7 @@ const TodayHighlightsSection = () => {
         <h2 className="text-2xl font-bold text-secondary mb-4">{t('home.todayEvents.title')}</h2>
         <Card className="p-6 text-center">
           <p className="text-gray-500">{t('home.todayEvents.noEvents')}</p>
-          <Link to="/events">
+          <Link to={resolvePath("/events")}>
             <Button variant="link" className="mt-2">
               {t('home.todayEvents.viewAllEvents')}
             </Button>
@@ -68,9 +70,9 @@ const TodayHighlightsSection = () => {
           <Card key={event.id} className="overflow-hidden">
             <div className="flex items-center">
               <div className="relative w-1/3 h-32">
-                <img 
-                  src={event.image} 
-                  alt={event.title} 
+                <img
+                  src={event.image}
+                  alt={event.title}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -90,7 +92,7 @@ const TodayHighlightsSection = () => {
                 <p className="text-gray-600 text-sm mb-2">
                   {event.time} {event.location && `- ${event.location}`}
                 </p>
-                <Link to="/events">
+                <Link to={resolvePath("/events")}>
                   <Button size="sm" className="w-full sm:w-auto">
                     {event.category === 'event' ? t('common.book') : t('common.viewOffer')}
                   </Button>

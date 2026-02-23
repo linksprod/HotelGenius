@@ -25,7 +25,15 @@ import {
   Eye,
   Search,
   RefreshCw,
+  ArrowUpDown,
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { Guest } from './components/guests/types';
 
@@ -49,30 +57,47 @@ const filterCards: FilterCard[] = [
   { id: 'past', label: 'Past', icon: Clock, colorClass: 'text-slate-500', bgClass: 'bg-slate-100', cardBgClass: 'bg-slate-50 border-slate-200' },
 ];
 
+type SortOption = 'newest' | 'oldest' | 'check-in-asc' | 'check-in-desc' | 'check-out-asc' | 'check-out-desc';
+
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+
 const GuestsManager: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
   const navigate = useNavigate();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   const handleViewGuest = (guest: Guest) => {
     navigate(`/admin/guests/${guest.id}`);
   };
 
   const { data: guests = [], isLoading, refetch } = useQuery({
-    queryKey: ['guests'],
+    queryKey: ['guests', hotelId, isSuperAdmin],
     queryFn: async () => {
       // Fetch staff user_ids to exclude from guest list
-      const { data: staffRoles } = await supabase
+      let staffRolesQuery: any = supabase
         .from('user_roles')
         .select('user_id')
         .in('role', ['admin', 'moderator', 'staff']);
 
+      if (hotelId) {
+        staffRolesQuery = staffRolesQuery.eq('hotel_id', hotelId);
+      }
+
+      const { data: staffRoles } = await staffRolesQuery;
+
       const staffUserIds = new Set((staffRoles || []).map((r) => r.user_id));
 
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('guests')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -147,6 +172,35 @@ const GuestsManager: React.FC = () => {
     return filtered;
   }, [guests, activeFilter, searchQuery]);
 
+  const sortedGuests = useMemo(() => {
+    return [...filteredGuests].sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'oldest':
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case 'check-in-asc':
+          if (!a.check_in_date) return 1;
+          if (!b.check_in_date) return -1;
+          return new Date(a.check_in_date).getTime() - new Date(b.check_in_date).getTime();
+        case 'check-in-desc':
+          if (!a.check_in_date) return 1;
+          if (!b.check_in_date) return -1;
+          return new Date(b.check_in_date).getTime() - new Date(a.check_in_date).getTime();
+        case 'check-out-asc':
+          if (!a.check_out_date) return 1;
+          if (!b.check_out_date) return -1;
+          return new Date(a.check_out_date).getTime() - new Date(b.check_out_date).getTime();
+        case 'check-out-desc':
+          if (!a.check_out_date) return 1;
+          if (!b.check_out_date) return -1;
+          return new Date(b.check_out_date).getTime() - new Date(a.check_out_date).getTime();
+        default:
+          return 0;
+      }
+    });
+  }, [filteredGuests, sortBy]);
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
     return format(new Date(dateString), 'dd/MM/yy');
@@ -216,7 +270,7 @@ const GuestsManager: React.FC = () => {
                 : `Showing ${filterCards.find((f) => f.id === activeFilter)?.label} guests`}
             </CardDescription>
           </div>
-          <Badge variant="outline">{filteredGuests.length} guests</Badge>
+          <Badge variant="outline">{sortedGuests.length} guests</Badge>
         </CardHeader>
         <CardContent>
           {/* Search and Refresh */}
@@ -230,6 +284,20 @@ const GuestsManager: React.FC = () => {
                 className="pl-10"
               />
             </div>
+            <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
+              <SelectTrigger className="w-[180px]">
+                <ArrowUpDown className="mr-2 h-4 w-4" />
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Date Added (Newest)</SelectItem>
+                <SelectItem value="oldest">Date Added (Oldest)</SelectItem>
+                <SelectItem value="check-in-asc">Check-in (Earliest)</SelectItem>
+                <SelectItem value="check-in-desc">Check-in (Latest)</SelectItem>
+                <SelectItem value="check-out-asc">Check-out (Earliest)</SelectItem>
+                <SelectItem value="check-out-desc">Check-out (Latest)</SelectItem>
+              </SelectContent>
+            </Select>
             <Button
               variant="outline"
               size="icon"
@@ -264,14 +332,14 @@ const GuestsManager: React.FC = () => {
                       Loading guests...
                     </TableCell>
                   </TableRow>
-                ) : filteredGuests.length === 0 ? (
+                ) : sortedGuests.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={10} className="h-24 text-center">
                       No guests found.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredGuests.map((guest) => (
+                  sortedGuests.map((guest) => (
                     <TableRow key={guest.id}>
                       <TableCell className="font-medium">
                         {guest.first_name} {guest.last_name}
@@ -291,9 +359,9 @@ const GuestsManager: React.FC = () => {
                       </TableCell>
                       <TableCell>{guest.phone || '—'}</TableCell>
                       <TableCell>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-8 w-8"
                           onClick={() => handleViewGuest(guest)}
                         >

@@ -12,11 +12,13 @@ import { Button } from '@/components/ui/button';
 import { Loader2, FileText } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
+import { useUserRole } from '@/hooks/useUserRole';
+
 const AboutEditor = () => {
   const { aboutData, isLoadingAbout, aboutError, updateAboutData, createInitialAboutData } = useAboutData();
   const [activeTab, setActiveTab] = useState('hero');
   const [isCreating, setIsCreating] = useState(false);
-  
+
   if (isLoadingAbout) {
     return (
       <div className="p-8 flex justify-center">
@@ -25,14 +27,14 @@ const AboutEditor = () => {
       </div>
     );
   }
-  
+
   if (aboutError) {
     return (
       <Card className="p-8 m-4 text-center text-red-500">
         <h2 className="text-xl font-bold mb-4">Loading Error</h2>
         <p>{aboutError.message}</p>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="mt-4"
           onClick={() => window.location.reload()}
         >
@@ -41,7 +43,7 @@ const AboutEditor = () => {
       </Card>
     );
   }
-  
+
   const handleCreateAboutData = async () => {
     setIsCreating(true);
     // Default about data
@@ -80,7 +82,7 @@ const AboutEditor = () => {
       hero_title: 'Welcome to Hotel Genius',
       hero_subtitle: 'Discover luxury and comfort'
     };
-    
+
     try {
       await createInitialAboutData(defaultAboutData);
       window.location.reload();
@@ -90,14 +92,14 @@ const AboutEditor = () => {
       setIsCreating(false);
     }
   };
-  
+
   if (!aboutData) {
     return (
       <div className="p-8 text-center">
         <Card className="p-6">
           <h2 className="text-xl font-bold mb-4">No information found</h2>
           <p className="mb-6">The "About" page information has not been configured yet. Would you like to create default content?</p>
-          <Button 
+          <Button
             onClick={handleCreateAboutData}
             disabled={isCreating}
             className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
@@ -115,7 +117,7 @@ const AboutEditor = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -127,7 +129,7 @@ const AboutEditor = () => {
           <p className="text-sm text-muted-foreground">Edit hotel information and directory</p>
         </div>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="hero">Hero</TabsTrigger>
@@ -136,9 +138,9 @@ const AboutEditor = () => {
           <TabsTrigger value="features">Features</TabsTrigger>
           <TabsTrigger value="directory">Directory</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="hero" className="space-y-6">
-          <HeroSection 
+          <HeroSection
             heroImage={aboutData?.hero_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80'}
             heroTitle={aboutData?.hero_title || 'Welcome to Our Hotel'}
             heroSubtitle={aboutData?.hero_subtitle || 'Discover luxury and comfort'}
@@ -146,9 +148,9 @@ const AboutEditor = () => {
             onSave={(heroData) => updateAboutData({ ...aboutData, ...heroData })}
           />
         </TabsContent>
-        
+
         <TabsContent value="welcome">
-          <WelcomeSection 
+          <WelcomeSection
             welcomeTitle={aboutData?.welcome_title || ''}
             welcomeDescription={aboutData?.welcome_description || ''}
             welcomeDescriptionExtended={aboutData?.welcome_description_extended || ''}
@@ -156,34 +158,34 @@ const AboutEditor = () => {
             onSave={(data) => updateAboutData({ ...aboutData, ...data })}
           />
         </TabsContent>
-        
+
         <TabsContent value="mission">
-          <MissionSection 
-            mission={aboutData.mission} 
+          <MissionSection
+            mission={aboutData.mission}
             isEditing={true}
             onSave={(mission) => updateAboutData({ ...aboutData, mission })}
           />
         </TabsContent>
-        
+
         <TabsContent value="features">
-          <FeaturesSection 
-            features={aboutData.features} 
+          <FeaturesSection
+            features={aboutData.features}
             isEditing={true}
             onSave={(features) => updateAboutData({ ...aboutData, features })}
           />
         </TabsContent>
-        
+
         <TabsContent value="directory">
           <h2 className="text-xl font-semibold mb-4">Directory and Information</h2>
-          <InfoItemSection 
+          <InfoItemSection
             title="Directory Title"
             items={[{ label: 'Title', value: aboutData.directory_title }]}
             isEditing={true}
             onSave={(items) => updateAboutData({ ...aboutData, directory_title: String(items[0].value) })}
             singleItem={true}
           />
-          
-          <DirectorySection 
+
+          <DirectorySection
             directoryTitle={aboutData.directory_title}
             importantNumbers={aboutData.important_numbers}
             facilities={aboutData.facilities}

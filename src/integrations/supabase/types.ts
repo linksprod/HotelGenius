@@ -247,6 +247,7 @@ export type Database = {
           guest_email: string | null
           guest_id: string | null
           guest_name: string
+          hotel_id: string | null
           id: string
           room_number: string | null
           status: string
@@ -406,6 +407,7 @@ export type Database = {
           guest_name: string | null
           guest_phone: string | null
           guests: number
+          hotel_id: string | null
           id: string
           room_number: string | null
           special_requests: string | null
@@ -660,6 +662,7 @@ export type Database = {
           email: string | null
           first_name: string
           guest_type: string | null
+          hotel_id: string | null
           id: string
           last_name: string
           nationality: string | null
@@ -846,11 +849,14 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
+          primary_color: string | null
+          secondary_color: string | null
+          slug: string
           subdomain: string | null
           updated_at: string
         }
         Insert: {
-          address: string
+          address?: string
           config?: Json | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -858,6 +864,9 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          slug: string
           subdomain?: string | null
           updated_at?: string
         }
@@ -870,6 +879,9 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          slug?: string
           subdomain?: string | null
           updated_at?: string
         }
@@ -880,6 +892,7 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          hotel_id: string | null
           id: string
           message_type: string
           metadata: Json | null
@@ -1126,6 +1139,7 @@ export type Database = {
           capacity: number
           created_at: string | null
           floor: number
+          hotel_id: string | null
           id: string
           images: string[] | null
           price: number
@@ -1171,6 +1185,7 @@ export type Database = {
           description: string | null
           guest_id: string
           guest_name: string | null
+          hotel_id: string | null
           id: string
           request_item_id: string | null
           room_id: string
@@ -1371,6 +1386,7 @@ export type Database = {
           guest_email: string
           guest_name: string
           guest_phone: string | null
+          hotel_id: string | null
           id: string
           room_number: string | null
           service_id: string | null
@@ -1612,6 +1628,7 @@ export type Database = {
           guest_name: string | null
           guest_phone: string | null
           guests: number
+          hotel_id: string | null
           id: string
           restaurant_id: string | null
           room_number: string | null
@@ -1666,23 +1683,34 @@ export type Database = {
       user_roles: {
         Row: {
           created_at: string | null
+          hotel_id: string | null
           id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
           created_at?: string | null
+          hotel_id?: string | null
           id?: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
           created_at?: string | null
+          hotel_id?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -1735,36 +1763,36 @@ export type Database = {
         Returns: boolean
       }
       insert_guest_from_registration:
-        | {
-            Args: {
-              birth_date?: string
-              check_in_date?: string
-              check_out_date?: string
-              email: string
-              first_name: string
-              last_name: string
-              nationality?: string
-              room_number: string
-              user_id: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              birth_date?: string
-              check_in_date?: string
-              check_out_date?: string
-              email: string
-              first_name: string
-              last_name: string
-              nationality?: string
-              phone?: string
-              profile_image?: string
-              room_number: string
-              user_id: string
-            }
-            Returns: string
-          }
+      | {
+        Args: {
+          birth_date?: string
+          check_in_date?: string
+          check_out_date?: string
+          email: string
+          first_name: string
+          last_name: string
+          nationality?: string
+          room_number: string
+          user_id: string
+        }
+        Returns: string
+      }
+      | {
+        Args: {
+          birth_date?: string
+          check_in_date?: string
+          check_out_date?: string
+          email: string
+          first_name: string
+          last_name: string
+          nationality?: string
+          phone?: string
+          profile_image?: string
+          room_number: string
+          user_id: string
+        }
+        Returns: string
+      }
       is_admin: { Args: { user_id: string }; Returns: boolean }
       is_hotel_admin: {
         Args: { hotel_id: string; user_id: string }
@@ -1793,116 +1821,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-    ? R
-    : never
+  ? R
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
-    : never
+    DefaultSchema["Views"])
+  ? (DefaultSchema["Tables"] &
+    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R
+    }
+  ? R
+  : never
+  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["Tables"]
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
-    }
-    ? I
-    : never
+    Insert: infer I
+  }
+  ? I
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
-    : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+    Insert: infer I
+  }
+  ? I
+  : never
+  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["Tables"]
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
-    }
-    ? U
-    : never
+    Update: infer U
+  }
+  ? U
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
-    : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+    Update: infer U
+  }
+  ? U
+  : never
+  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["Enums"]
+  | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+  : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema["CompositeTypes"]
+  | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+  : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never
 
 export const Constants = {
   public: {

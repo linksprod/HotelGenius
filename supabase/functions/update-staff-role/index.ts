@@ -28,39 +28,45 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Verify caller
-    const supabaseAuth = createClient(
+    const callerToken = authHeader.replace("Bearer ", "");
+
+    // Auth client for token verification
+    const authClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const { data: claimsData, error: claimsError } =
-      await supabaseAuth.auth.getClaims(authHeader.replace("Bearer ", ""));
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    // Verify caller with getUser
+    const { data: { user: callerUser }, error: userError } = await authClient.auth.getUser(callerToken);
+
+    if (userError || !callerUser) {
+      return new Response(JSON.stringify({ error: "Unauthorized", details: userError?.message }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const callerId = claimsData.claims.sub as string;
+    const callerId = callerUser.id;
 
-    // Service role client for DB operations
+    // Service role client for DB operations (including permission checks)
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Verify caller is admin
-    const { data: isAdmin } = await supabase.rpc("has_role", {
-      _user_id: callerId,
-      _role: "admin",
-    });
+    // Verify caller is admin or super admin
+    const { data: rolesData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId);
 
-    if (!isAdmin) {
+    const roles = (rolesData || []).map((r: any) => r.role);
+    const hasPermission = roles.includes("admin") || roles.includes("super_admin");
+
+    if (!hasPermission) {
       return new Response(
-        JSON.stringify({ error: "Only admins can change roles" }),
+        JSON.stringify({ error: "Only admins or super admins can change roles" }),
         {
           status: 403,
           headers: { ...corsHeaders, "Content-Type": "application/json" },

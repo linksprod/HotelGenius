@@ -3,13 +3,22 @@ import { supabase } from '@/integrations/supabase/client';
 import { Restaurant } from '@/features/dining/types';
 
 /**
- * Fetches all restaurants from the database
+ * Fetches all restaurants from the database for a specific hotel
  */
-export const fetchRestaurants = async (): Promise<Restaurant[]> => {
-  const { data, error } = await supabase
+export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdmin: boolean = false): Promise<Restaurant[]> => {
+  if (!hotelId && !isSuperAdmin) {
+    return [];
+  }
+
+  let query = supabase
     .from('restaurants')
-    .select('*')
-    .order('name');
+    .select('*');
+
+  if (hotelId) {
+    query = query.eq('hotel_id', hotelId);
+  }
+
+  const { data, error } = await query.order('name');
 
   if (error) {
     console.error('Error fetching restaurants:', error);
@@ -26,11 +35,10 @@ export const fetchRestaurants = async (): Promise<Restaurant[]> => {
     openHours: item.open_hours,
     location: item.location,
     status: item.status as 'open' | 'closed',
-    actionText: item.action_text || "Book a Table", // Add default if not present
+    actionText: item.action_text || "Book a Table",
     isFeatured: item.is_featured || false
   }));
 };
-
 /**
  * Fetches a restaurant by its ID
  */
@@ -56,20 +64,29 @@ export const fetchRestaurantById = async (id: string): Promise<Restaurant> => {
     openHours: data.open_hours,
     location: data.location,
     status: data.status as 'open' | 'closed',
-    actionText: data.action_text || "Book a Table", // Add default if not present
+    actionText: data.action_text || "Book a Table",
     isFeatured: data.is_featured || false
   };
 };
 
 /**
- * Fetches featured restaurants from the database
+ * Fetches featured restaurants from the database for a specific hotel
  */
-export const fetchFeaturedRestaurants = async (): Promise<Restaurant[]> => {
-  const { data, error } = await supabase
+export const fetchFeaturedRestaurants = async (hotelId: string | null = null, isSuperAdmin: boolean = false): Promise<Restaurant[]> => {
+  if (!hotelId && !isSuperAdmin) {
+    return [];
+  }
+
+  let query = supabase
     .from('restaurants')
     .select('*')
-    .eq('is_featured', true)
-    .order('name');
+    .eq('is_featured', true);
+
+  if (hotelId) {
+    query = query.eq('hotel_id', hotelId);
+  }
+
+  const { data, error } = await query.order('name');
 
   if (error) {
     console.error('Error fetching featured restaurants:', error);
@@ -86,7 +103,7 @@ export const fetchFeaturedRestaurants = async (): Promise<Restaurant[]> => {
     openHours: item.open_hours,
     location: item.location,
     status: item.status as 'open' | 'closed',
-    actionText: item.action_text || "Book a Table", // Add default if not present
+    actionText: item.action_text || "Book a Table",
     isFeatured: true
   }));
 };

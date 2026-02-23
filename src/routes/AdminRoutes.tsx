@@ -25,6 +25,7 @@ import DemoManager from '@/pages/admin/DemoManager';
 import GuestsManager from '@/pages/admin/GuestsManager';
 import GuestDetailPage from '@/pages/admin/GuestDetailPage';
 import StaffManager from '@/pages/admin/StaffManager';
+import HotelsManager from '@/pages/admin/HotelsManager';
 
 
 const AdminRoutes = () => {
@@ -34,6 +35,7 @@ const AdminRoutes = () => {
         <AdminLayout>
           <Routes>
             <Route index element={<AdminDashboard />} />
+            <Route path="hotels" element={<HotelsManager />} />
             <Route path="guests" element={<GuestsManager />} />
             <Route path="guests/:guestId" element={<GuestDetailPage />} />
             <Route path="security" element={<SecurityManager />} />
@@ -54,7 +56,7 @@ const AdminRoutes = () => {
             <Route path="destination-admin" element={<DestinationAdmin />} />
             <Route path="demo" element={<DemoManager />} />
             <Route path="staff" element={<StaffManager />} />
-            
+
           </Routes>
         </AdminLayout>
       </AdminRoleGuard>

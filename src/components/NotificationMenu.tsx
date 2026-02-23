@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import NotificationList from "./notifications/NotificationList";
 import { useNotifications } from "@/hooks/useNotifications";
+import { useHotelPath } from "@/hooks/useHotelPath";
 
 const NotificationMenu = () => {
   const {
@@ -25,6 +26,7 @@ const NotificationMenu = () => {
     refetchSpaBookings,
     refetchEventReservations,
   } = useNotifications();
+  const { resolvePath } = useHotelPath();
 
   // Reset the badge to 0 when the menu is opened
   // and refresh notifications data to ensure we have the latest data
@@ -66,7 +68,7 @@ const NotificationMenu = () => {
         </div>
 
         <DropdownMenuSeparator />
-        <Link to="/requests">
+        <Link to={resolvePath("/requests")}>
           <DropdownMenuItem className="text-center cursor-pointer hover:bg-gray-100/70">
             <span className="w-full text-center text-primary font-medium">View all Notifications</span>
           </DropdownMenuItem>

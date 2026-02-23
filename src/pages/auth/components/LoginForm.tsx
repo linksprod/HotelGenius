@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { loginUser } from '@/features/auth/services/authService';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -22,6 +23,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const LoginForm: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -36,29 +38,32 @@ const LoginForm: React.FC = () => {
     setLoading(true);
     try {
       console.log('Login attempt with:', values.email);
-      
+
       const result = await loginUser(values.email, values.password);
-      
+
       if (result.success) {
         toast({
           title: 'Login successful',
           description: 'Welcome to Stay Genius',
         });
-        
+
         // Check if user is admin and redirect accordingly
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user?.id) {
-          const { data: isStaff } = await supabase.rpc('is_staff_member', { 
-            _user_id: session.user.id 
+          const { data: isStaff } = await supabase.rpc('is_staff_member', {
+            _user_id: session.user.id
           });
-          
-          if (isStaff) {
-            navigate('/admin');
+          const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', {
+            user_id: session.user.id
+          });
+
+          if (isStaff || isSuperAdmin) {
+            navigate(resolvePath('/admin'));
           } else {
-            navigate('/');
+            navigate(resolvePath('/'));
           }
         } else {
-          navigate('/');
+          navigate(resolvePath('/'));
         }
       } else {
         console.error('Login failed:', result.error);
@@ -96,7 +101,7 @@ const LoginForm: React.FC = () => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="password"
@@ -110,7 +115,7 @@ const LoginForm: React.FC = () => {
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? (
             <>

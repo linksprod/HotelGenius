@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import StarRating from './StarRating';
 import { FeedbackType } from '../types/feedbackTypes';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 const FeedbackForm = () => {
   const [name, setName] = useState('');
@@ -17,10 +18,11 @@ const FeedbackForm = () => {
   const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { hotelId } = useCurrentHotelId();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !email || !rating) {
       toast({
         title: "Erreur",
@@ -39,6 +41,7 @@ const FeedbackForm = () => {
         guest_email: email,
         rating,
         comment
+        // hotel_id is handled by DB trigger (if logged in) or needs other context
       });
 
       if (error) throw error;
@@ -76,21 +79,21 @@ const FeedbackForm = () => {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="name">Nom <span className="text-red-500">*</span></Label>
-                <Input 
-                  id="name" 
-                  value={name} 
-                  onChange={(e) => setName(e.target.value)} 
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Votre nom"
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Votre email"
                   required
                 />
@@ -98,21 +101,21 @@ const FeedbackForm = () => {
             </div>
 
             <StarRating rating={rating} setRating={setRating} />
-            
+
             <div className="space-y-2">
               <Label htmlFor="comment">Commentaire</Label>
-              <Textarea 
-                id="comment" 
-                value={comment} 
-                onChange={(e) => setComment(e.target.value)} 
+              <Textarea
+                id="comment"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
                 placeholder="Partagez votre expérience avec nous..."
                 rows={4}
               />
             </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full md:w-auto" 
+
+            <Button
+              type="submit"
+              className="w-full md:w-auto"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon avis'}

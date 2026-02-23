@@ -14,6 +14,8 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { SpaBooking } from '@/features/spa/types';
 import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { useSpaServices } from '@/hooks/useSpaServices';
 
 interface SpaService {
   id: string;
@@ -27,34 +29,21 @@ interface SpaBookingsTabProps {
 
 export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProps) {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
-  const [services, setServices] = useState<SpaService[]>([]);
-  const [isLoadingServices, setIsLoadingServices] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<string>('');
 
-  const { bookings, isLoading, updateBookingStatus, refetch } = useSpaBookings();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+  const { bookings, isLoading: isLoadingBookings, updateBookingStatus, refetch } = useSpaBookings();
+  const { services, isLoading: isLoadingServices, error: servicesError } = useSpaServices();
   const { spaServiceCounts, markSectionSeen } = useAdminNotifications();
 
   useEffect(() => {
-    const loadServices = async () => {
-      setIsLoadingServices(true);
-      try {
-        const { data, error } = await supabase
-          .from('spa_services')
-          .select('id, name, facility_id')
-          .order('name');
-        if (error) throw error;
-        setServices(data || []);
-      } catch (error) {
-        console.error('Error loading spa services:', error);
-        toast.error('Error loading spa services');
-      } finally {
-        setIsLoadingServices(false);
-      }
-    };
-    loadServices();
-  }, []);
+    if (servicesError) {
+      console.error('Error loading spa services:', servicesError);
+      toast.error('Error loading spa services');
+    }
+  }, [servicesError]);
 
   const getNewCount = (serviceId: string) => spaServiceCounts[serviceId] || 0;
 
@@ -73,8 +62,8 @@ export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProp
     if (booking.service_id !== selectedServiceId) return false;
     const matchesSearch =
       (booking.guest_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       booking.guest_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       booking.room_number?.toLowerCase().includes(searchTerm.toLowerCase()));
+        booking.guest_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        booking.room_number?.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
     const matchesDate = !dateFilter || booking.date === dateFilter;
     return matchesSearch && matchesStatus && matchesDate;
@@ -219,13 +208,15 @@ export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProp
   if (!selectedServiceId) {
     return (
       <div className="p-4">
-        {isLoading || isLoadingServices ? (
+        {isLoadingBookings || isLoadingServices ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">Loading services...</p>
           </div>
         ) : services.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">No spa services found</p>
+          <div className="text-center py-8 px-4 border rounded-lg bg-gray-50 border-dashed">
+            <RefreshCw className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+            <p className="text-muted-foreground">No spa services found for this hotel.</p>
+            <p className="text-xs text-muted-foreground mt-1">Please add services in the 'Services' tab first.</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -334,7 +325,7 @@ export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProp
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoadingBookings ? (
         <div className="text-center py-8">
           <p className="text-muted-foreground">Loading bookings...</p>
         </div>

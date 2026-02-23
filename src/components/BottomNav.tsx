@@ -6,6 +6,7 @@ import { UtensilsCrossed, BedDouble, Phone, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useMessageBadge } from '@/hooks/useMessageBadge';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const BottomNav = () => {
   const { t } = useTranslation();
@@ -15,8 +16,9 @@ const BottomNav = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const isMobile = useIsMobile();
   const { unreadCount } = useMessageBadge();
+  const { resolvePath } = useHotelPath();
 
-  const isAdminPage = location.pathname.startsWith('/admin');
+  const isAdminPage = location.pathname.includes('/admin');
 
   // Optimiser la gestion du scroll pour de meilleures performances
   const handleScroll = useCallback(() => {
@@ -30,12 +32,12 @@ const BottomNav = () => {
     }
     setLastScrollY(currentScrollY);
   }, [lastScrollY]);
-  
+
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, {
       passive: true
     });
-    
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
@@ -45,12 +47,12 @@ const BottomNav = () => {
       icon: <UtensilsCrossed className="h-5 w-5" />,
       label: t('bottomNav.dining'),
       path: '/dining'
-    }, 
+    },
     {
       icon: <BedDouble className="h-5 w-5" />,
       label: t('bottomNav.myRoom'),
       path: '/my-room'
-    }, 
+    },
     {
       icon: <Phone className="h-5 w-5" />,
       label: t('bottomNav.request'),
@@ -75,13 +77,14 @@ const BottomNav = () => {
   // Optimiser la fonction de navigation
   const handleNavigation = useCallback((path: string) => {
     if (path !== '#') {
+      const resolvedPath = resolvePath(path);
       if (path === '/messages') {
-        navigate(path, { state: { from: location.pathname } });
+        navigate(resolvedPath, { state: { from: location.pathname } });
       } else {
-        navigate(path);
+        navigate(resolvedPath);
       }
     }
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, resolvePath]);
 
   // Hide navbar on admin pages
   if (isAdminPage) {
@@ -89,7 +92,7 @@ const BottomNav = () => {
   }
 
   return (
-    <nav 
+    <nav
       className={cn(
         "fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border shadow-xl z-50 transition-transform duration-300 ease-out",
         isVisible ? "translate-y-0" : "translate-y-full"
@@ -97,13 +100,13 @@ const BottomNav = () => {
     >
       <div className="flex justify-around items-center h-16">
         {navItems.map(item => (
-          <button 
-            key={`${item.path}-${item.label}`} 
+          <button
+            key={`${item.path}-${item.label}`}
             onClick={() => handleNavigation(item.path)}
             className={cn(
               "flex flex-col items-center justify-center w-full h-full gap-1.5 transition-colors relative",
-              location.pathname === item.path 
-                ? "text-primary" 
+              location.pathname === resolvePath(item.path)
+                ? "text-primary"
                 : "text-muted-foreground hover:text-primary"
             )}
           >

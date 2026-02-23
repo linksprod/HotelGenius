@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BedDouble, UtensilsCrossed, Heart, Compass, Phone, ShoppingBag, Map, Home, Info, Calendar, BellRing } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface MainMenuProps {
   buttonClassName?: string;
@@ -22,6 +23,8 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const [open, setOpen] = React.useState(false);
+  const { resolvePath } = useHotelPath();
 
   console.log('Current path in MainMenu:', location.pathname);
 
@@ -40,21 +43,23 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
   ];
 
   const handleNavigate = (path: string) => {
-    console.log(`Navigating to: ${path}`);
-    navigate(path);
+    const resolvedPath = resolvePath(path);
+    console.log(`Navigating to: ${resolvedPath}`);
+    setOpen(false);
+    navigate(resolvedPath);
   };
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className={cn("relative p-2 rounded-full hover:bg-accent/20", buttonClassName)}
         >
-          <img 
-            src="/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png" 
-            alt="Menu" 
+          <img
+            src="/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png"
+            alt="Menu"
             className="h-6 w-6 object-contain"
           />
           <span className="absolute top-0 right-0 h-2 w-2 bg-primary rounded-full" />
@@ -64,9 +69,9 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
         <div className="flex flex-col bg-card">
           <SheetHeader className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-b border-border">
             <div className="flex items-center gap-3">
-              <img 
-                src="/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png" 
-                alt="Logo" 
+              <img
+                src="/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png"
+                alt="Logo"
                 className="h-8 w-8 object-contain"
               />
               <SheetTitle className="text-2xl text-card-foreground font-semibold">{t('nav.services')}</SheetTitle>

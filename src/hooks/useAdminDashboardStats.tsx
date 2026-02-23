@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export interface AdminDashboardStats {
   totalReservations: number;
@@ -24,9 +25,61 @@ export interface AdminDashboardStats {
   };
 }
 
-const fetchDashboardStats = async (): Promise<AdminDashboardStats> => {
+const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboardStats> => {
   const today = new Date().toISOString().split('T')[0];
-  
+
+  // Helper to add hotel_id filter if present
+  const query = (table: string) => {
+    let q = supabase.from(table).select('*', { count: 'exact', head: true });
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  // Specific query builders for different needs
+  const guestsQuery = () => {
+    let q = supabase.from('guests').select('*', { count: 'exact', head: true }).gte('check_out_date', today);
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  const eventsQuery = () => {
+    let q = supabase.from('events').select('*', { count: 'exact', head: true }).gte('date', today);
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  const serviceRequestsQuery = () => {
+    let q = supabase.from('service_requests').select('status');
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  const feedbackQuery = () => {
+    let q = supabase.from('guest_feedback').select('rating');
+    // Assuming guest_feedback has hotel_id or we filter by joining guests (if schema doesn't support hotel_id directly yet)
+    // But since we are adding hotel_id to guest_feedback in migration, we use it directly.
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  const todayReservationsQuery = () => {
+    let q = supabase.from('table_reservations').select('*', { count: 'exact', head: true }).eq('date', today);
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  const todayMessagesQuery = () => {
+    let q = supabase.from('messages').select('*', { count: 'exact', head: true }).gte('created_at', `${today}T00:00:00`);
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
+  const unansweredMessagesQuery = () => {
+    let q = supabase.from('conversations').select('*', { count: 'exact', head: true }).eq('status', 'active').eq('current_handler', 'ai');
+    if (hotelId) q = q.eq('hotel_id', hotelId);
+    return q;
+  };
+
   // Fetch all data in parallel
   const [
     tableReservationsResult,
@@ -42,30 +95,18 @@ const fetchDashboardStats = async (): Promise<AdminDashboardStats> => {
     todayMessagesResult,
     unansweredMessagesResult
   ] = await Promise.all([
-    // Table reservations count
-    supabase.from('table_reservations').select('*', { count: 'exact', head: true }),
-    // Spa bookings count
-    supabase.from('spa_bookings').select('*', { count: 'exact', head: true }),
-    // Event reservations count
-    supabase.from('event_reservations').select('*', { count: 'exact', head: true }),
-    // Messages count
-    supabase.from('messages').select('*', { count: 'exact', head: true }),
-    // Current guests (check_out_date >= today)
-    supabase.from('guests').select('*', { count: 'exact', head: true }).gte('check_out_date', today),
-    // Active events (date >= today)
-    supabase.from('events').select('*', { count: 'exact', head: true }).gte('date', today),
-    // Service requests by status
-    supabase.from('service_requests').select('status'),
-    // Average guest satisfaction
-    supabase.from('guest_feedback').select('rating'),
-    // Conversations count
-    supabase.from('conversations').select('*', { count: 'exact', head: true }),
-    // Today's reservations (all types)
-    supabase.from('table_reservations').select('*', { count: 'exact', head: true }).eq('date', today),
-    // Today's messages
-    supabase.from('messages').select('*', { count: 'exact', head: true }).gte('created_at', `${today}T00:00:00`),
-    // Unanswered messages (conversations with status 'active' and current_handler = 'ai')
-    supabase.from('conversations').select('*', { count: 'exact', head: true }).eq('status', 'active').eq('current_handler', 'ai')
+    query('table_reservations'),
+    query('spa_bookings'),
+    query('event_reservations'),
+    query('messages'),
+    guestsQuery(),
+    eventsQuery(),
+    serviceRequestsQuery(),
+    feedbackQuery(),
+    query('conversations'),
+    todayReservationsQuery(),
+    todayMessagesQuery(),
+    unansweredMessagesQuery()
   ]);
 
   // Calculate service request stats
@@ -75,8 +116,8 @@ const fetchDashboardStats = async (): Promise<AdminDashboardStats> => {
 
   // Calculate average rating
   const ratings = feedbackResult.data || [];
-  const avgRating = ratings.length > 0 
-    ? ratings.reduce((sum, f) => sum + (f.rating || 0), 0) / ratings.length 
+  const avgRating = ratings.length > 0
+    ? ratings.reduce((sum, f) => sum + (f.rating || 0), 0) / ratings.length
     : 0;
 
   return {
@@ -104,10 +145,15 @@ const fetchDashboardStats = async (): Promise<AdminDashboardStats> => {
 };
 
 export const useAdminDashboardStats = () => {
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+
   return useQuery({
-    queryKey: ['admin-dashboard-stats'],
-    queryFn: fetchDashboardStats,
+    queryKey: ['admin-dashboard-stats', hotelId, isSuperAdmin],
+    queryFn: () => fetchDashboardStats(hotelId),
     refetchInterval: 30000, // Refresh every 30 seconds
     staleTime: 10000, // Consider data stale after 10 seconds
+    enabled: true, // Always enable, fetchDashboardStats handles null hotelId (it just won't filter) 
+    // OR you might want to return empty/loading if hotelId is missing but required. 
+    // For Super Admin, hotelId might be null if they see ALL, but currently we focus on filtering.
   });
 };

@@ -2,22 +2,26 @@
 import { supabase } from '@/integrations/supabase/client';
 import { MenuItem } from '@/features/dining/types';
 
-export const fetchMenuItems = async (restaurantId?: string): Promise<MenuItem[]> => {
-  let query = supabase
+export const fetchMenuItems = async (restaurantId?: string, hotelId?: string | null): Promise<MenuItem[]> => {
+  let query: any = supabase
     .from('restaurant_menus')
     .select('*');
-  
+
+  if (hotelId) {
+    query = query.eq('hotel_id', hotelId);
+  }
+
   if (restaurantId) {
     query = query.eq('restaurant_id', restaurantId);
   }
-  
+
   const { data, error } = await query;
-  
+
   if (error) {
     console.error('Error fetching menu items:', error);
     throw error;
   }
-  
+
   return data.map(item => ({
     id: item.id,
     restaurantId: item.restaurant_id,
@@ -38,7 +42,7 @@ export const fetchMenuItemById = async (id: string): Promise<MenuItem | null> =>
     .select('*')
     .eq('id', id)
     .single();
-  
+
   if (error) {
     if (error.code === 'PGRST116') {
       return null;
@@ -46,9 +50,9 @@ export const fetchMenuItemById = async (id: string): Promise<MenuItem | null> =>
     console.error('Error fetching menu item:', error);
     throw error;
   }
-  
+
   if (!data) return null;
-  
+
   return {
     id: data.id,
     restaurantId: data.restaurant_id,
@@ -66,16 +70,17 @@ export const fetchMenuItemById = async (id: string): Promise<MenuItem | null> =>
 export const createMenuItem = async (item: Omit<MenuItem, 'id'>): Promise<MenuItem> => {
   console.log('Creating menu item with data:', item);
   console.log('menuPdf present:', !!item.menuPdf);
-  
+
   if (item.menuPdf) {
     console.log('PDF length:', item.menuPdf.length, 'characters');
     console.log('PDF start:', item.menuPdf.substring(0, 50) + '...');
   }
-  
+
   const { data, error } = await supabase
     .from('restaurant_menus')
     .insert({
       restaurant_id: item.restaurantId,
+      hotel_id: (item as any).hotel_id,
       name: item.name,
       description: item.description,
       price: item.price,
@@ -87,14 +92,14 @@ export const createMenuItem = async (item: Omit<MenuItem, 'id'>): Promise<MenuIt
     })
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error creating menu item:', error);
     throw error;
   }
-  
+
   console.log('Menu item created:', data);
-  
+
   return {
     id: data.id,
     restaurantId: data.restaurant_id,
@@ -112,16 +117,17 @@ export const createMenuItem = async (item: Omit<MenuItem, 'id'>): Promise<MenuIt
 export const updateMenuItem = async (item: MenuItem): Promise<MenuItem> => {
   console.log('Updating menu item with data:', item);
   console.log('menuPdf present:', !!item.menuPdf);
-  
+
   if (item.menuPdf) {
     console.log('PDF length:', item.menuPdf.length, 'characters');
     console.log('PDF start:', item.menuPdf.substring(0, 50) + '...');
   }
-  
+
   const { data, error } = await supabase
     .from('restaurant_menus')
     .update({
       restaurant_id: item.restaurantId,
+      hotel_id: (item as any).hotel_id,
       name: item.name,
       description: item.description,
       price: item.price,
@@ -134,14 +140,14 @@ export const updateMenuItem = async (item: MenuItem): Promise<MenuItem> => {
     .eq('id', item.id)
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error updating menu item:', error);
     throw error;
   }
-  
+
   console.log('Menu item updated:', data);
-  
+
   return {
     id: data.id,
     restaurantId: data.restaurant_id,
@@ -161,7 +167,7 @@ export const deleteMenuItem = async (id: string): Promise<void> => {
     .from('restaurant_menus')
     .delete()
     .eq('id', id);
-  
+
   if (error) {
     console.error('Error deleting menu item:', error);
     throw error;

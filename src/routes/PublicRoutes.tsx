@@ -45,14 +45,14 @@ const PublicRoutes = () => {
       <Route path="contact" element={<Contact />} />
       <Route path="services" element={<Services />} />
       <Route path="shops" element={<Shops />} />
-        <Route path="feedback" element={<Feedback />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="notifications" element={<Notifications />} />
-        <Route path="requests" element={<Requests />} />
-        <Route path="my-room" element={<MyRoom />} />
-        <Route path="my-room/requests/:id" element={<ServiceRequestDetails />} />
-        <Route path="debug" element={<DebugInfo />} />
-        <Route path="*" element={<NotFound />} />
+      <Route path="feedback" element={<Feedback />} />
+      <Route path="messages" element={<Messages />} />
+      <Route path="notifications" element={<Notifications />} />
+      <Route path="requests" element={<Requests />} />
+      <Route path="my-room" element={<MyRoom />} />
+      <Route path="my-room/requests/:id" element={<ServiceRequestDetails />} />
+      <Route path="debug" element={<DebugInfo />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

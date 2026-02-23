@@ -1,0 +1,11 @@
+--- HOTELS ---
+No hotels found in the database.
+
+--- RESTAURANTS ---
+ID: 599bb32b-92bd-4846-aebc-f754e9592325 | HotelID: null | Name: Central Bar
+ID: 2737914e-3e80-4c5d-9564-a355a782d414 | HotelID: null | Name: In-Room Dining
+ID: ac54ac81-302b-4d24-a236-ba36388d763f | HotelID: null | Name: International Buffet 
+ID: dae8446d-0b34-48e4-af07-eccfc76044b5 | HotelID: null | Name: Steak house 
+ID: ab87f4b1-42c4-4cf8-88c3-855cac219f81 | HotelID: null | Name: Allegria
+ID: fc757879-a89a-40af-b2fd-38313e51430b | HotelID: 7e10c3dc-5d19-492e-a5d2-42838e7580ec | Name: cofe fiesta
+ID: 8bff89b4-be5c-4142-8424-1c6113155668 | HotelID: 00000000-0000-0000-0000-000000000000 | Name: test test demo hotel genius restaurant 

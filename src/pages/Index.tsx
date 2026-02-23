@@ -12,6 +12,7 @@ import AssistanceSection from '@/components/home/AssistanceSection';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 // Custom error boundary fallback component
 const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => {
@@ -20,7 +21,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetError
     <div className="p-6 border-2 border-red-300 rounded-md bg-red-50 m-4">
       <h2 className="text-xl font-bold text-red-800 mb-2">{t('errors.generic')}:</h2>
       <p className="text-red-600 mb-4">{error.message}</p>
-      <button 
+      <button
         onClick={resetErrorBoundary}
         className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
       >
@@ -72,7 +73,8 @@ const Index = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  
+  const { resolvePath } = useHotelPath();
+
   return (
     <Layout>
       <div className="pb-20">
@@ -80,15 +82,15 @@ const Index = () => {
         <SectionWrapper id="hero-section">
           <Suspense fallback={<div className="p-6 text-center">{t('common.loading')}</div>}>
             <HeroSection />
-            
+
             {/* Login button if user is not authenticated */}
             {!isAuthenticated && (
               <div className="text-center my-6">
                 <p className="text-lg mb-4">{t('home.hero.loginPrompt')}</p>
-                <Button 
-                  variant="default" 
-                  size="lg" 
-                  onClick={() => navigate('/auth/login')}
+                <Button
+                  variant="default"
+                  size="lg"
+                  onClick={() => navigate(resolvePath('/auth/login'))}
                   className="mx-auto"
                 >
                   {t('home.hero.loginButton')}

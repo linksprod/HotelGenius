@@ -10,6 +10,8 @@ import { useHotelConfig } from '@/hooks/useHotelConfig';
 import { supabase } from '@/integrations/supabase/client';
 import { FeedbackType } from '@/pages/feedback/types/feedbackTypes';
 
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+
 const FeedbackManager = () => {
   const [activeTab, setActiveTab] = useState('reviews');
   const [feedbacks, setFeedbacks] = useState<FeedbackType[]>([]);
@@ -18,20 +20,26 @@ const FeedbackManager = () => {
   const [isLoadingFeedback, setIsLoadingFeedback] = useState(true);
   const { toast } = useToast();
   const { config, isLoading: configLoading, updateConfig } = useHotelConfig();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
       setIsLoadingFeedback(true);
       try {
-        const { data, error } = await supabase
+        let query: any = supabase
           .from('guest_feedback')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
+          .select('*');
+
+        if (hotelId) {
+          query = query.eq('hotel_id', hotelId);
+        }
+
+        const { data, error } = await query.order('created_at', { ascending: false });
+
         if (error) {
           throw error;
         }
-        
+
         if (data) {
           const typedData = data as FeedbackType[];
           setFeedbacks(typedData);
@@ -63,13 +71,13 @@ const FeedbackManager = () => {
 
   const handleImageUpdate = () => {
     setLoading(true);
-    
+
     console.log("Updating hero image to:", heroImage);
-    
+
     updateConfig({
       feedback_hero_image: heroImage
     });
-    
+
     setTimeout(() => {
       setLoading(false);
       toast({
@@ -101,7 +109,7 @@ const FeedbackManager = () => {
           <p className="text-sm text-muted-foreground">Gérez les avis et personnalisez la page de feedback</p>
         </div>
       </div>
-      
+
       <Tabs defaultValue="reviews" onValueChange={setActiveTab} value={activeTab}>
         <TabsList className="mb-4">
           <TabsTrigger value="reviews" className="flex items-center gap-2">
@@ -113,7 +121,7 @@ const FeedbackManager = () => {
             <span>Apparence</span>
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="reviews" className="space-y-4">
           <Card>
             <CardHeader>
@@ -157,7 +165,7 @@ const FeedbackManager = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="appearance">
           <Card>
             <CardHeader>
@@ -165,10 +173,10 @@ const FeedbackManager = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <ImageUpload 
-                  id="hero-image" 
-                  value={heroImage} 
-                  onChange={setHeroImage} 
+                <ImageUpload
+                  id="hero-image"
+                  value={heroImage}
+                  onChange={setHeroImage}
                   className="max-w-2xl mx-auto"
                 />
                 <div className="flex justify-end">

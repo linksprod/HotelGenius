@@ -3,16 +3,27 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SpaFacility } from '@/features/spa/types';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export const useSpaFacilities = () => {
   const queryClient = useQueryClient();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Récupérer toutes les installations spa
   const fetchFacilities = async (): Promise<SpaFacility[]> => {
-    const { data, error } = await supabase
+    if (!hotelId && !isSuperAdmin) {
+      return [];
+    }
+
+    let query: any = supabase
       .from('spa_facilities')
-      .select('*')
-      .order('name');
+      .select('*');
+
+    if (hotelId) {
+      query = query.eq('hotel_id', hotelId);
+    }
+
+    const { data, error } = await query.order('name');
 
     if (error) {
       console.error('Error fetching spa facilities:', error);
@@ -43,7 +54,7 @@ export const useSpaFacilities = () => {
     mutationFn: async (facility: Omit<SpaFacility, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
         .from('spa_facilities')
-        .insert(facility)
+        .insert(facility)   // hotel_id is set automatically by DB trigger
         .select('id')
         .single();
 
@@ -115,7 +126,7 @@ export const useSpaFacilities = () => {
   });
 
   const { data = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['spa-facilities'],
+    queryKey: ['spa-facilities', hotelId, isSuperAdmin],
     queryFn: fetchFacilities,
   });
 

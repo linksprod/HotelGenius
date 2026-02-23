@@ -13,7 +13,8 @@ export interface UserData {
   profile_image?: string;
   phone?: string; // Added phone property
   companions?: CompanionData[];
-  guest_type?: string; // Add guest_type property that was missing
+  guest_type?: string;
+  hotel_id?: string;
 }
 
 export interface CompanionData {

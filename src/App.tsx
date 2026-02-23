@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AuthProvider } from '@/features/auth/hooks/useAuthContext';
 
 import { Toaster } from 'sonner';
@@ -11,6 +12,8 @@ import AuthenticatedRoutes from './routes/AuthenticatedRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import './i18n';
 
+import { HotelProvider } from '@/features/hotels/context/HotelContext';
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -19,21 +22,35 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/*" element={<PublicRoutes />} />
-            <Route path="/profile/*" element={<AuthenticatedRoutes />} />
-            <Route path="/dining/reservations/*" element={<AuthenticatedRoutes />} />
-            <Route path="/spa/booking/*" element={<AuthenticatedRoutes />} />
-            {/* Events list is public, event details handled in PublicRoutes */}
-            <Route path="/my-room/*" element={<AuthenticatedRoutes />} />
-            <Route path="/notifications/*" element={<AuthenticatedRoutes />} />
-            <Route path="/admin/*" element={<AdminRoutes />} />
+            {/* Redirect root to a default hotel context */}
+            <Route path="/" element={<Navigate to="/h/demo" replace />} />
+
+            {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
+            <Route path="/h/:slug/*" element={
+              <HotelProvider>
+                <Routes>
+                  <Route path="profile/*" element={<AuthenticatedRoutes />} />
+                  <Route path="dining/reservations/*" element={<AuthenticatedRoutes />} />
+                  <Route path="spa/booking/*" element={<AuthenticatedRoutes />} />
+                  <Route path="my-room/*" element={<AuthenticatedRoutes />} />
+                  <Route path="notifications/*" element={<AuthenticatedRoutes />} />
+                  <Route path="admin/*" element={<AdminRoutes />} />
+                  <Route path="/*" element={<PublicRoutes />} />
+                </Routes>
+              </HotelProvider>
+            } />
+
+            {/* Fallback for any other path */}
+            <Route path="*" element={<Navigate to="/h/demo" replace />} />
           </Routes>
           <Toaster richColors position="top-right" closeButton />
           <ShadcnToaster />
         </AuthProvider>
       </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
 
 export default App;
+

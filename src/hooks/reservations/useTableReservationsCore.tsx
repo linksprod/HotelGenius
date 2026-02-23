@@ -8,20 +8,24 @@ import { useEffect } from 'react';
 import { useReservationsFetching } from './useReservationsFetching';
 import { useReservationsRealtime } from './useReservationsRealtime';
 
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+
 export const useTableReservationsCore = (restaurantId?: string) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+
   const userId = user?.id || localStorage.getItem('user_id');
   const userEmail = user?.email || localStorage.getItem('user_email');
-  
+
   const isRestaurantSpecific = !!restaurantId && restaurantId !== ':id';
-  
+
   // Use the fetching logic from a separate hook
-  const { fetchUserReservations, fetchRestaurantReservations } = useReservationsFetching(userId, userEmail, restaurantId);
+  const { fetchUserReservations, fetchRestaurantReservations } = useReservationsFetching(userId, userEmail, restaurantId, hotelId, isSuperAdmin);
 
   // Query for fetching reservations (either user's or restaurant's)
   const { data: reservations, isLoading, error, refetch } = useQuery({
-    queryKey: ['tableReservations', userId, userEmail, restaurantId],
+    queryKey: ['tableReservations', userId, userEmail, restaurantId, hotelId, isSuperAdmin],
     queryFn: async () => {
       // Evaluate at query execution time, not hook initialization
       const shouldFetchByRestaurant = !!restaurantId && restaurantId !== ':id';

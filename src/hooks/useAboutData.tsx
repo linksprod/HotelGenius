@@ -2,17 +2,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { HotelAbout } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 import { fetchAboutData, updateAboutData, createInitialAbout } from '@/services/hotelAbout/aboutService';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export function useAboutData() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['hotelAbout'],
-    queryFn: fetchAboutData
+    queryKey: ['hotelAbout', hotelId, isSuperAdmin],
+    queryFn: () => fetchAboutData(hotelId, isSuperAdmin)
   });
-  
+
   const updateAboutMutation = useMutation({
     mutationFn: updateAboutData,
     onSuccess: () => {
@@ -30,7 +33,7 @@ export function useAboutData() {
       });
     }
   });
-  
+
   const createInitialAboutMutation = useMutation({
     mutationFn: createInitialAbout,
     onSuccess: () => {
@@ -48,7 +51,7 @@ export function useAboutData() {
       });
     }
   });
-  
+
   return {
     aboutData: data,
     isLoadingAbout: isLoading,

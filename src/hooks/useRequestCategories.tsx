@@ -4,18 +4,33 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { RequestCategory, RequestItem } from '@/features/rooms/types';
 
+import { useUserRole } from '@/hooks/useUserRole';
+import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useLocation } from 'react-router-dom';
+
 // Main hook to fetch categories and provide mutation functions
 export function useRequestCategories() {
   const queryClient = useQueryClient();
-  
+  const location = useLocation();
+  const { hotelId: adminHotelId } = useUserRole();
+  const { hotelId: guestHotelId } = useHotel();
+
+  const isAdminSection = location.pathname.includes('/admin');
+  const hotelId = isAdminSection ? adminHotelId : guestHotelId;
+
   // Fetch all categories
   const categoriesQuery = useQuery({
-    queryKey: ['requestCategories'],
+    queryKey: ['requestCategories', hotelId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('request_categories')
-        .select('*')
-        .order('name');
+        .select('*');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
 
       if (error) {
         console.error("Error fetching request categories:", error);
@@ -28,12 +43,17 @@ export function useRequestCategories() {
 
   // Fetch all items
   const itemsQuery = useQuery({
-    queryKey: ['requestItems'],
+    queryKey: ['requestItems', hotelId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('request_items')
-        .select('*')
-        .order('name');
+        .select('*');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
 
       if (error) {
         console.error("Error fetching request items:", error);
@@ -55,7 +75,12 @@ export function useRequestCategories() {
 // Separate hooks for mutations to make them easier to use
 export function useCreateRequestCategory() {
   const queryClient = useQueryClient();
-  
+  const { hotelId: adminHotelId } = useUserRole();
+  const { hotelId: guestHotelId } = useHotel();
+  const location = useLocation();
+  const isAdminSection = location.pathname.includes('/admin');
+  const hotelId = isAdminSection ? adminHotelId : guestHotelId;
+
   return useMutation({
     mutationFn: async (newCategory: Omit<RequestCategory, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
@@ -66,6 +91,7 @@ export function useCreateRequestCategory() {
           is_active: newCategory.is_active || true,
           icon: newCategory.icon,
           parent_id: newCategory.parent_id
+          // hotel_id set by DB trigger
         })
         .select()
         .single();
@@ -74,14 +100,19 @@ export function useCreateRequestCategory() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['requestCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['requestCategories', hotelId] });
     }
   });
 }
 
 export function useUpdateRequestCategory() {
   const queryClient = useQueryClient();
-  
+  const { hotelId: adminHotelId } = useUserRole();
+  const { hotelId: guestHotelId } = useHotel();
+  const location = useLocation();
+  const isAdminSection = location.pathname.includes('/admin');
+  const hotelId = isAdminSection ? adminHotelId : guestHotelId;
+
   return useMutation({
     mutationFn: async (category: RequestCategory) => {
       const { data, error } = await supabase
@@ -102,14 +133,19 @@ export function useUpdateRequestCategory() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['requestCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['requestCategories', hotelId] });
     }
   });
 }
 
 export function useCreateRequestItem() {
   const queryClient = useQueryClient();
-  
+  const { hotelId: adminHotelId } = useUserRole();
+  const { hotelId: guestHotelId } = useHotel();
+  const location = useLocation();
+  const isAdminSection = location.pathname.includes('/admin');
+  const hotelId = isAdminSection ? adminHotelId : guestHotelId;
+
   return useMutation({
     mutationFn: async (newItem: Omit<RequestItem, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
@@ -119,6 +155,7 @@ export function useCreateRequestItem() {
           description: newItem.description,
           category_id: newItem.category_id,
           is_active: newItem.is_active || true
+          // hotel_id set by DB trigger
         })
         .select()
         .single();
@@ -127,14 +164,19 @@ export function useCreateRequestItem() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['requestItems'] });
+      queryClient.invalidateQueries({ queryKey: ['requestItems', hotelId] });
     }
   });
 }
 
 export function useUpdateRequestItem() {
   const queryClient = useQueryClient();
-  
+  const { hotelId: adminHotelId } = useUserRole();
+  const { hotelId: guestHotelId } = useHotel();
+  const location = useLocation();
+  const isAdminSection = location.pathname.includes('/admin');
+  const hotelId = isAdminSection ? adminHotelId : guestHotelId;
+
   return useMutation({
     mutationFn: async (item: RequestItem) => {
       const { data, error } = await supabase
@@ -154,24 +196,35 @@ export function useUpdateRequestItem() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['requestItems'] });
+      queryClient.invalidateQueries({ queryKey: ['requestItems', hotelId] });
     }
   });
 }
 
 // Hook to fetch items for a specific category
 export function useRequestItems(categoryId?: string) {
+  const { hotelId: adminHotelId } = useUserRole();
+  const { hotelId: guestHotelId } = useHotel();
+  const location = useLocation();
+  const isAdminSection = location.pathname.includes('/admin');
+  const hotelId = isAdminSection ? adminHotelId : guestHotelId;
+
   return useQuery({
-    queryKey: ['requestItems', categoryId],
+    queryKey: ['requestItems', hotelId, categoryId],
     queryFn: async () => {
       if (!categoryId) return [];
 
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('request_items')
         .select('*')
         .eq('category_id', categoryId)
-        .eq('is_active', true)
-        .order('name');
+        .eq('is_active', true);
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
 
       if (error) {
         console.error(`Error fetching items for category ${categoryId}:`, error);

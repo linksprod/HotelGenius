@@ -27,32 +27,50 @@ Deno.serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } =
-      await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    const callerToken = authHeader.replace("Bearer ", "");
+
+    // Use getUser with the token to verify the user is logged in
+    const { data: { user: callerUser }, error: userError } = await supabaseAuth.auth.getUser(callerToken);
+
+    if (userError || !callerUser) {
+      console.error("Auth error:", userError);
+      return new Response(JSON.stringify({ error: "Invalid token", details: userError?.message }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const callerId = claimsData.claims.sub;
+    const callerId = callerUser.id;
 
-    // Check admin role
-    const { data: isAdmin } = await supabaseAuth.rpc("has_role", {
-      _user_id: callerId,
-      _role: "admin",
-    });
+    // Use service role client (supabaseAdmin) to check roles reliably
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: "Admin access required" }), {
+    const { data: rolesData, error: rolesError } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId);
+
+    if (rolesError) {
+      console.error("Error fetching roles:", rolesError);
+    }
+
+    const roles = (rolesData || []).map((r: any) => r.role);
+    console.log("Caller roles:", roles);
+
+    const hasPermission = roles.includes("admin") || roles.includes("super_admin");
+
+    if (!hasPermission) {
+      return new Response(JSON.stringify({ error: "Admin access required. Your roles: " + roles.join(", ") }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { first_name, last_name, email, password, role, service_type } = await req.json();
+    const { first_name, last_name, email, password, role, service_type, hotel_id } = await req.json();
+    console.log("Request Body:", { first_name, last_name, email, role, hotel_id });
 
     // Validate inputs
     if (!first_name || !last_name || !email || !password || !role) {
@@ -87,12 +105,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Use service role to create user
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
-
+    // Use service role to create user (already initialized as supabaseAdmin above)
     const { data: newUser, error: createError } =
       await supabaseAdmin.auth.admin.createUser({
         email,
@@ -108,11 +121,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // The trigger handle_new_user_role already inserts 'user' role.
-    // We need to insert the staff/moderator/admin role as well.
+    // Insert the staff/moderator/admin role with hotel_id.
     const { error: roleError } = await supabaseAdmin
       .from("user_roles")
-      .insert({ user_id: newUser.user.id, role });
+      .insert({ user_id: newUser.user.id, role, hotel_id });
 
     if (roleError) {
       return new Response(JSON.stringify({ error: roleError.message }), {
@@ -121,7 +133,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Remove the auto-inserted 'user' role from the trigger
+    // Remove the auto-inserted 'user' role from the trigger if it exists
     await supabaseAdmin
       .from("user_roles")
       .delete()
@@ -145,13 +157,14 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Insert guest profile so StaffManager can display name/email
+    // Insert guest profile and link to hotel_id
     await supabaseAdmin.from("guests").insert({
       user_id: newUser.user.id,
       first_name,
       last_name,
       email,
       guest_type: "Staff",
+      hotel_id,
     });
 
     return new Response(
@@ -161,7 +174,7 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
-  } catch (err) {
+  } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

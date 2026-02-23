@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 
 const UserMenu = () => {
@@ -19,12 +20,13 @@ const UserMenu = () => {
   const { userData, isAuthenticated } = useAuth();
   const { t, i18n } = useTranslation();
   const isMobile = useIsMobile();
-  
+  const { resolvePath } = useHotelPath();
+
 
   const changeLanguage = async (lng: string) => {
     console.log('Attempting to change language to:', lng);
     console.log('Current language before change:', i18n.language);
-    
+
     try {
       await i18n.changeLanguage(lng);
       localStorage.setItem('language', lng);
@@ -75,7 +77,7 @@ const UserMenu = () => {
       console.log("Redirection vers la page de connexion avec refresh complet");
       setTimeout(() => {
         // Le délai permet à la toast de s'afficher avant le rechargement
-        window.location.href = '/auth/login';
+        window.location.href = resolvePath('/auth/login');
       }, 300);
     } catch (error) {
       console.error("=== ERREUR CRITIQUE DE DÉCONNEXION ===", error);
@@ -97,7 +99,7 @@ const UserMenu = () => {
         // Dernier recours - redirection forcée avec reload
         console.log("Redirection d'urgence");
         setTimeout(() => {
-          window.location.href = '/auth/login?emergency=true';
+          window.location.href = resolvePath('/auth/login') + '?emergency=true';
         }, 300);
       } catch (e) {
         console.error("Échec critique du nettoyage d'urgence:", e);
@@ -122,9 +124,9 @@ const UserMenu = () => {
   // Si l'utilisateur n'est pas authentifié, afficher une icône utilisateur au lieu d'un bouton
   if (!isAuthenticated || !userData) {
     return (
-      <Button 
-        variant="ghost" 
-        onClick={() => navigate('/auth/login')} 
+      <Button
+        variant="ghost"
+        onClick={() => navigate(resolvePath('/auth/login'))}
         className="rounded-full p-2 h-9 w-9"
         size="icon"
       >
@@ -153,20 +155,20 @@ const UserMenu = () => {
           <GuestStatusBadge />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link to="/my-room">
+        <Link to={resolvePath("/my-room")}>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
             <span>{t('nav.myRoom')}</span>
           </DropdownMenuItem>
         </Link>
-        <Link to="/profile">
+        <Link to={resolvePath("/profile")}>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <span>{t('nav.profile')}</span>
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => changeLanguage('en')}
           className={i18n.language === 'en' ? 'bg-accent' : ''}
         >
@@ -174,7 +176,7 @@ const UserMenu = () => {
           <span>{t('common.english')}</span>
           {i18n.language === 'en' && <Check className="ml-auto h-4 w-4" />}
         </DropdownMenuItem>
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={() => changeLanguage('fr')}
           className={i18n.language === 'fr' ? 'bg-accent' : ''}
         >
