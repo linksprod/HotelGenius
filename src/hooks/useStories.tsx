@@ -61,7 +61,7 @@ export const useStories = () => {
     },
     onSuccess: (newStory) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
+      queryClient.setQueryData(['stories', hotelId, isSuperAdmin], (oldStories: Story[] = []) =>
         [newStory, ...oldStories]
       );
 
@@ -104,7 +104,7 @@ export const useStories = () => {
     },
     onSuccess: (updatedStory) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
+      queryClient.setQueryData(['stories', hotelId, isSuperAdmin], (oldStories: Story[] = []) =>
         oldStories.map(s => s.id === updatedStory.id ? updatedStory : s)
       );
 
@@ -141,7 +141,7 @@ export const useStories = () => {
     },
     onSuccess: (id) => {
       // Mettre à jour le cache React Query
-      queryClient.setQueryData(['stories'], (oldStories: Story[] = []) =>
+      queryClient.setQueryData(['stories', hotelId, isSuperAdmin], (oldStories: Story[] = []) =>
         oldStories.filter(s => s.id !== id)
       );
 

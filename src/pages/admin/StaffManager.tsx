@@ -10,7 +10,7 @@ import DeleteStaffDialog from './staff/DeleteStaffDialog';
 import EditRoleDialog from './staff/EditRoleDialog';
 import { toast } from '@/hooks/use-toast';
 
-import { useUserRole } from '@/hooks/useUserRole';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 const StaffManager: React.FC = () => {
   const [staff, setStaff] = useState<StaffMember[]>([]);
@@ -22,7 +22,7 @@ const StaffManager: React.FC = () => {
   const [staffToDelete, setStaffToDelete] = useState<StaffMember | null>(null);
   const [staffToEdit, setStaffToEdit] = useState<StaffMember | null>(null);
   const [roleFilter, setRoleFilter] = useState('all');
-  const { hotelId } = useUserRole();
+  const { hotelId } = useCurrentHotelId();
 
   const fetchStaff = useCallback(async () => {
     setIsLoading(true);

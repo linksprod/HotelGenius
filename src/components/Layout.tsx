@@ -13,6 +13,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { hexToHSL } from '@/lib/colors';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -31,10 +32,14 @@ const Layout = ({
 
   const homeLink = hotel ? `/h/${hotel.slug}` : "/";
 
+  // Prepare dynamic theme styles
+  const dynamicStyles = hotel?.primary_color ? {
+    '--primary': hexToHSL(hotel.primary_color),
+    '--ring': hexToHSL(hotel.primary_color),
+  } as React.CSSProperties : {};
+
   return (
-    <div className="min-h-screen bg-background" style={{
-      ['--primary' as any]: hotel?.primary_color || undefined,
-    }}>
+    <div className="min-h-screen bg-background" style={dynamicStyles}>
       <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-lg">
         <div className="container mx-auto px-4">
           <div className="relative flex items-center h-16">
@@ -44,8 +49,8 @@ const Layout = ({
             </div>
 
             {/* Center section - Logo - absolutely centered */}
-            <div className="w-full flex justify-center items-center">
-              <Link to={homeLink} className="hover:opacity-80 transition-opacity">
+            <div className="w-full flex justify-center items-center pointer-events-none">
+              <Link to={homeLink} className="hover:opacity-80 transition-opacity pointer-events-auto">
                 {hotel?.logo_url ? (
                   <img
                     src={hotel.logo_url}
@@ -56,6 +61,7 @@ const Layout = ({
                   <img
                     src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
                     alt="Hotel Genius"
+                    className={cn("filter brightness-110", isMobile ? "h-5" : "h-7")}
                   />
                 )}
               </Link>
