@@ -2,46 +2,54 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Restaurant } from '@/features/dining/types';
-import { 
-  fetchRestaurants, 
-  fetchRestaurantById, 
+import {
+  fetchRestaurants,
+  fetchRestaurantById,
   fetchFeaturedRestaurants,
-  createRestaurant as createRestaurantService, 
-  updateRestaurant as updateRestaurantService, 
-  deleteRestaurant as deleteRestaurantService 
+  createRestaurant as createRestaurantService,
+  updateRestaurant as updateRestaurantService,
+  deleteRestaurant as deleteRestaurantService
 } from '@/features/dining/services/restaurantService';
+
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export const useRestaurants = () => {
   const queryClient = useQueryClient();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Use React Query for data fetching and caching
+  // Don't fire until hotelId is resolved (HotelContext async) or user is super admin
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['restaurants'],
-    queryFn: fetchRestaurants,
+    queryKey: ['restaurants', hotelId, isSuperAdmin],
+    queryFn: () => fetchRestaurants(hotelId, isSuperAdmin),
+    enabled: isSuperAdmin || hotelId !== null,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,
   });
 
-  const { 
+  const {
     data: featuredRestaurants,
     isLoading: isFeaturedLoading
   } = useQuery({
-    queryKey: ['featuredRestaurants'],
-    queryFn: fetchFeaturedRestaurants,
+    queryKey: ['featuredRestaurants', hotelId, isSuperAdmin],
+    queryFn: () => fetchFeaturedRestaurants(hotelId, isSuperAdmin),
+    enabled: isSuperAdmin || hotelId !== null,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,
   });
 
   const createMutation = useMutation({
-    mutationFn: createRestaurantService,
+    mutationFn: (newRestaurant: Omit<Restaurant, 'id'>) =>
+      createRestaurantService(newRestaurant as any), // hotel_id set by DB trigger
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['restaurants'] });
       queryClient.invalidateQueries({ queryKey: ['featuredRestaurants'] });
       toast.success('Restaurant créé avec succès');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Error creating restaurant:', error);
-      toast.error('Erreur lors de la création du restaurant');
+      const message = error.message || 'Erreur lors de la création du restaurant';
+      toast.error(message);
     }
   });
 

@@ -4,6 +4,7 @@ import { TableReservation } from '@/features/dining/types';
 import { reservationTransformers } from './reservations/reservationTransformers';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 interface UseAllTableReservationsOptions {
   restaurantId?: string;
@@ -12,16 +13,19 @@ interface UseAllTableReservationsOptions {
 
 export const useAllTableReservations = (options?: UseAllTableReservationsOptions) => {
   const queryClient = useQueryClient();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
   const { restaurantId, status } = options || {};
 
   const { data: reservations, isLoading, error, refetch } = useQuery({
-    queryKey: ['allTableReservations', restaurantId, status],
+    queryKey: ['allTableReservations', hotelId, restaurantId, status],
     queryFn: async () => {
-      let query = supabase
+      let query: any = supabase
         .from('table_reservations')
-        .select('*')
-        .order('date', { ascending: false })
-        .order('time', { ascending: false });
+        .select('*');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
 
       if (restaurantId) {
         query = query.eq('restaurant_id', restaurantId);
@@ -30,9 +34,12 @@ export const useAllTableReservations = (options?: UseAllTableReservationsOptions
         query = query.eq('status', status);
       }
 
-      const { data, error } = await query;
-      if (error) throw error;
-      return reservationTransformers.transformReservations(data || []);
+      const { data: fetchResult, error: fetchError } = await query
+        .order('date', { ascending: false })
+        .order('time', { ascending: false });
+
+      if (fetchError) throw fetchError;
+      return reservationTransformers.transformReservations(fetchResult || []);
     },
     staleTime: 1000 * 60,
   });
@@ -46,7 +53,7 @@ export const useAllTableReservations = (options?: UseAllTableReservationsOptions
         schema: 'public',
         table: 'table_reservations',
       }, () => {
-        queryClient.invalidateQueries({ queryKey: ['allTableReservations'] });
+        queryClient.invalidateQueries({ queryKey: ['allTableReservations', hotelId] });
       })
       .subscribe();
 

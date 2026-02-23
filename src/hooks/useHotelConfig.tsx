@@ -2,6 +2,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+import { useHotel } from '@/features/hotels/context/HotelContext';
+
 export interface HotelConfig {
   id: string;
   name: string;
@@ -18,30 +20,36 @@ export interface HotelConfig {
 
 export function useHotelConfig() {
   const queryClient = useQueryClient();
-  
+  const { hotelId } = useHotel();
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['hotelConfig'],
+    queryKey: ['hotelConfig', hotelId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('hotel_config')
-        .select('*')
-        .single();
-        
+        .select('*');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.maybeSingle();
+
       if (error) throw error;
-      
+
       return data as HotelConfig;
     }
   });
-  
+
   const updateConfig = useMutation({
     mutationFn: async (newConfig: Partial<HotelConfig>) => {
       const { data: existingConfig } = await supabase
         .from('hotel_config')
         .select('id')
         .single();
-        
+
       let result;
-      
+
       if (existingConfig) {
         // Update existing config
         const { data, error } = await supabase
@@ -50,7 +58,7 @@ export function useHotelConfig() {
           .eq('id', existingConfig.id)
           .select()
           .single();
-          
+
         if (error) throw error;
         result = data;
       } else {
@@ -61,24 +69,24 @@ export function useHotelConfig() {
           secondary_color: newConfig.secondary_color || '#4f46e5',
           ...newConfig
         };
-        
+
         const { data, error } = await supabase
           .from('hotel_config')
           .insert(configToInsert)
           .select()
           .single();
-          
+
         if (error) throw error;
         result = data;
       }
-      
+
       return result as HotelConfig;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hotelConfig'] });
     }
   });
-  
+
   return {
     config: data,
     isLoading,

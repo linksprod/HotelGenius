@@ -59,10 +59,12 @@ import {
   ChevronRight,
   Globe,
   UserCog,
+  Building2,
 } from 'lucide-react';
 import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useUserRole } from '@/hooks/useUserRole';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface NavItem {
   title: string;
@@ -138,6 +140,7 @@ const navigationSections: NavSection[] = [
   {
     label: 'Administration',
     items: [
+      { title: 'Hotels', url: '/admin/hotels', icon: Building2 },
       { title: 'Staff Management', url: '/admin/staff', icon: UserCog },
       { title: 'Demo Settings', url: '/admin/demo', icon: Settings },
     ],
@@ -177,8 +180,16 @@ export const AdminSidebar: React.FC = () => {
   const isCollapsed = state === 'collapsed';
   const { counts } = useAdminNotifications();
   const { role } = useUserRole();
+  const { resolvePath } = useHotelPath();
 
   // Role-based allowed paths
+  const superAdminAllowedUrls = [
+    '/admin',
+    '/admin/hotels',
+    // Super admin can access everything, but mainly these for high level
+    '/admin/staff', // to manage other admins? possibly
+  ];
+
   const moderatorAllowedUrls = [
     '/admin',
     '/admin/chat',
@@ -194,6 +205,19 @@ export const AdminSidebar: React.FC = () => {
   ];
 
   const filteredSections = (() => {
+    // Super Admin should see Hotels
+    if (role === 'super_admin') {
+      return navigationSections; // Super admin sees everything for now, or specifically filtered
+    }
+
+    // Hotel Admin (default 'admin' or new 'hotel_admin')
+    if (role === 'admin' || role === 'hotel_admin') {
+      return navigationSections.map(section => ({
+        ...section,
+        items: section.items.filter(item => item.title !== 'Hotels') // Hide Hotels manager from normal admins
+      })).filter(section => section.items.length > 0);
+    }
+
     if (role === 'moderator') {
       return navigationSections
         .map((section) => ({
@@ -225,7 +249,7 @@ export const AdminSidebar: React.FC = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/');
+    navigate(resolvePath('/'));
   };
 
   const handleLanguageChange = (langCode: string) => {
@@ -233,10 +257,11 @@ export const AdminSidebar: React.FC = () => {
   };
 
   const isActive = (url: string) => {
+    const resolvedUrl = resolvePath(url);
     if (url === '/admin') {
-      return location.pathname === '/admin';
+      return location.pathname === resolvedUrl;
     }
-    return location.pathname.startsWith(url);
+    return location.pathname.startsWith(resolvedUrl);
   };
 
   const isSectionActive = (section: NavSection) => {
@@ -317,7 +342,7 @@ export const AdminSidebar: React.FC = () => {
                               tooltip={item.title}
                               className="h-9 rounded-lg transition-all duration-150"
                             >
-                              <NavLink to={item.url} end={item.url === '/admin'}>
+                              <NavLink to={resolvePath(item.url)} end={item.url === '/admin'}>
                                 <item.icon className={`h-4 w-4 ${isActive(item.url) ? 'text-primary' : 'text-muted-foreground'}`} />
                                 <span>{item.title}</span>
                               </NavLink>
@@ -344,9 +369,8 @@ export const AdminSidebar: React.FC = () => {
                           )}
                           {!isCollapsed && (
                             <ChevronRight
-                              className={`h-3 w-3 transition-transform duration-200 ${
-                                isOpen ? 'rotate-90' : 'rotate-0'
-                              }`}
+                              className={`h-3 w-3 transition-transform duration-200 ${isOpen ? 'rotate-90' : 'rotate-0'
+                                }`}
                             />
                           )}
                         </div>
@@ -372,7 +396,7 @@ export const AdminSidebar: React.FC = () => {
                                       <span>{item.title}</span>
                                     </span>
                                   ) : (
-                                    <NavLink to={item.url} end={item.url === '/admin'}>
+                                    <NavLink to={resolvePath(item.url)} end={item.url === '/admin'}>
                                       <item.icon className={`h-4 w-4 ${isActive(item.url) ? 'text-primary' : 'text-muted-foreground'}`} />
                                       <span>{item.title}</span>
                                     </NavLink>

@@ -1,16 +1,18 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { SpaBooking } from '@/features/spa/types';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 /**
  * Hook pour récupérer toutes les réservations de spa
  */
 export const useBookingsFetch = () => {
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+
   // Fetch all spa bookings
   const fetchBookings = async (): Promise<SpaBooking[]> => {
     try {
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('spa_bookings')
         .select(`
           *,
@@ -25,8 +27,13 @@ export const useBookingsFetch = () => {
             status,
             facility_id
           )
-        `)
-        .order('date', { ascending: false });
+        `);
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('date', { ascending: false });
 
       if (error) {
         console.error('Error fetching spa bookings:', error);
@@ -47,7 +54,7 @@ export const useBookingsFetch = () => {
   };
 
   const { data = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['spa-bookings'],
+    queryKey: ['spa-bookings', hotelId, isSuperAdmin],
     queryFn: fetchBookings,
   });
 

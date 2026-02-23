@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 const SECTION_KEYS = [
   'restaurants',
@@ -23,7 +24,7 @@ const CATEGORY_MAP: Record<string, SectionKey> = {
   '2f96741e-3e04-4117-8d37-e94795e37a68': 'information-technology',
 };
 
-async function fetchCounts(): Promise<{ counts: Record<SectionKey, number>; restaurantCounts: Record<string, number>; spaServiceCounts: Record<string, number> }> {
+async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<SectionKey, number>; restaurantCounts: Record<string, number>; spaServiceCounts: Record<string, number> }> {
   const counts: Record<string, number> = {};
   SECTION_KEYS.forEach((k) => (counts[k] = 0));
 
@@ -59,21 +60,27 @@ async function fetchCounts(): Promise<{ counts: Record<SectionKey, number>; rest
   // Helper: get last_seen or epoch for first-time
   const getLastSeen = (key: string) => lastSeenMap[key] || '1970-01-01T00:00:00Z';
 
-  // Restaurant reservations
-  let restaurantQuery = supabase
-    .from('table_reservations')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'pending')
-    .gt('created_at', getLastSeen('restaurants'));
-  const { count: restaurantCount } = await restaurantQuery;
+  // Helper: optionally add hotel_id filter to enforce tenant isolation
+  const withHotel = (q: any) => (hotelId ? q.eq('hotel_id', hotelId) : q);
+
+  // Restaurant reservations - global count for sidebar
+  const { count: restaurantCount } = await withHotel(
+    supabase
+      .from('table_reservations')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending')
+      .gt('created_at', getLastSeen('restaurants'))
+  );
   counts.restaurants = restaurantCount || 0;
 
   // Per-restaurant pending counts (only new ones)
-  const { data: restaurantReservations } = await supabase
-    .from('table_reservations')
-    .select('restaurant_id')
-    .eq('status', 'pending')
-    .gt('created_at', getLastSeen('restaurants'));
+  const { data: restaurantReservations } = await withHotel(
+    supabase
+      .from('table_reservations')
+      .select('restaurant_id')
+      .eq('status', 'pending')
+      .gt('created_at', getLastSeen('restaurants'))
+  );
 
   const restaurantCounts: Record<string, number> = {};
   if (restaurantReservations) {
@@ -85,18 +92,22 @@ async function fetchCounts(): Promise<{ counts: Record<SectionKey, number>; rest
   }
 
   // Spa bookings - global count for sidebar
-  const { count: spaCount } = await supabase
-    .from('spa_bookings')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'pending')
-    .gt('created_at', getLastSeen('spa'));
+  const { count: spaCount } = await withHotel(
+    supabase
+      .from('spa_bookings')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending')
+      .gt('created_at', getLastSeen('spa'))
+  );
   counts.spa = spaCount || 0;
 
   // Spa bookings - per-service counts
-  const { data: spaBookings } = await supabase
-    .from('spa_bookings')
-    .select('service_id, created_at')
-    .eq('status', 'pending');
+  const { data: spaBookings } = await withHotel(
+    supabase
+      .from('spa_bookings')
+      .select('service_id, created_at')
+      .eq('status', 'pending')
+  );
 
   const spaServiceCounts: Record<string, number> = {};
   if (spaBookings) {
@@ -111,20 +122,24 @@ async function fetchCounts(): Promise<{ counts: Record<SectionKey, number>; rest
   }
 
   // Event reservations
-  const { count: eventsCount } = await supabase
-    .from('event_reservations')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'pending')
-    .gt('created_at', getLastSeen('events'));
+  const { count: eventsCount } = await withHotel(
+    supabase
+      .from('event_reservations')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending')
+      .gt('created_at', getLastSeen('events'))
+  );
   counts.events = eventsCount || 0;
 
   // Chat: count conversations with new guest messages since last seen
   const chatLastSeen = getLastSeen('chat');
-  const { data: newGuestMessages } = await supabase
-    .from('messages')
-    .select('conversation_id')
-    .eq('sender_type', 'guest')
-    .gt('created_at', chatLastSeen);
+  const { data: newGuestMessages } = await withHotel(
+    supabase
+      .from('messages')
+      .select('conversation_id')
+      .eq('sender_type', 'guest')
+      .gt('created_at', chatLastSeen)
+  );
 
   if (newGuestMessages) {
     const uniqueConvos = new Set(newGuestMessages.map(m => m.conversation_id));
@@ -132,10 +147,12 @@ async function fetchCounts(): Promise<{ counts: Record<SectionKey, number>; rest
   }
 
   // Service requests by category
-  const { data: serviceRequests } = await supabase
-    .from('service_requests')
-    .select('category_id, created_at')
-    .eq('status', 'pending');
+  const { data: serviceRequests } = await withHotel(
+    supabase
+      .from('service_requests')
+      .select('category_id, created_at')
+      .eq('status', 'pending')
+  );
 
   if (serviceRequests) {
     for (const req of serviceRequests) {
@@ -154,6 +171,8 @@ async function fetchCounts(): Promise<{ counts: Record<SectionKey, number>; rest
 
 export function useAdminNotifications() {
   const queryClient = useQueryClient();
+  const { hotelId } = useCurrentHotelId();
+
   const [localCounts, setLocalCounts] = useState<Record<SectionKey, number>>(() => {
     const init: Record<string, number> = {};
     SECTION_KEYS.forEach((k) => (init[k] = 0));
@@ -163,8 +182,8 @@ export function useAdminNotifications() {
   const [localSpaServiceCounts, setLocalSpaServiceCounts] = useState<Record<string, number>>({});
 
   const { data } = useQuery({
-    queryKey: ['admin-notifications'],
-    queryFn: fetchCounts,
+    queryKey: ['admin-notifications', hotelId],
+    queryFn: () => fetchCounts(hotelId),
     refetchInterval: 30000,
   });
 
@@ -178,7 +197,7 @@ export function useAdminNotifications() {
 
   // Realtime subscriptions
   useEffect(() => {
-    const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-notifications'] });
+    const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-notifications', hotelId] });
 
     const channel = supabase
       .channel('admin-notifications')
@@ -196,7 +215,7 @@ export function useAdminNotifications() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, hotelId]);
 
   const markSectionSeen = useCallback(async (sectionKey: string) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -210,8 +229,8 @@ export function useAdminNotifications() {
       );
 
     // Immediately refresh counts
-    queryClient.invalidateQueries({ queryKey: ['admin-notifications'] });
-  }, [queryClient]);
+    queryClient.invalidateQueries({ queryKey: ['admin-notifications', hotelId] });
+  }, [queryClient, hotelId]);
 
   return { counts: localCounts, restaurantCounts: localRestaurantCounts, spaServiceCounts: localSpaServiceCounts, markSectionSeen };
 }

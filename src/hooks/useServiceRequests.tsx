@@ -1,37 +1,42 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { ServiceRequest } from '@/features/rooms/types';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { useLocation } from 'react-router-dom';
+import { useUserRole } from '@/hooks/useUserRole';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export const useServiceRequests = () => {
   const queryClient = useQueryClient();
   const { user, userData } = useAuth();
   const location = useLocation();
-  const userId = user?.id || localStorage.getItem('user_id');
-  const userRoomNumber = userData?.room_number || localStorage.getItem('user_room_number');
-  
-  // Check if we're in the admin section
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
   const isAdminSection = location.pathname.includes('/admin');
 
-  const fetchServiceRequests = async (): Promise<ServiceRequest[]> => {
-    console.log('fetchServiceRequests called with:', { userId, userRoomNumber, isAdminSection });
-    
-    if (!userId && !userRoomNumber && !isAdminSection) {
-      console.log('No authenticated user or user_id in localStorage, returning empty service requests');
-      return [];
-    }
+  const userId = user?.id || localStorage.getItem('user_id');
+  const userRoomNumber = userData?.room_number || localStorage.getItem('user_room_number');
 
-    // For admin section, fetch all service requests
+  const fetchServiceRequests = async (): Promise<ServiceRequest[]> => {
+    console.log('fetchServiceRequests called with:', { userId, userRoomNumber, isAdminSection, hotelId });
+
+    // For admin section, fetch service requests for the specific hotel
     if (isAdminSection) {
-      console.log('Admin view: Fetching all service requests');
-      
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) {
+        return [];
+      }
+
+      console.log('Admin view: Fetching service requests', hotelId ? `for hotel ${hotelId}` : 'all hotels');
+
+      let query: any = supabase
         .from('service_requests')
-        .select('*, request_items(*)')
-        .order('created_at', { ascending: false });
+        .select('*, request_items(*)');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching service requests:', error);
@@ -41,45 +46,36 @@ export const useServiceRequests = () => {
       console.log('Service requests data retrieved:', data?.length || 0);
       return data as ServiceRequest[];
     } else {
+      if (!userId && !userRoomNumber) {
+        console.log('No authenticated user or user_id in localStorage, returning empty service requests');
+        return [];
+      }
+
+      let query: any = supabase
+        .from('service_requests')
+        .select('*, request_items(*)');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
       // Pour un utilisateur normal, privilégier le filtrage par numéro de chambre
       if (userRoomNumber) {
         console.log(`Fetching service requests for room number: ${userRoomNumber}`);
-        
-        const { data, error } = await supabase
-          .from('service_requests')
-          .select('*, request_items(*)')
-          .eq('room_number', userRoomNumber)
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.error('Error fetching service requests by room number:', error);
-          throw error;
-        }
-
-        console.log(`Retrieved ${data?.length || 0} service requests for room ${userRoomNumber}`);
-        return data as ServiceRequest[];
-      }
-      
-      // Si pas de numéro de chambre, filtrer par ID utilisateur
-      if (userId) {
+        query = query.eq('room_number', userRoomNumber);
+      } else if (userId) {
         console.log(`Fetching service requests for user ID: ${userId}`);
-        
-        const { data, error } = await supabase
-          .from('service_requests')
-          .select('*, request_items(*)')
-          .eq('guest_id', userId)
-          .order('created_at', { ascending: false });
-
-        if (error) {
-          console.error('Error fetching service requests by guest_id:', error);
-          throw error;
-        }
-
-        console.log(`Retrieved ${data?.length || 0} service requests by guest_id`);
-        return data as ServiceRequest[];
+        query = query.eq('guest_id', userId);
       }
-      
-      return [];
+
+      const { data, error } = await query.order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching service requests:', error);
+        throw error;
+      }
+
+      return data as ServiceRequest[];
     }
   };
 
@@ -93,7 +89,7 @@ export const useServiceRequests = () => {
       .from('service_requests')
       .update({ status: 'cancelled' })
       .eq('id', requestId);
-      
+
     // Only apply user filter if not in admin section
     if (!isAdminSection) {
       // Ajouter une vérification du guest_id pour s'assurer que l'utilisateur ne peut annuler que ses propres demandes

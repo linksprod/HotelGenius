@@ -10,6 +10,8 @@ import DeleteStaffDialog from './staff/DeleteStaffDialog';
 import EditRoleDialog from './staff/EditRoleDialog';
 import { toast } from '@/hooks/use-toast';
 
+import { useUserRole } from '@/hooks/useUserRole';
+
 const StaffManager: React.FC = () => {
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,15 +22,22 @@ const StaffManager: React.FC = () => {
   const [staffToDelete, setStaffToDelete] = useState<StaffMember | null>(null);
   const [staffToEdit, setStaffToEdit] = useState<StaffMember | null>(null);
   const [roleFilter, setRoleFilter] = useState('all');
+  const { hotelId } = useUserRole();
 
   const fetchStaff = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Get all user_roles that are not 'user'
-      const { data: roles, error: rolesError } = await supabase
+      // Get all user_roles for the current hotel that are not 'user'
+      let query = supabase
         .from('user_roles')
         .select('user_id, role, created_at')
         .neq('role', 'user');
+
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data: roles, error: rolesError } = await query;
 
       if (rolesError) throw rolesError;
       if (!roles || roles.length === 0) {
@@ -38,10 +47,16 @@ const StaffManager: React.FC = () => {
 
       // Get guest profiles for these users
       const userIds = roles.map((r) => r.user_id);
-      const { data: guests } = await supabase
+      let guestsQuery = supabase
         .from('guests')
         .select('user_id, first_name, last_name, email')
         .in('user_id', userIds);
+
+      if (hotelId) {
+        guestsQuery = guestsQuery.eq('hotel_id', hotelId);
+      }
+
+      const { data: guests } = await guestsQuery;
 
       // Fetch moderator service types
       const { data: modServices } = await supabase

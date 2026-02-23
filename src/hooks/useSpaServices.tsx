@@ -3,16 +3,27 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SpaService, SpaBooking } from '@/features/spa/types';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export const useSpaServices = () => {
   const queryClient = useQueryClient();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Récupérer tous les services spa
   const fetchServices = async (): Promise<SpaService[]> => {
-    const { data, error } = await supabase
+    if (!hotelId && !isSuperAdmin) {
+      return [];
+    }
+
+    let query: any = supabase
       .from('spa_services')
-      .select('*')
-      .order('name');
+      .select('*');
+
+    if (hotelId) {
+      query = query.eq('hotel_id', hotelId);
+    }
+
+    const { data, error } = await query.order('name');
 
     if (error) {
       console.error('Error fetching spa services:', error);
@@ -31,12 +42,21 @@ export const useSpaServices = () => {
 
   // Récupérer les services mis en avant
   const fetchFeaturedServices = async (): Promise<SpaService[]> => {
-    const { data, error } = await supabase
+    if (!hotelId && !isSuperAdmin) {
+      return [];
+    }
+
+    let query: any = supabase
       .from('spa_services')
       .select('*')
       .eq('is_featured', true)
-      .eq('status', 'available')
-      .order('name');
+      .eq('status', 'available');
+
+    if (hotelId) {
+      query = query.eq('hotel_id', hotelId);
+    }
+
+    const { data, error } = await query.order('name');
 
     if (error) {
       console.error('Error fetching featured spa services:', error);
@@ -58,7 +78,7 @@ export const useSpaServices = () => {
     mutationFn: async (booking: Omit<SpaBooking, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
         .from('spa_bookings')
-        .insert(booking)
+        .insert(booking)   // hotel_id set by DB trigger
         .select()
         .single();
 
@@ -106,13 +126,13 @@ export const useSpaServices = () => {
 
   // Services data
   const { data: services = [], isLoading: isLoadingServices, error: servicesError, refetch: refetchServices } = useQuery({
-    queryKey: ['spa-services'],
+    queryKey: ['spa-services', hotelId, isSuperAdmin],
     queryFn: fetchServices,
   });
 
   // Featured services data
   const { data: featuredServices = [], isLoading: isLoadingFeatured, error: featuredError } = useQuery({
-    queryKey: ['spa-services', 'featured'],
+    queryKey: ['spa-services', 'featured', hotelId, isSuperAdmin],
     queryFn: fetchFeaturedServices,
   });
 

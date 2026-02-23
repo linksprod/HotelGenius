@@ -10,20 +10,26 @@ import {
   deleteMenuItem
 } from '@/features/dining/services/menuService';
 
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+
 export const useRestaurantMenus = (restaurantId?: string) => {
   const queryClient = useQueryClient();
+  const { hotelId } = useCurrentHotelId();
 
   // Use React Query for data fetching and caching
   const { data, isLoading, error } = useQuery({
-    queryKey: ['menuItems', restaurantId],
-    queryFn: () => fetchMenuItems(restaurantId),
-    enabled: restaurantId !== undefined
+    queryKey: ['menuItems', hotelId, restaurantId],
+    queryFn: () => {
+      if (!hotelId && !restaurantId) return [];
+      return fetchMenuItems(restaurantId, hotelId);
+    },
+    enabled: true // Always enable to allow fetching for all restaurants if restaurantId is undefined
   });
 
   const createMutation = useMutation({
     mutationFn: createMenuItem,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['menuItems', restaurantId] });
+      queryClient.invalidateQueries({ queryKey: ['menuItems', hotelId, restaurantId] });
       toast.success('Plat ajouté avec succès');
     },
     onError: (error) => {
@@ -35,7 +41,7 @@ export const useRestaurantMenus = (restaurantId?: string) => {
   const updateMutation = useMutation({
     mutationFn: updateMenuItem,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['menuItems', restaurantId] });
+      queryClient.invalidateQueries({ queryKey: ['menuItems', hotelId, restaurantId] });
       toast.success('Plat mis à jour avec succès');
     },
     onError: (error) => {

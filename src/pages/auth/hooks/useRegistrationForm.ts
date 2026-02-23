@@ -11,6 +11,7 @@ import { CompanionData } from '@/features/users/types/userTypes';
 import { registerUser } from '@/features/auth/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 import { syncGuestData } from '@/features/users/services/guestService';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 // Calculate the date 18 years ago for minimum age validation
 const eighteenYearsAgo = new Date();
@@ -60,6 +61,7 @@ export const useRegistrationForm = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { hotelId } = useHotel();
   const [companions, setCompanions] = useState<CompanionType[]>([]);
 
   // Formulaire d'inscription
@@ -78,7 +80,7 @@ export const useRegistrationForm = () => {
 
   const handleRegister = async (values: RegistrationFormValues) => {
     setLoading(true);
-    
+
     try {
       // Préparer les données utilisateur 
       const userData = {
@@ -91,14 +93,14 @@ export const useRegistrationForm = () => {
         check_out_date: values.checkOutDate,
         companions: mapCompanionsToCompanionData(companions),
       };
-      
+
       // Enregistrer l'utilisateur avec Supabase Auth
       const result = await registerUser(values.email, values.password, userData);
-      
+
       if (!result.success) {
         throw new Error(result.error || "Registration failed");
       }
-      
+
       // Si userId est défini, synchroniser avec Supabase
       if (result.userId) {
         // Créer directement l'entrée dans la table guests
@@ -111,14 +113,15 @@ export const useRegistrationForm = () => {
           nationality: values.nationality,
           birth_date: values.birthDate.toISOString().split('T')[0],
           check_in_date: values.checkInDate.toISOString().split('T')[0],
-          check_out_date: values.checkOutDate.toISOString().split('T')[0]
+          check_out_date: values.checkOutDate.toISOString().split('T')[0],
+          hotel_id: hotelId
         };
-        
+
         // Créer l'invité directement dans la table guests
         const { error } = await supabase
           .from('guests')
           .insert([guestData]);
-        
+
         if (error) {
           console.error('Error creating guest:', error);
           toast({
@@ -127,14 +130,14 @@ export const useRegistrationForm = () => {
             description: "Your account was created but we couldn't save your guest profile.",
           });
         }
-        
+
         // Synchroniser également avec la méthode existante pour la compatibilité
         const syncSuccess = await syncUserData({
           ...userData,
           email: values.email,
           id: result.userId
         });
-        
+
         if (!syncSuccess) {
           toast({
             variant: "destructive",
@@ -143,12 +146,12 @@ export const useRegistrationForm = () => {
           });
         }
       }
-      
+
       toast({
         title: "Registration successful",
         description: "Welcome to Stay Genius",
       });
-      
+
       // Rediriger vers la page d'accueil
       navigate('/');
     } catch (error: any) {

@@ -7,10 +7,10 @@ import { Restaurant } from '@/features/dining/types';
  */
 export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Promise<Restaurant> => {
   console.log('Creating restaurant with data:', restaurant);
-  
+
   // Verify required fields
-  if (!restaurant.name || !restaurant.description || !restaurant.cuisine || 
-      !restaurant.openHours || !restaurant.location || !restaurant.status) {
+  if (!restaurant.name || !restaurant.description || !restaurant.cuisine ||
+    !restaurant.openHours || !restaurant.location || !restaurant.status) {
     throw new Error("Some required fields are missing");
   }
 
@@ -27,7 +27,8 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Prom
         location: restaurant.location,
         status: restaurant.status,
         action_text: restaurant.actionText,
-        is_featured: restaurant.isFeatured
+        is_featured: restaurant.isFeatured,
+        hotel_id: (restaurant as any).hotel_id
       })
       .select();
 
@@ -65,10 +66,10 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Prom
  */
 export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaurant> => {
   console.log('Updating restaurant with data:', restaurant);
-  
+
   // Verify required fields
-  if (!restaurant.name || !restaurant.description || !restaurant.cuisine || 
-      !restaurant.openHours || !restaurant.location || !restaurant.status) {
+  if (!restaurant.name || !restaurant.description || !restaurant.cuisine ||
+    !restaurant.openHours || !restaurant.location || !restaurant.status) {
     throw new Error("Some required fields are missing");
   }
 
@@ -103,11 +104,11 @@ export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaura
         .select('*')
         .eq('id', restaurant.id)
         .single();
-        
+
       if (fetchError) {
         throw fetchError;
       }
-      
+
       console.log('Fetched updated restaurant:', fetchedData);
       return {
         id: fetchedData.id,

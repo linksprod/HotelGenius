@@ -5,10 +5,10 @@ import { SpaBooking } from '@/features/spa/types';
 /**
  * Fonction pour récupérer les réservations d'un utilisateur spécifique
  */
-export const fetchUserBookings = async (userId: string): Promise<SpaBooking[]> => {
+export const fetchUserBookings = async (userId: string, hotelId?: string | null): Promise<SpaBooking[]> => {
   try {
-    console.log('Fetching bookings for user ID:', userId);
-    const { data, error } = await supabase
+    console.log('Fetching bookings for user ID:', userId, hotelId ? `for hotel ${hotelId}` : '');
+    let query: any = supabase
       .from('spa_bookings')
       .select(`
         *,
@@ -24,8 +24,13 @@ export const fetchUserBookings = async (userId: string): Promise<SpaBooking[]> =
           facility_id
         )
       `)
-      .eq('user_id', userId)
-      .order('date', { ascending: false });
+      .eq('user_id', userId);
+
+    if (hotelId) {
+      query = query.eq('hotel_id', hotelId);
+    }
+
+    const { data, error } = await query.order('date', { ascending: false });
 
     if (error) {
       console.error('Error fetching user spa bookings:', error);
@@ -33,7 +38,7 @@ export const fetchUserBookings = async (userId: string): Promise<SpaBooking[]> =
     }
 
     console.log('Found bookings for user:', data?.length || 0);
-    
+
     // Ensure we properly type the data that comes back
     const typedData = data?.map(booking => ({
       ...booking,

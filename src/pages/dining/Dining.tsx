@@ -12,15 +12,18 @@ import { useToast } from '@/hooks/use-toast';
 import RestaurantBookingDialog from '@/features/dining/components/RestaurantBookingDialog';
 import { Restaurant } from '@/features/dining/types';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const Dining = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { requireAuth } = useRequireAuth();
-  const { restaurants, isLoading } = useRestaurants();
+  const { isLoading: isHotelLoading } = useHotel();
+  const { restaurants, isLoading: isRestaurantsLoading } = useRestaurants();
   const { upcomingEvents } = useEvents();
-  
+  const isLoading = isHotelLoading || isRestaurantsLoading;
+
   // Booking dialog state
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
@@ -48,7 +51,7 @@ const Dining = () => {
   const getEventsForRestaurant = (restaurantId: string) => {
     return (upcomingEvents || []).filter(event => event.restaurant_id === restaurantId);
   };
-  
+
   return (
     <Layout>
       <div className="text-center mb-8 pt-6 md:pt-8">
@@ -71,10 +74,10 @@ const Dining = () => {
           {restaurants.map(restaurant => (
             <Card key={restaurant.id} className="overflow-hidden animate-fade-in bg-card border-border/50 shadow-lg hover:shadow-xl transition-shadow">
               <div className="relative">
-                <img 
-                  src={restaurant.images[0]} 
-                  alt={restaurant.name} 
-                  className="w-full h-48 object-cover" 
+                <img
+                  src={restaurant.images[0]}
+                  alt={restaurant.name}
+                  className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-2 right-2">
                   <span className={`
@@ -101,16 +104,16 @@ const Dining = () => {
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">{restaurant.description}</p>
                 <div className="grid grid-cols-2 gap-2 mb-2">
-                  <Button 
-                    onClick={() => handleBookTable(restaurant.id)} 
+                  <Button
+                    onClick={() => handleBookTable(restaurant.id)}
                     className="w-full flex items-center justify-center gap-1"
                   >
                     <Calendar size={16} />
                     {restaurant.actionText || t('dining.bookTable')}
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent" 
+                  <Button
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent"
                     onClick={() => navigate(`/dining/${restaurant.id}`)}
                   >
                     <BookText size={16} />
@@ -136,7 +139,7 @@ const Dining = () => {
           ))}
         </div>
       )}
-      
+
       {/* Restaurant Booking Dialog */}
       {isBookingOpen && selectedRestaurant && (
         <RestaurantBookingDialog

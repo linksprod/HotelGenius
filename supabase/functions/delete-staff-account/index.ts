@@ -26,30 +26,41 @@ Deno.serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } =
-      await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    const callerToken = authHeader.replace("Bearer ", "");
+
+    // Verify user with getUser
+    const { data: { user: callerUser }, error: userError } = await supabaseAuth.auth.getUser(callerToken);
+
+    if (userError || !callerUser) {
+      return new Response(JSON.stringify({ error: "Unauthorized", details: userError?.message }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const callerId = claimsData.claims.sub;
+    const callerId = callerUser.id;
 
-    const { data: isAdmin } = await supabaseAuth.rpc("has_role", {
-      _user_id: callerId,
-      _role: "admin",
-    });
+    // Service role client for DB operations (including permission checks)
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-    if (!isAdmin) {
-      return new Response(JSON.stringify({ error: "Admin access required" }), {
+    // Verify caller is admin or super admin
+    const { data: rolesData } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", callerId);
+
+    const roles = (rolesData || []).map((r: any) => r.role);
+    const hasPermission = roles.includes("admin") || roles.includes("super_admin");
+
+    if (!hasPermission) {
+      return new Response(JSON.stringify({ error: "Only admins or super admins can change roles" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
     const { user_id } = await req.json();
 
     if (!user_id) {

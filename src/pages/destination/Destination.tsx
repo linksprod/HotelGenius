@@ -7,74 +7,112 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Navigation, Car, Landmark, ShoppingBag, Ticket } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 const Destination = () => {
   const { t } = useTranslation();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+
   // Fetch destination categories
   const { data: categories, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ['destinationCategories'],
+    queryKey: ['destinationCategories', hotelId, isSuperAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) return [];
+
+      let query = supabase
         .from('destination_categories')
-        .select('*')
-        .order('name');
-      
+        .select('*');
+
+      if (hotelId && !isSuperAdmin) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
+
       if (error) throw error;
       return data || [];
     }
   });
-  
+
   // Fetch attractions
   const { data: attractions, isLoading: isLoadingAttractions } = useQuery({
-    queryKey: ['attractions'],
+    queryKey: ['attractions', hotelId, isSuperAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) return [];
+
+      let query = supabase
         .from('attractions')
-        .select('*')
-        .order('name');
-      
+        .select('*');
+
+      if (hotelId && !isSuperAdmin) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
+
       if (error) throw error;
       return data || [];
     }
   });
-  
+
   // Fetch activities
   const { data: activities, isLoading: isLoadingActivities } = useQuery({
-    queryKey: ['activities'],
+    queryKey: ['activities', hotelId, isSuperAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) return [];
+
+      let query = supabase
         .from('destination_activities')
-        .select('*')
-        .order('name');
-      
+        .select('*');
+
+      if (hotelId && !isSuperAdmin) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
+
       if (error) throw error;
       return data || [];
     }
   });
-  
+
   // Fetch car rentals
   const { data: carRentals, isLoading: isLoadingCarRentals } = useQuery({
-    queryKey: ['carRentals'],
+    queryKey: ['carRentals', hotelId, isSuperAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) return [];
+
+      let query = supabase
         .from('car_rentals')
-        .select('*')
-        .order('name');
-      
+        .select('*');
+
+      if (hotelId && !isSuperAdmin) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
+
       if (error) throw error;
       return data || [];
     }
   });
-  
+
   // Fetch public transport options
   const { data: publicTransport, isLoading: isLoadingTransport } = useQuery({
-    queryKey: ['publicTransport'],
+    queryKey: ['publicTransport', hotelId, isSuperAdmin],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!hotelId && !isSuperAdmin) return [];
+
+      let query = supabase
         .from('public_transport')
-        .select('*')
-        .order('name');
-      
+        .select('*');
+
+      if (hotelId && !isSuperAdmin) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query.order('name');
+
       if (error) throw error;
       return data || [];
     }
@@ -90,15 +128,15 @@ const Destination = () => {
 
   // Use dynamic categories if available, otherwise use defaults
   const displayCategories = categories?.length ? categories : defaultCategories;
-  
+
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <div className="relative mb-8 rounded-3xl overflow-hidden">
-          <img 
-            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
-            alt="City View" 
+          <img
+            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+            alt="City View"
             className="w-full h-64 object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent" />
@@ -159,9 +197,9 @@ const Destination = () => {
                 <Card key={attraction.id} className="overflow-hidden">
                   <div className="flex min-h-40">
                     <div className="w-1/3 h-full">
-                      <img 
-                        src={attraction.image} 
-                        alt={attraction.name} 
+                      <img
+                        src={attraction.image}
+                        alt={attraction.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -188,9 +226,9 @@ const Destination = () => {
                 <Card className="overflow-hidden">
                   <div className="flex h-40">
                     <div className="w-1/3 h-full">
-                      <img 
-                        src="https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2834&q=80" 
-                        alt="Historic Mosque" 
+                      <img
+                        src="https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2834&q=80"
+                        alt="Historic Mosque"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -208,13 +246,13 @@ const Destination = () => {
                     </div>
                   </div>
                 </Card>
-                
+
                 <Card className="overflow-hidden">
                   <div className="flex h-40">
                     <div className="w-1/3 h-full">
-                      <img 
-                        src="https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2671&q=80" 
-                        alt="Historic Theatre" 
+                      <img
+                        src="https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2671&q=80"
+                        alt="Historic Theatre"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -236,9 +274,9 @@ const Destination = () => {
                 <Card className="overflow-hidden">
                   <div className="flex h-40">
                     <div className="w-1/3 h-full">
-                      <img 
-                        src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=4000&q=80" 
-                        alt="Scenic Bridge" 
+                      <img
+                        src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=4000&q=80"
+                        alt="Scenic Bridge"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -281,9 +319,9 @@ const Destination = () => {
               activities.map((activity) => (
                 <Card key={activity.id} className="overflow-hidden">
                   <div className="h-40 relative">
-                    <img 
-                      src={activity.image} 
-                      alt={activity.name} 
+                    <img
+                      src={activity.image}
+                      alt={activity.name}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -302,9 +340,9 @@ const Destination = () => {
               <>
                 <Card className="overflow-hidden">
                   <div className="h-40 relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
-                      alt="City Tour" 
+                    <img
+                      src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                      alt="City Tour"
                       className="w-full h-40 object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -317,12 +355,12 @@ const Destination = () => {
                     <Button size="sm" className="w-full">{t('destinationPage.activities.defaultItems.cityTour.action')}</Button>
                   </div>
                 </Card>
-                
+
                 <Card className="overflow-hidden">
                   <div className="h-40 relative">
-                    <img 
-                      src="https://images.unsplash.com/photo-1499591934045-40b55745b12f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" 
-                      alt="Boat Trip" 
+                    <img
+                      src="https://images.unsplash.com/photo-1499591934045-40b55745b12f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80"
+                      alt="Boat Trip"
                       className="w-full h-40 object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
@@ -343,7 +381,7 @@ const Destination = () => {
         {/* Transportation */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-secondary mb-4">{t('destinationPage.transportation.title')}</h2>
-          
+
           {/* Car Rental */}
           {isLoadingCarRentals ? (
             <Card className="p-4 rounded-xl mb-4 animate-pulse">
@@ -367,9 +405,9 @@ const Destination = () => {
                     <h3 className="font-semibold mb-1">{carRental.name}</h3>
                     <p className="text-sm text-muted-foreground mb-2">{carRental.description}</p>
                     {carRental.website ? (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => window.open(carRental.website, '_blank')}
                       >
                         {t('destinationPage.transportation.carRental.visitWebsite')}
@@ -395,7 +433,7 @@ const Destination = () => {
               </div>
             </Card>
           )}
-          
+
           {/* Public Transportation */}
           {isLoadingTransport ? (
             <Card className="p-4 rounded-xl animate-pulse">
@@ -419,9 +457,9 @@ const Destination = () => {
                     <h3 className="font-semibold mb-1">{transport.name}</h3>
                     <p className="text-sm text-muted-foreground mb-2">{transport.description}</p>
                     {transport.website ? (
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => window.open(transport.website, '_blank')}
                       >
                         {t('destinationPage.transportation.carRental.visitWebsite')}
@@ -461,7 +499,7 @@ const getCategoryIcon = (name: string, t: any) => {
     [t('destinationPage.categories.cafes')]: <div className="h-6 w-6 mb-1 flex items-center justify-center">☕</div>,
     [t('destinationPage.categories.shopping')]: <ShoppingBag className="h-6 w-6 mb-1" />,
   };
-  
+
   return iconMap[name] || <Navigation className="h-6 w-6 mb-1" />;
 };
 
