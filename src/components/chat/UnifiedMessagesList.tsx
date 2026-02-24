@@ -36,13 +36,13 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
 
   const getMessageStyle = (senderType: string) => {
     if (isAdmin) {
-      return senderType === 'staff' 
-        ? 'bg-primary text-primary-foreground' 
-        : 'bg-muted';
+      return senderType === 'staff'
+        ? 'bg-primary text-primary-foreground shadow-sm'
+        : 'bg-muted border border-border/50 text-foreground shadow-sm';
     }
-    return senderType === 'guest' 
-      ? 'bg-primary text-primary-foreground' 
-      : 'bg-muted';
+    return senderType === 'guest'
+      ? 'bg-primary text-primary-foreground shadow-sm'
+      : 'bg-muted border border-border/50 text-foreground shadow-sm';
   };
 
   const getSenderIcon = (senderType: string) => {
@@ -76,15 +76,14 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
           <div key={message.id} className={`flex ${getMessageAlignment(message.sender_type)}`}>
             <div className={`flex ${message.sender_type === 'guest' && !isAdmin || message.sender_type === 'staff' && isAdmin ? 'flex-row-reverse' : 'flex-row'} items-end space-x-2 max-w-[80%]`}>
               <Avatar className="h-8 w-8 flex-shrink-0">
-                <AvatarFallback className={`text-xs ${
-                  message.sender_type === 'ai' ? 'bg-blue-100 text-blue-600' :
-                  message.sender_type === 'staff' ? 'bg-green-100 text-green-600' :
-                  'bg-gray-100 text-gray-600'
-                }`}>
+                <AvatarFallback className={`text-xs ${message.sender_type === 'ai' ? 'bg-primary/10 text-primary' :
+                    message.sender_type === 'staff' ? 'bg-accent/20 text-accent-foreground' :
+                      'bg-muted text-muted-foreground'
+                  }`}>
                   {getSenderIcon(message.sender_type)}
                 </AvatarFallback>
               </Avatar>
-              
+
               <div className={`${message.sender_type === 'guest' && !isAdmin || message.sender_type === 'staff' && isAdmin ? 'mr-2' : 'ml-2'}`}>
                 <div className={`rounded-lg px-3 py-2 ${getMessageStyle(message.sender_type)}`}>
                   {message.message_type === 'system' && (
@@ -95,7 +94,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                   )}
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                 </div>
-                
+
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-muted-foreground">
                     {getSenderName(message)}
@@ -114,7 +113,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
         <div className="flex justify-start">
           <div className="flex items-end space-x-2 max-w-[80%]">
             <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-blue-100 text-blue-600">
+              <AvatarFallback className="bg-primary/10 text-primary">
                 <Bot className="h-4 w-4" />
               </AvatarFallback>
             </Avatar>

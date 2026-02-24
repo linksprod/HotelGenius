@@ -61,7 +61,7 @@ const Layout = ({
                   <img
                     src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
                     alt="Hotel Genius"
-                    className={cn("filter brightness-110", isMobile ? "h-5" : "h-7")}
+                    className={cn("filter brightness-110 dark:brightness-0 dark:invert", isMobile ? "h-5" : "h-7")}
                   />
                 )}
               </Link>

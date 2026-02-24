@@ -7,26 +7,33 @@ import { syncGuestData } from '@/features/users/services/guestService';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { calculateStayDuration } from '../utils/dateUtils';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export const useProfileData = () => {
   const { toast } = useToast();
-  const { userData: authUserData, user, refreshUserData } = useAuth();
+  const { userData: authUserData, user, refreshUserData, setUserData: setGlobalUserData } = useAuth();
+  const { hotelId } = useCurrentHotelId();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [companions, setCompanions] = useState<CompanionData[]>([]);
-  
+  const [isUpdating, setIsUpdating] = useState(false);
+
   // Get real notifications from the notification system
   const { notifications: systemNotifications } = useNotifications();
 
   useEffect(() => {
-    if (authUserData) {
+    // Ne pas écraser l'état local si nous sommes en train de faire une mise à jour
+    if (authUserData && !isUpdating) {
+      console.log('Syncing profile local state from AuthContext:', authUserData.profile_image);
       setUserData(authUserData);
     }
-    
+  }, [authUserData, isUpdating]);
+
+  useEffect(() => {
     const userId = user?.id || localStorage.getItem('user_id');
     if (userId) {
       fetchCompanions(userId);
     }
-  }, [authUserData, user]);
+  }, [user]);
 
   const fetchCompanions = async (userId: string) => {
     try {
@@ -47,12 +54,12 @@ export const useProfileData = () => {
       });
       return false;
     }
-    
+
     try {
       const newCompanions = [...companions, companion];
       await syncCompanions(userId, newCompanions);
       setCompanions(newCompanions);
-      
+
       toast({
         title: "Accompagnateur ajouté",
         description: "L'accompagnateur a été ajouté avec succès."
@@ -81,38 +88,88 @@ export const useProfileData = () => {
 
   const handleProfileImageChange = async (imageData: string | null) => {
     if (!userData) return;
-    
-    const updatedUserData = {
+
+    // 1. Mise à jour immédiate de l'UI (optimiste)
+    const originalImage = userData.profile_image;
+    const optimisticData = {
       ...userData,
       profile_image: imageData
     };
-    
-    setUserData(updatedUserData);
-    
+
+    setUserData(optimisticData);
+    setGlobalUserData(optimisticData); // <--- GLOBAL UPDATE FOR NAVBAR
+
     const userId = user?.id || localStorage.getItem('user_id');
-    if (userId) {
-      try {
-        await syncGuestData(userId, updatedUserData);
-        await refreshUserData();
-        toast({
-          title: "Profil mis à jour",
-          description: "Votre photo de profil a été mise à jour avec succès."
-        });
-      } catch (error) {
-        console.error('Error syncing profile image with Supabase:', error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour votre photo de profil.",
-          variant: "destructive"
-        });
+    if (!userId) return;
+
+    setIsUpdating(true);
+    try {
+      let finalImageUrl = imageData;
+
+      // 2. Si on a une nouvelle image (base64 du cropper), on l'uploade vers le storage
+      if (imageData && imageData.startsWith('data:')) {
+        console.log('[useProfileData] New image detected, uploading to storage...');
+        const { uploadProfileImage } = await import('@/features/users/services/profileImageService');
+        const uploadedUrl = await uploadProfileImage(userId, imageData);
+
+        if (!uploadedUrl) {
+          throw new Error("Échec de l'upload vers le storage");
+        }
+        finalImageUrl = uploadedUrl;
+        console.log('[useProfileData] Upload successful, URL:', finalImageUrl);
       }
+
+      // 3. Mise à jour de la table 'guests' avec l'URL persistante
+      const updatedUserData = {
+        ...userData,
+        profile_image: finalImageUrl,
+        hotel_id: hotelId || userData.hotel_id
+      };
+
+      console.log('[useProfileData] Syncing guest data with URL:', finalImageUrl, 'for hotel:', updatedUserData.hotel_id);
+      const syncSuccess = await syncGuestData(userId, updatedUserData);
+
+      if (!syncSuccess) {
+        throw new Error("Échec de la synchronisation avec la base de données");
+      }
+
+      // 4. Update global context and local state immediately with guaranteed fresh data
+      console.log('[useProfileData] Sync successful, updating states with:', finalImageUrl);
+      setGlobalUserData(updatedUserData);
+      setUserData(updatedUserData);
+
+      // Trigger a silent background refresh just in case, but we don't depend on its result
+      refreshUserData().catch(err => console.warn('[useProfileData] Background refresh failed:', err));
+
+      toast({
+        title: "Profil mis à jour",
+        description: "Votre photo de profil a été enregistrée sur le serveur."
+      });
+    } catch (error) {
+      console.error('[useProfileData] Error syncing profile image:', error);
+      // Rétablir l'image originale en cas d'erreur
+      setGlobalUserData(authUserData);
+      setUserData(userData);
+
+      toast({
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Impossible d'enregistrer votre photo de profil.",
+        variant: "destructive"
+      });
+    } finally {
+      // Delay clearing isUpdating to allow any background refreshes to settle
+      // and ensure the useEffect skip-logic remains active long enough.
+      setTimeout(() => {
+        console.log('[useProfileData] Updating session complete, clearing isUpdating guard');
+        setIsUpdating(false);
+      }, 500);
     }
   };
 
-  const stayDuration = userData ? 
-    calculateStayDuration(userData.check_in_date, userData.check_out_date) : 
+  const stayDuration = userData ?
+    calculateStayDuration(userData.check_in_date, userData.check_out_date) :
     null;
-  
+
   // Convert system notifications to the format expected by NotificationsList
   // Ensure ID is preserved as-is, without forcing number conversion
   const notifications = systemNotifications
@@ -120,14 +177,14 @@ export const useProfileData = () => {
     .map(notification => ({
       id: notification.id, // Keep the original string ID
       message: notification.title,
-      time: typeof notification.time === 'string' 
-        ? notification.time 
-        : new Intl.DateTimeFormat('fr-FR', { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            day: '2-digit', 
-            month: '2-digit' 
-          }).format(notification.time)
+      time: typeof notification.time === 'string'
+        ? notification.time
+        : new Intl.DateTimeFormat('fr-FR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          day: '2-digit',
+          month: '2-digit'
+        }).format(notification.time)
     }));
 
   return {

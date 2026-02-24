@@ -29,22 +29,22 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
     <div className="flex items-center justify-between p-4 border-b bg-card">
       <div className="flex items-center space-x-3">
         {onGoBack && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={onGoBack}
             className="lg:hidden"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
-        
+
         <Avatar className="h-10 w-10">
-          <AvatarFallback className={`${isAIHandling ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+          <AvatarFallback className={`${isAIHandling ? 'bg-primary/10 text-primary' : 'bg-accent/20 text-accent-foreground'}`}>
             {isAIHandling ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
           </AvatarFallback>
         </Avatar>
-        
+
         <div>
           <h3 className="font-semibold text-sm">
             {isAIHandling ? 'AI Assistant' : 'Concierge'}
@@ -57,8 +57,8 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
 
       <div className="flex items-center space-x-2">
         {canEscalate && (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={onEscalateToHuman}
             className="gap-2"
@@ -67,10 +67,10 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
             <span className="hidden sm:inline">Talk to Human</span>
           </Button>
         )}
-        
+
         {canTakeOver && (
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => onTakeOver(conversation.id)}
             className="gap-2"

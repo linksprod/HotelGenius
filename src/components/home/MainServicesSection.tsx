@@ -15,7 +15,7 @@ const MainServicesSection = () => {
   return (
     <section className="px-4 sm:px-6 mb-8 sm:mb-10">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold text-secondary">{t('home.services.mainServicesTitle')}</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">{t('home.services.mainServicesTitle')}</h2>
         {/* Admin button to edit About page */}
         {!isAdmin}
       </div>

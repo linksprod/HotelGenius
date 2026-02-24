@@ -22,7 +22,7 @@ const Services = () => {
   });
   const { toast } = useToast();
   const { userData } = useAuth();
-  
+
   const roomNumber = userInfo.roomNumber || userData?.room_number || localStorage.getItem('user_room_number') || '';
   const { data: room } = useRoom(roomNumber);
 
@@ -40,16 +40,16 @@ const Services = () => {
         return;
       }
     }
-    
+
     const storedUserData = localStorage.getItem('user_data');
     const storedRoomNumber = localStorage.getItem('user_room_number');
-    
+
     if (storedUserData) {
       try {
         const parsedUserData = JSON.parse(storedUserData);
         const fullName = `${parsedUserData.first_name || ''} ${parsedUserData.last_name || ''}`.trim();
         const roomNumber = parsedUserData.room_number || storedRoomNumber || '';
-        
+
         if (fullName || roomNumber) {
           setUserInfo({
             name: fullName || 'Guest',
@@ -83,27 +83,27 @@ const Services = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-semibold text-secondary mb-4">Hotel Services</h1>
+          <h1 className="text-4xl font-semibold text-foreground mb-4">Hotel Services</h1>
           <p className="text-muted-foreground">24/7 dedicated concierge support</p>
         </div>
 
         <div className="max-w-xl mx-auto mb-8 px-4">
-          <h2 className="text-xl font-medium text-secondary mb-3">Quick Service Search</h2>
+          <h2 className="text-xl font-medium text-foreground mb-3">Quick Service Search</h2>
           <div className="relative">
             <div className="relative flex items-center border rounded-xl px-4 py-3.5 bg-background shadow-md cursor-pointer hover:shadow-lg transition-all group">
               <Search className="h-5 w-5 mr-3 text-primary group-hover:text-primary/80 transition-colors" />
               <span className="text-muted-foreground group-hover:text-foreground transition-colors">Search for services (towels, cleaning, wifi support...)</span>
             </div>
-            
+
             <div className="absolute inset-0">
-              <CommandSearch 
-                room={room} 
+              <CommandSearch
+                room={room}
                 onRequestSuccess={() => {
                   toast({
                     title: "Request Sent",
                     description: "Your service request has been submitted successfully."
                   });
-                }} 
+                }}
               />
             </div>
           </div>

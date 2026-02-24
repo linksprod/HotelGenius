@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { useTheme } from 'next-themes';
+import menuIconWhite from '@/assets/menu-icon-dark.png';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -25,6 +27,11 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
   const { resolvePath } = useHotelPath();
+  const { theme } = useTheme();
+
+  const menuIconSrc = theme === 'dark'
+    ? menuIconWhite
+    : '/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png';
 
   console.log('Current path in MainMenu:', location.pathname);
 
@@ -58,7 +65,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
           className={cn("relative p-2 rounded-full hover:bg-accent/20", buttonClassName)}
         >
           <img
-            src="/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png"
+            src={menuIconSrc}
             alt="Menu"
             className="h-6 w-6 object-contain"
           />
@@ -70,7 +77,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
           <SheetHeader className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-b border-border">
             <div className="flex items-center gap-3">
               <img
-                src="/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png"
+                src={menuIconSrc}
                 alt="Logo"
                 className="h-8 w-8 object-contain"
               />

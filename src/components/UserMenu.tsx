@@ -130,7 +130,7 @@ const UserMenu = () => {
         className="rounded-full p-2 h-9 w-9"
         size="icon"
       >
-        <UserRound className="h-5 w-5 text-secondary" />
+        <UserRound className="h-5 w-5 text-foreground" />
       </Button>
     );
   }
@@ -139,13 +139,15 @@ const UserMenu = () => {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar>
+          <Avatar key={userData?.profile_image || 'no-image'}>
             {userData?.profile_image ? (
               <AvatarImage src={userData.profile_image} alt={t('user.profileImage')} />
             ) : (
               <AvatarImage src="/placeholder.svg" />
             )}
-            <AvatarFallback>{getInitials()}</AvatarFallback>
+            <AvatarFallback className="bg-primary text-primary-foreground font-medium">
+              {getInitials()}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

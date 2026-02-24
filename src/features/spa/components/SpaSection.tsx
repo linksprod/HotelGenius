@@ -36,7 +36,7 @@ const SpaSection = ({
   return (
     <div className="mb-12">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-secondary mb-2">Spa Services</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-2">Spa Services</h2>
         <p className="text-muted-foreground">
           Discover our range of relaxing and rejuvenating treatments
         </p>
@@ -52,9 +52,9 @@ const SpaSection = ({
         <CarouselContent>
           {displayServices.map((service) => (
             <CarouselItem key={service.id} className="md:basis-1/2 lg:basis-1/3 pl-4">
-              <SpaServiceCard 
-                service={service} 
-                onBook={() => onBookService(service.id)} 
+              <SpaServiceCard
+                service={service}
+                onBook={() => onBookService(service.id)}
               />
             </CarouselItem>
           ))}
@@ -64,8 +64,8 @@ const SpaSection = ({
           <CarouselNext className="static transform-none" />
         </div>
         <div className="mt-4 flex justify-center">
-          <SwipeIndicator 
-            selectedIndex={selectedIndex} 
+          <SwipeIndicator
+            selectedIndex={selectedIndex}
             totalSlides={displayServices.length}
           />
         </div>

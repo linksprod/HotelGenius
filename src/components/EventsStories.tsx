@@ -78,7 +78,7 @@ const EventsStories: React.FC = () => {
   if (loading) {
     return <div className="mb-8 mt-4 md:mt-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-secondary">Events & Stories</h2>
+        <h2 className="text-2xl font-bold text-foreground">Events & Stories</h2>
         <Link to={resolvePath("/events")} className="text-primary text-sm font-medium">See all</Link>
       </div>
 
@@ -101,7 +101,7 @@ const EventsStories: React.FC = () => {
 
   return <div className="mb-8 mt-4 md:mt-6">
     <div className="flex justify-between items-center mb-4">
-      <h2 className="text-2xl font-bold text-secondary">Events & Promos</h2>
+      <h2 className="text-2xl font-bold text-foreground">Events & Stories</h2>
       <Link to={resolvePath("/events")} className="text-primary text-sm font-medium">See all</Link>
     </div>
 

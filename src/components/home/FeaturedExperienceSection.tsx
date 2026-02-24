@@ -12,21 +12,21 @@ const FeaturedExperienceSection = () => {
   const { t } = useTranslation();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  
+
   React.useEffect(() => {
     if (!emblaApi) return;
-    
+
     const onSelect = () => {
       setSelectedIndex(emblaApi.selectedScrollSnap());
     };
-    
+
     emblaApi.on('select', onSelect);
-    
+
     return () => {
       emblaApi.off('select', onSelect);
     };
   }, [emblaApi]);
-  
+
   const featuredExperiences = [
     {
       id: '1',
@@ -48,14 +48,14 @@ const FeaturedExperienceSection = () => {
 
   return (
     <section className="px-6 mb-10">
-      <h2 className="text-2xl font-bold text-secondary mb-4">{t('home.featuredExperience.title')}</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-4">{t('home.featuredExperience.title')}</h2>
       <Carousel className="w-full">
         <CarouselContent ref={emblaRef}>
           {featuredExperiences.map((experience, index) => (
             <CarouselItem key={experience.id}>
               <motion.div
                 initial={{ opacity: 0.8, scale: 0.95 }}
-                animate={{ 
+                animate={{
                   opacity: selectedIndex === index ? 1 : 0.8,
                   scale: selectedIndex === index ? 1 : 0.95
                 }}
@@ -63,9 +63,9 @@ const FeaturedExperienceSection = () => {
               >
                 <Card className="overflow-hidden">
                   <div className="relative h-64">
-                    <img 
-                      src={experience.image} 
-                      alt={experience.title} 
+                    <img
+                      src={experience.image}
+                      alt={experience.title}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
@@ -80,9 +80,9 @@ const FeaturedExperienceSection = () => {
                     </div>
                   </div>
                   <div className="p-4">
-                    <p className="text-gray-600 mb-4">{experience.description}</p>
-                    <Button 
-                      className="w-full" 
+                    <p className="text-muted-foreground mb-4">{experience.description}</p>
+                    <Button
+                      className="w-full"
                       onClick={() => window.location.href = experience.path}
                     >
                       {t('common.exploreNow')}
@@ -94,10 +94,10 @@ const FeaturedExperienceSection = () => {
           ))}
         </CarouselContent>
       </Carousel>
-      
-      <SwipeIndicator 
-        selectedIndex={selectedIndex} 
-        totalSlides={featuredExperiences.length} 
+
+      <SwipeIndicator
+        selectedIndex={selectedIndex}
+        totalSlides={featuredExperiences.length}
         className="mt-4"
       />
     </section>

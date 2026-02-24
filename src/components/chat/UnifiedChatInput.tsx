@@ -50,47 +50,47 @@ const ConciergeMessageInput = ({
 
   return (
     <div className="border-t bg-card p-3 flex-shrink-0 relative">
-      <UserQuickTemplates 
+      <UserQuickTemplates
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}
         onSelectTemplate={handleTemplateSelect}
       />
-      
+
       <div className="flex items-center gap-2">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="rounded-full h-10 w-10 flex-shrink-0"
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full h-10 w-10 flex-shrink-0 border-border/50 bg-background hover:bg-muted"
           type="button"
         >
           <Paperclip className="h-5 w-5" />
         </Button>
-        
+
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
-          className="rounded-full h-10 w-10 flex-shrink-0"
+          className="rounded-full h-10 w-10 flex-shrink-0 border-border/50 bg-background hover:bg-muted"
           onClick={() => setShowTemplates(!showTemplates)}
           type="button"
         >
           <MessageSquare className="h-5 w-5" />
         </Button>
-        
-        <Textarea 
+
+        <Textarea
           ref={inputRef}
-          value={inputMessage} 
-          onChange={(e) => setInputMessage(e.target.value)} 
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="Type your message to concierge..." 
-          className="resize-none min-h-0 h-10 py-2 px-4 rounded-full border-0 focus-visible:ring-1 bg-muted/50" 
+          placeholder="Type your message to concierge..."
+          className="resize-none min-h-0 h-10 py-2 px-4 rounded-full border border-border/50 focus-visible:ring-1 bg-muted/30"
           disabled={isTyping}
         />
-        
-        <Button 
+
+        <Button
           type="button"
-          size="icon" 
-          onClick={onSendMessage} 
-          className="rounded-full h-10 w-10 flex-shrink-0" 
+          size="icon"
+          onClick={onSendMessage}
+          className="rounded-full h-10 w-10 flex-shrink-0"
           disabled={!inputMessage.trim() || isTyping}
         >
           <Send className="h-5 w-5" />

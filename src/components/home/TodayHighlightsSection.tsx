@@ -19,7 +19,7 @@ const TodayHighlightsSection = () => {
   if (loading) {
     return (
       <section className="px-6 mb-10">
-        <h2 className="text-2xl font-bold text-secondary mb-4">{t('home.todayEvents.title')}</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-4">{t('home.todayEvents.title')}</h2>
         <div className="grid grid-cols-1 gap-4">
           <Card className="overflow-hidden">
             <div className="flex items-center">
@@ -49,9 +49,9 @@ const TodayHighlightsSection = () => {
   if (todayEvents.length === 0) {
     return (
       <section className="px-6 mb-10">
-        <h2 className="text-2xl font-bold text-secondary mb-4">{t('home.todayEvents.title')}</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-4">{t('home.todayEvents.title')}</h2>
         <Card className="p-6 text-center">
-          <p className="text-gray-500">{t('home.todayEvents.noEvents')}</p>
+          <p className="text-muted-foreground">{t('home.todayEvents.noEvents')}</p>
           <Link to={resolvePath("/events")}>
             <Button variant="link" className="mt-2">
               {t('home.todayEvents.viewAllEvents')}
@@ -64,7 +64,7 @@ const TodayHighlightsSection = () => {
 
   return (
     <section className="px-6 mb-10">
-      <h2 className="text-2xl font-bold text-secondary mb-4">{t('home.todayEvents.title')}</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-4">{t('home.todayEvents.title')}</h2>
       <div className="grid grid-cols-1 gap-4">
         {todayEvents.map((event) => (
           <Card key={event.id} className="overflow-hidden">
@@ -85,11 +85,11 @@ const TodayHighlightsSection = () => {
                     ) : (
                       <Wine className="w-5 h-5 text-primary" />
                     )}
-                    <h3 className="text-lg font-semibold text-secondary">{event.title}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{event.title}</h3>
                   </div>
                   <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{t('common.today')}</span>
                 </div>
-                <p className="text-gray-600 text-sm mb-2">
+                <p className="text-muted-foreground text-sm mb-2">
                   {event.time} {event.location && `- ${event.location}`}
                 </p>
                 <Link to={resolvePath("/events")}>
