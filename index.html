@@ -1,103 +1,55 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png" type="image/png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hotel Genius - Premium Guest Experience & Hotel Management Platform</title>
-    <meta name="description" content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
-    <meta name="author" content="Hotel Genius" />
-    <meta name="keywords" content="hotel management, guest experience, hotel app, room service, dining reservations, spa bookings, concierge, hotel operations, hospitality technology" />
-    <meta name="robots" content="index, follow" />
-    <meta property="og:image" content="/lovable-uploads/06f288b6-b20d-4ff4-a0ba-f3b10b05d03a.png" />
-    <meta property="og:title" content="Hotel Genius - Premium Guest Experience & Hotel Management Platform" />
-    <meta property="og:description" content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="/lovable-uploads/06f288b6-b20d-4ff4-a0ba-f3b10b05d03a.png" />
-    <meta name="twitter:title" content="Hotel Genius - Premium Guest Experience & Hotel Management Platform" />
-    <meta name="twitter:description" content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
-    <style>
-      /* Disable text selection and context menu */
-      * {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        -webkit-touch-callout: none;
-        -webkit-tap-highlight-color: transparent;
-      }
-      
-      /* Re-enable text selection for input fields */
-      input, textarea, [contenteditable] {
-        -webkit-user-select: text;
-        -moz-user-select: text;
-        -ms-user-select: text;
-        user-select: text;
-      }
-    </style>
-  </head>
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script>
-      // Disable right-click context menu
-      document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        return false;
-      });
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Genius - Premium Guest Experience & Hotel Management Platform</title>
+  <meta name="description"
+    content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
+  <meta name="author" content="Hotel Genius" />
+  <meta name="keywords"
+    content="hotel management, guest experience, hotel app, room service, dining reservations, spa bookings, concierge, hotel operations, hospitality technology" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:image" content="/lovable-uploads/06f288b6-b20d-4ff4-a0ba-f3b10b05d03a.png" />
+  <meta property="og:title" content="Hotel Genius - Premium Guest Experience & Hotel Management Platform" />
+  <meta property="og:description"
+    content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="/lovable-uploads/06f288b6-b20d-4ff4-a0ba-f3b10b05d03a.png" />
+  <meta name="twitter:title" content="Hotel Genius - Premium Guest Experience & Hotel Management Platform" />
+  <meta name="twitter:description"
+    content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
+  <style>
+    /* Disable text selection and context menu */
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-      // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-      document.addEventListener('keydown', function(e) {
-        // F12
-        if (e.keyCode === 123) {
-          e.preventDefault();
-          return false;
-        }
-        // Ctrl+Shift+I (Inspector)
-        if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
-          e.preventDefault();
-          return false;
-        }
-        // Ctrl+Shift+J (Console)
-        if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
-          e.preventDefault();
-          return false;
-        }
-        // Ctrl+U (View Source)
-        if (e.ctrlKey && e.keyCode === 85) {
-          e.preventDefault();
-          return false;
-        }
-        // Ctrl+Shift+C (Element Inspector)
-        if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
-          e.preventDefault();
-          return false;
-        }
-      });
+    /* Re-enable text selection for input fields */
+    input,
+    textarea,
+    [contenteditable] {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+  </style>
+</head>
 
-      // Disable drag and drop
-      document.addEventListener('dragstart', function(e) {
-        e.preventDefault();
-        return false;
-      });
+<body>
+  <div id="root"></div>
 
-      // Disable text selection on mobile (except for input fields)
-      document.addEventListener('selectstart', function(e) {
-        // Allow text selection in input fields, textareas, and contenteditable elements
-        if (e.target.tagName === 'INPUT' || 
-            e.target.tagName === 'TEXTAREA' || 
-            e.target.contentEditable === 'true' ||
-            e.target.closest('input, textarea, [contenteditable]')) {
-          return true;
-        }
-        e.preventDefault();
-        return false;
-      });
-    </script>
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

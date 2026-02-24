@@ -48,7 +48,7 @@ const AuthGuard = ({
     // Check if the current route is a public route
     const isPublicRoute = publicRoutes.some(route => {
       const resolved = resolvePath(route);
-      return location.pathname === resolved || location.pathname.startsWith(resolved === '/' ? '/h/' : resolved + '/');
+      return location.pathname === resolved || location.pathname.startsWith(resolved + '/');
     });
 
     // If it's a public route or explicitly marked for public access, allow access
@@ -79,7 +79,7 @@ const AuthGuard = ({
   // Allow access if authorized or on auth page or public route
   return (isAuthPage() || authorized || publicRoutes.some(route => {
     const resolved = resolvePath(route);
-    return location.pathname === resolved || location.pathname.startsWith(resolved === '/' ? '/h/' : resolved + '/');
+    return location.pathname === resolved || location.pathname.startsWith(resolved + '/');
   }) ||
     publicAccess) ? <>{children}</> : null;
 };

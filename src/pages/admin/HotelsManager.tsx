@@ -136,7 +136,7 @@ const HotelsManager: React.FC = () => {
                                     <TableCell className="text-right">
                                         <Button variant="ghost" size="sm" asChild>
                                             <a
-                                                href={`http://localhost:8080/h/${hotel.slug}`}
+                                                href={`http://localhost:8080/${hotel.slug}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="flex items-center"

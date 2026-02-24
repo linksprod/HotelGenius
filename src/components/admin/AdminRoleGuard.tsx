@@ -29,7 +29,7 @@ const AdminRoleGuard: React.FC<{ children: React.ReactNode }> = ({ children }) =
   // If the user attempts to access a hotel dashboard that isn't theirs (and isn't a super admin)
   if (!isSuperAdmin && assignedHotelId && contextHotelId && assignedHotelId !== contextHotelId) {
     console.warn('Unauthorized hotel access attempt:', { assignedHotelId, contextHotelId });
-    return <Navigate to={`/h/${assignedHotelId}/admin`} replace />;
+    return <Navigate to={`/${assignedHotelId}/admin`} replace />;
   }
 
   const path = location.pathname;

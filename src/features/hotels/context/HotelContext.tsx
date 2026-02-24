@@ -35,8 +35,8 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             let currentSlug = slug;
 
             // Fallback: extract slug from pathname for cases where useParams might be empty
-            if (!currentSlug && location.pathname.startsWith('/h/')) {
-                currentSlug = location.pathname.split('/')[2];
+            if (!currentSlug && location.pathname !== '/') {
+                currentSlug = location.pathname.split('/')[1];
             }
 
             if (!currentSlug) {

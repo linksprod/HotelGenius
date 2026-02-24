@@ -26,11 +26,11 @@ const Layout = ({
   const location = useLocation();
   const { hotel } = useHotel();
 
-  const isHomePage = location.pathname === '/' || location.pathname.startsWith('/h/');
+  const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = location.pathname === '/admin/spa';
   const isMobile = useIsMobile();
 
-  const homeLink = hotel ? `/h/${hotel.slug}` : "/";
+  const homeLink = hotel ? `/${hotel.slug}` : "/";
 
   // Prepare dynamic theme styles
   const dynamicStyles = hotel?.primary_color ? {

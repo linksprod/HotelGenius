@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
 import { AuthProvider } from '@/features/auth/hooks/useAuthContext';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
@@ -25,10 +25,10 @@ function App() {
           <AuthProvider>
             <Routes>
               {/* Redirect root to a default hotel context */}
-              <Route path="/" element={<Navigate to="/h/demo" replace />} />
+              <Route path="/" element={<Navigate to="/demo" replace />} />
 
               {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
-              <Route path="/h/:slug/*" element={
+              <Route path="/:slug/*" element={
                 <HotelProvider>
                   <Routes>
                     <Route path="profile/*" element={<AuthenticatedRoutes />} />
@@ -43,13 +43,13 @@ function App() {
               } />
 
               {/* Fallback for any other path */}
-              <Route path="*" element={<Navigate to="/h/demo" replace />} />
+              <Route path="*" element={<Navigate to="/demo" replace />} />
             </Routes>
             <Toaster richColors position="top-right" closeButton />
             <ShadcnToaster />
           </AuthProvider>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
+
       </QueryClientProvider>
     </ThemeProvider>
   );

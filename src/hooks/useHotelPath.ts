@@ -16,18 +16,18 @@ export const useHotelPath = () => {
 
         // Fallback: try to extract slug from current path if hotel context isn't ready
         let slug = hotel?.slug;
-        if (!slug && location.pathname.startsWith('/h/')) {
-            slug = location.pathname.split('/')[2];
+        if (!slug && location.pathname !== '/') {
+            slug = location.pathname.split('/')[1];
         }
 
         // If we have a slug, prefix the path
         if (slug) {
             // Avoid double prefixing
-            if (path.startsWith(`/h/${slug}`)) return path;
+            if (path.startsWith(`/${slug}`)) return path;
 
             // Avoid double slashes if path is '/'
             const cleanPath = path === '/' ? '' : path;
-            return `/h/${slug}${cleanPath}`;
+            return `/${slug}${cleanPath}`;
         }
 
         // Default to absolute path
