@@ -50,7 +50,10 @@ const Layout = ({
             </div>
 
             {/* Center section - Logo - absolutely centered */}
-            <div className="w-full flex justify-center items-center pointer-events-none">
+            <div className={cn(
+              "w-full flex justify-center items-center pointer-events-none",
+              isMobile && "px-16"
+            )}>
               <Link to={homeLink} className="hover:opacity-80 transition-opacity pointer-events-auto">
                 {hotel?.logo_url ? (
                   <img
