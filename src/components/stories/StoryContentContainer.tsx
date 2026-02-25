@@ -5,6 +5,7 @@ import { StoryContentPresentation } from './StoryContentPresentation';
 import { useNavigate } from 'react-router-dom';
 import EventBookingDialog from '@/components/events/EventBookingDialog';
 import { useToast } from '@/hooks/use-toast';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface StoryContentContainerProps {
   story: Story;
@@ -16,12 +17,13 @@ export const StoryContentContainer: React.FC<StoryContentContainerProps> = ({
   linkedEvent,
 }) => {
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const [isBookingOpen, setIsBookingOpen] = React.useState(false);
   const { toast } = useToast();
 
   const handleNavigateToEvents = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate('/events');
+    navigate(resolvePath('/events'));
   };
 
   const handleBookEvent = (e: React.MouseEvent) => {
@@ -45,7 +47,7 @@ export const StoryContentContainer: React.FC<StoryContentContainerProps> = ({
         onNavigateToEvents={handleNavigateToEvents}
         onBookEvent={handleBookEvent}
       />
-      
+
       {linkedEvent && (
         <EventBookingDialog
           isOpen={isBookingOpen}

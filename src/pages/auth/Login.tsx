@@ -36,7 +36,9 @@ const Login = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-start justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 overflow-y-scroll">
+    <div className="min-h-screen flex items-start justify-center bg-background py-12 px-4 sm:px-6 lg:px-8 overflow-y-scroll relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/10 -z-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] -z-10 opacity-30" />
       <LoginCard />
     </div>
   );

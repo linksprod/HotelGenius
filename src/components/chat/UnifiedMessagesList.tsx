@@ -34,15 +34,16 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
     return senderType === 'guest' ? 'justify-end' : 'justify-start';
   };
 
+  const isCurrentUser = (senderType: string) => {
+    if (isAdmin) return senderType === 'staff';
+    return senderType === 'guest';
+  };
+
   const getMessageStyle = (senderType: string) => {
-    if (isAdmin) {
-      return senderType === 'staff'
-        ? 'bg-primary text-primary-foreground shadow-sm'
-        : 'bg-muted border border-border/50 text-foreground shadow-sm';
+    if (isCurrentUser(senderType)) {
+      return 'bg-[#82A691] text-white shadow-sm';
     }
-    return senderType === 'guest'
-      ? 'bg-primary text-primary-foreground shadow-sm'
-      : 'bg-muted border border-border/50 text-foreground shadow-sm';
+    return 'bg-[#F1F1F1] text-foreground shadow-sm';
   };
 
   const getSenderIcon = (senderType: string) => {
@@ -65,7 +66,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
       {messages.length === 0 ? (
         <div className="text-center text-muted-foreground py-8">
           <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -74,32 +75,32 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
       ) : (
         messages.map((message) => (
           <div key={message.id} className={`flex ${getMessageAlignment(message.sender_type)}`}>
-            <div className={`flex ${message.sender_type === 'guest' && !isAdmin || message.sender_type === 'staff' && isAdmin ? 'flex-row-reverse' : 'flex-row'} items-end space-x-2 max-w-[80%]`}>
-              <Avatar className="h-8 w-8 flex-shrink-0">
-                <AvatarFallback className={`text-xs ${message.sender_type === 'ai' ? 'bg-primary/10 text-primary' :
-                    message.sender_type === 'staff' ? 'bg-accent/20 text-accent-foreground' :
-                      'bg-muted text-muted-foreground'
+            <div className={`flex ${isCurrentUser(message.sender_type) ? 'flex-row-reverse space-x-reverse' : 'flex-row'} items-end space-x-3 max-w-[85%]`}>
+              <Avatar className="h-7 w-7 flex-shrink-0 mb-6">
+                <AvatarFallback className={`text-[10px] ${message.sender_type === 'ai' ? 'bg-primary/5 text-primary' :
+                  message.sender_type === 'staff' ? 'bg-accent/5 text-accent-foreground' :
+                    'bg-slate-100 text-slate-400'
                   }`}>
                   {getSenderIcon(message.sender_type)}
                 </AvatarFallback>
               </Avatar>
 
-              <div className={`${message.sender_type === 'guest' && !isAdmin || message.sender_type === 'staff' && isAdmin ? 'mr-2' : 'ml-2'}`}>
-                <div className={`rounded-lg px-3 py-2 ${getMessageStyle(message.sender_type)}`}>
+              <div className="flex flex-col">
+                <div className={`rounded-xl px-4 py-2.5 ${getMessageStyle(message.sender_type)}`}>
                   {message.message_type === 'system' && (
-                    <div className="text-xs opacity-75 mb-1 flex items-center gap-1">
+                    <div className="text-[10px] opacity-75 mb-1 flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       System Message
                     </div>
                   )}
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">{message.content}</p>
                 </div>
 
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">
+                <div className={`flex items-center gap-2 mt-1.5 px-1 ${isCurrentUser(message.sender_type) ? 'justify-end' : 'justify-start'}`}>
+                  <span className="text-[10px] text-slate-400 font-bold tracking-tight">
                     {getSenderName(message)}
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[10px] text-slate-400/80 font-medium">
                     {formatTime(message.created_at)}
                   </span>
                 </div>

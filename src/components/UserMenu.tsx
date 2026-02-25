@@ -104,7 +104,7 @@ const UserMenu = () => {
       } catch (e) {
         console.error("Échec critique du nettoyage d'urgence:", e);
         alert("Problème de déconnexion. Veuillez fermer votre navigateur et réessayer.");
-        navigate('/auth/login');
+        navigate(resolvePath('/auth/login'));
       }
     }
   };

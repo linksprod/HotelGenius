@@ -11,22 +11,24 @@ import { CheckCircle2, XCircle, Clock, Loader2, FileText, Ban } from 'lucide-rea
 import { toast } from 'sonner';
 import { ServiceRequest } from '@/features/rooms/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const ServiceRequestDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+  const { resolvePath } = useHotelPath();
+
   // Use the dedicated hook for fetching single service request
-  const { 
-    data: request, 
-    isLoading: isLoadingRequest, 
+  const {
+    data: request,
+    isLoading: isLoadingRequest,
     error: requestError,
     refetch: refetchRequest
   } = useServiceRequestDetail(id);
-  
+
   // Use the general hook only for the cancel functionality
   const { cancelRequest } = useServiceRequests();
-  
+
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -38,16 +40,16 @@ const ServiceRequestDetails = () => {
     requestError,
     hasRequest: !!request
   });
-  
+
   const handleCancelRequest = async () => {
     if (!request) return;
-    
+
     setIsUpdating(true);
     try {
       await cancelRequest(request.id);
       toast.success("Your request has been cancelled");
       setIsCancelDialogOpen(false);
-      
+
       // Refetch the request to get updated data
       refetchRequest();
     } catch (error) {
@@ -57,10 +59,10 @@ const ServiceRequestDetails = () => {
       setIsUpdating(false);
     }
   };
-  
+
   const getStatusIcon = () => {
     if (!request) return null;
-    
+
     switch (request.status) {
       case 'completed':
         return <CheckCircle2 className="h-6 w-6 text-green-500" />;
@@ -72,10 +74,10 @@ const ServiceRequestDetails = () => {
         return <Clock className="h-6 w-6 text-yellow-500" />;
     }
   };
-  
+
   const getStatusText = () => {
     if (!request) return "";
-    
+
     switch (request.status) {
       case 'completed': return "Completed";
       case 'in_progress': return "In Progress";
@@ -83,10 +85,10 @@ const ServiceRequestDetails = () => {
       default: return "Pending";
     }
   };
-  
+
   const getStatusClass = () => {
     if (!request) return "";
-    
+
     switch (request.status) {
       case 'completed': return "bg-green-100 text-green-800";
       case 'in_progress': return "bg-blue-100 text-blue-800";
@@ -94,15 +96,15 @@ const ServiceRequestDetails = () => {
       default: return "bg-yellow-100 text-yellow-800";
     }
   };
-  
+
   const getTypeIcon = () => {
     return <FileText className="h-6 w-6" />;
   };
-  
+
   const getTypeText = () => {
     return "Service Request";
   };
-  
+
   // Check for missing ID first
   if (!id) {
     return (
@@ -113,7 +115,7 @@ const ServiceRequestDetails = () => {
               <p className="text-center text-gray-500">Request ID is missing</p>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Button onClick={() => navigate('/notifications')}>
+              <Button onClick={() => navigate(resolvePath('/notifications'))}>
                 Back to notifications
               </Button>
             </CardFooter>
@@ -132,7 +134,7 @@ const ServiceRequestDetails = () => {
       </Layout>
     );
   }
-  
+
   if (requestError) {
     return (
       <Layout>
@@ -149,7 +151,7 @@ const ServiceRequestDetails = () => {
               </div>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Button onClick={() => navigate('/notifications')}>
+              <Button onClick={() => navigate(resolvePath('/notifications'))}>
                 Back to notifications
               </Button>
             </CardFooter>
@@ -168,7 +170,7 @@ const ServiceRequestDetails = () => {
               <p className="text-center text-gray-500">Unable to find the details of this request.</p>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Button onClick={() => navigate('/notifications')}>
+              <Button onClick={() => navigate(resolvePath('/notifications'))}>
                 Back to notifications
               </Button>
             </CardFooter>
@@ -177,18 +179,18 @@ const ServiceRequestDetails = () => {
       </Layout>
     );
   }
-  
+
   const isPending = request.status === 'pending';
   const isInProgress = request.status === 'in_progress';
   const isCompleted = request.status === 'completed';
   const isCancelled = request.status === 'cancelled';
   const creationDate = new Date(request.created_at);
-  
+
   return (
     <Layout>
       <div className="container py-8">
         <h1 className="text-2xl font-bold mb-6">Your Request Details</h1>
-        
+
         <Card className="mb-6">
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
@@ -201,18 +203,18 @@ const ServiceRequestDetails = () => {
               <Badge className={getStatusClass()}>{getStatusText()}</Badge>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             {request.description && (
               <div className="text-gray-600">
                 <p>{request.description}</p>
               </div>
             )}
-            
+
             <div className="text-sm text-gray-500">
               Request created {formatDistanceToNow(creationDate, { addSuffix: true })}
             </div>
-            
+
             <div className="pt-4">
               {isPending && (
                 <div className="rounded-md bg-yellow-50 p-4">
@@ -229,7 +231,7 @@ const ServiceRequestDetails = () => {
                   </div>
                 </div>
               )}
-              
+
               {isInProgress && (
                 <div className="rounded-md bg-blue-50 p-4">
                   <div className="flex">
@@ -245,7 +247,7 @@ const ServiceRequestDetails = () => {
                   </div>
                 </div>
               )}
-              
+
               {isCompleted && (
                 <div className="rounded-md bg-green-50 p-4">
                   <div className="flex">
@@ -261,7 +263,7 @@ const ServiceRequestDetails = () => {
                   </div>
                 </div>
               )}
-              
+
               {isCancelled && (
                 <div className="rounded-md bg-red-50 p-4">
                   <div className="flex">
@@ -279,18 +281,18 @@ const ServiceRequestDetails = () => {
               )}
             </div>
           </CardContent>
-          
+
           <CardFooter className="pt-2 flex gap-3">
-            <Button variant="outline" onClick={() => navigate('/my-room')}>
+            <Button variant="outline" onClick={() => navigate(resolvePath('/my-room'))}>
               Back to My Room
             </Button>
-            <Button variant="outline" onClick={() => navigate('/requests')}>
+            <Button variant="outline" onClick={() => navigate(resolvePath('/requests'))}>
               View All Requests
             </Button>
-            
+
             {(isPending || isInProgress) && (
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 className="gap-2"
                 onClick={() => setIsCancelDialogOpen(true)}
               >
@@ -301,7 +303,7 @@ const ServiceRequestDetails = () => {
           </CardFooter>
         </Card>
       </div>
-      
+
       <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>

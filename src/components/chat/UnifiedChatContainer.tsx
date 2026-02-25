@@ -14,6 +14,7 @@ interface UnifiedChatContainerProps {
   className?: string;
   conversationType?: 'concierge' | 'safety_ai';
   conversationId?: string; // Load specific conversation by ID (for admin)
+  onGoBack?: () => void;
 }
 
 export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
@@ -21,7 +22,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   isAdmin = false,
   className = "",
   conversationType = 'concierge',
-  conversationId
+  conversationId,
+  onGoBack
 }) => {
   const {
     conversation,
@@ -50,24 +52,25 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   }
 
   return (
-    <div className={`flex flex-col h-full bg-background ${className}`}>
-      <UnifiedChatHeader 
+    <div className={`flex flex-col h-full bg-white ${className}`}>
+      <UnifiedChatHeader
         conversation={conversation}
         currentHandler={currentHandler as 'ai' | 'human'}
         isAdmin={isAdmin}
         onEscalateToHuman={escalateToHuman}
         onTakeOver={takeOverConversation}
+        onGoBack={onGoBack}
       />
-      
-      <UnifiedMessagesList 
+
+      <UnifiedMessagesList
         messages={messages}
         isTyping={isTyping}
         messagesEndRef={messagesEndRef}
         currentUser={userInfo}
         isAdmin={isAdmin}
       />
-      
-      <UnifiedChatInput 
+
+      <UnifiedChatInput
         inputMessage={inputMessage}
         setInputMessage={setInputMessage}
         onSendMessage={sendMessage}

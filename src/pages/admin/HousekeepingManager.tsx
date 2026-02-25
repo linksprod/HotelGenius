@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2 } from 'lucide-react';
 
 import { RequestItem } from '@/features/rooms/types';
-import { useRequestCategories, useCreateRequestItem, useUpdateRequestItem } from '@/hooks/useRequestCategories';
+import { useRequestCategories, useCreateRequestItem, useCreateRequestCategory, useUpdateRequestItem } from '@/hooks/useRequestCategories';
 import { useRequestsData } from '@/hooks/useRequestsData';
 import { updateRequestStatus } from '@/features/rooms/controllers/roomService';
 import HousekeepingItemsTab from './housekeeping/components/HousekeepingItemsTab';
@@ -36,40 +36,61 @@ const HousekeepingManager = () => {
     is_active: true
   });
   const [editingItem, setEditingItem] = useState<RequestItem | null>(null);
-  
+
   const { toast } = useToast();
-  const { categories } = useRequestCategories();
+  const { categories, isLoading } = useRequestCategories();
   const { requests, handleRefresh } = useRequestsData();
-  
+
   const createItem = useCreateRequestItem();
+  const createCategory = useCreateRequestCategory();
   const updateItem = useUpdateRequestItem();
-  
+
   // Find the Housekeeping category
   const housekeepingCategory = categories.find(cat => cat.name === 'Housekeeping');
-  
+
+  const createHousekeepingCategory = async () => {
+    try {
+      const result = await createCategory.mutateAsync({
+        name: 'Housekeeping',
+        description: 'Room cleaning and amenities',
+        is_active: true,
+        icon: 'Trash2'
+      });
+      toast({ title: "Success", description: "Housekeeping category created" });
+      return result;
+    } catch (error) {
+      console.error("Error creating category:", error);
+      toast({ title: "Error", description: "Failed to create category", variant: "destructive" });
+      throw error;
+    }
+  };
+
   // Filter housekeeping requests
   const housekeepingRequests = requests.filter(
     req => {
+      const currentCategory = categories.find(cat => cat.name === 'Housekeeping');
       // Check if the request is related to housekeeping
-      const isHousekeeping = 
-        req.category_id === housekeepingCategory?.id || 
+      const isHousekeeping =
+        req.category_id === currentCategory?.id ||
         req.type?.toLowerCase() === 'housekeeping' ||
-        (req.request_items && req.request_items.category_id === housekeepingCategory?.id);
-      
+        (req.request_items && req.request_items.category_id === currentCategory?.id);
+
       return isHousekeeping;
     }
   );
-  
+
   const handleAddItem = async () => {
-    if (!housekeepingCategory) {
+    const currentCategory = categories.find(cat => cat.name === 'Housekeeping');
+
+    if (!currentCategory) {
       toast({
         title: "Error",
-        description: "Housekeeping category not found",
+        description: "Housekeeping category not found. Please try again in 1 second.",
         variant: "destructive"
       });
       return;
     }
-    
+
     if (!newItem.name) {
       toast({
         title: "Validation Error",
@@ -78,25 +99,25 @@ const HousekeepingManager = () => {
       });
       return;
     }
-    
+
     try {
       await createItem.mutateAsync({
         ...newItem,
-        category_id: housekeepingCategory.id
+        category_id: currentCategory.id
       });
-      
+
       toast({
         title: "Success",
         description: "Item added successfully"
       });
-      
+
       setNewItem({
         name: '',
         description: '',
         category_id: '',
         is_active: true
       });
-      
+
       setIsAddItemDialogOpen(false);
     } catch (error) {
       console.error("Error adding item:", error);
@@ -107,18 +128,18 @@ const HousekeepingManager = () => {
       });
     }
   };
-  
+
   const handleUpdateItem = async () => {
     if (!editingItem) return;
-    
+
     try {
       await updateItem.mutateAsync(editingItem);
-      
+
       toast({
         title: "Success",
         description: "Item updated successfully"
       });
-      
+
       setIsEditItemDialogOpen(false);
       setEditingItem(null);
     } catch (error) {
@@ -130,17 +151,17 @@ const HousekeepingManager = () => {
       });
     }
   };
-  
+
   const openEditDialog = (item: RequestItem) => {
     setEditingItem(item);
     setIsEditItemDialogOpen(true);
   };
-  
+
   const handleUpdateRequestStatus = async (requestId: string, status: 'pending' | 'in_progress' | 'completed' | 'cancelled') => {
     try {
       await updateRequestStatus(requestId, status);
       handleRefresh();
-      
+
       toast({
         title: "Success",
         description: `Request marked as ${status}`
@@ -154,7 +175,7 @@ const HousekeepingManager = () => {
       });
     }
   };
-  
+
   return (
     <div className="p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -166,22 +187,23 @@ const HousekeepingManager = () => {
           <p className="text-sm text-muted-foreground">Manage housekeeping items and requests</p>
         </div>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="items">Items</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="items">
-          <HousekeepingItemsTab 
+          <HousekeepingItemsTab
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             openAddItemDialog={() => setIsAddItemDialogOpen(true)}
             openEditDialog={openEditDialog}
+            createHousekeepingCategory={createHousekeepingCategory}
           />
         </TabsContent>
-        
+
         <TabsContent value="requests">
           <HousekeepingRequestsTab
             requestsSearchTerm={requestsSearchTerm}
@@ -190,7 +212,7 @@ const HousekeepingManager = () => {
           />
         </TabsContent>
       </Tabs>
-      
+
       {/* Add Item Dialog */}
       <AddItemDialog
         isOpen={isAddItemDialogOpen}
@@ -199,7 +221,7 @@ const HousekeepingManager = () => {
         setNewItem={setNewItem}
         onAdd={handleAddItem}
       />
-      
+
       {/* Edit Item Dialog */}
       <EditItemDialog
         isOpen={isEditItemDialogOpen}

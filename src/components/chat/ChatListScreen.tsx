@@ -16,62 +16,62 @@ export const ChatListScreen: React.FC<ChatListScreenProps> = ({
   userInfo
 }) => {
   return (
-    <div className="py-4">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/10 rounded-2xl px-6 py-8 mb-6 mx-1 shadow-sm">
-        <h1 className="text-2xl font-bold text-foreground">Messages</h1>
-        <p className="text-muted-foreground mt-2">
+    <div className="py-6 px-4 max-w-5xl mx-auto">
+      {/* Selection Header */}
+      <div className="bg-slate-50/80 border border-slate-100 rounded-2xl px-8 py-10 mb-8 shadow-sm">
+        <h1 className="text-3xl font-bold text-slate-900">Messages</h1>
+        <p className="text-slate-500 mt-2 text-lg">
           Connect with our team or AI assistant
         </p>
       </div>
 
-      {/* Chat Options as Cards */}
-      <div className="space-y-4 px-1">
+      {/* Chat Options */}
+      <div className="space-y-6">
         {/* Hotel Team Chat */}
         <Card
-          className="cursor-pointer border-border hover:border-primary/50 hover:bg-muted/30 transition-all duration-200 group shadow-sm hover:shadow-md"
+          className="cursor-pointer border-slate-100 hover:border-primary/30 hover:bg-slate-50/50 transition-all duration-300 group shadow-sm hover:shadow-md rounded-2xl overflow-hidden"
           onClick={() => onSelectChat('concierge')}
         >
-          <div className="flex items-center gap-4 p-5">
+          <div className="flex items-center gap-6 p-7">
             <div className="relative">
-              <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
-                <User className="h-7 w-7 text-primary" />
+              <div className="h-16 w-16 rounded-full bg-emerald-50 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                <User className="h-8 w-8 text-emerald-600" />
               </div>
-              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-accent rounded-full border-2 border-card"></div>
+              <div className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white"></div>
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-lg text-foreground">Hotel Team</h3>
-              <p className="text-sm text-muted-foreground mt-0.5">
+              <h3 className="font-bold text-xl text-slate-800">Hotel Team</h3>
+              <p className="text-slate-500 mt-1">
                 Connect directly with our staff
               </p>
             </div>
 
-            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            <ChevronRight className="h-6 w-6 text-slate-300 group-hover:text-primary transition-colors" />
           </div>
         </Card>
 
         {/* AI Assistant Chat */}
         <Card
-          className="cursor-pointer border-border hover:border-secondary/50 hover:bg-muted/30 transition-all duration-200 group shadow-sm hover:shadow-md"
+          className="cursor-pointer border-slate-100 hover:border-secondary/30 hover:bg-slate-50/50 transition-all duration-300 group shadow-sm hover:shadow-md rounded-2xl overflow-hidden"
           onClick={() => onSelectChat('safety_ai')}
         >
-          <div className="flex items-center gap-4 p-5">
+          <div className="flex items-center gap-6 p-7">
             <div className="relative">
-              <div className="h-14 w-14 rounded-full bg-secondary/10 flex items-center justify-center group-hover:bg-secondary/15 transition-colors">
-                <Bot className="h-7 w-7 text-secondary" />
+              <div className="h-16 w-16 rounded-full bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
+                <Bot className="h-8 w-8 text-indigo-600" />
               </div>
-              <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-secondary rounded-full border-2 border-card"></div>
+              <div className="absolute bottom-0 right-0 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white"></div>
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-lg text-foreground">AI Assistant</h3>
-              <p className="text-sm text-muted-foreground mt-0.5">
+              <h3 className="font-bold text-xl text-slate-800">AI Assistant</h3>
+              <p className="text-slate-500 mt-1">
                 Instant AI help, can escalate to staff
               </p>
             </div>
 
-            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-secondary transition-colors" />
+            <ChevronRight className="h-6 w-6 text-slate-300 group-hover:text-secondary transition-colors" />
           </div>
         </Card>
       </div>

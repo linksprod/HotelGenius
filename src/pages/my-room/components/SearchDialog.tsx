@@ -46,8 +46,8 @@ const SearchDialog: React.FC<Props> = ({
   };
 
   return (
-    <CommandDialog 
-      open={open} 
+    <CommandDialog
+      open={open}
       onOpenChange={setOpen}
       className="rounded-xl overflow-hidden"
     >
@@ -85,8 +85,9 @@ const SearchDialog: React.FC<Props> = ({
             </div>
           ) : (
             <>
+              {/* Security Category (Special handling for urgency) */}
               {securityCategory && (
-                <CommandGroup heading={securityCategory.name} className="px-3 py-2">
+                <CommandGroup heading={securityCategory.name.toUpperCase()} className="px-3 py-2">
                   {filterItemsBySearch(
                     allItems.filter(item => item.category_id === securityCategory.id && item.is_active),
                     searchTerm
@@ -95,51 +96,68 @@ const SearchDialog: React.FC<Props> = ({
                       key={item.id}
                       disabled={isSubmitting}
                       onSelect={() => onSelect(item, securityCategory)}
-                      className="cursor-pointer flex items-center px-4 py-3 rounded-lg group hover:bg-primary/5 my-1"
+                      className="cursor-pointer flex items-center px-4 py-4 rounded-xl group hover:bg-rose-50/50 my-1 transition-all border border-transparent hover:border-rose-100"
                     >
                       <div className="flex flex-1 items-center">
-                        <div className="mr-3 h-9 w-9 rounded-full bg-red-100 flex items-center justify-center">
-                          <span className="text-red-600 text-xs font-semibold">!</span>
+                        <div className="mr-4 h-11 w-11 rounded-full bg-rose-100 flex items-center justify-center shrink-0 group-hover:bg-rose-200 transition-colors">
+                          <span className="text-rose-600 font-bold text-lg">!</span>
                         </div>
-                        <div>
-                          <div className="font-medium">{item.name}</div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-slate-800 group-hover:text-rose-700 transition-colors">{item.name}</div>
                           {item.description && (
-                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+                            <div className="text-sm text-slate-500 mt-0.5 line-clamp-1 group-hover:text-rose-600/70 transition-colors">{item.description}</div>
                           )}
                         </div>
                       </div>
-                      <Check className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <Check className="h-5 w-5 text-rose-500 opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0" />
                     </CommandItem>
                   ))}
                 </CommandGroup>
               )}
+
+              {/* Other Categories */}
               {Object.entries(itemsByCategory).map(([categoryId, items]) => {
                 if (securityCategory && securityCategory.id === categoryId) return null;
                 const category = categories.find(c => c.id === categoryId);
                 if (!category) return null;
+
                 const filtered = filterItemsBySearch(items, searchTerm);
                 if (filtered.length === 0) return null;
+
+                // Define icon colors based on category name
+                const getCategoryStyles = (name: string) => {
+                  const lowerName = name.toLowerCase();
+                  if (lowerName.includes('housekeeping')) return { bg: 'bg-emerald-50', text: 'text-emerald-600', hover: 'hover:bg-emerald-50/50', border: 'hover:border-emerald-100', iconBg: 'bg-emerald-100' };
+                  if (lowerName.includes('maintenance')) return { bg: 'bg-amber-50', text: 'text-amber-600', hover: 'hover:bg-amber-50/50', border: 'hover:border-amber-100', iconBg: 'bg-amber-100' };
+                  if (lowerName.includes('it') || lowerName.includes('technology')) return { bg: 'bg-indigo-50', text: 'text-indigo-600', hover: 'hover:bg-indigo-50/50', border: 'hover:border-indigo-100', iconBg: 'bg-indigo-100' };
+                  return { bg: 'bg-slate-50', text: 'text-slate-600', hover: 'hover:bg-slate-50/50', border: 'hover:border-slate-100', iconBg: 'bg-slate-100' };
+                };
+
+                const styles = getCategoryStyles(category.name);
+
                 return (
-                  <CommandGroup key={categoryId} heading={category.name} className="px-3 py-2">
+                  <CommandGroup key={categoryId} heading={category.name.toUpperCase()} className="px-3 py-2">
                     {filtered.map(item => (
                       <CommandItem
                         key={item.id}
                         disabled={isSubmitting}
                         onSelect={() => onSelect(item, category)}
-                        className="cursor-pointer flex items-center px-4 py-3 rounded-lg group hover:bg-primary/5 my-1"
+                        className={`cursor-pointer flex items-center px-4 py-4 rounded-xl group ${styles.hover} my-1 transition-all border border-transparent ${styles.border}`}
                       >
                         <div className="flex flex-1 items-center">
-                          <div className="mr-3 h-9 w-9 rounded-md bg-primary/10 flex items-center justify-center">
-                            <span className="text-primary text-xs font-semibold">{category.name.charAt(0)}</span>
+                          <div className={`mr-4 h-11 w-11 rounded-xl ${styles.iconBg} flex items-center justify-center shrink-0 group-hover:opacity-80 transition-opacity`}>
+                            <span className={`${styles.text} font-bold text-base`}>
+                              {category.name.charAt(0)}
+                            </span>
                           </div>
-                          <div>
-                            <div className="font-medium">{item.name}</div>
+                          <div className="min-w-0">
+                            <div className="font-semibold text-slate-800 group-hover:text-slate-900 transition-colors">{item.name}</div>
                             {item.description && (
-                              <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+                              <div className="text-sm text-slate-500 mt-0.5 line-clamp-1">{item.description}</div>
                             )}
                           </div>
                         </div>
-                        <Check className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Check className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0" />
                       </CommandItem>
                     ))}
                   </CommandGroup>

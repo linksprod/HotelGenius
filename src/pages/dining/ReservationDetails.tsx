@@ -11,36 +11,39 @@ import { fr } from 'date-fns/locale';
 import { CheckCircle2, XCircle, Clock, CalendarClock, Users, Utensils, FileText, Edit, Ban } from 'lucide-react';
 import { toast } from 'sonner';
 import { TableReservation } from '@/features/dining/types';
+import { ServiceRequest } from '@/features/rooms/types';
 import BookingDialog from './components/BookingDialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const ReservationDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const { reservations = [], updateReservationStatus, isUpdating } = useTableReservations();
   const { fetchRestaurantById } = useRestaurants();
-  
+
   const [reservation, setReservation] = useState<TableReservation | null>(null);
   const [restaurant, setRestaurant] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     if (!id) {
       toast.error("Identifiant de réservation manquant");
       navigate('/notifications');
       return;
     }
-    
+
     // Trouver la réservation
-    const foundReservation = reservations && Array.isArray(reservations) 
-      ? reservations.find(r => r.id === id) 
+    const foundReservation = reservations && Array.isArray(reservations)
+      ? reservations.find(r => r.id === id)
       : null;
-      
+
     if (foundReservation) {
       setReservation(foundReservation);
-      
+
       // Charger les détails du restaurant
       fetchRestaurantById(foundReservation.restaurantId)
         .then(data => {
@@ -63,18 +66,18 @@ const ReservationDetails = () => {
       }
     }
   }, [id, reservations, fetchRestaurantById, navigate]);
-  
+
   const handleCancelReservation = () => {
     if (!reservation) return;
-    
-    updateReservationStatus({ 
-      id: reservation.id, 
-      status: 'cancelled' 
+
+    updateReservationStatus({
+      id: reservation.id,
+      status: 'cancelled'
     });
-    
+
     toast.success("Votre réservation a été annulée");
     setIsCancelDialogOpen(false);
-    
+
     // Mettre à jour l'état local
     if (reservation) {
       setReservation({
@@ -83,21 +86,21 @@ const ReservationDetails = () => {
       });
     }
   };
-  
+
   const handleEditSuccess = () => {
     setIsEditDialogOpen(false);
     toast.success("Votre réservation a été modifiée");
-    
+
     // Recharger les données
     const updatedReservation = reservations.find(r => r.id === id);
     if (updatedReservation) {
       setReservation(updatedReservation);
     }
   };
-  
+
   const getStatusIcon = () => {
     if (!reservation) return null;
-    
+
     switch (reservation.status) {
       case 'confirmed':
         return <CheckCircle2 className="h-6 w-6 text-green-500" />;
@@ -107,27 +110,27 @@ const ReservationDetails = () => {
         return <Clock className="h-6 w-6 text-yellow-500" />;
     }
   };
-  
+
   const getStatusText = () => {
     if (!reservation) return "";
-    
+
     switch (reservation.status) {
       case 'confirmed': return "Confirmée";
       case 'cancelled': return "Annulée";
       default: return "En attente";
     }
   };
-  
+
   const getStatusClass = () => {
     if (!reservation) return "";
-    
+
     switch (reservation.status) {
       case 'confirmed': return "bg-green-100 text-green-800";
       case 'cancelled': return "bg-red-100 text-red-800";
       default: return "bg-yellow-100 text-yellow-800";
     }
   };
-  
+
   if (isLoading) {
     return (
       <Layout>
@@ -137,7 +140,7 @@ const ReservationDetails = () => {
       </Layout>
     );
   }
-  
+
   if (!reservation || !restaurant) {
     return (
       <Layout>
@@ -147,8 +150,8 @@ const ReservationDetails = () => {
               <p className="text-center text-gray-500">Impossible de trouver les détails de cette réservation.</p>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Button onClick={() => navigate('/notifications')}>
-                Retour aux notifications
+              <Button onClick={() => navigate(resolvePath('/notifications'))}>
+                Back to notifications
               </Button>
             </CardFooter>
           </Card>
@@ -156,18 +159,18 @@ const ReservationDetails = () => {
       </Layout>
     );
   }
-  
+
   const reservationDate = new Date(reservation.date);
   const formattedDate = format(reservationDate, 'EEEE d MMMM yyyy', { locale: fr });
   const isPending = reservation.status === 'pending';
   const isConfirmed = reservation.status === 'confirmed';
   const isCancelled = reservation.status === 'cancelled';
-  
+
   return (
     <Layout>
       <div className="container py-8">
         <h1 className="text-2xl font-bold mb-6">Détails de votre réservation</h1>
-        
+
         <Card className="mb-6">
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
@@ -175,23 +178,23 @@ const ReservationDetails = () => {
               <Badge className={getStatusClass()}>{getStatusText()}</Badge>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2 text-gray-700">
               <CalendarClock className="h-5 w-5 text-gray-500" />
               <span className="capitalize">{formattedDate} à {reservation.time}</span>
             </div>
-            
+
             <div className="flex items-center gap-2 text-gray-700">
               <Users className="h-5 w-5 text-gray-500" />
               <span>{reservation.guests} {reservation.guests > 1 ? 'personnes' : 'personne'}</span>
             </div>
-            
+
             <div className="flex items-center gap-2 text-gray-700">
               <Utensils className="h-5 w-5 text-gray-500" />
               <span>Restaurant: {restaurant.cuisine}</span>
             </div>
-            
+
             {reservation.specialRequests && (
               <div className="flex items-start gap-2 text-gray-700">
                 <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
@@ -201,7 +204,7 @@ const ReservationDetails = () => {
                 </div>
               </div>
             )}
-            
+
             <div className="pt-4">
               {isPending && (
                 <div className="rounded-md bg-yellow-50 p-4">
@@ -218,7 +221,7 @@ const ReservationDetails = () => {
                   </div>
                 </div>
               )}
-              
+
               {isConfirmed && (
                 <div className="rounded-md bg-green-50 p-4">
                   <div className="flex">
@@ -234,7 +237,7 @@ const ReservationDetails = () => {
                   </div>
                 </div>
               )}
-              
+
               {isCancelled && (
                 <div className="rounded-md bg-red-50 p-4">
                   <div className="flex">
@@ -252,25 +255,28 @@ const ReservationDetails = () => {
               )}
             </div>
           </CardContent>
-          
+
           <CardFooter className="pt-2 flex gap-3 flex-wrap">
-            <Button variant="outline" onClick={() => navigate('/dining')}>
+            <Button variant="outline" onClick={() => navigate(resolvePath('/dining'))}>
               Voir le restaurant
             </Button>
-            
+            <Button variant="outline" onClick={() => navigate(resolvePath('/requests'))}>
+              View All Requests
+            </Button>
+
             {isPending && (
               <>
-                <Button 
-                  variant="secondary" 
+                <Button
+                  variant="secondary"
                   className="gap-2"
                   onClick={() => setIsEditDialogOpen(true)}
                 >
                   <Edit className="h-4 w-4" />
                   Modifier
                 </Button>
-                
-                <Button 
-                  variant="destructive" 
+
+                <Button
+                  variant="destructive"
                   className="gap-2"
                   onClick={() => setIsCancelDialogOpen(true)}
                 >
@@ -279,10 +285,10 @@ const ReservationDetails = () => {
                 </Button>
               </>
             )}
-            
+
             {isConfirmed && (
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 className="gap-2"
                 onClick={() => setIsCancelDialogOpen(true)}
               >
@@ -293,7 +299,7 @@ const ReservationDetails = () => {
           </CardFooter>
         </Card>
       </div>
-      
+
       {/* Dialog de modification */}
       <BookingDialog
         isOpen={isEditDialogOpen}
@@ -304,7 +310,7 @@ const ReservationDetails = () => {
         buttonText="Modifier ma réservation"
         existingReservation={reservation}
       />
-      
+
       {/* Dialog de confirmation d'annulation */}
       <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">

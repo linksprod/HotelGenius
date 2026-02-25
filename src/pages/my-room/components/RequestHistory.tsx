@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle2, Timer, XCircle, Clock, FileText, ArrowRight } from 'lucide-react';
 import { ServiceRequest } from '@/features/rooms/types';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface RequestHistoryProps {
   isLoading: boolean;
@@ -12,6 +13,7 @@ interface RequestHistoryProps {
 }
 
 const RequestHistory = ({ isLoading, requests }: RequestHistoryProps) => {
+  const { resolvePath } = useHotelPath();
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
@@ -29,7 +31,7 @@ const RequestHistory = ({ isLoading, requests }: RequestHistoryProps) => {
     <>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-secondary">Recent Requests</h2>
-        <Link to="/requests">
+        <Link to={resolvePath("/requests")}>
           <Button variant="outline" size="sm">
             View All <ArrowRight className="h-4 w-4 ml-1" />
           </Button>
@@ -43,8 +45,8 @@ const RequestHistory = ({ isLoading, requests }: RequestHistoryProps) => {
             </div>
           ) : requests.length > 0 ? (
             requests.map((request) => (
-              <div 
-                key={request.id} 
+              <div
+                key={request.id}
                 className="flex items-center gap-4 p-4 bg-gray-50/80 rounded-xl hover:bg-gray-100/80 transition-colors"
               >
                 <div className="p-2 bg-white rounded-lg">

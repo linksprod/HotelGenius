@@ -19,33 +19,49 @@ type HousekeepingItemsTabProps = {
   setSearchTerm: (term: string) => void;
   openAddItemDialog: () => void;
   openEditDialog: (item: RequestItem) => void;
+  createHousekeepingCategory: () => Promise<any>;
 };
 
 const HousekeepingItemsTab = ({
   searchTerm,
   setSearchTerm,
   openAddItemDialog,
-  openEditDialog
+  openEditDialog,
+  createHousekeepingCategory
 }: HousekeepingItemsTabProps) => {
   const { categories, allItems, isLoading } = useRequestCategories();
-  
+
   // Find the Housekeeping category
   const housekeepingCategory = categories.find(cat => cat.name === 'Housekeeping');
-  
+
   // Filter items by the Housekeeping category
   const housekeepingItems = allItems.filter(
     item => item.category_id === (housekeepingCategory?.id || '') &&
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddItem = async () => {
+    if (!housekeepingCategory) {
+      try {
+        const newCategory = await createHousekeepingCategory();
+        // Pass the new category's ID if needed or just open the dialog
+        // The dialog in the manager uses the 'newItem' state which we should probably update
+        openAddItemDialog();
+      } catch (error) {
+        console.error("Failed to initialize category:", error);
+      }
+    } else {
+      openAddItemDialog();
+    }
+  };
 
   return (
     <Card className="mb-6">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>Housekeeping Service Items</CardTitle>
-          <Button 
-            onClick={openAddItemDialog}
-            disabled={!housekeepingCategory}
+          <Button
+            onClick={handleAddItem}
           >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Item
@@ -64,7 +80,7 @@ const HousekeepingItemsTab = ({
             />
           </div>
         </div>
-        
+
         {isLoading ? (
           <div className="text-center py-4">Loading...</div>
         ) : housekeepingItems.length > 0 ? (
@@ -102,9 +118,16 @@ const HousekeepingItemsTab = ({
           </Table>
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            {!housekeepingCategory 
-              ? "Housekeeping category not found. Please create it first." 
-              : "No housekeeping items found."}
+            {!housekeepingCategory ? (
+              <div className="space-y-4">
+                <p>Housekeeping category not found. Please initialize it first.</p>
+                <Button onClick={createHousekeepingCategory}>
+                  Initialize Housekeeping
+                </Button>
+              </div>
+            ) : (
+              "No housekeeping items found."
+            )}
           </div>
         )}
       </CardContent>

@@ -49,27 +49,27 @@ const ConciergeMessageInput = ({
   };
 
   return (
-    <div className="border-t bg-card p-3 flex-shrink-0 relative">
+    <div className="border-t bg-slate-50/50 p-4 pb-6 flex-shrink-0 relative">
       <UserQuickTemplates
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}
         onSelectTemplate={handleTemplateSelect}
       />
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="rounded-full h-10 w-10 flex-shrink-0 border-border/50 bg-background hover:bg-muted"
+          className="rounded-full h-10 w-10 flex-shrink-0 text-muted-foreground hover:bg-muted"
           type="button"
         >
           <Paperclip className="h-5 w-5" />
         </Button>
 
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="rounded-full h-10 w-10 flex-shrink-0 border-border/50 bg-background hover:bg-muted"
+          className="rounded-full h-10 w-10 flex-shrink-0 text-muted-foreground hover:bg-muted font-bold"
           onClick={() => setShowTemplates(!showTemplates)}
           type="button"
         >
@@ -82,7 +82,7 @@ const ConciergeMessageInput = ({
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Type your message to concierge..."
-          className="resize-none min-h-0 h-10 py-2 px-4 rounded-full border border-border/50 focus-visible:ring-1 bg-muted/30"
+          className="resize-none min-h-0 h-11 py-3 px-4 rounded-full border border-border/50 focus-visible:ring-1 bg-muted/40 text-sm"
           disabled={isTyping}
         />
 
@@ -90,10 +90,10 @@ const ConciergeMessageInput = ({
           type="button"
           size="icon"
           onClick={onSendMessage}
-          className="rounded-full h-10 w-10 flex-shrink-0"
+          className="rounded-full h-11 w-11 flex-shrink-0 bg-[#82A691] hover:bg-[#6D8E7B] text-white shadow-md transition-all active:scale-95"
           disabled={!inputMessage.trim() || isTyping}
         >
-          <Send className="h-5 w-5" />
+          <Send className="h-5 w-5 rotate-45 -translate-y-0.5 -translate-x-0.5" />
         </Button>
       </div>
     </div>

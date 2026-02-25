@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { isToday, isBefore, isAfter, startOfDay } from 'date-fns';
@@ -15,6 +16,7 @@ import { GuestStatus } from './components/guests/types';
 const GuestDetailPage: React.FC = () => {
   const { guestId } = useParams<{ guestId: string }>();
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const today = startOfDay(new Date());
 
   const getGuestStatus = (checkIn: string | null, checkOut: string | null): GuestStatus => {
@@ -185,7 +187,7 @@ const GuestDetailPage: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
         <p className="text-muted-foreground">Guest not found</p>
         <button
-          onClick={() => navigate('/admin/guests')}
+          onClick={() => navigate(resolvePath('/admin/guests'))}
           className="text-primary hover:underline"
         >
           Back to guests

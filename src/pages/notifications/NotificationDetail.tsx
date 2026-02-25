@@ -7,15 +7,17 @@ import NotificationDetailContent from './components/NotificationDetailContent';
 import { LoadingState } from './components/LoadingState';
 import { NotFoundState } from './components/NotFoundState';
 import { useNotificationDetail } from './hooks/useNotificationDetail';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const NotificationDetail: React.FC = () => {
   const { type, id } = useParams<{ type: string; id: string }>();
   const navigate = useNavigate();
   const { notification, isLoading, error } = useNotificationDetail(type, id);
+  const { resolvePath } = useHotelPath();
 
   // Navigation handler
   const handleBack = () => {
-    navigate('/notifications');
+    navigate(resolvePath('/notifications'));
   };
 
   // Show loading state while fetching data
@@ -26,8 +28,8 @@ const NotificationDetail: React.FC = () => {
   // Show "not found" state if there's an error or no notification
   if (error || !notification) {
     return (
-      <NotFoundState 
-        onBack={handleBack} 
+      <NotFoundState
+        onBack={handleBack}
         errorMessage={error instanceof Error ? error.message : String(error)}
       />
     );
@@ -36,16 +38,16 @@ const NotificationDetail: React.FC = () => {
   return (
     <Layout>
       <div className="container py-8">
-        <NotificationDetailHeader 
+        <NotificationDetailHeader
           title={notification.title}
           type={notification.type}
           onBack={handleBack}
         />
-        
-        <NotificationDetailContent 
-          notification={notification} 
-          notificationType={notification.type} 
-          notificationId={notification.id} 
+
+        <NotificationDetailContent
+          notification={notification}
+          notificationType={notification.type}
+          notificationId={notification.id}
         />
       </div>
     </Layout>

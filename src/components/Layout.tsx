@@ -27,7 +27,8 @@ const Layout = ({
   const { hotel } = useHotel();
 
   const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
-  const isSpaManagerPage = location.pathname === '/admin/spa';
+  const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
+  const isMessagesPage = hotel ? location.pathname === `/${hotel.slug}/messages` : location.pathname === '/messages';
   const isMobile = useIsMobile();
 
   const homeLink = hotel ? `/${hotel.slug}` : "/";
@@ -77,10 +78,14 @@ const Layout = ({
         </div>
       </header>
 
-      <main className={cn("container mx-auto px-[9px] pt-16 pb-24", isSpaManagerPage && "h-screen flex flex-col")}>
-        {isSpaManagerPage ? (
-          <ScrollArea className="flex-1 overflow-y-auto">
-            <div className="py-4">
+      <main className={cn(
+        "container mx-auto px-[9px] pt-16 pb-24",
+        isSpaManagerPage && "h-screen flex flex-col",
+        isMessagesPage && "max-w-none px-0 pt-16 pb-20 sm:pb-24 h-[calc(100vh)]"
+      )}>
+        {isSpaManagerPage || isMessagesPage ? (
+          <ScrollArea className="flex-1 overflow-y-auto h-full">
+            <div className={cn("py-4 h-full", isMessagesPage && "py-0")}>
               {children}
             </div>
           </ScrollArea>

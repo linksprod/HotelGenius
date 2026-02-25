@@ -20,29 +20,43 @@ type InformationTechnologyItemsTabProps = {
   setSearchTerm: (term: string) => void;
   openAddItemDialog: () => void;
   openEditDialog: (item: RequestItem) => void;
+  createITCategory: () => Promise<any>;
 };
 
 const InformationTechnologyItemsTab = ({
   searchTerm,
   setSearchTerm,
   openAddItemDialog,
-  openEditDialog
+  openEditDialog,
+  createITCategory
 }: InformationTechnologyItemsTabProps) => {
   const { categories, allItems, isLoading } = useRequestCategories();
   const itCategory = categories.find(cat => cat.name === 'Information Technology');
   const itItems = allItems.filter(
     item => item.category_id === (itCategory?.id || '') &&
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleAddItem = async () => {
+    if (!itCategory) {
+      try {
+        await createITCategory();
+        openAddItemDialog();
+      } catch (error) {
+        console.error("Failed to initialize IT category:", error);
+      }
+    } else {
+      openAddItemDialog();
+    }
+  };
 
   return (
     <Card className="mb-6">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>IT Service Items</CardTitle>
-          <Button 
-            onClick={openAddItemDialog}
-            disabled={!itCategory}
+          <Button
+            onClick={handleAddItem}
           >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Item
@@ -98,9 +112,16 @@ const InformationTechnologyItemsTab = ({
           </Table>
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            {!itCategory 
-              ? "Information Technology category not found. Please create it first." 
-              : "No information technology items found."}
+            {!itCategory ? (
+              <div className="space-y-4">
+                <p>Information Technology category not found. Please initialize it first.</p>
+                <Button onClick={createITCategory}>
+                  Initialize IT Support
+                </Button>
+              </div>
+            ) : (
+              "No IT support items found."
+            )}
           </div>
         )}
       </CardContent>

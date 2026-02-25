@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import { useRestaurants } from '@/hooks/useRestaurants';
 import { useTableReservations } from '@/hooks/useTableReservations';
 import { Button } from '@/components/ui/button';
@@ -14,15 +15,16 @@ import { TableReservation } from '@/features/dining/types';
 const ReservationManager = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const { fetchRestaurantById } = useRestaurants();
   const { reservations, isLoading, error, updateReservationStatus } = useTableReservations(id);
-  
+
   const [restaurant, setRestaurant] = useState<any>(null);
   const [selectedReservation, setSelectedReservation] = useState<TableReservation | null>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<'pending' | 'confirmed' | 'cancelled'>('pending');
   const [loadingError, setLoadingError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     if (id && id !== ':id') {
       fetchRestaurantById(id)
@@ -39,9 +41,9 @@ const ReservationManager = () => {
 
   const handleUpdateStatus = () => {
     if (selectedReservation && newStatus) {
-      updateReservationStatus({ 
-        id: selectedReservation.id, 
-        status: newStatus 
+      updateReservationStatus({
+        id: selectedReservation.id,
+        status: newStatus
       });
       setIsStatusDialogOpen(false);
     }
@@ -54,7 +56,7 @@ const ReservationManager = () => {
   };
 
   if (loadingError) {
-    return <ErrorState errorMessage={loadingError} onBackClick={() => navigate('/admin/restaurants')} />;
+    return <ErrorState errorMessage={loadingError} onBackClick={() => navigate(resolvePath('/admin/restaurants'))} />;
   }
 
   if (isLoading || !restaurant) {
@@ -64,29 +66,29 @@ const ReservationManager = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center mb-4">
-        <Button variant="outline" size="sm" onClick={() => navigate('/admin/restaurants')}>
+        <Button variant="outline" size="sm" onClick={() => navigate(resolvePath('/admin/restaurants'))}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Retour
         </Button>
       </div>
-      
+
       <div className="mb-6">
         <h1 className="text-3xl font-semibold">{restaurant.name}</h1>
         <p className="text-muted-foreground">Gestion des Réservations</p>
       </div>
 
       {error && (
-        <ErrorState 
-          errorMessage={`Impossible de charger les réservations: ${error instanceof Error ? error.message : 'Erreur inconnue'}`} 
-          onBackClick={() => navigate('/admin/restaurants')} 
+        <ErrorState
+          errorMessage={`Impossible de charger les réservations: ${error instanceof Error ? error.message : 'Erreur inconnue'}`}
+          onBackClick={() => navigate(resolvePath('/admin/restaurants'))}
         />
       )}
 
-      <ReservationList 
-        reservations={reservations} 
-        onOpenStatusDialog={handleOpenStatusDialog} 
+      <ReservationList
+        reservations={reservations}
+        onOpenStatusDialog={handleOpenStatusDialog}
       />
-      
-      <StatusDialog 
+
+      <StatusDialog
         isOpen={isStatusDialogOpen}
         onOpenChange={setIsStatusDialogOpen}
         reservation={selectedReservation}

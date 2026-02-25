@@ -14,16 +14,16 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogFooter,
   DialogClose
 } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { useRequestCategories, useCreateRequestItem, useUpdateRequestItem } from '@/hooks/useRequestCategories';
+import { useRequestCategories, useCreateRequestItem, useCreateRequestCategory, useUpdateRequestItem } from '@/hooks/useRequestCategories';
 import { RequestItem } from '@/features/rooms/types';
 import MaintenanceItemsTab from './maintenance/components/MaintenanceItemsTab';
 import MaintenanceRequestsTab from './maintenance/components/MaintenanceRequestsTab';
@@ -51,33 +51,58 @@ const MaintenanceManager = () => {
     is_active: true
   });
   const [editingItem, setEditingItem] = useState<RequestItem | null>(null);
-  
+
   const { toast } = useToast();
   const { categories, allItems, isLoading } = useRequestCategories();
-  
+
   const createItem = useCreateRequestItem();
+  const createCategory = useCreateRequestCategory();
   const updateItem = useUpdateRequestItem();
-  
+
   // Find the Maintenance and Technical categories
   const maintenanceCategory = categories.find(cat => cat.name === 'Maintenance');
   const technicalCategory = categories.find(cat => cat.name === 'Technical');
-  
+
+  const createMaintenanceCategories = async () => {
+    try {
+      let mCat = maintenanceCategory;
+      let tCat = technicalCategory;
+
+      if (!maintenanceCategory) {
+        mCat = await createCategory.mutateAsync({
+          name: 'Maintenance',
+          description: 'General repairs and infrastructure',
+          is_active: true,
+          icon: 'Wrench'
+        });
+      }
+      if (!technicalCategory) {
+        tCat = await createCategory.mutateAsync({
+          name: 'Technical',
+          description: 'Technical equipment and systems',
+          is_active: true,
+          icon: 'Cpu'
+        });
+      }
+      toast({ title: "Success", description: "Maintenance categories created" });
+      return { maintenanceCategory: mCat, technicalCategory: tCat };
+    } catch (error) {
+      console.error("Error creating categories:", error);
+      toast({ title: "Error", description: "Failed to create categories", variant: "destructive" });
+    }
+  };
+
   // Get the IDs of both categories
   const categoryIds = [
     maintenanceCategory?.id,
     technicalCategory?.id
   ].filter(Boolean) as string[];
-  
+
   const handleAddItem = async () => {
-    if (categoryIds.length === 0) {
-      toast({
-        title: "Error",
-        description: "Maintenance or Technical category not found",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    const categoriesList = categories;
+    const maintenanceCat = categoriesList.find(cat => cat.name === 'Maintenance');
+    const technicalCat = categoriesList.find(cat => cat.name === 'Technical');
+
     if (!newItem.name) {
       toast({
         title: "Validation Error",
@@ -86,7 +111,7 @@ const MaintenanceManager = () => {
       });
       return;
     }
-    
+
     if (!newItem.category_id) {
       toast({
         title: "Validation Error",
@@ -95,24 +120,24 @@ const MaintenanceManager = () => {
       });
       return;
     }
-    
+
     try {
       await createItem.mutateAsync({
         ...newItem
       });
-      
+
       toast({
         title: "Success",
         description: "Item added successfully"
       });
-      
+
       setNewItem({
         name: '',
         description: '',
         category_id: '',
         is_active: true
       });
-      
+
       setIsAddItemDialogOpen(false);
     } catch (error) {
       console.error("Error adding item:", error);
@@ -123,18 +148,18 @@ const MaintenanceManager = () => {
       });
     }
   };
-  
+
   const handleUpdateItem = async () => {
     if (!editingItem) return;
-    
+
     try {
       await updateItem.mutateAsync(editingItem);
-      
+
       toast({
         title: "Success",
         description: "Item updated successfully"
       });
-      
+
       setIsEditItemDialogOpen(false);
       setEditingItem(null);
     } catch (error) {
@@ -146,12 +171,12 @@ const MaintenanceManager = () => {
       });
     }
   };
-  
+
   const openEditDialog = (item: RequestItem) => {
     setEditingItem(item);
     setIsEditItemDialogOpen(true);
   };
-  
+
   return (
     <div className="p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -163,15 +188,15 @@ const MaintenanceManager = () => {
           <p className="text-sm text-muted-foreground">Manage maintenance items and technical requests</p>
         </div>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="items">Items</TabsTrigger>
           <TabsTrigger value="requests">Requests</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="items">
-          <MaintenanceItemsTab 
+          <MaintenanceItemsTab
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             openAddItemDialog={() => setIsAddItemDialogOpen(true)}
@@ -181,28 +206,29 @@ const MaintenanceManager = () => {
               const category = categories.find(cat => cat.id === categoryId);
               return category?.name || 'Unknown';
             }}
+            createMaintenanceCategories={createMaintenanceCategories}
           />
         </TabsContent>
-        
+
         <TabsContent value="requests">
           <MaintenanceRequestsTab categoryIds={categoryIds} />
         </TabsContent>
       </Tabs>
-      
+
       {/* Add Item Dialog */}
       <Dialog open={isAddItemDialogOpen} onOpenChange={setIsAddItemDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Maintenance/Technical Item</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <div className="grid gap-2">
               <label htmlFor="category" className="text-sm font-medium">Category</label>
-              <select 
+              <select
                 id="category"
                 value={newItem.category_id}
-                onChange={(e) => setNewItem({...newItem, category_id: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, category_id: e.target.value })}
                 className="px-3 py-2 border rounded-md"
               >
                 <option value="">Select Category</option>
@@ -214,28 +240,28 @@ const MaintenanceManager = () => {
                 )}
               </select>
             </div>
-            
+
             <div className="grid gap-2">
               <label htmlFor="name" className="text-sm font-medium">Name</label>
               <Input
                 id="name"
                 value={newItem.name}
-                onChange={(e) => setNewItem({...newItem, name: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                 placeholder="Air Conditioning Issue"
               />
             </div>
-            
+
             <div className="grid gap-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
               <Input
                 id="description"
                 value={newItem.description || ''}
-                onChange={(e) => setNewItem({...newItem, description: e.target.value})}
+                onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                 placeholder="Report a problem with the room's air conditioning"
               />
             </div>
           </div>
-          
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
@@ -246,22 +272,22 @@ const MaintenanceManager = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Edit Item Dialog */}
       <Dialog open={isEditItemDialogOpen} onOpenChange={setIsEditItemDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Maintenance/Technical Item</DialogTitle>
           </DialogHeader>
-          
+
           {editingItem && (
             <div className="space-y-4 py-4">
               <div className="grid gap-2">
                 <label htmlFor="edit-category" className="text-sm font-medium">Category</label>
-                <select 
+                <select
                   id="edit-category"
                   value={editingItem.category_id}
-                  onChange={(e) => setEditingItem({...editingItem, category_id: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, category_id: e.target.value })}
                   className="px-3 py-2 border rounded-md"
                 >
                   {maintenanceCategory && (
@@ -272,38 +298,38 @@ const MaintenanceManager = () => {
                   )}
                 </select>
               </div>
-              
+
               <div className="grid gap-2">
                 <label htmlFor="edit-name" className="text-sm font-medium">Name</label>
                 <Input
                   id="edit-name"
                   value={editingItem.name}
-                  onChange={(e) => setEditingItem({...editingItem, name: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
                 />
               </div>
-              
+
               <div className="grid gap-2">
                 <label htmlFor="edit-description" className="text-sm font-medium">Description</label>
                 <Input
                   id="edit-description"
                   value={editingItem.description || ''}
-                  onChange={(e) => setEditingItem({...editingItem, description: e.target.value})}
+                  onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
                 />
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   id="is_active"
                   checked={editingItem.is_active}
-                  onChange={(e) => setEditingItem({...editingItem, is_active: e.target.checked})}
+                  onChange={(e) => setEditingItem({ ...editingItem, is_active: e.target.checked })}
                   className="h-4 w-4 rounded border-gray-300"
                 />
                 <label htmlFor="is_active" className="text-sm font-medium">Active</label>
               </div>
             </div>
           )}
-          
+
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>

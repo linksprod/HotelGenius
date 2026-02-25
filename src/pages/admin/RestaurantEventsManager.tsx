@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
@@ -15,6 +16,7 @@ import RestaurantEventsList from './components/restaurant-events/RestaurantEvent
 const RestaurantEventsManager = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const { fetchRestaurantById } = useRestaurants();
   const { events, loading: eventsLoading, refetch, deleteEvent } = useEvents();
   const [restaurant, setRestaurant] = useState<any>(null);
@@ -74,7 +76,7 @@ const RestaurantEventsManager = () => {
     return (
       <div className="p-8">
         <p>Restaurant not found</p>
-        <Button onClick={() => navigate('/admin/restaurants')}>Back to Restaurants</Button>
+        <Button onClick={() => navigate(resolvePath('/admin/restaurants'))}>Back to Restaurants</Button>
       </div>
     );
   }
@@ -83,7 +85,7 @@ const RestaurantEventsManager = () => {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => navigate('/admin/restaurants')}>
+          <Button variant="outline" size="sm" onClick={() => navigate(resolvePath('/admin/restaurants'))}>
             <ArrowLeft className="h-4 w-4 mr-2" /> Back
           </Button>
           <h1 className="text-2xl font-semibold ml-4">{restaurant.name} - Events Management</h1>
@@ -111,7 +113,7 @@ const RestaurantEventsManager = () => {
             </TabsList>
 
             <TabsContent value="events">
-              <RestaurantEventsList 
+              <RestaurantEventsList
                 events={filteredEvents}
                 onEditEvent={handleEditEvent}
                 onDeleteEvent={handleDeleteEvent}

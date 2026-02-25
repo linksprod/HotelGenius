@@ -26,14 +26,14 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
   const canTakeOver = isAdmin && isAIHandling && conversation && onTakeOver;
 
   return (
-    <div className="flex items-center justify-between p-4 border-b bg-card">
+    <div className="flex items-center justify-between p-4 border-b bg-white">
       <div className="flex items-center space-x-3">
-        {onGoBack && (
+        {onGoBack && !isAdmin && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onGoBack}
-            className="lg:hidden"
+            className="flex-shrink-0 h-9 w-9 bg-slate-50 hover:bg-slate-100 rounded-lg text-slate-500"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -45,11 +45,11 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
           </AvatarFallback>
         </Avatar>
 
-        <div>
-          <h3 className="font-semibold text-sm">
+        <div className="min-w-0">
+          <h3 className="font-bold text-[15px] text-slate-800 leading-tight">
             {isAIHandling ? 'AI Assistant' : 'Concierge'}
           </h3>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[12px] text-slate-500 font-medium">
             {isAIHandling ? '24/7 Available' : 'Live Support'}
           </p>
         </div>

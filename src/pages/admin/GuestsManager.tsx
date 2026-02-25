@@ -60,16 +60,18 @@ const filterCards: FilterCard[] = [
 type SortOption = 'newest' | 'oldest' | 'check-in-asc' | 'check-in-desc' | 'check-out-asc' | 'check-out-desc';
 
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const GuestsManager: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   const handleViewGuest = (guest: Guest) => {
-    navigate(`/admin/guests/${guest.id}`);
+    navigate(resolvePath(`/admin/guests/${guest.id}`));
   };
 
   const { data: guests = [], isLoading, refetch } = useQuery({

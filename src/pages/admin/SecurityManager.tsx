@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Shield } from 'lucide-react';
-import { useRequestCategories, useCreateRequestItem } from '@/hooks/useRequestCategories';
+import { useRequestCategories, useCreateRequestItem, useCreateRequestCategory } from '@/hooks/useRequestCategories';
 import { RequestItem } from '@/features/rooms/types';
 import SecurityItemsTab from './security/SecurityItemsTab';
 import SecurityRequestsTab from './security/SecurityRequestsTab';
@@ -29,35 +29,36 @@ const SecurityManager = () => {
   const [isEditItemDialogOpen, setIsEditItemDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingItem, setEditingItem] = useState<RequestItem | null>(null);
-  
+
   const { toast } = useToast();
-  
+
   const { categories } = useRequestCategories();
-  const createItem = useCreateRequestItem();
-  
-  // Find the Security category
-  const securityCategory = categories.find(cat => 
-    cat.name?.toLowerCase().includes('secur') || 
+  const createCategory = useCreateRequestCategory();
+
+  // Find the Security category dynamically
+  const getSecurityCategory = () => categories.find(cat =>
     cat.name?.toLowerCase().includes('security')
   );
-  
+
+  const securityCategory = getSecurityCategory();
+
   // Get the category ID
   const categoryIds = securityCategory ? [securityCategory.id] : [];
-  
+
   const createSecurityCategory = async () => {
     try {
-      const result = await createItem.mutateAsync({
+      const result = await createCategory.mutateAsync({
         name: 'Security',
         description: 'Security related requests',
         is_active: true,
-        category_id: '', // This will be converted to a category
+        icon: 'Shield',
       });
-      
+
       toast({
         title: "Success",
         description: "Security category created successfully"
       });
-      
+
       return result;
     } catch (error) {
       console.error('Error creating security category:', error);
@@ -69,12 +70,12 @@ const SecurityManager = () => {
       throw error;
     }
   };
-  
+
   const openEditDialog = (item: RequestItem) => {
     setEditingItem(item);
     setIsEditItemDialogOpen(true);
   };
-  
+
   return (
     <div className="p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -86,7 +87,7 @@ const SecurityManager = () => {
           <p className="text-sm text-muted-foreground">Manage security items and requests</p>
         </div>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-6">
           <TabsTrigger value="items">Items</TabsTrigger>
@@ -99,9 +100,9 @@ const SecurityManager = () => {
             )}
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="items">
-          <SecurityItemsTab 
+          <SecurityItemsTab
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             openAddItemDialog={() => setIsAddItemDialogOpen(true)}
@@ -109,19 +110,19 @@ const SecurityManager = () => {
             createSecurityCategory={createSecurityCategory}
           />
         </TabsContent>
-        
+
         <TabsContent value="requests">
           <SecurityRequestsTab categoryIds={categoryIds} />
         </TabsContent>
       </Tabs>
-      
+
       {/* Dialogs */}
       <AddItemDialog
         isOpen={isAddItemDialogOpen}
         onOpenChange={setIsAddItemDialogOpen}
         categoryId={securityCategory?.id || ''}
       />
-      
+
       <EditItemDialog
         isOpen={isEditItemDialogOpen}
         onOpenChange={setIsEditItemDialogOpen}

@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Wifi } from 'lucide-react';
 
 import { RequestItem } from '@/features/rooms/types';
-import { useRequestCategories, useCreateRequestItem, useUpdateRequestItem } from '@/hooks/useRequestCategories';
+import { useRequestCategories, useCreateRequestItem, useCreateRequestCategory, useUpdateRequestItem } from '@/hooks/useRequestCategories';
 import { useRequestsData } from '@/hooks/useRequestsData';
 import { updateRequestStatus } from '@/features/rooms/controllers/roomService';
 import InformationTechnologyItemsTab from './information-technology/components/InformationTechnologyItemsTab';
@@ -37,25 +37,46 @@ const InformationTechnologyManager = () => {
   });
   const [editingItem, setEditingItem] = useState<RequestItem | null>(null);
 
-  
+
   const { toast } = useToast();
   const { categories } = useRequestCategories();
   const { requests, handleRefresh } = useRequestsData();
   const createItem = useCreateRequestItem();
+  const createCategory = useCreateRequestCategory();
   const updateItem = useUpdateRequestItem();
 
   const itCategory = categories.find(cat => cat.name === 'Information Technology');
-  const itRequests = requests.filter(req => 
-    req.category_id === itCategory?.id 
-    || req.type?.toLowerCase().includes('information technology')
-    || (req.request_items && req.request_items.category_id === itCategory?.id)
-  );
+
+  const createITCategory = async () => {
+    try {
+      const result = await createCategory.mutateAsync({
+        name: 'Information Technology',
+        description: 'IT support and technology requests',
+        is_active: true,
+        icon: 'Wifi'
+      });
+      toast({ title: "Success", description: "IT Support category created" });
+      return result; // Explicitly return the result for immediate ID access
+    } catch (error) {
+      console.error("Error creating category:", error);
+      toast({ title: "Error", description: "Failed to create category", variant: "destructive" });
+      throw error;
+    }
+  };
+  const itRequests = requests.filter(req => {
+    const currentCategory = categories.find(cat => cat.name === 'Information Technology');
+    return req.category_id === currentCategory?.id
+      || req.type?.toLowerCase().includes('information technology')
+      || (req.request_items && req.request_items.category_id === currentCategory?.id);
+  });
 
   const handleAddItem = async () => {
-    if (!itCategory) {
+    const currentCategory = categories.find(cat => cat.name === 'Information Technology');
+
+    if (!currentCategory) {
       toast({
         title: "Error",
-        description: "Information Technology category not found",
+        description: "Information Technology category not found. Please try again in 1 second.",
         variant: "destructive"
       });
       return;
@@ -71,7 +92,7 @@ const InformationTechnologyManager = () => {
     try {
       await createItem.mutateAsync({
         ...newItem,
-        category_id: itCategory.id
+        category_id: currentCategory.id
       });
       toast({ title: "Success", description: "Item added successfully" });
       setNewItem({ name: '', description: '', category_id: '', is_active: true });
@@ -143,11 +164,12 @@ const InformationTechnologyManager = () => {
           <TabsTrigger value="requests">Requests</TabsTrigger>
         </TabsList>
         <TabsContent value="items">
-          <InformationTechnologyItemsTab 
+          <InformationTechnologyItemsTab
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             openAddItemDialog={() => setIsAddItemDialogOpen(true)}
             openEditDialog={openEditDialog}
+            createITCategory={createITCategory}
           />
         </TabsContent>
         <TabsContent value="requests">

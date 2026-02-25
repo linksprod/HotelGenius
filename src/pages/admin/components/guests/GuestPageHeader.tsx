@@ -1,11 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ArrowLeft, 
-  CalendarDays, 
-  Home, 
+import {
+  ArrowLeft,
+  CalendarDays,
+  Home,
   Users,
   DoorOpen,
   Clock,
@@ -60,7 +61,9 @@ const GuestPageHeader: React.FC<GuestPageHeaderProps> = ({
   companions,
   status,
 }) => {
+  const { guestId } = useParams<{ guestId: string }>();
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const config = status ? statusConfig[status] : null;
   const StatusIcon = config?.icon || CalendarDays;
 
@@ -94,7 +97,7 @@ const GuestPageHeader: React.FC<GuestPageHeaderProps> = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => navigate('/admin/guests')}
+          onClick={() => navigate(resolvePath('/admin/guests'))}
           className="text-muted-foreground hover:text-foreground -ml-2"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />

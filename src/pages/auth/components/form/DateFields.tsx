@@ -47,7 +47,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form }) => {
           </FormItem>
         )}
       />
-      
+
       <div className="grid grid-cols-2 gap-4">
         <FormField
           control={form.control}
@@ -84,7 +84,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form }) => {
                     selected={field.value}
                     onSelect={(date) => {
                       field.onChange(date);
-                      
+
                       // If checkOutDate is before the new checkInDate, update checkOutDate
                       const checkOutDate = form.getValues('checkOutDate');
                       if (date && checkOutDate && date > checkOutDate) {
@@ -96,7 +96,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form }) => {
                     }}
                     disabled={(date) => date < today}
                     initialFocus
-                    className="pointer-events-auto bg-white"
+                    className="pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
@@ -104,7 +104,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form }) => {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="checkOutDate"
@@ -142,13 +142,13 @@ const DateFields: React.FC<DateFieldsProps> = ({ form }) => {
                     disabled={(date) => {
                       // Get checkInDate value
                       const checkInDate = form.getValues('checkInDate');
-                      
+
                       // Disable dates before checkInDate or today (whichever is later)
                       const minDate = checkInDate || today;
                       return date < minDate;
                     }}
                     initialFocus
-                    className="pointer-events-auto bg-white"
+                    className="pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>

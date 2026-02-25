@@ -14,8 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import MenuItemForm from './restaurants/menu/MenuItemForm';
 import MenuItemsTable from './restaurants/menu/MenuItemsTable';
 import { MenuItemFormValues } from './restaurants/menu/MenuItemFormSchema';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const RestaurantMenuManager = () => {
+  const { resolvePath } = useHotelPath();
   const [searchParams, setSearchParams] = useSearchParams();
   const restaurantId = searchParams.get('restaurantId');
   const { menuItems, isLoading, updateMenuItem, createMenuItem, deleteMenuItem } = useRestaurantMenus(restaurantId || undefined);
@@ -30,7 +32,7 @@ const RestaurantMenuManager = () => {
       toast.error("Please select a restaurant first.");
       return;
     }
-    
+
     try {
       if (editingItem) {
         await updateMenuItem({
@@ -81,7 +83,7 @@ const RestaurantMenuManager = () => {
           <h2 className="text-2xl font-bold">Sélectionner un restaurant</h2>
           <p className="text-muted-foreground">Veuillez choisir un restaurant pour gérer son menu</p>
         </div>
-        
+
         {restaurants && restaurants.length > 0 ? (
           <div className="max-w-md mx-auto">
             <Select onValueChange={handleRestaurantChange}>
@@ -96,10 +98,10 @@ const RestaurantMenuManager = () => {
                 ))}
               </SelectContent>
             </Select>
-            
+
             <div className="mt-4 text-center">
               <Button asChild variant="outline" size="sm">
-                <Link to="/admin/restaurants">
+                <Link to={resolvePath("/admin/restaurants")}>
                   <Plus className="mr-2 h-4 w-4" />
                   Créer un restaurant
                 </Link>
@@ -110,7 +112,7 @@ const RestaurantMenuManager = () => {
           <div className="text-center py-4 space-y-4">
             <p className="text-muted-foreground">Aucun restaurant trouvé</p>
             <Button asChild>
-              <Link to="/admin/restaurants">
+              <Link to={resolvePath("/admin/restaurants")}>
                 <Plus className="mr-2 h-4 w-4" />
                 Créer un restaurant
               </Link>
@@ -142,7 +144,7 @@ const RestaurantMenuManager = () => {
           </Button>
           <h1 className="text-2xl font-bold">{restaurant.name} - Menu</h1>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => setEditingItem(null)}>
@@ -153,13 +155,13 @@ const RestaurantMenuManager = () => {
             <DialogHeader>
               <DialogTitle>{editingItem ? "Modifier le plat" : "Ajouter un plat"}</DialogTitle>
               <DialogDescription>
-                {editingItem 
-                  ? "Modifiez les informations du plat." 
+                {editingItem
+                  ? "Modifiez les informations du plat."
                   : "Remplissez le formulaire pour ajouter un nouveau plat."}
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
-              <MenuItemForm 
+              <MenuItemForm
                 onSubmit={handleSubmit}
                 editingItem={editingItem}
               />

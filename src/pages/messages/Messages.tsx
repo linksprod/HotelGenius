@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { UnifiedChatContainer } from '@/components/chat/UnifiedChatContainer';
 import { AdminChatDashboard } from '@/components/admin/chat/AdminChatDashboard';
@@ -11,22 +11,24 @@ import Layout from '@/components/Layout';
 
 const Messages = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState<{
     name: string;
     email?: string;
     roomNumber?: string;
   } | null>(null);
+  const [selectedChatType, setSelectedChatType] = useState<'concierge' | 'safety_ai' | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedChatType, setSelectedChatType] = useState<'concierge' | 'safety_ai' | null>(null);
   const { markAsSeen } = useMessageBadge();
 
-  // Auto-select chat type from navigation state
-  useEffect(() => {
-    if (location.state?.chatType) {
-      setSelectedChatType(location.state.chatType);
+  const handleBack = () => {
+    if (selectedChatType) {
+      setSelectedChatType(null);
+    } else {
+      navigate(-1);
     }
-  }, [location.state]);
+  };
 
   // Mark messages as seen when the page loads (for non-admin users)
   useEffect(() => {
@@ -41,7 +43,7 @@ const Messages = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        // Check if user is admin
+        // Check if user is admin (we still want to know this for other logic, but we won't show the dashboard here)
         const { data: adminCheck } = await supabase.rpc('is_admin', { user_id: user.id });
         setIsAdmin(adminCheck || false);
 
@@ -66,10 +68,15 @@ const Messages = () => {
               email: user.email || undefined
             });
           }
+        } else {
+          // Admin fallback info
+          setUserInfo({
+            name: 'Admin',
+            email: user.email || undefined
+          });
         }
       } catch (error) {
         console.error('Error checking user role:', error);
-        // Set default user info on error
         setUserInfo({
           name: 'Guest'
         });
@@ -92,12 +99,6 @@ const Messages = () => {
     );
   }
 
-  // Show admin dashboard for admin users
-  if (isAdmin) {
-    return <AdminChatDashboard />;
-  }
-
-  // Show chat selection or specific chat for regular users
   if (!userInfo) {
     return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
@@ -108,33 +109,26 @@ const Messages = () => {
     );
   }
 
-  // Show specific chat type if selected
+  // Show concierge chat or AI chat if selected
   if (selectedChatType) {
     return (
-      <div className="fixed inset-0 bg-background">
-        {/* Back Button */}
-        <div className="absolute top-4 left-4 z-10">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => setSelectedChatType(null)}
-            className="bg-background/80 backdrop-blur-sm"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+      <Layout>
+        <div className="flex flex-col h-full w-full">
+          <UnifiedChatContainer
+            userInfo={userInfo}
+            conversationType={selectedChatType}
+            className="h-full w-full"
+            onGoBack={handleBack}
+          />
         </div>
-        <UnifiedChatContainer 
-          userInfo={userInfo} 
-          conversationType={selectedChatType}
-        />
-      </div>
+      </Layout>
     );
   }
 
-  // Show chat list screen with Layout wrapper for navbar
+  // Show chat selection screen
   return (
     <Layout>
-      <ChatListScreen 
+      <ChatListScreen
         userInfo={userInfo}
         onSelectChat={setSelectedChatType}
       />

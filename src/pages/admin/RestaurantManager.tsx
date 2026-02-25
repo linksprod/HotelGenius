@@ -14,12 +14,16 @@ import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import EventForm from '@/pages/admin/components/events/EventForm';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 import { useEvents } from '@/hooks/useEvents';
 import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import InlineReservationsPanel from '@/components/admin/restaurants/InlineReservationsPanel';
 
 const RestaurantManager = () => {
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
   const queryClient = useQueryClient();
   const { restaurants, isLoading, deleteRestaurant } = useRestaurants();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -36,7 +40,7 @@ const RestaurantManager = () => {
   }, [activeTab, markSectionSeen]);
 
   // State for add event dialog
-  const [addEventRestaurantId, setAddEventRestaurantId] = useState<string|null>(null);
+  const [addEventRestaurantId, setAddEventRestaurantId] = useState<string | null>(null);
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
 
   const { createEvent } = useEvents();
@@ -82,7 +86,7 @@ const RestaurantManager = () => {
   };
 
   const navigateToMenus = (restaurantId) => {
-    navigate(`/admin/restaurant-menus?restaurantId=${restaurantId}`);
+    navigate(resolvePath(`/admin/restaurant-menus?restaurantId=${restaurantId}`));
   };
 
   // Handle add event
@@ -123,31 +127,31 @@ const RestaurantManager = () => {
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="menus">Menus</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="restaurants">
           <Card>
             {!selectedRestaurantForReservations && (
-            <CardHeader>
-              <CardTitle>Restaurants</CardTitle>
-              <CardDescription>
-                Manage restaurant listings and information
-              </CardDescription>
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
-                <Button onClick={() => setIsDialogOpen(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Restaurant
-                </Button>
-              </div>
-            </CardHeader>
+              <CardHeader>
+                <CardTitle>Restaurants</CardTitle>
+                <CardDescription>
+                  Manage restaurant listings and information
+                </CardDescription>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </Button>
+                  <Button onClick={() => setIsDialogOpen(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Restaurant
+                  </Button>
+                </div>
+              </CardHeader>
             )}
             <CardContent>
               {isLoading || isRefreshing ? (
@@ -161,8 +165,8 @@ const RestaurantManager = () => {
                   onBack={() => setSelectedRestaurantForReservations(null)}
                 />
               ) : (
-                <RestaurantTable 
-                  restaurants={restaurants || []} 
+                <RestaurantTable
+                  restaurants={restaurants || []}
                   onEdit={handleEditRestaurant}
                   onDelete={handleDeleteRestaurant}
                   onViewReservations={navigateToReservations}
@@ -173,7 +177,7 @@ const RestaurantManager = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="bookings">
           <Card>
             <CardHeader>
@@ -187,7 +191,7 @@ const RestaurantManager = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="menus">
           <Card>
             <CardHeader>

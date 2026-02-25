@@ -8,6 +8,7 @@ import { useRoom } from '@/hooks/useRoom';
 import ServiceCard from '@/features/services/components/ServiceCard';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import CommandSearch from '@/pages/my-room/components/CommandSearch';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface UserInfo {
   name: string;
@@ -67,8 +68,10 @@ const Services = () => {
     }
   }, [userData]);
 
+  const { resolvePath } = useHotelPath();
+
   const handleStartChat = () => {
-    navigate('/messages', { state: { chatType: 'concierge' } });
+    navigate(resolvePath('/messages'), { state: { chatType: 'concierge' } });
   };
 
   const handleWhatsAppService = () => {

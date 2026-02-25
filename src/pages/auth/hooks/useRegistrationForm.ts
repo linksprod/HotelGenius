@@ -12,6 +12,7 @@ import { registerUser } from '@/features/auth/services/authService';
 import { supabase } from '@/integrations/supabase/client';
 import { syncGuestData } from '@/features/users/services/guestService';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 // Calculate the date 18 years ago for minimum age validation
 const eighteenYearsAgo = new Date();
@@ -62,6 +63,7 @@ export const useRegistrationForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hotelId } = useHotel();
+  const { resolvePath } = useHotelPath();
   const [companions, setCompanions] = useState<CompanionType[]>([]);
 
   // Formulaire d'inscription
@@ -153,7 +155,7 @@ export const useRegistrationForm = () => {
       });
 
       // Rediriger vers la page d'accueil
-      navigate('/');
+      navigate(resolvePath('/'));
     } catch (error: any) {
       toast({
         variant: "destructive",

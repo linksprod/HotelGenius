@@ -22,6 +22,7 @@ type MaintenanceItemsTabProps = {
   openEditDialog: (item: RequestItem) => void;
   categoryIds: string[];
   getCategoryName: (categoryId: string) => string;
+  createMaintenanceCategories: () => Promise<any>;
 };
 
 const MaintenanceItemsTab = ({
@@ -30,24 +31,37 @@ const MaintenanceItemsTab = ({
   openAddItemDialog,
   openEditDialog,
   categoryIds,
-  getCategoryName
+  getCategoryName,
+  createMaintenanceCategories
 }: MaintenanceItemsTabProps) => {
   const { allItems, isLoading } = useRequestCategories();
-  
+
   // Filter items by the Maintenance or Technical categories
   const maintenanceItems = allItems.filter(
     item => categoryIds.includes(item.category_id) &&
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
+  const handleAddItem = async () => {
+    if (categoryIds.length === 0) {
+      try {
+        await createMaintenanceCategories();
+        openAddItemDialog();
+      } catch (error) {
+        console.error("Failed to initialize categories:", error);
+      }
+    } else {
+      openAddItemDialog();
+    }
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle>Maintenance & Technical Service Items</CardTitle>
-          <Button 
-            onClick={openAddItemDialog}
-            disabled={categoryIds.length === 0}
+          <Button
+            onClick={handleAddItem}
           >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Item
@@ -66,7 +80,7 @@ const MaintenanceItemsTab = ({
             />
           </div>
         </div>
-        
+
         {isLoading ? (
           <div className="text-center py-4">Loading...</div>
         ) : maintenanceItems.length > 0 ? (
@@ -106,9 +120,16 @@ const MaintenanceItemsTab = ({
           </Table>
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            {categoryIds.length === 0
-              ? "Maintenance or Technical categories not found. Please create them first." 
-              : "No maintenance or technical items found."}
+            {categoryIds.length === 0 ? (
+              <div className="space-y-4">
+                <p>Maintenance or Technical categories not found. Please initialize them first.</p>
+                <Button onClick={createMaintenanceCategories}>
+                  Initialize Maintenance
+                </Button>
+              </div>
+            ) : (
+              "No maintenance or technical items found."
+            )}
           </div>
         )}
       </CardContent>

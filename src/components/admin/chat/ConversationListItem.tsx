@@ -26,27 +26,29 @@ export const ConversationListItem: React.FC<ConversationListItemProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 p-3 cursor-pointer hover:bg-muted/50 transition-colors border-l-[3px]",
+        "flex items-center gap-3 p-4 cursor-pointer hover:bg-slate-50 transition-colors border-b border-slate-100",
         isSelected
-          ? "bg-muted border-l-primary"
-          : "border-l-transparent"
+          ? "bg-slate-50"
+          : ""
       )}
       onClick={onClick}
     >
-      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-semibold">
+      <div className="flex-shrink-0 w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold ring-1 ring-slate-200">
         {initials}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
-          <span className="font-semibold text-sm truncate">{conversation.guest_name}</span>
-          <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
+        <div className="flex items-center justify-between mb-0.5">
+          <span className="font-bold text-[13px] text-slate-700 truncate">{conversation.guest_name}</span>
+          <div className="flex items-center gap-3 flex-shrink-0 ml-2">
             {unreadCount > 0 && (
-              <span className="min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center px-1">
+              <span className="min-w-[17px] h-[17px] rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center px-1">
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
             )}
-            <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(conversation.updated_at), { addSuffix: false })}
+            <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap">
+              {formatDistanceToNow(new Date(conversation.updated_at), { addSuffix: false })
+                .replace('about ', '')
+                .replace('less than a minute', 'now')}
             </span>
           </div>
         </div>

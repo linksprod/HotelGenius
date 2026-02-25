@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface BookingNotFoundProps {
   bookingId?: string;
@@ -12,7 +13,8 @@ interface BookingNotFoundProps {
 
 const BookingNotFound: React.FC<BookingNotFoundProps> = ({ bookingId, errorMessage }) => {
   const navigate = useNavigate();
-  
+  const { resolvePath } = useHotelPath();
+
   return (
     <Card>
       <CardContent className="p-6 text-center">
@@ -22,7 +24,7 @@ const BookingNotFound: React.FC<BookingNotFoundProps> = ({ bookingId, errorMessa
           {errorMessage || "The booking you are looking for doesn't exist or has been deleted."}
           {bookingId && <span className="block text-sm mt-1">ID: {bookingId}</span>}
         </p>
-        <Button onClick={() => navigate('/profile')}>
+        <Button onClick={() => navigate(resolvePath('/profile'))}>
           Back to Profile
         </Button>
       </CardContent>

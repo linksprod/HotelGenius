@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -24,23 +25,24 @@ const RestaurantReservationsManager = () => {
     markSectionSeen('restaurants');
   }, [markSectionSeen]);
   const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const { fetchRestaurantById } = useRestaurants();
   const [restaurant, setRestaurant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const { 
-    reservations, 
-    isLoading: isLoadingReservations, 
+
+  const {
+    reservations,
+    isLoading: isLoadingReservations,
     updateReservationStatus,
-    refetch 
+    refetch
   } = useTableReservations(id);
-  
+
   const [selectedReservation, setSelectedReservation] = useState<TableReservation | null>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<'pending' | 'confirmed' | 'cancelled'>('pending');
-  
+
   useEffect(() => {
     if (id && id !== ':id') {
       fetchRestaurantById(id)
@@ -59,7 +61,7 @@ const RestaurantReservationsManager = () => {
       setIsLoading(false);
     }
   }, [id, fetchRestaurantById]);
-  
+
   const handleRefresh = async () => {
     if (isRefreshing) return;
     setIsRefreshing(true);
@@ -73,12 +75,12 @@ const RestaurantReservationsManager = () => {
       setIsRefreshing(false);
     }
   };
-  
+
   const handleUpdateStatus = () => {
     if (selectedReservation && newStatus) {
-      updateReservationStatus({ 
-        id: selectedReservation.id, 
-        status: newStatus 
+      updateReservationStatus({
+        id: selectedReservation.id,
+        status: newStatus
       });
       setIsStatusDialogOpen(false);
     }
@@ -110,7 +112,7 @@ const RestaurantReservationsManager = () => {
   };
 
   if (error) {
-    return <ErrorState errorMessage={error} onBackClick={() => navigate('/admin/restaurants')} />;
+    return <ErrorState errorMessage={error} onBackClick={() => navigate(resolvePath('/admin/restaurants'))} />;
   }
 
   if (isLoading || !restaurant) {
@@ -129,15 +131,15 @@ const RestaurantReservationsManager = () => {
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate('/admin/restaurants')}>
+            <Button variant="outline" size="sm" onClick={() => navigate(resolvePath('/admin/restaurants'))}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
             <h1 className="text-2xl font-semibold ml-4">{restaurant.name} - Reservations</h1>
           </div>
-          
-          <Button 
-            variant="outline" 
-            size="sm" 
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleRefresh}
             disabled={isRefreshing}
             className="gap-2"
@@ -146,7 +148,7 @@ const RestaurantReservationsManager = () => {
             Refresh
           </Button>
         </div>
-        
+
         {isLoadingReservations || isRefreshing ? (
           <div className="flex justify-center py-8">
             <RefreshCw className="h-6 w-6 animate-spin text-primary" />
@@ -232,8 +234,8 @@ const RestaurantReservationsManager = () => {
             </Button>
           </div>
         )}
-        
-        <StatusDialog 
+
+        <StatusDialog
           isOpen={isStatusDialogOpen}
           onOpenChange={setIsStatusDialogOpen}
           reservation={selectedReservation}
