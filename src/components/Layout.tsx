@@ -84,7 +84,7 @@ const Layout = ({
       <main className={cn(
         "container mx-auto px-[9px] pt-16 pb-24",
         isSpaManagerPage && "h-screen flex flex-col",
-        isMessagesPage && "max-w-none px-0 pt-16 pb-16 h-screen flex flex-col"
+        isMessagesPage && "fixed inset-0 pt-16 pb-16 flex flex-col max-w-none px-0 z-0 bg-background"
       )}>
         {isSpaManagerPage ? (
           <ScrollArea className="flex-1 overflow-y-auto h-full">

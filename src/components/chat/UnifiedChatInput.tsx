@@ -49,7 +49,7 @@ const ConciergeMessageInput = ({
   };
 
   return (
-    <div className="border-t bg-muted/20 p-4 pb-20 sm:pb-4 flex-shrink-0 relative">
+    <div className="border-t bg-muted/20 p-4 pb-20 sm:pb-4 flex-shrink-0 relative z-20">
       <UserQuickTemplates
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}
