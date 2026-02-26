@@ -43,7 +43,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
     if (isCurrentUser(senderType)) {
       return 'bg-[#82A691] text-white shadow-sm';
     }
-    return 'bg-[#F1F1F1] text-foreground shadow-sm';
+    return 'bg-muted/50 text-foreground shadow-sm';
   };
 
   const getSenderIcon = (senderType: string) => {
@@ -66,7 +66,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
+    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-background">
       {messages.length === 0 ? (
         <div className="text-center text-muted-foreground py-8">
           <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -79,7 +79,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
               <Avatar className="h-7 w-7 flex-shrink-0 mb-6">
                 <AvatarFallback className={`text-[10px] ${message.sender_type === 'ai' ? 'bg-primary/5 text-primary' :
                   message.sender_type === 'staff' ? 'bg-accent/5 text-accent-foreground' :
-                    'bg-slate-100 text-slate-400'
+                    'bg-muted text-muted-foreground'
                   }`}>
                   {getSenderIcon(message.sender_type)}
                 </AvatarFallback>
@@ -97,10 +97,10 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                 </div>
 
                 <div className={`flex items-center gap-2 mt-1.5 px-1 ${isCurrentUser(message.sender_type) ? 'justify-end' : 'justify-start'}`}>
-                  <span className="text-[10px] text-slate-400 font-bold tracking-tight">
+                  <span className="text-[10px] text-muted-foreground font-bold tracking-tight">
                     {getSenderName(message)}
                   </span>
-                  <span className="text-[10px] text-slate-400/80 font-medium">
+                  <span className="text-[10px] text-muted-foreground/60 font-medium">
                     {formatTime(message.created_at)}
                   </span>
                 </div>

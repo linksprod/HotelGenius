@@ -31,17 +31,8 @@ const AuthGuard = ({
     '/about',
     '/contact',
     '/destination',
-    '/rooms',
-    '/dining',
-    '/spa',
-    '/activities',
-    '/events',
-    '/services',
     '/map',
-    '/shops',
     '/feedback',
-    '/messages',
-    '/notifications'
   ];
 
   useEffect(() => {

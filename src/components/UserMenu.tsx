@@ -12,12 +12,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useUserRole } from '@/hooks/useUserRole';
 
 
 const UserMenu = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { userData, isAuthenticated } = useAuth();
+  const { role, isAdmin } = useUserRole();
   const { t, i18n } = useTranslation();
   const isMobile = useIsMobile();
   const { resolvePath } = useHotelPath();
@@ -154,7 +156,7 @@ const UserMenu = () => {
       <DropdownMenuContent align="end" className="w-56 bg-card border-border">
         <DropdownMenuLabel className="flex flex-col gap-1">
           <span>{getFullName()}</span>
-          <GuestStatusBadge />
+          <GuestStatusBadge role={role || 'user'} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link to={resolvePath("/my-room")}>
@@ -169,6 +171,17 @@ const UserMenu = () => {
             <span>{t('nav.profile')}</span>
           </DropdownMenuItem>
         </Link>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <Link to={resolvePath("/admin")}>
+              <DropdownMenuItem className="text-primary font-medium">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>{t('nav.adminPanel', 'Admin Panel')}</span>
+              </DropdownMenuItem>
+            </Link>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => changeLanguage('en')}

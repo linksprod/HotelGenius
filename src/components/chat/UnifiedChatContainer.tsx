@@ -52,7 +52,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   }
 
   return (
-    <div className={`flex flex-col h-full bg-white ${className}`}>
+    <div className={`flex flex-col h-full bg-background ${className}`}>
       <UnifiedChatHeader
         conversation={conversation}
         currentHandler={currentHandler as 'ai' | 'human'}

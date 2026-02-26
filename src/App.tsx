@@ -11,6 +11,7 @@ import { Toaster as ShadcnToaster } from '@/components/ui/toaster';
 import PublicRoutes from './routes/PublicRoutes';
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes';
 import AdminRoutes from './routes/AdminRoutes';
+import TenantGuard from './components/TenantGuard';
 import './i18n';
 
 import { HotelProvider } from '@/features/hotels/context/HotelContext';
@@ -30,15 +31,17 @@ function App() {
               {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
               <Route path="/:slug/*" element={
                 <HotelProvider>
-                  <Routes>
-                    <Route path="profile/*" element={<AuthenticatedRoutes />} />
-                    <Route path="dining/reservations/*" element={<AuthenticatedRoutes />} />
-                    <Route path="spa/booking/*" element={<AuthenticatedRoutes />} />
-                    <Route path="my-room/*" element={<AuthenticatedRoutes />} />
-                    <Route path="notifications/*" element={<AuthenticatedRoutes />} />
-                    <Route path="admin/*" element={<AdminRoutes />} />
-                    <Route path="/*" element={<PublicRoutes />} />
-                  </Routes>
+                  <TenantGuard>
+                    <Routes>
+                      <Route path="profile/*" element={<AuthenticatedRoutes />} />
+                      <Route path="dining/reservations/*" element={<AuthenticatedRoutes />} />
+                      <Route path="spa/booking/*" element={<AuthenticatedRoutes />} />
+                      <Route path="my-room/*" element={<AuthenticatedRoutes />} />
+                      <Route path="notifications/*" element={<AuthenticatedRoutes />} />
+                      <Route path="admin/*" element={<AdminRoutes />} />
+                      <Route path="/*" element={<PublicRoutes />} />
+                    </Routes>
+                  </TenantGuard>
                 </HotelProvider>
               } />
 

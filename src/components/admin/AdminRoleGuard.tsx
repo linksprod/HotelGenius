@@ -19,7 +19,7 @@ const staffAllowedPaths = [
 ];
 
 const AdminRoleGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { role, hotelId: assignedHotelId, loading, isSuperAdmin } = useUserRole();
+  const { role, hotelId: assignedHotelId, hotelSlug, loading, isSuperAdmin } = useUserRole();
   const { hotelId: contextHotelId } = useCurrentHotelId();
   const location = useLocation();
   const { resolvePath } = useHotelPath();
@@ -29,7 +29,9 @@ const AdminRoleGuard: React.FC<{ children: React.ReactNode }> = ({ children }) =
   // If the user attempts to access a hotel dashboard that isn't theirs (and isn't a super admin)
   if (!isSuperAdmin && assignedHotelId && contextHotelId && assignedHotelId !== contextHotelId) {
     console.warn('Unauthorized hotel access attempt:', { assignedHotelId, contextHotelId });
-    return <Navigate to={`/${assignedHotelId}/admin`} replace />;
+    // Prefer redirecting to the slug if available
+    const redirectBase = hotelSlug || assignedHotelId;
+    return <Navigate to={`/${redirectBase}/admin`} replace />;
   }
 
   const path = location.pathname;
