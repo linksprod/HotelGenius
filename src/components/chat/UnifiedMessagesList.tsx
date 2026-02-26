@@ -66,7 +66,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-background">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 bg-background">
       {messages.length === 0 ? (
         <div className="text-center text-muted-foreground py-8">
           <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />

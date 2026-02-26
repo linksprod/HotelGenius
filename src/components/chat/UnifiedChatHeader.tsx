@@ -26,7 +26,7 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
   const canTakeOver = isAdmin && isAIHandling && conversation && onTakeOver;
 
   return (
-    <div className="flex items-center justify-between p-4 border-b bg-background/95 backdrop-blur-md">
+    <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-background/95 backdrop-blur-md sticky top-0 z-10">
       <div className="flex items-center space-x-3">
         {onGoBack && !isAdmin && (
           <Button

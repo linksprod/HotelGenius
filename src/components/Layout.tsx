@@ -52,7 +52,7 @@ const Layout = ({
             {/* Center section - Logo - absolutely centered */}
             <div className={cn(
               "w-full flex justify-center items-center pointer-events-none",
-              isMobile && "px-16"
+              isMobile && "px-24"
             )}>
               <Link to={homeLink} className="hover:opacity-80 transition-opacity pointer-events-auto">
                 {hotel?.logo_url ? (
@@ -84,14 +84,18 @@ const Layout = ({
       <main className={cn(
         "container mx-auto px-[9px] pt-16 pb-24",
         isSpaManagerPage && "h-screen flex flex-col",
-        isMessagesPage && "max-w-none px-0 pt-16 pb-20 sm:pb-24 h-[calc(100vh)]"
+        isMessagesPage && "max-w-none px-0 pt-16 pb-16 h-screen flex flex-col"
       )}>
-        {isSpaManagerPage || isMessagesPage ? (
+        {isSpaManagerPage ? (
           <ScrollArea className="flex-1 overflow-y-auto h-full">
-            <div className={cn("py-4 h-full", isMessagesPage && "py-0")}>
+            <div className="py-4 h-full">
               {children}
             </div>
           </ScrollArea>
+        ) : isMessagesPage ? (
+          <div className="flex-1 h-full overflow-hidden">
+            {children}
+          </div>
         ) : (
           <div>
             {children}

@@ -28,7 +28,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [aiTranscript, setAiTranscript] = useState('');
   const [isSpeaking, setIsSpeaking] = useState(false);
-  
+
   const handleTemplateSelect = (message: string) => {
     setInputMessage(message);
     setShowTemplates(false);
@@ -51,13 +51,13 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
   };
 
   return (
-    <div className="border-t bg-card p-3 flex-shrink-0 relative">
-      <UserQuickTemplates 
+    <div className="border-t bg-card p-3 pb-20 sm:pb-4 flex-shrink-0 relative">
+      Check the local system time periodically if your task depends on it.      <UserQuickTemplates
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}
         onSelectTemplate={handleTemplateSelect}
       />
-      
+
       {isVoiceMode ? (
         <VoiceInterface
           userInfo={userInfo}
@@ -72,17 +72,17 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
               <p className="text-sm">{aiTranscript}</p>
             </div>
           )}
-          
+
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="rounded-full h-10 w-10 flex-shrink-0"
               type="button"
             >
               <Paperclip className="h-5 w-5" />
             </Button>
-            
+
             <Button
               variant="ghost"
               size="icon"
@@ -102,26 +102,26 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
             >
               {isSpeaking ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
             </Button>
-            
-            <Textarea 
+
+            <Textarea
               ref={inputRef}
-              value={inputMessage} 
-              onChange={(e) => setInputMessage(e.target.value)} 
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   onSendMessage();
                 }
               }}
-              placeholder="Type or speak your message..." 
-              className="resize-none min-h-0 h-10 py-2 px-4 rounded-full border-0 focus-visible:ring-1 bg-muted/50" 
+              placeholder="Type or speak your message..."
+              className="resize-none min-h-0 h-10 py-2 px-4 rounded-full border-0 focus-visible:ring-1 bg-muted/50"
             />
-            
-            <Button 
+
+            <Button
               type="button"
-              size="icon" 
-              onClick={onSendMessage} 
-              className="rounded-full h-10 w-10 flex-shrink-0" 
+              size="icon"
+              onClick={onSendMessage}
+              className="rounded-full h-10 w-10 flex-shrink-0"
               disabled={!inputMessage.trim()}
             >
               <Send className="h-5 w-5" />
