@@ -52,20 +52,20 @@ const Layout = ({
             {/* Center section - Logo - absolutely centered */}
             <div className={cn(
               "w-full flex justify-center items-center pointer-events-none",
-              isMobile && "px-24"
+              isMobile && "px-32"
             )}>
               <Link to={homeLink} className="hover:opacity-80 transition-opacity pointer-events-auto">
                 {hotel?.logo_url ? (
                   <img
                     src={hotel.logo_url}
                     alt={hotel.name}
-                    className={cn("object-contain", isMobile ? "h-8" : "h-10")}
+                    className={cn("object-contain max-w-[140px] sm:max-w-[200px]", isMobile ? "h-6" : "h-10")}
                   />
                 ) : (
                   <img
                     src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
                     alt="Hotel Genius"
-                    className={cn("filter brightness-110 dark:brightness-0 dark:invert", isMobile ? "h-5" : "h-7")}
+                    className={cn("filter brightness-110 dark:brightness-0 dark:invert object-contain max-w-[140px] sm:max-w-[200px]", isMobile ? "h-5" : "h-7")}
                   />
                 )}
               </Link>
