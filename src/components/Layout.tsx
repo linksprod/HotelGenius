@@ -43,36 +43,33 @@ const Layout = ({
     <div className="min-h-screen bg-background" style={dynamicStyles}>
       <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-lg">
         <div className="container mx-auto px-4">
-          <div className="relative flex items-center h-16">
+          <div className="flex items-center justify-between h-16">
             {/* Left section - Menu */}
-            <div className="absolute left-0 flex items-center">
+            <div className="flex items-center flex-1">
               <MainMenu />
             </div>
 
-            {/* Center section - Logo - absolutely centered */}
-            <div className={cn(
-              "w-full flex justify-center items-center pointer-events-none",
-              isMobile && "px-32"
-            )}>
-              <Link to={homeLink} className="hover:opacity-80 transition-opacity pointer-events-auto">
+            {/* Center section - Logo */}
+            <div className="flex justify-center items-center flex-1">
+              <Link to={homeLink} className="hover:opacity-80 transition-opacity">
                 {hotel?.logo_url ? (
                   <img
                     src={hotel.logo_url}
                     alt={hotel.name}
-                    className={cn("object-contain max-w-[140px] sm:max-w-[200px]", isMobile ? "h-6" : "h-10")}
+                    className={cn("object-contain", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
                   />
                 ) : (
                   <img
                     src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
                     alt="Hotel Genius"
-                    className={cn("filter brightness-110 dark:brightness-0 dark:invert object-contain max-w-[140px] sm:max-w-[200px]", isMobile ? "h-5" : "h-7")}
+                    className={cn("filter brightness-110 dark:brightness-0 dark:invert object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
                   />
                 )}
               </Link>
             </div>
 
             {/* Right section - Notifications and User Menu */}
-            <div className="absolute right-0 flex items-center gap-1">
+            <div className="flex items-center justify-end gap-1 flex-1">
               <ThemeToggle />
               <NotificationMenu />
               <UserMenu />
