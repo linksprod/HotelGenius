@@ -51,7 +51,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
   };
 
   return (
-    <div className="border-t bg-card p-3 pb-20 sm:pb-4 flex-shrink-0 relative">
+    <div className="border-t bg-card p-3 sm:p-4 flex-shrink-0 relative">
       <UserQuickTemplates
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}
@@ -73,11 +73,11 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
             </div>
           )}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-end gap-2">
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full h-10 w-10 flex-shrink-0"
+              className="rounded-full h-10 w-10 flex-shrink-0 mb-0.5"
               type="button"
             >
               <Paperclip className="h-5 w-5" />
@@ -86,7 +86,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full h-10 w-10 flex-shrink-0"
+              className="rounded-full h-10 w-10 flex-shrink-0 mb-0.5"
               onClick={() => setShowTemplates(!showTemplates)}
               type="button"
             >
@@ -96,7 +96,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className={`rounded-full h-10 w-10 flex-shrink-0 ${isSpeaking ? 'bg-primary/10 text-primary' : ''}`}
+              className={`rounded-full h-10 w-10 flex-shrink-0 mb-0.5 ${isSpeaking ? 'bg-primary/10 text-primary' : ''}`}
               onClick={() => setIsVoiceMode(!isVoiceMode)}
               type="button"
             >
@@ -114,17 +114,17 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
                 }
               }}
               placeholder="Type or speak your message..."
-              className="resize-none min-h-0 h-10 py-2 px-4 rounded-full border-0 focus-visible:ring-1 bg-muted/50"
+              className="resize-none min-h-[40px] max-h-32 py-2.5 px-4 rounded-2xl border border-border/50 focus-visible:ring-1 bg-muted/50 text-[15px] leading-tight flex-1"
             />
 
             <Button
               type="button"
               size="icon"
               onClick={onSendMessage}
-              className="rounded-full h-10 w-10 flex-shrink-0"
+              className="rounded-full h-10 w-10 flex-shrink-0 mb-0.5 bg-[#82A691] hover:bg-[#6D8E7B] text-white shadow-md transition-all active:scale-95"
               disabled={!inputMessage.trim()}
             >
-              <Send className="h-5 w-5" />
+              <Send className="h-5 w-5 rotate-45 -translate-y-0.5 -translate-x-0.5" />
             </Button>
           </div>
         </>
