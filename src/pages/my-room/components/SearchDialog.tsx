@@ -72,12 +72,14 @@ const SearchDialog: React.FC<Props> = ({
           )}
         </div>
         <CommandList className="max-h-[65vh] overflow-y-auto">
-          <CommandEmpty>
-            <div className="py-6 text-center flex flex-col items-center">
-              <Search className="h-10 w-10 text-muted-foreground/50 mb-2" />
-              <p className="text-muted-foreground">No results found for "{searchTerm}"</p>
-            </div>
-          </CommandEmpty>
+          {!isLoading && (
+            <CommandEmpty>
+              <div className="py-6 text-center flex flex-col items-center">
+                <Search className="h-10 w-10 text-muted-foreground/50 mb-2" />
+                <p className="text-muted-foreground">No results found for "{searchTerm}"</p>
+              </div>
+            </CommandEmpty>
+          )}
           {isLoading ? (
             <div className="p-6 text-center">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
