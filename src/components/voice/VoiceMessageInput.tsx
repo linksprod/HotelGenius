@@ -52,7 +52,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
 
   return (
     <div className="border-t bg-card p-3 pb-20 sm:pb-4 flex-shrink-0 relative">
-      Check the local system time periodically if your task depends on it.      <UserQuickTemplates
+      <UserQuickTemplates
         isOpen={showTemplates}
         onClose={() => setShowTemplates(false)}
         onSelectTemplate={handleTemplateSelect}
