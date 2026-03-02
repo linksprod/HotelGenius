@@ -6,11 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { supabase } from '@/integrations/supabase/client';
+import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { useToast } from '@/hooks/use-toast';
 import { useQueryClient } from '@tanstack/react-query';
 
 const HotelProfile: React.FC = () => {
-    const { hotel } = useHotel();
+    const { hotel, refreshHotel } = useHotel();
     const { toast } = useToast();
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,18 +91,17 @@ const HotelProfile: React.FC = () => {
         if (!hotel?.id) return;
         setIsSaving(true);
         try {
-            const { error } = await supabase
+            // Use supabaseAdmin to bypass RLS restrictions on the hotels table
+            const { error } = await supabaseAdmin
                 .from('hotels')
                 .update({ logo_url: logoUrl })
                 .eq('id', hotel.id);
 
             if (error) throw error;
 
-            toast({ title: 'Success', description: 'Hotel logo updated successfully!' });
-            // Invalidate hotel context queries so sidebar updates
-            queryClient.invalidateQueries({ queryKey: ['hotel'] });
-            // Force a page reload to refresh the HotelContext
-            setTimeout(() => window.location.reload(), 500);
+            toast({ title: 'Success!', description: 'Hotel logo saved successfully.' });
+            // Refresh hotel context so sidebar and navbar update immediately
+            refreshHotel();
         } catch (error: any) {
             console.error('Save error:', error);
             toast({ title: 'Error', description: error.message || 'Failed to save logo', variant: 'destructive' });

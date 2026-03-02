@@ -16,6 +16,7 @@ interface HotelContextType {
     hotelId: string | null;
     isLoading: boolean;
     error: string | null;
+    refreshHotel: () => void;
 }
 
 const HotelContext = createContext<HotelContextType | undefined>(undefined);
@@ -25,6 +26,12 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const lastSlugRef = React.useRef<string | null>(null);
+    const [refreshCount, setRefreshCount] = useState(0);
+
+    const refreshHotel = () => {
+        lastSlugRef.current = null; // force re-fetch on next effect
+        setRefreshCount(c => c + 1);
+    };
 
     // Try to get slug from URL if we are in a /h/:slug route
     const { slug } = useParams<{ slug?: string }>();
@@ -83,13 +90,13 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         };
 
         resolveHotel();
-        // `hotel` intentionally excluded from deps — slug and pathname are sufficient triggers
-    }, [slug, location.pathname]);
+        // `hotel` intentionally excluded from deps — slug, pathname, and refreshCount are sufficient triggers
+    }, [slug, location.pathname, refreshCount]);
 
 
 
     return (
-        <HotelContext.Provider value={{ hotel, hotelId: hotel?.id || null, isLoading, error }}>
+        <HotelContext.Provider value={{ hotel, hotelId: hotel?.id || null, isLoading, error, refreshHotel }}>
             {children}
         </HotelContext.Provider>
     );
