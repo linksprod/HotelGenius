@@ -13,6 +13,7 @@ export function useRequestCategories() {
   // Fetch all categories
   const categoriesQuery = useQuery({
     queryKey: ['requestCategories', hotelId],
+    enabled: !!hotelId, // Don't run until we have a hotel context
     queryFn: async () => {
       let query = supabase
         .from('request_categories')
@@ -54,7 +55,7 @@ export function useRequestCategories() {
 
       return data as RequestItem[];
     },
-    enabled: !categoriesQuery.isLoading // Only run after categories are loaded
+    enabled: !!hotelId && !categoriesQuery.isLoading // Only run after categories are loaded AND hotelId exists
   });
 
   return {
