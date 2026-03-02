@@ -65,6 +65,7 @@ import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell'
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 interface NavItem {
   title: string;
@@ -181,6 +182,7 @@ export const AdminSidebar: React.FC = () => {
   const { counts } = useAdminNotifications();
   const { role } = useUserRole();
   const { resolvePath } = useHotelPath();
+  const { hotel } = useHotel();
 
   // Role-based allowed paths
   const superAdminAllowedUrls = [
@@ -297,12 +299,23 @@ export const AdminSidebar: React.FC = () => {
       {/* Header */}
       <SidebarHeader className="p-4 pb-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-sm">
-            <Hotel className="h-5 w-5" />
+          {/* Hotel logo or fallback icon */}
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary/80 shadow-sm">
+            {hotel?.logo_url ? (
+              <img
+                src={hotel.logo_url}
+                alt={hotel.name}
+                className="h-full w-full object-contain"
+              />
+            ) : (
+              <Hotel className="h-5 w-5 text-primary-foreground" />
+            )}
           </div>
           {!isCollapsed && (
-            <div className="flex flex-1 flex-col">
-              <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">Admin Panel</span>
+            <div className="flex flex-1 flex-col overflow-hidden">
+              <span className="truncate text-sm font-semibold tracking-tight text-sidebar-foreground">
+                {hotel?.name || 'Admin Panel'}
+              </span>
               <span className="text-[11px] text-muted-foreground">Hotel Management</span>
             </div>
           )}
