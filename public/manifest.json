@@ -4,20 +4,20 @@
     "description": "Premium Guest Experience & Hotel Management Platform",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0a0a0a",
+    "background_color": "#1e2130",
     "theme_color": "#16a34a",
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png",
+            "src": "/lovable-uploads/install-image.jpeg",
             "sizes": "192x192",
-            "type": "image/png",
+            "type": "image/jpeg",
             "purpose": "any maskable"
         },
         {
-            "src": "/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png",
+            "src": "/lovable-uploads/install-image.jpeg",
             "sizes": "512x512",
-            "type": "image/png",
+            "type": "image/jpeg",
             "purpose": "any maskable"
         }
     ],
