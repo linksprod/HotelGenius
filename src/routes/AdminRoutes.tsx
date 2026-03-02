@@ -26,6 +26,7 @@ import GuestsManager from '@/pages/admin/GuestsManager';
 import GuestDetailPage from '@/pages/admin/GuestDetailPage';
 import StaffManager from '@/pages/admin/StaffManager';
 import HotelsManager from '@/pages/admin/HotelsManager';
+import HotelProfile from '@/pages/admin/HotelProfile';
 
 
 const AdminRoutes = () => {
@@ -56,6 +57,7 @@ const AdminRoutes = () => {
             <Route path="destination-admin" element={<DestinationAdmin />} />
             <Route path="demo" element={<DemoManager />} />
             <Route path="staff" element={<StaffManager />} />
+            <Route path="hotel-profile" element={<HotelProfile />} />
 
           </Routes>
         </AdminLayout>

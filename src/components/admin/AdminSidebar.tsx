@@ -60,6 +60,7 @@ import {
   Globe,
   UserCog,
   Building2,
+  ImageIcon,
 } from 'lucide-react';
 import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -135,6 +136,7 @@ const navigationSections: NavSection[] = [
     items: [
       { title: 'Destinations', url: '/admin/destination-admin', icon: MapPin },
       { title: 'About Editor', url: '/admin/about', icon: FileText },
+      { title: 'Hotel Profile', url: '/admin/hotel-profile', icon: ImageIcon },
     ],
     defaultOpen: false,
   },
