@@ -1,4 +1,7 @@
--- Step 1: Add hotel_id column if it doesn't exist
+-- Fix admin write permissions for service categories, items, and hotel_about
+-- Addresses: missing hotel_id columns, RLS policy blocks for hotel admins
+
+-- Step 1: Add hotel_id column to relevant tables if they don't exist
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -14,9 +17,16 @@ BEGIN
     ) THEN
         ALTER TABLE public.request_items ADD COLUMN hotel_id UUID REFERENCES public.hotels(id);
     END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' AND table_name = 'hotel_about' AND column_name = 'hotel_id'
+    ) THEN
+        ALTER TABLE public.hotel_about ADD COLUMN hotel_id UUID REFERENCES public.hotels(id);
+    END IF;
 END $$;
 
--- Step 2: Populate hotel_id for any existing records without one (assign to 'fiesta' hotel)
+-- Step 2: Populate hotel_id for existing records (assign to 'fiesta' hotel)
 DO $$
 DECLARE
     v_hotel_id UUID;
@@ -25,14 +35,16 @@ BEGIN
     IF v_hotel_id IS NOT NULL THEN
         UPDATE public.request_categories SET hotel_id = v_hotel_id WHERE hotel_id IS NULL;
         UPDATE public.request_items SET hotel_id = v_hotel_id WHERE hotel_id IS NULL;
+        UPDATE public.hotel_about SET hotel_id = v_hotel_id WHERE hotel_id IS NULL;
     END IF;
 END $$;
 
--- Step 3: Enable RLS
+-- Step 3: Enable RLS on all affected tables
 ALTER TABLE public.request_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.request_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.hotel_about ENABLE ROW LEVEL SECURITY;
 
--- Step 4: Improve the can_access_hotel_data function
+-- Step 4: Improve the can_access_hotel_data function to handle NULLs gracefully
 CREATE OR REPLACE FUNCTION public.can_access_hotel_data(row_hotel_id UUID)
 RETURNS BOOLEAN AS $$
 DECLARE
@@ -48,12 +60,12 @@ BEGIN
         RETURN FALSE;
     END IF;
 
+    -- Super Admin can access everything
     IF user_role = 'super_admin' THEN
         RETURN TRUE;
     END IF;
 
-    -- Hotel Admin/Staff can access their own hotel's data
-    -- Also allow NULL row_hotel_id (backward compatibility / new inserts)
+    -- Hotel Admin/Staff: allow when their hotel matches, or row_hotel_id is NULL (new insert)
     IF user_hotel_id IS NOT NULL AND (row_hotel_id IS NULL OR user_hotel_id = row_hotel_id) THEN
         RETURN TRUE;
     END IF;
@@ -62,11 +74,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Step 5: Re-create RLS policies for request_categories and request_items
+-- Step 5: Re-create RLS policies for all three tables
 DO $$
 DECLARE
     t text;
-    tables text[] := ARRAY['request_categories', 'request_items'];
+    tables text[] := ARRAY['request_categories', 'request_items', 'hotel_about'];
 BEGIN
     FOREACH t IN ARRAY tables LOOP
         EXECUTE format('DROP POLICY IF EXISTS "Tenant Isolation Select" ON public.%I', t);

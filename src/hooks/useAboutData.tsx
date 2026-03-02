@@ -13,6 +13,7 @@ export function useAboutData() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['hotelAbout', hotelId, isSuperAdmin],
+    enabled: !!hotelId || isSuperAdmin, // Wait until hotel context is ready
     queryFn: () => fetchAboutData(hotelId, isSuperAdmin)
   });
 
@@ -35,7 +36,8 @@ export function useAboutData() {
   });
 
   const createInitialAboutMutation = useMutation({
-    mutationFn: createInitialAbout,
+    mutationFn: (initialData: Record<string, unknown>) =>
+      createInitialAbout({ ...initialData, hotelId: hotelId ?? undefined }),
     onSuccess: () => {
       toast({
         title: "Creation Successful",

@@ -58,7 +58,9 @@ export const updateAboutData = async (updatedData: Partial<HotelAbout>) => {
   return responseData;
 };
 
-export const createInitialAbout = async (initialData: Partial<HotelAbout>) => {
+export const createInitialAbout = async (initialData: Partial<HotelAbout> & { hotelId?: string }) => {
+  const { hotelId, ...restData } = initialData;
+
   const createPayload = {
     title: 'About Our Hotel',
     description: 'Learn more about our hotel, facilities, and services.',
@@ -66,7 +68,8 @@ export const createInitialAbout = async (initialData: Partial<HotelAbout>) => {
     action_text: 'Explore',
     action_link: '/about',
     status: 'active',
-    ...prepareDataForUpdate(initialData)
+    hotel_id: hotelId ?? null,
+    ...prepareDataForUpdate(restData)
   };
 
   const { data, error } = await supabase
