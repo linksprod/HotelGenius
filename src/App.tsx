@@ -12,6 +12,7 @@ import PublicRoutes from './routes/PublicRoutes';
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import TenantGuard from './components/TenantGuard';
+import PWAInstallBanner from './components/PWAInstallBanner';
 import './i18n';
 
 import { HotelProvider } from '@/features/hotels/context/HotelContext';
@@ -50,6 +51,7 @@ function App() {
             </Routes>
             <Toaster richColors position="top-right" closeButton />
             <ShadcnToaster />
+            <PWAInstallBanner />
           </AuthProvider>
         </BrowserRouter>
 

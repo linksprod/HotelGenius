@@ -4,7 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" href="/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png" type="image/png">
+  <link rel="apple-touch-icon" href="/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png">
+  <link rel="manifest" href="/manifest.json">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#16a34a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Hotel Genius">
   <title>Hotel Genius - Premium Guest Experience & Hotel Management Platform</title>
   <meta name="description"
     content="Hotel Genius offers comprehensive hotel management solutions with exceptional guest experience. Features include room service, dining reservations, spa bookings, concierge services, and seamless hotel operations management." />
@@ -50,6 +56,15 @@
 
 
   <script type="module" src="/src/main.tsx"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
 </body>
 
 </html>
