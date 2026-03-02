@@ -11,13 +11,14 @@ import HeroSection from '@/components/admin/about/HeroSection';
 import { Button } from '@/components/ui/button';
 import { Loader2, FileText } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-
-import { useUserRole } from '@/hooks/useUserRole';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const AboutEditor = () => {
   const { aboutData, isLoadingAbout, aboutError, updateAboutData, createInitialAboutData } = useAboutData();
+  const { hotel } = useHotel();
   const [activeTab, setActiveTab] = useState('hero');
   const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   if (isLoadingAbout) {
     return (
@@ -44,11 +45,13 @@ const AboutEditor = () => {
     );
   }
 
+  const hotelName = hotel?.name || 'Our Hotel';
+
   const handleCreateAboutData = async () => {
     setIsCreating(true);
-    // Default about data
+    setCreateError(null);
     const defaultAboutData = {
-      welcome_title: 'Welcome to Hotel Genius',
+      welcome_title: `Welcome to ${hotelName}`,
       welcome_description: 'A luxury hotel experience in the heart of the city.',
       welcome_description_extended: 'Since our establishment, we have been committed to creating a home away from home for our guests.',
       mission: 'To provide exceptional hospitality experiences by creating memorable moments for our guests.',
@@ -74,20 +77,20 @@ const AboutEditor = () => {
         { label: 'Breakfast', value: '6:30 AM - 10:30 AM' }
       ],
       additional_info: [
-        { label: 'Wi-Fi', value: 'Network "HotelGenius" - Password provided at check-in' },
+        { label: 'Wi-Fi', value: `Network "${hotelName}" - Password provided at check-in` },
         { label: 'Parking', value: 'Valet service available' }
       ],
       directory_title: 'Hotel Directory & Information',
       hero_image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80',
-      hero_title: 'Welcome to Hotel Genius',
+      hero_title: `Welcome to ${hotelName}`,
       hero_subtitle: 'Discover luxury and comfort'
     };
 
     try {
       await createInitialAboutData(defaultAboutData);
-      window.location.reload();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating about data:', error);
+      setCreateError(error?.message || 'Unknown error occurred');
     } finally {
       setIsCreating(false);
     }
@@ -98,7 +101,12 @@ const AboutEditor = () => {
       <div className="p-8 text-center">
         <Card className="p-6">
           <h2 className="text-xl font-bold mb-4">No information found</h2>
-          <p className="mb-6">The "About" page information has not been configured yet. Would you like to create default content?</p>
+          <p className="mb-6">The "About" page for <strong>{hotelName}</strong> has not been configured yet.</p>
+          {createError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm text-left">
+              <strong>Error:</strong> {createError}
+            </div>
+          )}
           <Button
             onClick={handleCreateAboutData}
             disabled={isCreating}

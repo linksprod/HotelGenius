@@ -59,6 +59,6 @@ export function useAboutData() {
     isLoadingAbout: isLoading,
     aboutError: error,
     updateAboutData: updateAboutMutation.mutate,
-    createInitialAboutData: createInitialAboutMutation.mutate
+    createInitialAboutData: createInitialAboutMutation.mutateAsync
   };
 }
