@@ -58,6 +58,13 @@ const Layout = ({
                     alt={hotel.name}
                     className={cn("object-contain", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
                   />
+                ) : hotel?.name ? (
+                  <span className={cn(
+                    "font-semibold tracking-tight text-foreground",
+                    isMobile ? "text-lg" : "text-2xl"
+                  )}>
+                    {hotel.name}
+                  </span>
                 ) : (
                   <img
                     src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"

@@ -69,15 +69,15 @@ const HotelProfile: React.FC = () => {
             toast({ title: 'Uploaded', description: 'Logo uploaded. Click Save to apply.' });
         } catch (error: any) {
             console.error('Upload error:', error);
-            // Fallback: if storage isn't available, use the lovable-uploads path
+            // Fallback: convert to data URL and save directly to database
             const reader = new FileReader();
             reader.onload = (ev) => {
                 const dataUrl = ev.target?.result as string;
-                setLogoPreview(dataUrl);
+                setLogoUrl(dataUrl);      // used by Save
+                setLogoPreview(dataUrl);  // shown in preview
                 toast({
-                    title: 'Info',
-                    description: 'Preview loaded locally. Enter a URL or use Supabase Storage.',
-                    variant: 'default'
+                    title: 'Image ready',
+                    description: 'Click Save Logo to apply the change.',
                 });
             };
             reader.readAsDataURL(file);
@@ -155,7 +155,7 @@ const HotelProfile: React.FC = () => {
                     <CardHeader>
                         <CardTitle>Hotel Logo</CardTitle>
                         <CardDescription>
-                            This logo will appear in the admin sidebar header. Recommended: square image, PNG or SVG, on a transparent or dark background.
+                            This logo will appear in the <strong>admin sidebar</strong> and the <strong>guest-facing navbar</strong>. Recommended: PNG or SVG on a transparent background.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
