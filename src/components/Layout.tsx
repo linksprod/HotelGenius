@@ -7,9 +7,11 @@ import UserMenu from './UserMenu';
 import NotificationMenu from './NotificationMenu';
 import BottomNav from './BottomNav';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ScrollArea } from './ui/scroll-area';
 import { ThemeToggle } from './ThemeToggle';
-import { useTheme } from 'next-themes';
+
+
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { hexToHSL } from '@/lib/colors';
 
@@ -24,11 +26,14 @@ const Layout = ({
   const location = useLocation();
   const { hotel } = useHotel();
 
+  const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
   const isMessagesPage = hotel ? location.pathname === `/${hotel.slug}/messages` : location.pathname === '/messages';
+  const isMobile = useIsMobile();
 
   const homeLink = hotel ? `/${hotel.slug}` : "/";
 
+  // Prepare dynamic theme styles
   const dynamicStyles = hotel?.primary_color ? {
     '--primary': hexToHSL(hotel.primary_color),
     '--ring': hexToHSL(hotel.primary_color),
@@ -51,25 +56,21 @@ const Layout = ({
                   <img
                     src={hotel.logo_url}
                     alt={hotel.name}
-                    className="object-contain h-7 md:h-10 max-w-[120px] md:max-w-[200px]"
+                    className={cn("object-contain dark:brightness-0 dark:invert", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
                   />
                 ) : hotel?.name ? (
-                  <span className="font-semibold tracking-tight text-card-foreground dark:!text-white text-lg md:text-2xl">
+                  <span className={cn(
+                    "font-semibold tracking-tight text-foreground transition-colors",
+                    isMobile ? "text-lg" : "text-2xl"
+                  )}>
                     {hotel.name}
                   </span>
                 ) : (
-                  <>
-                    <img
-                      src="/lovable-uploads/logo-light.png"
-                      alt="Hotel Genius"
-                      className="block dark:hidden object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px]"
-                    />
-                    <img
-                      src="/lovable-uploads/logo-dark.png"
-                      alt="Hotel Genius"
-                      className="hidden dark:block object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px]"
-                    />
-                  </>
+                  <img
+                    src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
+                    alt="Hotel Genius"
+                    className={cn("brightness-0 dark:invert object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
+                  />
                 )}
               </Link>
             </div>
@@ -107,7 +108,7 @@ const Layout = ({
       </main>
 
       <BottomNav />
-    </div>
+    </div >
   );
 };
 
