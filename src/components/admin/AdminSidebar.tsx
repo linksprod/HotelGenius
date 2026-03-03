@@ -307,7 +307,7 @@ export const AdminSidebar: React.FC = () => {
               <img
                 src={hotel.logo_url}
                 alt={hotel.name}
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain dark:brightness-0 dark:invert"
               />
             ) : (
               <Hotel className="h-5 w-5 text-primary-foreground" />
