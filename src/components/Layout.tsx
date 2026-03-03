@@ -60,7 +60,7 @@ const Layout = ({
                   />
                 ) : hotel?.name ? (
                   <span className={cn(
-                    "font-semibold tracking-tight text-foreground",
+                    "font-semibold tracking-tight text-foreground dark:text-white",
                     isMobile ? "text-lg" : "text-2xl"
                   )}>
                     {hotel.name}
@@ -69,7 +69,7 @@ const Layout = ({
                   <img
                     src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
                     alt="Hotel Genius"
-                    className={cn("filter brightness-110 dark:brightness-0 dark:invert object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
+                    className={cn("object-contain dark:brightness-0 dark:invert", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
                   />
                 )}
               </Link>
