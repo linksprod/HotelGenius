@@ -70,24 +70,23 @@ const Layout = ({
                   />
                 ) : hotel?.name ? (
                   <span
-                    className={cn(
-                      "font-semibold tracking-tight transition-all duration-200",
-                      isMobile ? "text-lg" : "text-2xl",
-                      textColorClass
-                    )}
-                    style={mounted && isDark ? { color: '#ffffff' } : {}}
+                    className="font-semibold tracking-tight text-foreground dark:text-white text-lg md:text-2xl transition-colors duration-200"
                   >
                     {hotel.name}
                   </span>
                 ) : (
-                  <img
-                    src={(mounted && isDark) ? "/lovable-uploads/logo-dark.png" : "/lovable-uploads/logo-light.png"}
-                    alt="Hotel Genius"
-                    className={cn(
-                      "object-contain transition-all duration-200",
-                      isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]"
-                    )}
-                  />
+                  <>
+                    <img
+                      src="/lovable-uploads/logo-light.png"
+                      alt="Hotel Genius"
+                      className="block dark:hidden object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px] transition-all duration-200"
+                    />
+                    <img
+                      src="/lovable-uploads/logo-dark.png"
+                      alt="Hotel Genius"
+                      className="hidden dark:block object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px] transition-all duration-200"
+                    />
+                  </>
                 )}
               </Link>
             </div>
