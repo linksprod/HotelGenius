@@ -60,20 +60,18 @@ const Layout = ({
                   />
                 ) : hotel?.name ? (
                   <span className={cn(
-                    "font-semibold tracking-tight text-foreground dark:text-white",
+                    "font-semibold tracking-tight text-foreground",
                     isMobile ? "text-lg" : "text-2xl"
                   )}>
                     {hotel.name}
                   </span>
                 ) : (
                   <>
-                    {/* Light mode logo */}
                     <img
                       src="/lovable-uploads/logo-light.png"
                       alt="Hotel Genius"
                       className={cn("block dark:hidden object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
                     />
-                    {/* Dark mode logo */}
                     <img
                       src="/lovable-uploads/logo-dark.png"
                       alt="Hotel Genius"
