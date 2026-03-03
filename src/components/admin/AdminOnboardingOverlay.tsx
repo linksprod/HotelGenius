@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X, ArrowRight, LayoutDashboard, Bell, User, BarChart3,
@@ -98,7 +98,7 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
             }
 
             const rect = el.getBoundingClientRect();
-            const padding = 10;
+            const padding = 8;
             const spotlightRect: SpotlightRect = {
                 top: rect.top - padding,
                 left: rect.left - padding,
@@ -108,27 +108,22 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
             setSpotlight(spotlightRect);
 
             const tooltipWidth = 340;
-            const tooltipHeight = 180;
+            const tooltipHeight = 190;
             const gap = 16;
 
             let top: number;
             let left: number;
             let placement = currentStep.placement;
 
-            // Position based on placement preference
             if (placement === 'right') {
                 top = rect.top + rect.height / 2 - tooltipHeight / 2;
                 left = rect.right + gap;
-                if (left + tooltipWidth > window.innerWidth - 16) {
-                    placement = 'bottom';
-                }
+                if (left + tooltipWidth > window.innerWidth - 16) placement = 'bottom';
             }
             if (placement === 'left') {
                 top = rect.top + rect.height / 2 - tooltipHeight / 2;
                 left = rect.left - tooltipWidth - gap;
-                if (left < 16) {
-                    placement = 'bottom';
-                }
+                if (left < 16) placement = 'bottom';
             }
 
             if (placement === 'bottom') {
@@ -138,12 +133,10 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
                 top = rect.top - tooltipHeight - gap;
                 left = rect.left + rect.width / 2 - tooltipWidth / 2;
             } else {
-                // already set for left/right
                 top = top!;
                 left = left!;
             }
 
-            // Clamp to viewport
             top = Math.max(16, Math.min(top, window.innerHeight - tooltipHeight - 16));
             left = Math.max(16, Math.min(left, window.innerWidth - tooltipWidth - 16));
 
@@ -176,35 +169,38 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
                     onClick={(e) => e.stopPropagation()}
                 />
 
-                {/* Backdrop with spotlight cutout */}
+                {/* Dark overlay — only shown when there is no spotlight target (centered tooltip) */}
                 <div
-                    className="absolute inset-0 bg-black/50 transition-all duration-500 ease-out"
-                    style={
-                        spotlight
-                            ? {
-                                maskImage: `radial-gradient(ellipse ${spotlight.width * 0.6}px ${spotlight.height * 0.6}px at ${spotlight.left + spotlight.width / 2}px ${spotlight.top + spotlight.height / 2}px, transparent 100%, black 100%)`,
-                                WebkitMaskImage: `radial-gradient(ellipse ${spotlight.width * 0.6}px ${spotlight.height * 0.6}px at ${spotlight.left + spotlight.width / 2}px ${spotlight.top + spotlight.height / 2}px, transparent 100%, black 100%)`,
-                                pointerEvents: 'none',
-                            }
-                            : { pointerEvents: 'none' }
-                    }
+                    className="absolute inset-0 bg-black/50 transition-opacity duration-300"
+                    style={{
+                        pointerEvents: 'none',
+                        opacity: spotlight ? 0 : 1,
+                    }}
                 />
 
-                {/* Spotlight ring + click blocker */}
+                {/* Spotlight: transparent box with box-shadow that darkens everything around it */}
                 {spotlight && (
                     <motion.div
                         key={`spotlight-${currentStepIndex}`}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.35, ease: 'easeOut' }}
-                        className="absolute rounded-xl border-2 border-primary/40 shadow-[0_0_24px_rgba(var(--primary-rgb,120,180,140),0.25)]"
-                        style={{
+                        initial={{ opacity: 0 }}
+                        animate={{
+                            opacity: 1,
                             top: spotlight.top,
                             left: spotlight.left,
                             width: spotlight.width,
                             height: spotlight.height,
+                        }}
+                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                        className="absolute"
+                        style={{
+                            boxShadow: '0 0 0 9999px rgba(0,0,0,0.55)',
+                            borderRadius: '10px',
+                            outline: '2px solid rgba(var(--primary-rgb, 120, 180, 140), 0.7)',
+                            outlineOffset: '1px',
+                            background: 'transparent',
                             pointerEvents: 'auto',
                             cursor: 'default',
+                            zIndex: 1,
                         }}
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                     />
@@ -217,11 +213,12 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: tooltipPos.placement === 'bottom' ? -10 : 10 }}
                     transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
-                    className="absolute z-[9999] w-[340px]"
+                    className="absolute w-[340px]"
                     style={{
                         top: tooltipPos.top,
                         left: tooltipPos.left,
                         pointerEvents: 'auto',
+                        zIndex: 2,
                     }}
                 >
                     <div className="bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
@@ -260,10 +257,10 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
                                         <div
                                             key={i}
                                             className={`h-1.5 rounded-full transition-all duration-300 ${i === currentStepIndex
-                                                    ? 'w-5 bg-primary'
-                                                    : i < currentStepIndex
-                                                        ? 'w-1.5 bg-primary/40'
-                                                        : 'w-1.5 bg-muted-foreground/20'
+                                                ? 'w-5 bg-primary'
+                                                : i < currentStepIndex
+                                                    ? 'w-1.5 bg-primary/40'
+                                                    : 'w-1.5 bg-muted-foreground/20'
                                                 }`}
                                         />
                                     ))}
