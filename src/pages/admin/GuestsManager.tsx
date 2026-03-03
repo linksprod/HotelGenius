@@ -49,12 +49,12 @@ interface FilterCard {
 }
 
 const filterCards: FilterCard[] = [
-  { id: 'all', label: 'All', icon: Users, colorClass: 'text-violet-600', bgClass: 'bg-violet-100', cardBgClass: 'bg-violet-50 border-violet-200' },
-  { id: 'in-house', label: 'In-House', icon: Home, colorClass: 'text-blue-600', bgClass: 'bg-blue-100', cardBgClass: 'bg-blue-50 border-blue-200' },
-  { id: 'arrivals', label: 'Arrivals', icon: ArrowRight, colorClass: 'text-green-600', bgClass: 'bg-green-100', cardBgClass: 'bg-green-50 border-green-200' },
-  { id: 'upcoming', label: 'Upcoming', icon: Calendar, colorClass: 'text-amber-600', bgClass: 'bg-amber-100', cardBgClass: 'bg-amber-50 border-amber-200' },
-  { id: 'departures', label: 'Departures', icon: ArrowLeftRight, colorClass: 'text-rose-600', bgClass: 'bg-rose-100', cardBgClass: 'bg-rose-50 border-rose-200' },
-  { id: 'past', label: 'Past', icon: Clock, colorClass: 'text-slate-500', bgClass: 'bg-slate-100', cardBgClass: 'bg-slate-50 border-slate-200' },
+  { id: 'all', label: 'All', icon: Users, colorClass: 'text-violet-500', bgClass: 'bg-violet-100 dark:bg-violet-900/30', cardBgClass: 'bg-violet-50 dark:bg-violet-950/40 border-violet-200 dark:border-violet-800' },
+  { id: 'in-house', label: 'In-House', icon: Home, colorClass: 'text-blue-500', bgClass: 'bg-blue-100 dark:bg-blue-900/30', cardBgClass: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800' },
+  { id: 'arrivals', label: 'Arrivals', icon: ArrowRight, colorClass: 'text-green-500', bgClass: 'bg-green-100 dark:bg-green-900/30', cardBgClass: 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800' },
+  { id: 'upcoming', label: 'Upcoming', icon: Calendar, colorClass: 'text-amber-500', bgClass: 'bg-amber-100 dark:bg-amber-900/30', cardBgClass: 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800' },
+  { id: 'departures', label: 'Departures', icon: ArrowLeftRight, colorClass: 'text-rose-500', bgClass: 'bg-rose-100 dark:bg-rose-900/30', cardBgClass: 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800' },
+  { id: 'past', label: 'Past', icon: Clock, colorClass: 'text-slate-400', bgClass: 'bg-slate-100 dark:bg-slate-800/60', cardBgClass: 'bg-slate-50 dark:bg-slate-900/60 border-slate-200 dark:border-slate-700' },
 ];
 
 type SortOption = 'newest' | 'oldest' | 'check-in-asc' | 'check-in-desc' | 'check-out-asc' | 'check-out-desc';

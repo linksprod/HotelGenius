@@ -129,11 +129,11 @@ export const AdminChatDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-slate-50/50">
+    <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-background">
       {/* Header */}
       <div id="admin-ob-chat-header" className="shrink-0 flex justify-between items-center p-6 pb-4">
         <h1 className="text-2xl font-bold tracking-tight">Chat Management</h1>
-        <Button variant="outline" onClick={fetchConversations} disabled={isLoading} className="gap-2 bg-white hover:bg-slate-50">
+        <Button variant="outline" onClick={fetchConversations} disabled={isLoading} className="gap-2">
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
@@ -141,36 +141,36 @@ export const AdminChatDashboard: React.FC = () => {
 
       {/* Stats */}
       <div className="shrink-0 grid grid-cols-1 sm:grid-cols-3 gap-4 px-6 pb-6">
-        <Card className="shadow-sm border-none bg-white">
+        <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Conversations</CardTitle>
-            <MessageSquare className="h-4 w-4 text-slate-400" />
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent><div className="text-3xl font-bold">15</div></CardContent>
+          <CardContent><div className="text-3xl font-bold">{stats.total}</div></CardContent>
         </Card>
-        <Card className="shadow-sm border-none bg-white">
+        <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Active Chats</CardTitle>
-            <Users className="h-4 w-4 text-slate-400" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent><div className="text-3xl font-bold">8</div></CardContent>
+          <CardContent><div className="text-3xl font-bold">{stats.active}</div></CardContent>
         </Card>
-        <Card className="shadow-sm border-none bg-white">
+        <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Needs Attention</CardTitle>
-            <Clock className="h-4 w-4 text-slate-400" />
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent><div className="text-3xl font-bold text-red-500">7</div></CardContent>
+          <CardContent><div className="text-3xl font-bold text-red-500">{stats.escalated}</div></CardContent>
         </Card>
       </div>
 
       {/* Side-by-side: Conversations + Chat */}
       <div className="flex flex-1 min-h-0 mx-6 mb-2 gap-4 overflow-hidden">
         {/* Left panel */}
-        <div className="w-[32%] border-none bg-white rounded-xl shadow-sm flex flex-col overflow-hidden">
+        <div className="w-[32%] border border-border bg-card rounded-xl shadow-sm flex flex-col overflow-hidden">
           <Tabs defaultValue="escalated" className="flex flex-col flex-1 overflow-hidden">
-            <div className="p-4 bg-slate-50/50 border-b">
-              <TabsList className="grid w-full grid-cols-3 bg-slate-100/50">
+            <div className="p-4 bg-muted/30 border-b border-border">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="escalated" className="text-xs">Attention ({stats.escalated})</TabsTrigger>
                 <TabsTrigger value="ai" className="text-xs">AI Handled</TabsTrigger>
                 <TabsTrigger value="all" className="text-xs">All Chats</TabsTrigger>
@@ -187,7 +187,7 @@ export const AdminChatDashboard: React.FC = () => {
         </div>
 
         {/* Right panel */}
-        <div className="flex-1 flex flex-col border-none bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="flex-1 flex flex-col border border-border bg-card rounded-xl shadow-sm overflow-hidden">
           {selectedConversation ? (
             <UnifiedChatContainer
               userInfo={{ name: 'Admin', email: 'admin@hotel.com' }}
