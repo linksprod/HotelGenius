@@ -10,8 +10,6 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ScrollArea } from './ui/scroll-area';
 import { ThemeToggle } from './ThemeToggle';
-
-
 import { useTheme } from 'next-themes';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { hexToHSL } from '@/lib/colors';
@@ -26,24 +24,13 @@ const Layout = ({
   const { t } = useTranslation();
   const location = useLocation();
   const { hotel } = useHotel();
-  const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isDark = theme === 'dark' || (typeof window !== 'undefined' && document.documentElement.classList.contains('dark'));
-  const textColorClass = mounted ? (isDark ? "text-white" : "text-foreground") : "text-foreground";
-
-  const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
   const isMessagesPage = hotel ? location.pathname === `/${hotel.slug}/messages` : location.pathname === '/messages';
-  const isMobile = useIsMobile();
 
   const homeLink = hotel ? `/${hotel.slug}` : "/";
 
-  // Prepare dynamic theme styles
   const dynamicStyles = hotel?.primary_color ? {
     '--primary': hexToHSL(hotel.primary_color),
     '--ring': hexToHSL(hotel.primary_color),
@@ -66,12 +53,10 @@ const Layout = ({
                   <img
                     src={hotel.logo_url}
                     alt={hotel.name}
-                    className={cn("object-contain", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
+                    className="object-contain h-7 md:h-10 max-w-[120px] md:max-w-[200px]"
                   />
                 ) : hotel?.name ? (
-                  <span
-                    className="font-semibold tracking-tight text-foreground dark:text-white text-lg md:text-2xl transition-colors duration-200"
-                  >
+                  <span className="font-semibold tracking-tight text-foreground dark:text-white text-lg md:text-2xl">
                     {hotel.name}
                   </span>
                 ) : (
@@ -79,12 +64,12 @@ const Layout = ({
                     <img
                       src="/lovable-uploads/logo-light.png"
                       alt="Hotel Genius"
-                      className="block dark:hidden object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px] transition-all duration-200"
+                      className="block dark:hidden object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px]"
                     />
                     <img
                       src="/lovable-uploads/logo-dark.png"
                       alt="Hotel Genius"
-                      className="hidden dark:block object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px] transition-all duration-200"
+                      className="hidden dark:block object-contain h-5 md:h-7 max-w-[120px] md:max-w-[200px]"
                     />
                   </>
                 )}
@@ -124,7 +109,7 @@ const Layout = ({
       </main>
 
       <BottomNav />
-    </div >
+    </div>
   );
 };
 
