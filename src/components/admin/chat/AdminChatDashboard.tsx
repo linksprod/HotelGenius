@@ -61,21 +61,25 @@ export const AdminChatDashboard: React.FC = () => {
       }
     }
 
-    // Scope unread counts to this hotel's conversations
-    const convIds = conversations
-      .filter(c => !hotelId || isSuperAdmin || c.hotel_id === hotelId || !c.hotel_id)
-      .map(c => c.id);
-
-    if (convIds.length === 0) {
-      setUnreadCounts({});
-      return;
-    }
-
-    const { data: guestMessages } = await supabase
+    // Only count unread messages for this hotel's conversations
+    let messagesQuery = supabase
       .from('messages')
       .select('conversation_id, created_at')
-      .eq('sender_type', 'guest')
-      .in('conversation_id', convIds);
+      .eq('sender_type', 'guest');
+
+    // Scope to hotel if not super admin
+    if (!isSuperAdmin && hotelId) {
+      // Filter messages that belong to this hotel's conversations
+      const convIds = conversations.map(c => c.id);
+      if (convIds.length > 0) {
+        messagesQuery = messagesQuery.in('conversation_id', convIds);
+      } else {
+        setUnreadCounts({});
+        return;
+      }
+    }
+
+    const { data: guestMessages } = await messagesQuery;
 
     const counts: Record<string, number> = {};
     if (guestMessages) {

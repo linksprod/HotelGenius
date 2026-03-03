@@ -1,71 +1,60 @@
--- Ensure hotel_id column exists on conversations (idempotent)
-ALTER TABLE public.conversations
-  ADD COLUMN IF NOT EXISTS hotel_id UUID REFERENCES public.hotels(id);
+-- Add hotel_id to conversations IF it doesn't exist
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'conversations' AND column_name = 'hotel_id') THEN
+        ALTER TABLE conversations ADD COLUMN hotel_id UUID REFERENCES hotels(id);
+    END IF;
+END $$;
 
--- Backfill hotel_id for existing conversations based on their guest's hotel
--- First: try to match via guests table (user_id → hotel_id)
-UPDATE public.conversations c
+-- BACKFILL hotel_id for existing conversations
+-- Pass 1: Match via guests table (most common case)
+UPDATE conversations c
 SET hotel_id = g.hotel_id
-FROM public.guests g
+FROM guests g
 WHERE c.guest_id = g.user_id
-  AND c.hotel_id IS NULL
-  AND g.hotel_id IS NOT NULL;
+AND c.hotel_id IS NULL;
 
--- Second pass: try to match via user_roles (the guest might be also in user_roles with a hotel)
-UPDATE public.conversations c
+-- Pass 2: Match via user_roles (fallback for cases where guest entry might be missing)
+UPDATE conversations c
 SET hotel_id = ur.hotel_id
-FROM public.user_roles ur
+FROM user_roles ur
 WHERE c.guest_id = ur.user_id
-  AND c.hotel_id IS NULL
-  AND ur.hotel_id IS NOT NULL;
+AND c.hotel_id IS NULL;
 
--- Drop the conflicting "Tenant Isolation Select" policy on conversations
--- (it blocks hotel_admin from seeing conversations where hotel_id IS NULL)
-DROP POLICY IF EXISTS "Tenant Isolation Select" ON public.conversations;
-DROP POLICY IF EXISTS "Tenant Isolation Insert" ON public.conversations;
-DROP POLICY IF EXISTS "Tenant Isolation Update" ON public.conversations;
-DROP POLICY IF EXISTS "Tenant Isolation Delete" ON public.conversations;
+-- DROP conflicting RLS policies (the ones that were too restrictive)
+DROP POLICY IF EXISTS "Tenant Isolation Select" ON conversations;
+DROP POLICY IF EXISTS "Tenant Isolation Insert" ON conversations;
+DROP POLICY IF EXISTS "Tenant Isolation Update" ON conversations;
+DROP POLICY IF EXISTS "Tenant Isolation Delete" ON conversations;
 
--- Replace with a cleaner hotel-scoped policy that:
--- 1. Lets guests see their own conversations
--- 2. Lets staff/admin see ALL conversations for their hotel (or all for super_admin)
--- 3. Does NOT block rows with NULL hotel_id from admins (fallback)
-
--- Guests: can only see their own conversations
+-- FIX RLS Policies for Conversations
+-- 1. Guests view own conversations
 CREATE POLICY "Guests view own conversations"
-  ON public.conversations
-  FOR SELECT
-  USING (auth.uid() = guest_id);
+ON conversations FOR SELECT
+USING (auth.uid() = guest_id);
 
--- Admins/staff: can see all conversations for their hotel
--- hotel_admin sees rows where hotel_id matches OR hotel_id is NULL (legacy)
+-- 2. Admins view ALL hotel conversations
+-- is_admin() check includes hotel_admin roles
 CREATE POLICY "Admins view hotel conversations"
-  ON public.conversations
-  FOR SELECT
-  USING (
-    public.is_admin(auth.uid())
-  );
+ON conversations FOR SELECT
+USING (is_admin());
 
--- Insert: guests can create their own conversations
+-- 3. Guests create conversations
 CREATE POLICY "Guests create conversations"
-  ON public.conversations
-  FOR INSERT
-  WITH CHECK (auth.uid() = guest_id);
+ON conversations FOR INSERT
+WITH CHECK (auth.uid() = guest_id);
 
--- Insert: admins can create conversations
+-- 4. Admins create conversations
 CREATE POLICY "Admins create conversations"
-  ON public.conversations
-  FOR INSERT
-  WITH CHECK (public.is_admin(auth.uid()));
+ON conversations FOR INSERT
+WITH CHECK (is_admin());
 
--- Update: guests update their own
+-- 5. Guests update own conversations
 CREATE POLICY "Guests update own conversations"
-  ON public.conversations
-  FOR UPDATE
-  USING (auth.uid() = guest_id);
+ON conversations FOR UPDATE
+USING (auth.uid() = guest_id);
 
--- Update: admins update any in their scope
+-- 6. Admins update conversations
 CREATE POLICY "Admins update conversations"
-  ON public.conversations
-  FOR UPDATE
-  USING (public.is_admin(auth.uid()));
+ON conversations FOR UPDATE
+USING (is_admin());
