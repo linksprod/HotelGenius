@@ -7,7 +7,6 @@ import UserMenu from './UserMenu';
 import NotificationMenu from './NotificationMenu';
 import BottomNav from './BottomNav';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { ScrollArea } from './ui/scroll-area';
 import { ThemeToggle } from './ThemeToggle';
 import { useTheme } from 'next-themes';
@@ -24,7 +23,6 @@ const Layout = ({
   const { t } = useTranslation();
   const location = useLocation();
   const { hotel } = useHotel();
-  const isMobile = useIsMobile();
 
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
   const isMessagesPage = hotel ? location.pathname === `/${hotel.slug}/messages` : location.pathname === '/messages';
@@ -56,7 +54,7 @@ const Layout = ({
                     className="object-contain h-7 md:h-10 max-w-[120px] md:max-w-[200px]"
                   />
                 ) : hotel?.name ? (
-                  <span className="font-semibold tracking-tight text-foreground dark:text-white text-lg md:text-2xl">
+                  <span className="font-semibold tracking-tight text-card-foreground dark:!text-white text-lg md:text-2xl">
                     {hotel.name}
                   </span>
                 ) : (
