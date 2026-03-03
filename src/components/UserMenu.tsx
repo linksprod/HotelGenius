@@ -127,6 +127,7 @@ const UserMenu = () => {
   if (!isAuthenticated || !userData) {
     return (
       <Button
+        id="onboarding-profile"
         variant="ghost"
         onClick={() => navigate(resolvePath('/auth/login'))}
         className="rounded-full p-2 h-9 w-9"
@@ -140,7 +141,7 @@ const UserMenu = () => {
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+        <Button id="onboarding-profile" variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar key={userData?.profile_image || 'no-image'}>
             {userData?.profile_image ? (
               <AvatarImage src={userData.profile_image} alt={t('user.profileImage')} />

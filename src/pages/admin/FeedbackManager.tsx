@@ -100,7 +100,7 @@ const FeedbackManager = () => {
 
   return (
     <div className="p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div id="admin-ob-feedback-header" className="flex items-center gap-3 mb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
           <MessageSquare className="h-5 w-5 text-primary" />
         </div>

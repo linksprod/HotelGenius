@@ -131,7 +131,7 @@ export const AdminChatDashboard: React.FC = () => {
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] overflow-hidden bg-slate-50/50">
       {/* Header */}
-      <div className="shrink-0 flex justify-between items-center p-6 pb-4">
+      <div id="admin-ob-chat-header" className="shrink-0 flex justify-between items-center p-6 pb-4">
         <h1 className="text-2xl font-bold tracking-tight">Chat Management</h1>
         <Button variant="outline" onClick={fetchConversations} disabled={isLoading} className="gap-2 bg-white hover:bg-slate-50">
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />

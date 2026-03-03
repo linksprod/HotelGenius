@@ -13,6 +13,9 @@ import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import OnboardingOverlay from '@/components/onboarding/OnboardingOverlay';
+import WelcomeToast from '@/components/onboarding/WelcomeToast';
+import { useOnboarding } from '@/hooks/useOnboarding';
 
 // Custom error boundary fallback component
 const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => {
@@ -74,6 +77,18 @@ const Index = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { resolvePath } = useHotelPath();
+  const {
+    isActive: isOnboardingActive,
+    currentStep,
+    currentStepIndex,
+    totalSteps,
+    nextStep,
+    skipTour,
+    showWelcome,
+    dismissWelcome,
+    userName,
+    userLastName,
+  } = useOnboarding();
 
   return (
     <Layout>
@@ -144,6 +159,24 @@ const Index = () => {
           </Suspense>
         </SectionWrapper>
       </div>
+
+      {/* Onboarding Tour Overlay */}
+      <OnboardingOverlay
+        isActive={isOnboardingActive}
+        currentStep={currentStep}
+        currentStepIndex={currentStepIndex}
+        totalSteps={totalSteps}
+        onNext={nextStep}
+        onSkip={skipTour}
+      />
+
+      {/* Welcome Back Toast */}
+      <WelcomeToast
+        show={showWelcome}
+        firstName={userName}
+        lastName={userLastName}
+        onDismiss={dismissWelcome}
+      />
     </Layout>
   );
 };

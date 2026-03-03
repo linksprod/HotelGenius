@@ -383,7 +383,7 @@
     "quickTemplates": "Quick Templates",
     "templates": {
       "roomRequests": "Room Requests",
-      "dining": "Dining", 
+      "dining": "Dining",
       "general": "General",
       "maintenance": "Maintenance",
       "housekeeping": "Housekeeping"
@@ -575,7 +575,7 @@
           "hours": "Open 5 AM - 10 PM"
         },
         "theatre": {
-          "name": "Royal Opera Theatre", 
+          "name": "Royal Opera Theatre",
           "description": "Elegant 19th-century theatre hosting world-class performances.",
           "distance": "1.1 km away",
           "hours": "Box office: 10 AM - 8 PM"
@@ -620,9 +620,40 @@
     },
     "categories": {
       "nearby": "Nearby",
-      "landmarks": "Landmarks", 
+      "landmarks": "Landmarks",
       "cafes": "Cafés",
       "shopping": "Shopping"
+    }
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get Started",
+    "steps": {
+      "menu": {
+        "title": "Explore Services",
+        "description": "Browse all hotel services — dining, spa, events, and more"
+      },
+      "notifications": {
+        "title": "Stay Updated",
+        "description": "Get real-time updates on your reservations and requests"
+      },
+      "profile": {
+        "title": "Your Profile",
+        "description": "Sign in to unlock the full experience — bookings, room service, and more"
+      },
+      "bottomNav": {
+        "title": "Quick Access",
+        "description": "Your essentials at your fingertips — dining, room, services, and messages"
+      },
+      "done": {
+        "title": "You're All Set!",
+        "description": "Explore the hotel and enjoy your stay"
+      }
+    },
+    "welcome": {
+      "title": "Welcome Back",
+      "message": "Good to see you again, {{name}}"
     }
   }
 }

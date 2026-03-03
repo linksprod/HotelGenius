@@ -50,7 +50,7 @@ const NotificationMenu = () => {
   return (
     <DropdownMenu modal={false} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+        <Button id="onboarding-notifications" variant="ghost" className="relative h-10 w-10 rounded-full p-0">
           <Bell className={`h-5 w-5 ${hasNewNotifications ? "text-primary" : ""}`} />
           {unreadCount > 0 && (
             <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-primary rounded-full text-[10px] text-primary-foreground flex items-center justify-center font-medium border border-background">

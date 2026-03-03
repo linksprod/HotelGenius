@@ -363,7 +363,7 @@
     "templates": {
       "roomRequests": "Demandes de Chambre",
       "dining": "Restauration",
-      "general": "Général", 
+      "general": "Général",
       "maintenance": "Maintenance",
       "housekeeping": "Ménage"
     }
@@ -597,6 +597,37 @@
       "reservationSentDesc": "Votre demande de réservation a été enregistrée avec succès.",
       "reservationError": "Erreur lors de l'envoi de la demande de réservation",
       "reservationCreationError": "Erreur lors de la création de la réservation"
+    }
+  },
+  "onboarding": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "getStarted": "C'est parti",
+    "steps": {
+      "menu": {
+        "title": "Explorez les Services",
+        "description": "Parcourez tous les services de l'hôtel — restauration, spa, événements et plus"
+      },
+      "notifications": {
+        "title": "Restez Informé",
+        "description": "Recevez des mises à jour en temps réel sur vos réservations et demandes"
+      },
+      "profile": {
+        "title": "Votre Profil",
+        "description": "Connectez-vous pour profiter pleinement de l'expérience — réservations, service en chambre et plus"
+      },
+      "bottomNav": {
+        "title": "Accès Rapide",
+        "description": "L'essentiel à portée de main — restauration, chambre, services et messages"
+      },
+      "done": {
+        "title": "Vous Êtes Prêt !",
+        "description": "Explorez l'hôtel et profitez de votre séjour"
+      }
+    },
+    "welcome": {
+      "title": "Bon Retour",
+      "message": "Ravi de vous revoir, {{name}}"
     }
   }
 }

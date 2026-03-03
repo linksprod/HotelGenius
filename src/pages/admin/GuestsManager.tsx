@@ -216,7 +216,7 @@ const GuestsManager: React.FC = () => {
   return (
     <div className="flex-1 space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div id="admin-ob-guests-header" className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
             <Users className="h-5 w-5 text-primary" />
@@ -233,7 +233,7 @@ const GuestsManager: React.FC = () => {
       </div>
 
       {/* Filter Cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+      <div id="admin-ob-guests-filters" className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
         {filterCards.map((filter) => {
           const Icon = filter.icon;
           const count = filterCounts[filter.id];
@@ -262,7 +262,7 @@ const GuestsManager: React.FC = () => {
       </div>
 
       {/* Guest List Card */}
-      <Card>
+      <Card id="admin-ob-guests-table">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
             <CardTitle>Guest List</CardTitle>

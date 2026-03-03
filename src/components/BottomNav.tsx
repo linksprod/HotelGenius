@@ -93,6 +93,7 @@ const BottomNav = () => {
 
   return (
     <nav
+      id="onboarding-bottom-nav"
       className={cn(
         "fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border shadow-xl z-50 transition-transform duration-300 ease-out",
         isVisible ? "translate-y-0" : "translate-y-full"

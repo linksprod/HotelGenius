@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
+import {
   CalendarCheck,
   MessageCircle,
   Users,
@@ -35,12 +35,12 @@ const AdminDashboard = () => {
     { day: 'Sun', visitors: 220 },
   ];
 
-  const statusData = stats?.serviceRequests.total 
+  const statusData = stats?.serviceRequests.total
     ? [
-        { name: 'Pending', value: stats.serviceRequests.pending, color: '#f59e0b' },
-        { name: 'In Progress', value: Math.max(0, stats.serviceRequests.total - stats.serviceRequests.pending - stats.serviceRequests.completed), color: '#3b82f6' },
-        { name: 'Completed', value: stats.serviceRequests.completed, color: '#22c55e' },
-      ]
+      { name: 'Pending', value: stats.serviceRequests.pending, color: '#f59e0b' },
+      { name: 'In Progress', value: Math.max(0, stats.serviceRequests.total - stats.serviceRequests.pending - stats.serviceRequests.completed), color: '#3b82f6' },
+      { name: 'Completed', value: stats.serviceRequests.completed, color: '#22c55e' },
+    ]
     : [];
 
   if (error) {
@@ -67,7 +67,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Stats Row 1 - Main metrics */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div id="admin-ob-stats" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatisticCard
           title="Total Reservations"
           value={stats?.totalReservations ?? 0}
@@ -148,7 +148,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+      <div id="admin-ob-summary" className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
         {/* Reservations Breakdown */}
         <Card className="bg-card border shadow-sm">
           <CardHeader className="pb-3">

@@ -297,7 +297,7 @@ export const AdminSidebar: React.FC = () => {
     : user?.email || 'Admin';
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" id="admin-ob-sidebar">
       {/* Header */}
       <SidebarHeader className="p-4 pb-3">
         <div className="flex items-center gap-3">
@@ -321,7 +321,7 @@ export const AdminSidebar: React.FC = () => {
               <span className="text-[11px] text-muted-foreground">Hotel Management</span>
             </div>
           )}
-          <StaffNotificationBell />
+          <span id="admin-ob-notif-bell"><StaffNotificationBell /></span>
         </div>
       </SidebarHeader>
 
@@ -466,7 +466,7 @@ export const AdminSidebar: React.FC = () => {
         )}
 
         {/* User Profile */}
-        <div className="flex items-center gap-2.5 rounded-lg p-2 hover:bg-sidebar-accent transition-colors">
+        <div id="admin-ob-user-profile" className="flex items-center gap-2.5 rounded-lg p-2 hover:bg-sidebar-accent transition-colors">
           <Avatar className="h-8 w-8 shrink-0">
             <AvatarImage src={userData?.profile_image || undefined} />
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
