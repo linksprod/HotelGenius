@@ -66,11 +66,20 @@ const Layout = ({
                     {hotel.name}
                   </span>
                 ) : (
-                  <img
-                    src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
-                    alt="Hotel Genius"
-                    className={cn("object-contain dark:brightness-0 dark:invert", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
-                  />
+                  <>
+                    {/* Light mode logo */}
+                    <img
+                      src="/lovable-uploads/logo-light.png"
+                      alt="Hotel Genius"
+                      className={cn("block dark:hidden object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
+                    />
+                    {/* Dark mode logo */}
+                    <img
+                      src="/lovable-uploads/logo-dark.png"
+                      alt="Hotel Genius"
+                      className={cn("hidden dark:block object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
+                    />
+                  </>
                 )}
               </Link>
             </div>
