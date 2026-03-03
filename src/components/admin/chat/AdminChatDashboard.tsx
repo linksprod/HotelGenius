@@ -61,25 +61,21 @@ export const AdminChatDashboard: React.FC = () => {
       }
     }
 
-    // Only count unread messages for this hotel's conversations
-    let messagesQuery = supabase
-      .from('messages')
-      .select('conversation_id, created_at')
-      .eq('sender_type', 'guest');
+    // Scope unread counts to this hotel's conversations
+    const convIds = conversations
+      .filter(c => !hotelId || isSuperAdmin || c.hotel_id === hotelId || !c.hotel_id)
+      .map(c => c.id);
 
-    // Scope to hotel if not super admin
-    if (!isSuperAdmin && hotelId) {
-      // Filter messages that belong to this hotel's conversations
-      const convIds = conversations.map(c => c.id);
-      if (convIds.length > 0) {
-        messagesQuery = messagesQuery.in('conversation_id', convIds);
-      } else {
-        setUnreadCounts({});
-        return;
-      }
+    if (convIds.length === 0) {
+      setUnreadCounts({});
+      return;
     }
 
-    const { data: guestMessages } = await messagesQuery;
+    const { data: guestMessages } = await supabase
+      .from('messages')
+      .select('conversation_id, created_at')
+      .eq('sender_type', 'guest')
+      .in('conversation_id', convIds);
 
     const counts: Record<string, number> = {};
     if (guestMessages) {
@@ -96,22 +92,23 @@ export const AdminChatDashboard: React.FC = () => {
   const fetchConversations = async () => {
     try {
       setIsLoading(true);
-      let query = supabase
+      // Fetch all conversations visible to this admin (RLS handles base visibility)
+      const { data, error } = await supabase
         .from('conversations')
         .select('*')
         .order('updated_at', { ascending: false });
 
-      // Scope to current hotel unless super admin
-      if (!isSuperAdmin && hotelId) {
-        query = query.eq('hotel_id', hotelId);
-      }
-
-      const { data, error } = await query;
       if (error) throw error;
-      setConversations(data || []);
-      const active = data?.filter(c => c.status === 'active').length || 0;
-      const escalated = data?.filter(c => c.status === 'escalated').length || 0;
-      setStats({ active, escalated, total: data?.length || 0 });
+
+      // Filter in memory per hotel — avoids DB errors from NULL hotel_id on legacy rows
+      const filtered = (!isSuperAdmin && hotelId)
+        ? (data || []).filter(c => c.hotel_id === hotelId || !c.hotel_id)
+        : (data || []);
+
+      setConversations(filtered);
+      const active = filtered.filter(c => c.status === 'active').length;
+      const escalated = filtered.filter(c => c.status === 'escalated').length;
+      setStats({ active, escalated, total: filtered.length });
       fetchUnreadCounts();
     } catch (error) {
       console.error('Error fetching conversations:', error);
