@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, Link } from 'react-router-dom';
 import MainMenu from './MainMenu';
@@ -27,7 +27,14 @@ const Layout = ({
   const location = useLocation();
   const { hotel } = useHotel();
   const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = theme === 'dark' || (typeof window !== 'undefined' && document.documentElement.classList.contains('dark'));
+  const textColorClass = mounted ? (isDark ? "text-white" : "text-foreground") : "text-foreground";
 
   const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
@@ -63,16 +70,23 @@ const Layout = ({
                   />
                 ) : hotel?.name ? (
                   <span
-                    className={cn("font-semibold tracking-tight", isMobile ? "text-lg" : "text-2xl")}
-                    style={{ color: isDark ? '#ffffff' : undefined }}
+                    className={cn(
+                      "font-semibold tracking-tight transition-all duration-200",
+                      isMobile ? "text-lg" : "text-2xl",
+                      textColorClass
+                    )}
+                    style={mounted && isDark ? { color: '#ffffff' } : {}}
                   >
                     {hotel.name}
                   </span>
                 ) : (
                   <img
-                    src={isDark ? "/lovable-uploads/logo-dark.png" : "/lovable-uploads/logo-light.png"}
+                    src={(mounted && isDark) ? "/lovable-uploads/logo-dark.png" : "/lovable-uploads/logo-light.png"}
                     alt="Hotel Genius"
-                    className={cn("object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
+                    className={cn(
+                      "object-contain transition-all duration-200",
+                      isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]"
+                    )}
                   />
                 )}
               </Link>
