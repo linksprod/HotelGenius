@@ -60,7 +60,7 @@ const Layout = ({
                   />
                 ) : hotel?.name ? (
                   <span className={cn(
-                    "font-semibold tracking-tight text-foreground",
+                    "font-semibold tracking-tight text-foreground dark:text-white",
                     isMobile ? "text-lg" : "text-2xl"
                   )}>
                     {hotel.name}
