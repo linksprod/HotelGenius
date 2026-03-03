@@ -128,7 +128,7 @@ const AboutEditor = () => {
 
   return (
     <div className="flex-1 space-y-6 p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div id="admin-ob-about-header" className="flex items-center gap-3 mb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
           <FileText className="h-5 w-5 text-primary" />
         </div>

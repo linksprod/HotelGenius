@@ -60,6 +60,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
+          id="onboarding-menu"
           variant="ghost"
           size="icon"
           className={cn("relative p-2 rounded-full hover:bg-accent/20", buttonClassName)}

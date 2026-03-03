@@ -13,7 +13,7 @@ const ShopsManager = () => {
 
   return (
     <div className="p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div id="admin-ob-shops-header" className="flex items-center gap-3 mb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
           <Store className="h-5 w-5 text-primary" />
         </div>
@@ -22,7 +22,7 @@ const ShopsManager = () => {
           <p className="text-sm text-muted-foreground">Manage hotel shops, categories and products</p>
         </div>
       </div>
-      
+
       <Tabs defaultValue="shops" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4 mb-6">
           <TabsTrigger value="shops">Hotel Shops</TabsTrigger>
@@ -30,7 +30,7 @@ const ShopsManager = () => {
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="shops">
           <ShopsTab />
         </TabsContent>
@@ -38,11 +38,11 @@ const ShopsManager = () => {
         <TabsContent value="nearby">
           <NearbyShopsTab />
         </TabsContent>
-        
+
         <TabsContent value="categories">
           <CategoriesTab />
         </TabsContent>
-        
+
         <TabsContent value="products">
           <ProductsTab />
         </TabsContent>

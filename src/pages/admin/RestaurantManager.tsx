@@ -111,7 +111,7 @@ const RestaurantManager = () => {
 
   return (
     <div className="p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div id="admin-ob-restaurants-header" className="flex items-center gap-3 mb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
           <Utensils className="h-5 w-5 text-primary" />
         </div>
@@ -122,7 +122,7 @@ const RestaurantManager = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList id="admin-ob-restaurants-tabs" className="grid w-full grid-cols-3">
           <TabsTrigger value="restaurants">Restaurants</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="menus">Menus</TabsTrigger>
@@ -136,7 +136,7 @@ const RestaurantManager = () => {
                 <CardDescription>
                   Manage restaurant listings and information
                 </CardDescription>
-                <div className="flex gap-2">
+                <div id="admin-ob-restaurants-actions" className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"

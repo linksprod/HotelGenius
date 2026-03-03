@@ -34,7 +34,7 @@ export default function SpaManager() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center gap-3 mb-6">
+      <div id="admin-ob-spa-header" className="flex items-center gap-3 mb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
           <Sparkles className="h-5 w-5 text-primary" />
         </div>
@@ -50,7 +50,7 @@ export default function SpaManager() {
           <TabsTrigger value="facilities">Facilities</TabsTrigger>
           <TabsTrigger value="services">Services</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="bookings">
           <Card>
             {!selectedSpaService && (
@@ -72,7 +72,7 @@ export default function SpaManager() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="facilities">
           <Card>
             <CardHeader>
@@ -86,7 +86,7 @@ export default function SpaManager() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="services">
           <Card>
             <CardHeader>

@@ -62,7 +62,7 @@ const HotelsManager: React.FC = () => {
     return (
         <div className="flex-1 space-y-6 p-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div id="admin-ob-hotels-header" className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                         <Building2 className="h-5 w-5 text-primary" />
