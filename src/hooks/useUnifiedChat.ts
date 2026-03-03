@@ -12,13 +12,15 @@ interface UseUnifiedChatProps {
   isAdmin?: boolean;
   conversationType?: 'concierge' | 'safety_ai';
   conversationId?: string; // Load specific conversation by ID (for admin)
+  hotelId?: string; // Tenant scope for conversation creation
 }
 
-export const useUnifiedChat = ({ 
-  userInfo, 
-  isAdmin = false, 
+export const useUnifiedChat = ({
+  userInfo,
+  isAdmin = false,
   conversationType = 'concierge',
-  conversationId 
+  conversationId,
+  hotelId
 }: UseUnifiedChatProps) => {
   const [chatState, setChatState] = useState<ChatState>({
     conversation: null,
@@ -27,7 +29,7 @@ export const useUnifiedChat = ({
     isTyping: false,
     currentHandler: 'ai'
   });
-  
+
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -89,8 +91,8 @@ export const useUnifiedChat = ({
           .from('conversations')
           .select('*')
           .eq('guest_id', user.user.id)
-      .eq('conversation_type', conversationType)
-      .in('status', ['active', 'escalated'])
+          .eq('conversation_type', conversationType)
+          .in('status', ['active', 'escalated'])
           .maybeSingle();
 
         let conversation = existingConversation;
@@ -105,7 +107,8 @@ export const useUnifiedChat = ({
               room_number: userInfo?.roomNumber,
               status: 'active',
               current_handler: conversationType === 'concierge' ? 'human' : 'ai',
-              conversation_type: conversationType
+              conversation_type: conversationType,
+              ...(hotelId ? { hotel_id: hotelId } : {}) // Tag with hotel_id when available
             })
             .select()
             .single();
@@ -113,7 +116,7 @@ export const useUnifiedChat = ({
           if (error) throw error;
           conversation = newConversation;
 
-          const welcomeMessage = conversationType === 'safety_ai' 
+          const welcomeMessage = conversationType === 'safety_ai'
             ? `Hello ${userInfo?.name || 'there'}! I'm your AI Assistant. I can help with bookings, hotel information, and much more. If you need human assistance, I can connect you to our staff. How can I help you today?`
             : `Hello ${userInfo?.name || 'there'}! Welcome to our Hotel Team chat. Our staff will assist you directly with any questions or requests you may have.`;
 
@@ -326,7 +329,7 @@ export const useUnifiedChat = ({
     } catch (error) {
       console.error('Error communicating with AI:', error);
       setChatState(prev => ({ ...prev, isTyping: false }));
-      
+
       await supabase
         .from('messages')
         .insert({

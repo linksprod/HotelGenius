@@ -14,6 +14,7 @@ interface UnifiedChatContainerProps {
   className?: string;
   conversationType?: 'concierge' | 'safety_ai';
   conversationId?: string; // Load specific conversation by ID (for admin)
+  hotelId?: string; // Tenant scope
   onGoBack?: () => void;
 }
 
@@ -23,6 +24,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   className = "",
   conversationType = 'concierge',
   conversationId,
+  hotelId,
   onGoBack
 }) => {
   const {
@@ -38,7 +40,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     takeOverConversation,
     messagesEndRef,
     inputRef
-  } = useUnifiedChat({ userInfo, isAdmin, conversationType, conversationId });
+  } = useUnifiedChat({ userInfo, isAdmin, conversationType, conversationId, hotelId });
 
   if (isLoading) {
     return (

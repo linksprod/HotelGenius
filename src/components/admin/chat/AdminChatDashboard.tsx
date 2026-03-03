@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,6 +20,7 @@ export const AdminChatDashboard: React.FC = () => {
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const { markSectionSeen } = useAdminNotifications();
+  const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   useEffect(() => {
     markSectionSeen('chat');
@@ -40,7 +42,7 @@ export const AdminChatDashboard: React.FC = () => {
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [hotelId]); // re-run when hotel changes
 
   const fetchUnreadCounts = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -59,10 +61,25 @@ export const AdminChatDashboard: React.FC = () => {
       }
     }
 
-    const { data: guestMessages } = await supabase
+    // Only count unread messages for this hotel's conversations
+    let messagesQuery = supabase
       .from('messages')
       .select('conversation_id, created_at')
       .eq('sender_type', 'guest');
+
+    // Scope to hotel if not super admin
+    if (!isSuperAdmin && hotelId) {
+      // Filter messages that belong to this hotel's conversations
+      const convIds = conversations.map(c => c.id);
+      if (convIds.length > 0) {
+        messagesQuery = messagesQuery.in('conversation_id', convIds);
+      } else {
+        setUnreadCounts({});
+        return;
+      }
+    }
+
+    const { data: guestMessages } = await messagesQuery;
 
     const counts: Record<string, number> = {};
     if (guestMessages) {
@@ -79,10 +96,17 @@ export const AdminChatDashboard: React.FC = () => {
   const fetchConversations = async () => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('conversations')
         .select('*')
         .order('updated_at', { ascending: false });
+
+      // Scope to current hotel unless super admin
+      if (!isSuperAdmin && hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       setConversations(data || []);
       const active = data?.filter(c => c.status === 'active').length || 0;

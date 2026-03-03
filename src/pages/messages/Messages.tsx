@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useMessageBadge } from '@/hooks/useMessageBadge';
 import Layout from '@/components/Layout';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const Messages = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { hotel } = useHotel();
   const [userInfo, setUserInfo] = useState<{
     name: string;
     email?: string;
@@ -118,6 +120,7 @@ const Messages = () => {
             userInfo={userInfo}
             conversationType={selectedChatType}
             className="h-full w-full"
+            hotelId={hotel?.id}
             onGoBack={handleBack}
           />
         </div>
