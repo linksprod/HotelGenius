@@ -96,23 +96,22 @@ export const AdminChatDashboard: React.FC = () => {
   const fetchConversations = async () => {
     try {
       setIsLoading(true);
-      // Fetch all conversations visible to this admin (RLS handles base visibility)
-      const { data, error } = await supabase
+      let query = supabase
         .from('conversations')
         .select('*')
         .order('updated_at', { ascending: false });
 
+      // Scope to current hotel unless super admin
+      if (!isSuperAdmin && hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
-
-      // Filter in memory per hotel — avoids DB errors from NULL hotel_id on legacy rows
-      const filtered = (!isSuperAdmin && hotelId)
-        ? (data || []).filter(c => c.hotel_id === hotelId || !c.hotel_id)
-        : (data || []);
-
-      setConversations(filtered);
-      const active = filtered.filter(c => c.status === 'active').length;
-      const escalated = filtered.filter(c => c.status === 'escalated').length;
-      setStats({ active, escalated, total: filtered.length });
+      setConversations(data || []);
+      const active = data?.filter(c => c.status === 'active').length || 0;
+      const escalated = data?.filter(c => c.status === 'escalated').length || 0;
+      setStats({ active, escalated, total: data?.length || 0 });
       fetchUnreadCounts();
     } catch (error) {
       console.error('Error fetching conversations:', error);
