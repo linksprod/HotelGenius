@@ -12,6 +12,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { ThemeToggle } from './ThemeToggle';
 
 
+import { useTheme } from 'next-themes';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { hexToHSL } from '@/lib/colors';
 
@@ -25,6 +26,8 @@ const Layout = ({
   const { t } = useTranslation();
   const location = useLocation();
   const { hotel } = useHotel();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
@@ -59,25 +62,18 @@ const Layout = ({
                     className={cn("object-contain", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
                   />
                 ) : hotel?.name ? (
-                  <span className={cn(
-                    "font-semibold tracking-tight text-foreground dark:text-white",
-                    isMobile ? "text-lg" : "text-2xl"
-                  )}>
+                  <span
+                    className={cn("font-semibold tracking-tight", isMobile ? "text-lg" : "text-2xl")}
+                    style={{ color: isDark ? '#ffffff' : undefined }}
+                  >
                     {hotel.name}
                   </span>
                 ) : (
-                  <>
-                    <img
-                      src="/lovable-uploads/logo-light.png"
-                      alt="Hotel Genius"
-                      className={cn("block dark:hidden object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
-                    />
-                    <img
-                      src="/lovable-uploads/logo-dark.png"
-                      alt="Hotel Genius"
-                      className={cn("hidden dark:block object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
-                    />
-                  </>
+                  <img
+                    src={isDark ? "/lovable-uploads/logo-dark.png" : "/lovable-uploads/logo-light.png"}
+                    alt="Hotel Genius"
+                    className={cn("object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
+                  />
                 )}
               </Link>
             </div>
