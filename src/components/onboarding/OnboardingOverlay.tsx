@@ -137,41 +137,40 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({
                     onClick={(e) => e.stopPropagation()}
                 />
 
-                {/* Backdrop with spotlight cutout via CSS mask */}
+                {/* Dark overlay — only shown when no spotlight target (centered tooltip) */}
                 <div
-                    className="absolute inset-0 bg-black/60 transition-all duration-500 ease-out"
-                    style={
-                        spotlight
-                            ? {
-                                maskImage: `radial-gradient(ellipse ${spotlight.width * 0.7}px ${spotlight.height * 0.7}px at ${spotlight.left + spotlight.width / 2}px ${spotlight.top + spotlight.height / 2}px, transparent 100%, black 100%)`,
-                                WebkitMaskImage: `radial-gradient(ellipse ${spotlight.width * 0.7}px ${spotlight.height * 0.7}px at ${spotlight.left + spotlight.width / 2}px ${spotlight.top + spotlight.height / 2}px, transparent 100%, black 100%)`,
-                                pointerEvents: 'none',
-                            }
-                            : { pointerEvents: 'none' }
-                    }
+                    className="absolute inset-0 bg-black/60 transition-opacity duration-300"
+                    style={{
+                        pointerEvents: 'none',
+                        opacity: spotlight ? 0 : 1,
+                    }}
                 />
 
-                {/* Spotlight ring glow — also blocks clicks on the spotlighted element */}
+                {/* Spotlight: box-shadow punch-through over the element */}
                 {spotlight && (
                     <motion.div
                         key={`spotlight-${currentStepIndex}`}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.4, ease: 'easeOut' }}
-                        className="absolute rounded-2xl border-2 border-primary/50 shadow-[0_0_20px_rgba(var(--primary-rgb,120,180,140),0.3)]"
-                        style={{
+                        initial={{ opacity: 0 }}
+                        animate={{
+                            opacity: 1,
                             top: spotlight.top,
                             left: spotlight.left,
                             width: spotlight.width,
                             height: spotlight.height,
+                        }}
+                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                        className="absolute"
+                        style={{
+                            boxShadow: '0 0 0 9999px rgba(0,0,0,0.6)',
+                            borderRadius: '14px',
+                            outline: '2px solid rgba(var(--primary-rgb, 120, 180, 140), 0.7)',
+                            outlineOffset: '1px',
+                            background: 'transparent',
                             pointerEvents: 'auto',
                             cursor: 'default',
+                            zIndex: 1,
                         }}
-                        onClick={(e) => {
-                            // Block clicks on the spotlighted element
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                     />
                 )}
 
@@ -226,10 +225,10 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({
                                         <div
                                             key={i}
                                             className={`h-1.5 rounded-full transition-all duration-300 ${i === currentStepIndex
-                                                    ? 'w-5 bg-primary'
-                                                    : i < currentStepIndex
-                                                        ? 'w-1.5 bg-primary/40'
-                                                        : 'w-1.5 bg-muted-foreground/20'
+                                                ? 'w-5 bg-primary'
+                                                : i < currentStepIndex
+                                                    ? 'w-1.5 bg-primary/40'
+                                                    : 'w-1.5 bg-muted-foreground/20'
                                                 }`}
                                         />
                                     ))}
@@ -264,8 +263,8 @@ const OnboardingOverlay: React.FC<OnboardingOverlayProps> = ({
                     {spotlight && (
                         <div
                             className={`absolute left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-card border-border ${tooltipPos.placement === 'bottom'
-                                    ? '-top-1.5 border-l border-t'
-                                    : '-bottom-1.5 border-r border-b'
+                                ? '-top-1.5 border-l border-t'
+                                : '-bottom-1.5 border-r border-b'
                                 }`}
                         />
                     )}
