@@ -13,6 +13,7 @@ import RestaurantBookingDialog from '@/features/dining/components/RestaurantBook
 import { Restaurant } from '@/features/dining/types';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const Dining = () => {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ const Dining = () => {
   const { toast } = useToast();
   const { requireAuth } = useRequireAuth();
   const { isLoading: isHotelLoading } = useHotel();
+  const { resolvePath } = useHotelPath();
   const { restaurants, isLoading: isRestaurantsLoading } = useRestaurants();
   const { upcomingEvents } = useEvents();
   const isLoading = isHotelLoading || isRestaurantsLoading;
@@ -114,7 +116,7 @@ const Dining = () => {
                   <Button
                     variant="outline"
                     className="w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent"
-                    onClick={() => navigate(`/dining/${restaurant.id}`)}
+                    onClick={() => navigate(resolvePath(`/dining/${restaurant.id}`))}
                   >
                     <BookText size={16} />
                     {t('common.viewDetails')}

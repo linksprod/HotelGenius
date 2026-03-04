@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 
 const HotelMap = () => {
   const [searchValue, setSearchValue] = useState('');
-  
+
   const handleClearSearch = () => {
     setSearchValue('');
   };
@@ -28,7 +28,7 @@ const HotelMap = () => {
             />
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
             {searchValue && (
-              <button 
+              <button
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-muted"
                 onClick={handleClearSearch}
               >
@@ -37,16 +37,16 @@ const HotelMap = () => {
             )}
           </div>
         </div>
-        
+
         {/* Interactive Map */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-secondary mb-4">Hotel Map</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Hotel Map</h2>
           <Card className="p-0 rounded-xl overflow-hidden mb-4">
             <div className="relative h-[400px] bg-muted">
               {/* This would be your interactive map component */}
-              <img 
-                src="https://images.unsplash.com/photo-1580846062738-c9558ed4d26b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80" 
-                alt="Hotel Map" 
+              <img
+                src="https://images.unsplash.com/photo-1580846062738-c9558ed4d26b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
+                alt="Hotel Map"
                 className="w-full h-full object-cover opacity-60"
               />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -58,7 +58,7 @@ const HotelMap = () => {
               </div>
             </div>
           </Card>
-          
+
           {/* Floor Selector */}
           <div className="flex overflow-x-auto gap-2 pb-2 mb-4">
             <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Ground Floor</Button>
@@ -69,10 +69,10 @@ const HotelMap = () => {
             <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Floor 5</Button>
           </div>
         </div>
-        
+
         {/* Key Facilities */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-secondary mb-4">Key Facilities</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Key Facilities</h2>
           <div className="grid grid-cols-2 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-3">
@@ -120,10 +120,10 @@ const HotelMap = () => {
             </Card>
           </div>
         </div>
-        
+
         {/* Emergency Info */}
         <div>
-          <h2 className="text-2xl font-bold text-secondary mb-4">Emergency Information</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Emergency Information</h2>
           <Card className="p-6">
             <div className="flex items-center gap-4 mb-4 text-red-600">
               <div className="p-2 bg-red-100 rounded-lg">
