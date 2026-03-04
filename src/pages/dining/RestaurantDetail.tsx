@@ -70,11 +70,11 @@ const RestaurantDetail = () => {
       <div className="container mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-pulse text-gray-400">Loading restaurant details...</div>
+            <div className="animate-pulse text-muted-foreground">Loading restaurant details...</div>
           </div>
         ) : !restaurant ? (
           <div className="flex items-center justify-center py-8">
-            <div className="text-gray-400">Restaurant not found.</div>
+            <div className="text-muted-foreground">Restaurant not found.</div>
           </div>
         ) : (
           <>
@@ -104,20 +104,20 @@ const RestaurantDetail = () => {
                     </Carousel>
                   </div>
                   <div className="p-6 md:w-1/2">
-                    <h1 className="text-3xl font-semibold text-secondary mb-4">{restaurant.name}</h1>
-                    <div className="flex items-center gap-2 text-gray-600 mb-2">
+                    <h1 className="text-3xl font-semibold text-foreground mb-4">{restaurant.name}</h1>
+                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
                       <UtensilsCrossed className="w-4 h-4" />
                       <span>{restaurant.cuisine}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600 mb-2">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
                       <Clock className="w-4 h-4" />
                       <span>{restaurant.openHours}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600 mb-4">
+                    <div className="flex items-center gap-2 text-muted-foreground mb-4">
                       <MapPin className="w-4 h-4" />
                       <span>{restaurant.location}</span>
                     </div>
-                    <p className="text-gray-600 mb-6">{restaurant.description}</p>
+                    <p className="text-muted-foreground mb-6">{restaurant.description}</p>
                     <Button onClick={handleBookTable}>
                       {restaurant.actionText || "Book a Table"}
                     </Button>
@@ -128,8 +128,8 @@ const RestaurantDetail = () => {
 
             <section className="mb-8">
               <Card>
-                <Tabs 
-                  value={activeTab} 
+                <Tabs
+                  value={activeTab}
                   onValueChange={setActiveTab}
                   className="w-full"
                 >
@@ -138,16 +138,16 @@ const RestaurantDetail = () => {
                     <TabsTrigger value="menu">Menu</TabsTrigger>
                   </TabsList>
                   <TabsContent value="info" className="p-4">
-                    <RestaurantInfo 
-                      restaurant={restaurant} 
+                    <RestaurantInfo
+                      restaurant={restaurant}
                       onBookingClick={handleBookTable}
                       onViewMenuClick={() => setActiveTab("menu")}
                     />
                   </TabsContent>
                   <TabsContent value="menu" className="p-4">
-                    <RestaurantMenu 
-                      menuItems={menuItems} 
-                      isLoading={menuLoading} 
+                    <RestaurantMenu
+                      menuItems={menuItems}
+                      isLoading={menuLoading}
                     />
                   </TabsContent>
                 </Tabs>
@@ -156,21 +156,21 @@ const RestaurantDetail = () => {
 
             {/* Add Events Section */}
             <section className="mb-10">
-              <h2 className="text-2xl font-bold text-secondary mb-6">
+              <h2 className="text-2xl font-bold text-foreground mb-6">
                 Upcoming Events
               </h2>
               <EventsSection events={restaurantEvents} />
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-secondary mb-6">Reviews</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">Reviews</h2>
               <Card className="p-6">
-                <p className="text-gray-600">No reviews yet.</p>
+                <p className="text-muted-foreground">No reviews yet.</p>
               </Card>
             </section>
           </>
         )}
-        
+
         {/* Restaurant Booking Dialog */}
         {isBookingOpen && restaurant && (
           <RestaurantBookingDialog

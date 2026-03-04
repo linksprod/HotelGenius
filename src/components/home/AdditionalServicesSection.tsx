@@ -3,9 +3,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShoppingBag, Map, Compass, Star } from 'lucide-react';
 import ServiceCard from './ServiceCard';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const AdditionalServicesSection = () => {
   const { t } = useTranslation();
+  const { resolvePath } = useHotelPath();
 
   return (
     <section className="px-6 mb-10">
@@ -16,7 +18,7 @@ const AdditionalServicesSection = () => {
           title={t('home.additionalServices.shops')}
           description={t('home.additionalServices.shopsDescription')}
           actionText={t('common.shopNow')}
-          actionLink="/shops"
+          actionLink={resolvePath("/shops")}
           status={t('common.open')}
         />
 
@@ -25,7 +27,7 @@ const AdditionalServicesSection = () => {
           title={t('home.additionalServices.hotelMap')}
           description={t('home.additionalServices.hotelMapDescription')}
           actionText={t('common.openMap')}
-          actionLink="/map"
+          actionLink={resolvePath("/map")}
           status={t('common.available')}
         />
 
@@ -34,7 +36,7 @@ const AdditionalServicesSection = () => {
           title={t('home.additionalServices.destination')}
           description={t('home.additionalServices.destinationDescription')}
           actionText={t('common.explore')}
-          actionLink="/destination"
+          actionLink={resolvePath("/destination")}
           status={t('common.available')}
         />
 
@@ -43,7 +45,7 @@ const AdditionalServicesSection = () => {
           title={t('home.additionalServices.feedback')}
           description={t('home.additionalServices.feedbackDescription')}
           actionText={t('common.writeReview')}
-          actionLink="/feedback"
+          actionLink={resolvePath("/feedback")}
           status={t('common.available')}
         />
       </div>

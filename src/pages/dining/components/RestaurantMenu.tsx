@@ -17,7 +17,7 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
   if (isLoading) {
     return <div className="text-center py-8">Chargement du menu...</div>;
   }
-  
+
   if (!menuItems || menuItems.length === 0) {
     return (
       <div className="text-center py-8">
@@ -25,9 +25,9 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
       </div>
     );
   }
-  
+
   const categories = [...new Set(menuItems.map(item => item.category))];
-  
+
   return (
     <>
       <div className="space-y-8">
@@ -39,8 +39,8 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
                 <Card key={item.id} className="overflow-hidden">
                   {item.image && (
                     <div className="relative aspect-video">
-                      <img 
-                        src={item.image} 
+                      <img
+                        src={item.image}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
@@ -57,7 +57,7 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
                     <div className="flex justify-between items-start mb-1">
                       <div>
                         <h4 className="font-semibold">{item.name}</h4>
-                        <p className="text-sm text-gray-600">{item.description}</p>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <span className="font-semibold">{item.price} €</span>
@@ -85,10 +85,10 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
       <Dialog open={!!selectedPdf} onOpenChange={(open) => !open && setSelectedPdf(null)}>
         <DialogContent className="max-w-4xl w-full h-[90vh] p-0">
           <DialogHeader className="absolute top-0 right-0 z-10 p-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="h-8 w-8 p-0 rounded-full" 
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 rounded-full"
               onClick={() => setSelectedPdf(null)}
             >
               ✕

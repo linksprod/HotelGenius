@@ -148,7 +148,7 @@ const Destination = () => {
 
         {/* Quick Access */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-secondary mb-4">{t('destinationPage.discover')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('destinationPage.discover')}</h2>
           <div className="grid grid-cols-4 gap-3">
             {isLoadingCategories ? (
               // Show skeleton loading state
@@ -175,7 +175,7 @@ const Destination = () => {
 
         {/* Recommended Places */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-secondary mb-4">{t('destinationPage.attractions.title')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('destinationPage.attractions.title')}</h2>
           <div className="space-y-4">
             {isLoadingAttractions ? (
               // Loading state
@@ -301,7 +301,7 @@ const Destination = () => {
 
         {/* Activities Section */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-secondary mb-4">{t('destinationPage.activities.title')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('destinationPage.activities.title')}</h2>
           <div className="grid grid-cols-2 gap-4">
             {isLoadingActivities ? (
               // Loading state
@@ -380,7 +380,7 @@ const Destination = () => {
 
         {/* Transportation */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-secondary mb-4">{t('destinationPage.transportation.title')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('destinationPage.transportation.title')}</h2>
 
           {/* Car Rental */}
           {isLoadingCarRentals ? (
