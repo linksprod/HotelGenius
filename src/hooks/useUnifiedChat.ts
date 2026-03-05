@@ -97,6 +97,19 @@ export const useUnifiedChat = ({
 
         let conversation = existingConversation;
 
+        // Self-healing: if conversation exists but has no hotel_id, assign it now
+        if (conversation && !conversation.hotel_id && hotelId) {
+          console.log(`[useUnifiedChat] Self-healing: Assigning hotel_id ${hotelId} to conversation ${conversation.id}`);
+          const { data: updatedConv } = await (supabase
+            .from('conversations')
+            .update({ hotel_id: hotelId } as any) as any)
+            .eq('id', conversation.id)
+            .select()
+            .single();
+
+          if (updatedConv) conversation = updatedConv;
+        }
+
         if (!conversation) {
           const { data: newConversation, error } = await supabase
             .from('conversations')
@@ -108,10 +121,10 @@ export const useUnifiedChat = ({
               status: 'active',
               current_handler: conversationType === 'concierge' ? 'human' : 'ai',
               conversation_type: conversationType,
-              ...(hotelId ? { hotel_id: hotelId } : {}) // Tag with hotel_id when available
-            })
+              hotel_id: hotelId ?? null // Always set hotel_id; trigger resolves from guests table if null
+            } as any)
             .select()
-            .single();
+            .single() as any;
 
           if (error) throw error;
           conversation = newConversation;
@@ -292,7 +305,20 @@ export const useUnifiedChat = ({
           message_type: 'text'
         });
 
-      if (chatState.currentHandler === 'ai' && !isAdmin && chatState.conversation.conversation_type === 'safety_ai') {
+      const isAISection = chatState.conversation.conversation_type === 'safety_ai';
+
+      if (isAISection && !isAdmin) {
+        // If we are in the AI section, automatically switch back to AI handler if it was human/escalated
+        if (chatState.currentHandler !== 'ai') {
+          console.log('[useUnifiedChat] Re-activating AI handler for safety_ai conversation');
+          await supabase
+            .from('conversations')
+            .update({ current_handler: 'ai' })
+            .eq('id', chatState.conversation.id);
+
+          setChatState(prev => ({ ...prev, currentHandler: 'ai' }));
+        }
+
         await sendToAI(messageContent);
       }
 
@@ -319,16 +345,25 @@ export const useUnifiedChat = ({
           userId: user.user.id,
           userName: userInfo.name,
           roomNumber: userInfo.roomNumber || 'N/A',
-          conversationId: chatState.conversation?.id
+          conversationId: chatState.conversation?.id,
+          hotelId: chatState.conversation?.hotel_id || hotelId
         }
       });
 
       if (response.error) {
         throw response.error;
       }
-    } catch (error) {
+
+      // Also check if the function logic returned an error inside the data payload (for handled 200 responses)
+      if (response.data && response.data.error) {
+        throw response.data;
+      }
+    } catch (error: any) {
       console.error('Error communicating with AI:', error);
       setChatState(prev => ({ ...prev, isTyping: false }));
+
+      const errorMessage = error.details || error.message || 'I encountered an error while processing your request.';
+      const suggestion = error.suggestion ? `\n\nSuggestion: ${error.suggestion}` : '';
 
       await supabase
         .from('messages')
@@ -336,7 +371,7 @@ export const useUnifiedChat = ({
           conversation_id: chatState.conversation!.id,
           sender_type: 'ai',
           sender_name: 'AI Assistant',
-          content: 'I apologize, but I encountered an error. A human staff member will assist you shortly.',
+          content: `I apologize, but I encountered an error: ${errorMessage}${suggestion}\n\nA human staff member will assist you shortly.`,
           message_type: 'system'
         });
 

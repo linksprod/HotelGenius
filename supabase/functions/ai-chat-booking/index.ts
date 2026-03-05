@@ -11,6 +11,10 @@ const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+if (!openAIApiKey) {
+  console.error('CRITICAL: OPENAI_API_KEY is not set in environment variables');
+}
+
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 serve(async (req) => {
@@ -19,50 +23,67 @@ serve(async (req) => {
   }
 
   try {
-    const { message, userId, userName, roomNumber, conversationId } = await req.json();
-    
-    console.log('AI Chat Request:', { message, userId, userName, roomNumber, conversationId });
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key is missing. Please set the OPENAI_API_KEY secret in your Supabase dashboard.');
+    }
+
+    const { message, userId, userName, roomNumber, conversationId, hotelId } = await req.json();
+
+    console.log('[AI] Request received:', { userId, userName, hotelId, messageLength: message?.length });
 
     if (!message || !userId || !userName) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+      return new Response(JSON.stringify({ error: 'Missing required fields (message, userId, userName)' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const response = await sendChatMessage(message, userId, userName, roomNumber, conversationId);
+    const response = await sendChatMessage(message, userId, userName, roomNumber, conversationId, hotelId);
 
     return new Response(JSON.stringify(response), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
-    console.error('Error in AI chat function:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Sorry, I encountered an error. Please try again.',
-      details: error.message 
+    console.error('[AI] Fatal Error:', error.message);
+    // Return 200 even on handled errors so the frontend can read the JSON body easily
+    // without the Supabase client masking it as a generic "non-2xx" error.
+    return new Response(JSON.stringify({
+      error: 'The AI Concierge encountered a problem.',
+      details: error.message,
+      suggestion: error.message.includes('API key') ? 'Please ensure your OpenAI API key is configured in the Supabase Edge Function secrets.' : 'Please try again in a moment.'
     }), {
-      status: 500,
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
 
-async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, conversationId?: string) {
+async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, conversationId?: string, hotelId?: string) {
+  // Determine the effective hotel ID (fallback to demo hotel if missing)
+  const effectiveHotelId = hotelId || '00000000-0000-0000-0000-000000000000';
+
+  console.log(`[AI] Processing request for hotel: ${effectiveHotelId} (provided: ${hotelId})`);
+
   // Get hotel data for AI context
   const [restaurants, spaServices, events, hotelInfo] = await Promise.all([
-    supabase.from('restaurants').select('*').eq('status', 'open'),
-    supabase.from('spa_services').select('*, spa_facilities(*)').eq('status', 'available'),
-    supabase.from('events').select('*').gte('date', new Date().toISOString().split('T')[0]),
-    supabase.from('hotel_about').select('*').eq('status', 'active').single()
+    supabase.from('restaurants').select('*').eq('status', 'open').eq('hotel_id', effectiveHotelId),
+    supabase.from('spa_services').select('*, spa_facilities(*)').eq('status', 'available').eq('hotel_id', effectiveHotelId),
+    supabase.from('events').select('*').gte('date', new Date().toISOString().split('T')[0]).eq('hotel_id', effectiveHotelId),
+    supabase.from('hotel_about').select('*').eq('status', 'active').eq('hotel_id', effectiveHotelId).limit(1)
   ]);
 
-  const systemPrompt = `You are a helpful hotel concierge AI assistant for ${hotelInfo.data?.title || 'Hotel Genius'}. 
-You can help guests with:
-- Information about hotel facilities, restaurants, spa services, and events
-- Making reservations for restaurants, spa services, and events
-- General hotel information and policies
-- Providing recommendations
+  const hotelData = hotelInfo.data && hotelInfo.data.length > 0 ? hotelInfo.data[0] : null;
+
+  const systemPrompt = `You are a helpful hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
+You are a multi-purpose assistant. You should answer ANY questions from the guest, whether they are related to:
+- Using the app and its features
+- Booking restaurants, spa services, and events (you have tools for these)
+- General hotel information, policies, and amenities
+- Local recommendations and general concierge assistance
+- ANY other requests or questions the guest may have.
+
+If you don't have a specific tool for a request, answer to the best of your knowledge based on the hotel information provided.
 
 Current guest: ${userName} in room ${roomNumber}
 
@@ -72,25 +93,11 @@ Upcoming events: ${JSON.stringify(events.data)}
 Hotel information: ${JSON.stringify(hotelInfo.data)}
 
 IMPORTANT BOOKING RULES:
-- NEVER call a booking function unless you have ALL required information
-- If a guest wants to book something but hasn't provided a date, time, or number of guests, ASK for these details first
-- Always confirm booking details before proceeding
+- NEVER call a booking function unless you have ALL required information (date, time, guests)
+- If a guest wants to book something but hasn't provided details, ASK for them politely.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
-- For restaurants, you need: restaurant name/ID, date, time, and number of guests
-- For spa services, you need: service name/ID, date, and time
-- For events, you need: event name/ID, date, and number of guests
 
-When making bookings, always confirm details with the guest and provide booking confirmation.
-Be friendly, professional, and proactive in offering assistance.
-
-If a guest says something like "I want to book a restaurant" without providing details, respond with something like:
-"I'd be happy to help you book a restaurant! I can see we have several excellent options available. Could you please tell me:
-- Which restaurant interests you? 
-- What date would you like to dine?
-- What time would you prefer?
-- How many guests will be dining?"
-
-Only call the booking function when you have all the required information.`;
+Always be friendly, professional, and helpful. If a request is completely outside your capabilities, invite the guest to speak with a human staff member, but always try to help yourself first.`;
 
   const tools = [
     {
@@ -183,11 +190,11 @@ Only call the booking function when you have all the required information.`;
     const toolCall = data.choices[0].message.tool_calls[0];
     const functionName = toolCall.function.name;
     const functionArgs = JSON.parse(toolCall.function.arguments);
-    
+
     console.log('Function call:', functionName, functionArgs);
 
     let bookingResult;
-    
+
     switch (functionName) {
       case 'book_restaurant':
         bookingResult = await bookRestaurant(functionArgs, userId, userName, roomNumber);

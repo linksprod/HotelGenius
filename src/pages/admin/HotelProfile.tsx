@@ -18,6 +18,8 @@ const HotelProfile: React.FC = () => {
 
     const [logoUrl, setLogoUrl] = useState(hotel?.logo_url || '');
     const [logoPreview, setLogoPreview] = useState(hotel?.logo_url || '');
+    const [primaryColor, setPrimaryColor] = useState(hotel?.primary_color || '#94b3a3');
+    const [secondaryColor, setSecondaryColor] = useState(hotel?.secondary_color || '#1a1a1a');
     const [isUploading, setIsUploading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -94,12 +96,16 @@ const HotelProfile: React.FC = () => {
             // Use supabaseAdmin to bypass RLS restrictions on the hotels table
             const { error } = await supabaseAdmin
                 .from('hotels')
-                .update({ logo_url: logoUrl })
+                .update({
+                    logo_url: logoUrl,
+                    primary_color: primaryColor,
+                    secondary_color: secondaryColor
+                })
                 .eq('id', hotel.id);
 
             if (error) throw error;
 
-            toast({ title: 'Success!', description: 'Hotel logo saved successfully.' });
+            toast({ title: 'Success!', description: 'Hotel profile saved successfully.' });
             // Refresh hotel context so sidebar and navbar update immediately
             refreshHotel();
         } catch (error: any) {
@@ -236,6 +242,86 @@ const HotelProfile: React.FC = () => {
                             )}
                             {isSaving ? 'Saving...' : 'Save Logo'}
                         </Button>
+                    </CardContent>
+                </Card>
+
+                {/* Branding & Colors Card */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Branding & Colors</CardTitle>
+                        <CardDescription>
+                            Personalize your hotel's application with your brand colors. These will be applied to buttons, icons, and navigation elements.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Primary Color */}
+                            <div className="space-y-3">
+                                <Label htmlFor="primary-color">Primary Color (Guest & Admin)</Label>
+                                <div className="flex gap-3 items-center">
+                                    <div
+                                        className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
+                                        style={{ backgroundColor: primaryColor }}
+                                    />
+                                    <Input
+                                        id="primary-color"
+                                        type="color"
+                                        value={primaryColor}
+                                        onChange={(e) => setPrimaryColor(e.target.value)}
+                                        className="h-10 p-1 w-20 cursor-pointer"
+                                    />
+                                    <Input
+                                        type="text"
+                                        value={primaryColor}
+                                        onChange={(e) => setPrimaryColor(e.target.value)}
+                                        className="font-mono text-xs uppercase"
+                                        placeholder="#94B3A3"
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground">Used for buttons, active states, and primary accents.</p>
+                            </div>
+
+                            {/* Secondary Color */}
+                            <div className="space-y-3">
+                                <Label htmlFor="secondary-color">Secondary/Accent Color</Label>
+                                <div className="flex gap-3 items-center">
+                                    <div
+                                        className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
+                                        style={{ backgroundColor: secondaryColor }}
+                                    />
+                                    <Input
+                                        id="secondary-color"
+                                        type="color"
+                                        value={secondaryColor}
+                                        onChange={(e) => setSecondaryColor(e.target.value)}
+                                        className="h-10 p-1 w-20 cursor-pointer"
+                                    />
+                                    <Input
+                                        type="text"
+                                        value={secondaryColor}
+                                        onChange={(e) => setSecondaryColor(e.target.value)}
+                                        className="font-mono text-xs uppercase"
+                                        placeholder="#1A1A1A"
+                                    />
+                                </div>
+                                <p className="text-xs text-muted-foreground">Used for secondary backgrounds and subtle accents.</p>
+                            </div>
+                        </div>
+
+                        {/* Save Colors */}
+                        <div className="pt-4 border-t">
+                            <Button
+                                onClick={handleSave}
+                                disabled={isSaving || (primaryColor === hotel.primary_color && secondaryColor === hotel.secondary_color)}
+                            >
+                                {isSaving ? (
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                ) : (
+                                    <Save className="h-4 w-4 mr-2" />
+                                )}
+                                {isSaving ? 'Saving...' : 'Save Branding Colors'}
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
             </div>

@@ -8,7 +8,8 @@ interface Hotel {
     name: string;
     slug: string;
     logo_url?: string;
-    primary_color?: string; // may not exist in all DB instances
+    primary_color?: string;
+    secondary_color?: string;
 }
 
 interface HotelContextType {

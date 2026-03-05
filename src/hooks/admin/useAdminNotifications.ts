@@ -60,27 +60,30 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Helper: get last_seen or epoch for first-time
   const getLastSeen = (key: string) => lastSeenMap[key] || '1970-01-01T00:00:00Z';
 
-  // Helper: optionally add hotel_id filter to enforce tenant isolation
-  const withHotel = (q: any) => (hotelId ? q.eq('hotel_id', hotelId) : q);
-
   // Restaurant reservations - global count for sidebar
-  const { count: restaurantCount } = await withHotel(
-    supabase
-      .from('table_reservations')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'pending')
-      .gt('created_at', getLastSeen('restaurants'))
-  );
+  let restaurantQuery = supabase
+    .from('table_reservations')
+    .select('id, restaurants!inner(hotel_id)', { count: 'exact', head: true })
+    .eq('status', 'pending')
+    .gt('created_at', getLastSeen('restaurants'));
+
+  if (hotelId) {
+    restaurantQuery = restaurantQuery.eq('restaurants.hotel_id', hotelId);
+  }
+  const { count: restaurantCount } = await restaurantQuery;
   counts.restaurants = restaurantCount || 0;
 
   // Per-restaurant pending counts (only new ones)
-  const { data: restaurantReservations } = await withHotel(
-    supabase
-      .from('table_reservations')
-      .select('restaurant_id')
-      .eq('status', 'pending')
-      .gt('created_at', getLastSeen('restaurants'))
-  );
+  let restaurantDetailsQuery = supabase
+    .from('table_reservations')
+    .select('restaurant_id, restaurants!inner(hotel_id)')
+    .eq('status', 'pending')
+    .gt('created_at', getLastSeen('restaurants'));
+
+  if (hotelId) {
+    restaurantDetailsQuery = restaurantDetailsQuery.eq('restaurants.hotel_id', hotelId);
+  }
+  const { data: restaurantReservations } = await restaurantDetailsQuery;
 
   const restaurantCounts: Record<string, number> = {};
   if (restaurantReservations) {
@@ -92,22 +95,28 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   }
 
   // Spa bookings - global count for sidebar
-  const { count: spaCount } = await withHotel(
-    supabase
-      .from('spa_bookings')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'pending')
-      .gt('created_at', getLastSeen('spa'))
-  );
+  let spaQuery = supabase
+    .from('spa_bookings')
+    .select('id, spa_services!inner(hotel_id)', { count: 'exact', head: true })
+    .eq('status', 'pending')
+    .gt('created_at', getLastSeen('spa'));
+
+  if (hotelId) {
+    spaQuery = spaQuery.eq('spa_services.hotel_id', hotelId);
+  }
+  const { count: spaCount } = await spaQuery;
   counts.spa = spaCount || 0;
 
   // Spa bookings - per-service counts
-  const { data: spaBookings } = await withHotel(
-    supabase
-      .from('spa_bookings')
-      .select('service_id, created_at')
-      .eq('status', 'pending')
-  );
+  let spaDetailsQuery = supabase
+    .from('spa_bookings')
+    .select('service_id, created_at, spa_services!inner(hotel_id)')
+    .eq('status', 'pending');
+
+  if (hotelId) {
+    spaDetailsQuery = spaDetailsQuery.eq('spa_services.hotel_id', hotelId);
+  }
+  const { data: spaBookings } = await spaDetailsQuery;
 
   const spaServiceCounts: Record<string, number> = {};
   if (spaBookings) {
@@ -122,24 +131,31 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   }
 
   // Event reservations
-  const { count: eventsCount } = await withHotel(
-    supabase
-      .from('event_reservations')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'pending')
-      .gt('created_at', getLastSeen('events'))
-  );
+  let eventsQuery = supabase
+    .from('event_reservations')
+    .select('id, events!inner(hotel_id)', { count: 'exact', head: true })
+    .eq('status', 'pending')
+    .gt('created_at', getLastSeen('events'));
+
+  if (hotelId) {
+    eventsQuery = eventsQuery.eq('events.hotel_id', hotelId);
+  }
+  const { count: eventsCount } = await eventsQuery;
   counts.events = eventsCount || 0;
 
   // Chat: count conversations with new guest messages since last seen
   const chatLastSeen = getLastSeen('chat');
-  const { data: newGuestMessages } = await withHotel(
-    supabase
-      .from('messages')
-      .select('conversation_id')
-      .eq('sender_type', 'guest')
-      .gt('created_at', chatLastSeen)
-  );
+  let chatQuery = supabase
+    .from('messages')
+    .select('conversation_id, conversations!inner(hotel_id)')
+    .eq('sender_type', 'guest')
+    .gt('created_at', chatLastSeen);
+
+  if (hotelId) {
+    chatQuery = chatQuery.eq('conversations.hotel_id', hotelId);
+  }
+
+  const { data: newGuestMessages } = await chatQuery;
 
   if (newGuestMessages) {
     const uniqueConvos = new Set(newGuestMessages.map(m => m.conversation_id));
@@ -147,12 +163,15 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   }
 
   // Service requests by category
-  const { data: serviceRequests } = await withHotel(
-    supabase
-      .from('service_requests')
-      .select('category_id, created_at')
-      .eq('status', 'pending')
-  );
+  let serviceRequestsQuery = supabase
+    .from('service_requests')
+    .select('category_id, created_at, request_items!inner(hotel_id)')
+    .eq('status', 'pending');
+
+  if (hotelId) {
+    serviceRequestsQuery = serviceRequestsQuery.eq('request_items.hotel_id', hotelId);
+  }
+  const { data: serviceRequests } = await serviceRequestsQuery;
 
   if (serviceRequests) {
     for (const req of serviceRequests) {

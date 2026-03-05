@@ -10,7 +10,7 @@ import {
   CommandSeparator
 } from '@/components/ui/command';
 import { Search, X, ChevronRight, MapPin } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCommandSearchOptions } from './useCommandSearchOptions';
 import { cn } from "@/lib/utils";
 
@@ -22,6 +22,7 @@ type SearchDialogProps = {
 const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
   const { getFilteredResults } = useCommandSearchOptions();
 
   useEffect(() => {
@@ -46,7 +47,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
   const shopResults = filteredResults.filter(item => item.type === 'shop');
 
   const handleSelect = (route: string) => {
-    navigate(route);
+    navigate(`/${slug}${route}`);
     setOpen(false);
     setQuery('');
   };
