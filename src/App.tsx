@@ -12,6 +12,7 @@ import PublicRoutes from './routes/PublicRoutes';
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import TenantGuard from './components/TenantGuard';
+import ThemeCustomizer from './components/ThemeCustomizer';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import './i18n';
 
@@ -32,6 +33,7 @@ function App() {
               {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
               <Route path="/:slug/*" element={
                 <HotelProvider>
+                  <ThemeCustomizer />
                   <TenantGuard>
                     <Routes>
                       <Route path="profile/*" element={<AuthenticatedRoutes />} />

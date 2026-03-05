@@ -44,7 +44,7 @@ export const AdminChatDashboard: React.FC = () => {
     return () => { supabase.removeChannel(channel); };
   }, [hotelId]); // re-run when hotel changes
 
-  const fetchUnreadCounts = async () => {
+  const fetchUnreadCounts = useCallback(async (targetConversations?: Conversation[]) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -61,6 +61,9 @@ export const AdminChatDashboard: React.FC = () => {
       }
     }
 
+    // Use provided conversations or fallback to state
+    const convsToCheck = targetConversations || conversations;
+
     // Only count unread messages for this hotel's conversations
     let messagesQuery = supabase
       .from('messages')
@@ -69,8 +72,8 @@ export const AdminChatDashboard: React.FC = () => {
 
     // Scope to hotel if not super admin
     if (!isSuperAdmin && hotelId) {
-      // Filter messages that belong to this hotel's conversations
-      const convIds = conversations.map(c => c.id);
+      // Filter messages that belong to these conversations
+      const convIds = convsToCheck.map(c => c.id);
       if (convIds.length > 0) {
         messagesQuery = messagesQuery.in('conversation_id', convIds);
       } else {
@@ -91,7 +94,7 @@ export const AdminChatDashboard: React.FC = () => {
       }
     }
     setUnreadCounts(counts);
-  };
+  }, [hotelId, isSuperAdmin, conversations]);
 
   const fetchConversations = async () => {
     try {
@@ -108,11 +111,15 @@ export const AdminChatDashboard: React.FC = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      setConversations(data || []);
-      const active = data?.filter(c => c.status === 'active').length || 0;
-      const escalated = data?.filter(c => c.status === 'escalated').length || 0;
-      setStats({ active, escalated, total: data?.length || 0 });
-      fetchUnreadCounts();
+
+      const fetchedConversations = data || [];
+      setConversations(fetchedConversations);
+      const active = fetchedConversations.filter(c => c.status === 'active').length || 0;
+      const escalated = fetchedConversations.filter(c => c.status === 'escalated').length || 0;
+      setStats({ active, escalated, total: fetchedConversations.length || 0 });
+
+      // Pass the freshly fetched data to avoid stale state issues
+      fetchUnreadCounts(fetchedConversations);
     } catch (error) {
       console.error('Error fetching conversations:', error);
       toast({ title: "Error", description: "Failed to load conversations.", variant: "destructive" });
