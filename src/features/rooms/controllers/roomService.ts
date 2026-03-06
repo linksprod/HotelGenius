@@ -55,7 +55,7 @@ export const createServiceRequest = async (requestData: {
           console.error("Error parsing user data:", error);
         }
       }
-      
+
       // If still no guest name, try to get it from the database based on room number
       if ((!requestData.guest_name || requestData.guest_name === 'Guest') && requestData.room_number) {
         try {
@@ -65,7 +65,7 @@ export const createServiceRequest = async (requestData: {
             .eq('room_number', requestData.room_number)
             .order('updated_at', { ascending: false })
             .limit(1);
-          
+
           if (!guestError && guestData && guestData.length > 0) {
             requestData.guest_name = `${guestData[0].first_name || ''} ${guestData[0].last_name || ''}`.trim() || 'Guest';
             console.log('Using guest name from database:', requestData.guest_name);
@@ -75,7 +75,6 @@ export const createServiceRequest = async (requestData: {
         }
       }
     }
-
     console.log('Creating service request with data:', {
       guest_id: requestData.guest_id,
       room_number: requestData.room_number,
@@ -115,21 +114,21 @@ export const requestService = async (
   try {
     // Récupérer l'ID utilisateur et les données utilisateur du localStorage
     const userId = localStorage.getItem('user_id') || '00000000-0000-0000-0000-000000000000';
-    
+
     // Privilégier le room_number stocké directement dans localStorage
     let room_number = localStorage.getItem('user_room_number') || '';
     let guest_name = 'Guest';
-    
+
     // Si le room_number n'est pas disponible, essayer de le récupérer des données utilisateur
     if (!room_number) {
       const userDataStr = localStorage.getItem('user_data');
       if (userDataStr) {
         try {
           const userData = JSON.parse(userDataStr);
-          
+
           // Récupérer le nom complet
           guest_name = `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || 'Guest';
-          
+
           // Récupérer le numéro de chambre
           if (userData.room_number) {
             room_number = userData.room_number;
@@ -148,7 +147,7 @@ export const requestService = async (
       // Sauvegarder dans localStorage
       localStorage.setItem('user_room_number', room_number);
     }
-    
+
     // Si guest_name est 'Guest' et que nous avons un room_number, essayer d'obtenir le nom réel
     if ((guest_name === 'Guest' || !guest_name) && room_number) {
       try {
@@ -158,7 +157,7 @@ export const requestService = async (
           .eq('room_number', room_number)
           .order('updated_at', { ascending: false })
           .limit(1);
-        
+
         if (!guestError && guestData && guestData.length > 0) {
           guest_name = `${guestData[0].first_name || ''} ${guestData[0].last_name || ''}`.trim() || 'Guest';
           console.log('Found guest name from database:', guest_name);
@@ -167,24 +166,24 @@ export const requestService = async (
         console.error("Error fetching guest data:", error);
       }
     }
-    
+
     console.log('Submitting service request with room_number:', room_number, 'and guest_name:', guest_name);
-    
+
     // Vérifier si le roomId est au format UUID ou au format numéro de chambre
     let actualRoomId = roomId;
-    
+
     if (!roomId.includes('-')) {
       const { data: roomData, error: roomError } = await supabase
         .from('rooms')
         .select('id')
         .eq('room_number', roomId)
         .maybeSingle();
-      
+
       if (roomError) {
         console.error('Error fetching room data:', roomError);
         throw roomError;
       }
-      
+
       if (roomData) {
         actualRoomId = roomData.id;
       } else {
@@ -197,7 +196,7 @@ export const requestService = async (
         throw new Error(`Room ${roomId} not found`);
       }
     }
-    
+
     console.log('Final request parameters:', {
       guest_id: userId,
       room_id: actualRoomId,
@@ -206,7 +205,22 @@ export const requestService = async (
       type,
       description
     });
-    
+
+    // Ensure we have a category_id for scoping, otherwise it won't be visible in the admin
+    let finalCategoryId = category_id;
+    if (!finalCategoryId) {
+      // Find the first available category for this hotel (could be improved to find a 'General' one)
+      const { data: catData } = await supabase
+        .from('request_categories')
+        .select('id')
+        .limit(1); // Since we can't easily filter by hotel_id here without circular dependency or extra query, we just pick one
+
+      if (catData && catData.length > 0) {
+        finalCategoryId = catData[0].id;
+        console.log('Assigned fallback category_id for scoping:', finalCategoryId);
+      }
+    }
+
     // Insérer la demande avec les bonnes données
     const { data, error } = await supabase
       .from('service_requests')
@@ -218,17 +232,17 @@ export const requestService = async (
         type,
         description,
         request_item_id,
-        category_id,
+        category_id: finalCategoryId,
         status: 'pending',
         created_at: new Date().toISOString()
       })
       .select();
-    
+
     if (error) {
       console.error('Error saving request to database:', error);
       throw error;
     }
-    
+
     return data;
   } catch (error) {
     console.error('Error submitting service request:', error);
