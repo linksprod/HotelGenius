@@ -1,6 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { TableReservation, CreateTableReservationDTO, UpdateReservationStatusDTO } from '@/features/dining/types';
+import { NotificationService } from '@/services/NotificationService';
 
 // Define the shape of the data returned from Supabase
 interface SupabaseTableReservation {
@@ -17,6 +18,7 @@ interface SupabaseTableReservation {
   special_requests: string | null;
   status: string;
   created_at: string;
+  hotel_id: string | null;
 }
 
 // Fetch reservations for a restaurant
@@ -26,7 +28,7 @@ export const fetchReservations = async (restaurantId?: string): Promise<TableRes
     .select('*')
     .order('date', { ascending: true })
     .order('time', { ascending: true });
-  
+
   if (restaurantId && restaurantId !== ':id') {
     query = query.eq('restaurant_id', restaurantId);
   }
@@ -51,32 +53,33 @@ export const fetchReservations = async (restaurantId?: string): Promise<TableRes
     guests: item.guests,
     specialRequests: item.special_requests || undefined,
     status: item.status as 'pending' | 'confirmed' | 'cancelled',
-    createdAt: item.created_at
+    createdAt: item.created_at,
+    hotelId: item.hotel_id
   }));
 };
 
 // Create a new reservation
 export const createReservation = async (reservation: CreateTableReservationDTO): Promise<TableReservation> => {
   console.log('Creating reservation with data:', reservation);
-  
+
   if (!reservation.restaurantId || reservation.restaurantId === ':id') {
     throw new Error('ID de restaurant invalide');
   }
-  
+
   // Verify room number is provided
   if (!reservation.roomNumber) {
     throw new Error('Le numéro de chambre est requis');
   }
-  
+
   // Verify guest name is provided
   if (!reservation.guestName) {
     throw new Error('Le nom est requis');
   }
-  
+
   // Get the current authenticated user from Supabase (if available)
   const { data: { user } } = await supabase.auth.getUser();
   const userId = user?.id || null;
-  
+
   // Create the reservation payload for Supabase format
   const reservationData = {
     restaurant_id: reservation.restaurantId,
@@ -89,28 +92,29 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
     time: reservation.time,
     guests: reservation.guests,
     special_requests: reservation.specialRequests || '',
-    status: reservation.status || 'pending'
+    status: reservation.status || 'pending',
+    hotel_id: reservation.hotelId
   };
-  
+
   try {
     console.log('Sending to Supabase:', reservationData);
     console.log('Room number being sent:', reservationData.room_number);
-    
+
     // Debug output to see the table structure
     const { data: tableInfo, error: tableError } = await supabase
       .from('table_reservations')
       .select('*')
       .limit(1);
-    
+
     if (tableInfo && tableInfo.length > 0) {
       console.log('Table structure sample:', tableInfo);
       console.log('Available columns:', Object.keys(tableInfo[0]));
     }
-    
+
     if (tableError) {
       console.error('Error checking table structure:', tableError);
     }
-    
+
     const { data, error } = await supabase
       .from('table_reservations')
       .insert(reservationData)
@@ -119,12 +123,12 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
 
     if (error) {
       console.error('Supabase error creating reservation:', error);
-      
+
       // Additional error handling for column not found error
       if (error.message && error.message.includes('column "room_number" does not exist')) {
         throw new Error('La colonne "room_number" n\'existe pas dans la table. Veuillez vérifier la structure de la base de données.');
       }
-      
+
       throw new Error(error.message || 'Erreur lors de la création de la réservation');
     }
 
@@ -134,6 +138,36 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
 
     // Utiliser une assertion de type pour éviter l'erreur
     const typedData = data as unknown as SupabaseTableReservation;
+    // Trigger notification for staff (New reservation alert)
+    await NotificationService.createNotification({
+      hotel_id: typedData.hotel_id,
+      type: 'table_reservation',
+      recipient_type: 'staff',
+      recipient_id: '00000000-0000-0000-0000-000000000000',
+      title: 'New Table Reservation',
+      body: `New reservation for ${typedData.guests} guests on ${typedData.date} at ${typedData.time} by ${typedData.guest_name}.`,
+      source_module: 'Dining',
+      source_event: 'reservation_created',
+      reference_id: typedData.id,
+      reference_type: 'TableReservation'
+    });
+
+    // Also trigger for Guest to appear in unified notifications
+    if (userId) {
+      await NotificationService.createNotification({
+        hotel_id: typedData.hotel_id,
+        type: 'table_reservation',
+        recipient_type: 'guest',
+        recipient_id: userId,
+        title: 'Table Reservation Requested',
+        body: `Your reservation at ${reservation.restaurantId} for ${typedData.date} at ${typedData.time} is pending.`,
+        source_module: 'Dining',
+        source_event: 'requested',
+        reference_id: typedData.id,
+        reference_type: 'TableReservation'
+      });
+    }
+
     return {
       id: typedData.id,
       restaurantId: typedData.restaurant_id,
@@ -147,7 +181,8 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
       guests: typedData.guests,
       specialRequests: typedData.special_requests || undefined,
       status: typedData.status as 'pending' | 'confirmed' | 'cancelled',
-      createdAt: typedData.created_at
+      createdAt: typedData.created_at,
+      hotelId: typedData.hotel_id
     };
   } catch (error: any) {
     console.error('Failed to create reservation:', error);
@@ -157,13 +192,53 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
 
 // Update reservation status
 export const updateReservationStatus = async ({ id, status }: UpdateReservationStatusDTO): Promise<void> => {
-  const { error } = await supabase
-    .from('table_reservations')
-    .update({ status })
-    .eq('id', id);
+  try {
+    const { data: reservation, error: fetchError } = await supabase
+      .from('table_reservations')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error) {
-    console.error('Error updating reservation status:', error);
+    if (fetchError) throw fetchError;
+
+    const { error } = await supabase
+      .from('table_reservations')
+      .update({ status })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating reservation status:', error);
+      throw error;
+    }
+
+    // Trigger notification based on new status
+    if (status === 'confirmed' && reservation.user_id) {
+      await NotificationService.createNotification({
+        type: 'booking_confirmed',
+        recipient_type: 'guest',
+        recipient_id: reservation.user_id,
+        title: 'Table Reservation Confirmed',
+        body: `Your reservation on ${reservation.date} at ${reservation.time} has been confirmed.`,
+        source_module: 'Dining',
+        source_event: 'confirmed',
+        reference_id: id,
+        reference_type: 'TableReservation'
+      });
+    } else if (status === 'cancelled' && reservation.user_id) {
+      await NotificationService.createNotification({
+        type: 'booking_cancelled',
+        recipient_type: 'guest',
+        recipient_id: reservation.user_id,
+        title: 'Table Reservation Cancelled',
+        body: `Your reservation on ${reservation.date} at ${reservation.time} has been cancelled.`,
+        source_module: 'Dining',
+        source_event: 'cancelled',
+        reference_id: id,
+        reference_type: 'TableReservation'
+      });
+    }
+  } catch (error) {
+    console.error('Error in updateReservationStatus:', error);
     throw error;
   }
 };

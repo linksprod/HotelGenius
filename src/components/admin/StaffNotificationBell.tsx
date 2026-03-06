@@ -72,6 +72,10 @@ export const StaffNotificationBell: React.FC = () => {
       if (targetRoute) {
         navigate(`${targetRoute}?tab=requests&requestId=${notif.reference_id}`);
       }
+    } else if (notif.reference_type === 'spa_booking' && notif.reference_id) {
+      navigate(`/admin/spa?tab=bookings&bookingId=${notif.reference_id}`);
+    } else if (notif.reference_type === 'reservation' && notif.reference_id) {
+      navigate(`/admin/restaurants?tab=reservations&reservationId=${notif.reference_id}`);
     }
 
     setOpen(false);
@@ -118,9 +122,8 @@ export const StaffNotificationBell: React.FC = () => {
               <button
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
-                className={`w-full text-left px-4 py-3 border-b last:border-b-0 hover:bg-accent/50 transition-colors ${
-                  !notif.is_read ? 'bg-accent/20' : ''
-                }`}
+                className={`w-full text-left px-4 py-3 border-b last:border-b-0 hover:bg-accent/50 transition-colors ${!notif.is_read ? 'bg-accent/20' : ''
+                  }`}
               >
                 <div className="flex items-start gap-2">
                   <div className="flex-1 min-w-0">

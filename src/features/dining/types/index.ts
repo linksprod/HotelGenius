@@ -50,6 +50,7 @@ export interface TableReservation {
   specialRequests?: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   createdAt: string;
+  hotelId?: string;
 }
 
 // Add the following DTOs for API communication
@@ -65,6 +66,7 @@ export interface CreateTableReservationDTO {
   guests: number;
   specialRequests?: string;
   status: 'pending' | 'confirmed' | 'cancelled';
+  hotelId?: string;
 }
 
 export interface UpdateReservationStatusDTO {

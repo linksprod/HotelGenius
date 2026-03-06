@@ -5,19 +5,11 @@ import { NotificationsList } from './components/NotificationsList';
 import { EmptyState } from './components/EmptyState';
 import { AuthPrompt } from './components/AuthPrompt';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useNotifications } from '@/hooks/useNotifications';
+import { useNotificationsData } from './hooks/useNotificationsData';
 import { NotificationItem as NotificationItemType } from './types/notificationTypes';
 
 const Notifications: React.FC = () => {
-  const { notifications, isAuthenticated, hasNewNotifications } = useNotifications();
-  
-  // Add proper loading state tracking
-  const [isLoading, setIsLoading] = React.useState(true);
-  
-  // Update loading state when notifications are received
-  React.useEffect(() => {
-    setIsLoading(false);
-  }, [notifications]);
+  const { notifications, isAuthenticated, isLoading, refetchUnified } = useNotificationsData();
 
   // Transform notifications to match the expected type if needed
   const typedNotifications: NotificationItemType[] = notifications.map(notification => ({
@@ -40,7 +32,7 @@ const Notifications: React.FC = () => {
     <Layout>
       <div className="container py-8">
         <h1 className="text-2xl font-bold mb-6">Notifications</h1>
-        
+
         {isLoading ? (
           <div className="space-y-4">
             <Skeleton className="h-24 w-full" />
@@ -48,7 +40,7 @@ const Notifications: React.FC = () => {
             <Skeleton className="h-24 w-full" />
           </div>
         ) : typedNotifications.length > 0 ? (
-          <NotificationsList notifications={typedNotifications} />
+          <NotificationsList notifications={typedNotifications} onRefresh={refetchUnified} />
         ) : (
           <EmptyState />
         )}

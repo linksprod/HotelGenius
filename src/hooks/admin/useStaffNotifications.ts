@@ -21,16 +21,30 @@ export const useStaffNotifications = () => {
 
   const fetchNotifications = useCallback(async () => {
     if (!user?.id) return;
+
+    // Fetch from unified notifications table for staff
     const { data } = await supabase
-      .from('staff_notifications')
+      .from('notifications' as any)
       .select('*')
-      .eq('user_id', user.id)
+      .eq('recipient_type', 'staff')
+      .or(`recipient_id.eq.${user.id},recipient_id.eq.00000000-0000-0000-0000-000000000000`)
       .order('created_at', { ascending: false })
       .limit(50);
 
     if (data) {
-      setNotifications(data as unknown as StaffNotification[]);
-      setUnreadCount((data as unknown as StaffNotification[]).filter((n) => !n.is_read).length);
+      const mappedNotifs: StaffNotification[] = data.map((n: any) => ({
+        id: n.notification_id,
+        user_id: n.recipient_id,
+        type: n.type,
+        title: n.title,
+        message: n.body,
+        reference_id: n.reference_id,
+        reference_type: n.reference_type,
+        is_read: n.status === 'read',
+        created_at: n.created_at
+      }));
+      setNotifications(mappedNotifs);
+      setUnreadCount(mappedNotifs.filter((n) => !n.is_read).length);
     }
   }, [user?.id]);
 
@@ -49,13 +63,29 @@ export const useStaffNotifications = () => {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'staff_notifications',
-          filter: `user_id=eq.${user.id}`,
+          table: 'notifications',
+          filter: `recipient_type=eq.staff`,
         },
-        (payload) => {
-          const newNotif = payload.new as unknown as StaffNotification;
-          setNotifications((prev) => [newNotif, ...prev]);
-          setUnreadCount((prev) => prev + 1);
+        async (payload) => {
+          const n = payload.new as any;
+          // Filter in JS since .or filters aren't supported in realtime filter strings yet
+          if (n.recipient_id === user.id || n.recipient_id === '00000000-0000-0000-0000-000000000000') {
+            const newNotif: StaffNotification = {
+              id: n.notification_id,
+              user_id: n.recipient_id,
+              type: n.type,
+              title: n.title,
+              message: n.body,
+              reference_id: n.reference_id,
+              reference_type: n.reference_type,
+              is_read: n.status === 'read',
+              created_at: n.created_at
+            };
+            setNotifications((prev) => [newNotif, ...prev]);
+            if (!newNotif.is_read) {
+              setUnreadCount((prev) => prev + 1);
+            }
+          }
         }
       )
       .subscribe();
@@ -67,9 +97,9 @@ export const useStaffNotifications = () => {
 
   const markAsRead = useCallback(async (id: string) => {
     await supabase
-      .from('staff_notifications')
-      .update({ is_read: true } as any)
-      .eq('id', id);
+      .from('notifications' as any)
+      .update({ status: 'read', read_at: new Date().toISOString() })
+      .eq('notification_id', id);
 
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
@@ -80,10 +110,11 @@ export const useStaffNotifications = () => {
   const markAllAsRead = useCallback(async () => {
     if (!user?.id) return;
     await supabase
-      .from('staff_notifications')
-      .update({ is_read: true } as any)
-      .eq('user_id', user.id)
-      .eq('is_read', false);
+      .from('notifications' as any)
+      .update({ status: 'read', read_at: new Date().toISOString() })
+      .eq('recipient_type', 'staff')
+      .or(`recipient_id.eq.${user.id},recipient_id.eq.00000000-0000-0000-0000-000000000000`)
+      .neq('status', 'read');
 
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     setUnreadCount(0);

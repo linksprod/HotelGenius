@@ -2,6 +2,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { ServiceType } from '../types';
 import { toast } from '@/hooks/use-toast';
 import { RoomType, ServiceRequestType } from '@/features/types/supabaseTypes';
+import { NotificationService } from '@/services/NotificationService';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 // Function to create a new service request
 export const createServiceRequest = async (requestData: {
@@ -96,6 +98,20 @@ export const createServiceRequest = async (requestData: {
       throw error;
     }
 
+    // Trigger notification for staff
+    await NotificationService.createNotification({
+      hotel_id: (data as any).hotel_id, // We might need to fetch this or expect it in requestData
+      type: 'service_ticket_created',
+      recipient_type: 'staff',
+      recipient_id: '00000000-0000-0000-0000-000000000000', // System/Global for now
+      title: 'New Service Request',
+      body: `Room ${requestData.room_number}: ${requestData.description}`,
+      source_module: 'Service',
+      source_event: 'created',
+      reference_id: data.id,
+      reference_type: 'ServiceRequest'
+    });
+
     return data;
   } catch (error) {
     console.error('Error in createServiceRequest:', error);
@@ -109,7 +125,8 @@ export const requestService = async (
   type: ServiceType,
   description: string,
   request_item_id?: string,
-  category_id?: string
+  category_id?: string,
+  hotelId?: string | null
 ) => {
   try {
     // Récupérer l'ID utilisateur et les données utilisateur du localStorage
@@ -138,6 +155,42 @@ export const requestService = async (
         } catch (error) {
           console.error("Error parsing user data:", error);
         }
+      }
+    }
+
+    // Ensure the guest record exists and is associated with the correct hotel
+    // This is crucial for the double-fetch logic used in the admin section
+    if (userId && hotelId) {
+      try {
+        const { data: existingGuest } = await supabase
+          .from('guests')
+          .select('id, hotel_id')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (existingGuest) {
+          if (!existingGuest.hotel_id || existingGuest.hotel_id === '00000000-0000-0000-0000-000000000000') {
+            await supabase
+              .from('guests')
+              .update({ hotel_id: hotelId } as any)
+              .eq('id', existingGuest.id);
+            console.log('Updated existing guest with hotelId:', hotelId);
+          }
+        } else {
+          // Create a guest record if it doesn't exist
+          await supabase
+            .from('guests')
+            .insert({
+              user_id: userId,
+              hotel_id: hotelId,
+              room_number: room_number || null,
+              first_name: guest_name.split(' ')[0] || 'Guest',
+              last_name: guest_name.split(' ').slice(1).join(' ') || '',
+            } as any);
+          console.log('Created new guest record for hotelId:', hotelId);
+        }
+      } catch (err) {
+        console.error('Error ensuring guest-hotel association:', err);
       }
     }
 
@@ -243,6 +296,22 @@ export const requestService = async (
       throw error;
     }
 
+    // Trigger notification for staff
+    if (data && data.length > 0) {
+      await NotificationService.createNotification({
+        hotel_id: hotelId || undefined,
+        type: 'service_ticket_created',
+        recipient_type: 'staff',
+        recipient_id: '00000000-0000-0000-0000-000000000000',
+        title: 'New Service Request',
+        body: `Room ${room_number}: ${description}`,
+        source_module: 'Service',
+        source_event: 'created',
+        reference_id: data[0].id,
+        reference_type: 'ServiceRequest'
+      });
+    }
+
     return data;
   } catch (error) {
     console.error('Error submitting service request:', error);
@@ -256,6 +325,14 @@ export const updateRequestStatus = async (
   status: 'pending' | 'on_hold' | 'in_progress' | 'completed' | 'cancelled'
 ): Promise<void> => {
   try {
+    const { data: request, error: fetchError } = await supabase
+      .from('service_requests')
+      .select('*')
+      .eq('id', requestId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
     const { error } = await supabase
       .from('service_requests')
       .update({ status, updated_at: new Date().toISOString() })
@@ -264,6 +341,22 @@ export const updateRequestStatus = async (
     if (error) {
       console.error('Error updating request status:', error);
       throw error;
+    }
+
+    // Notify guest if completed
+    if (status === 'completed' && request.guest_id) {
+      await NotificationService.createNotification({
+        hotel_id: (request as any).hotel_id,
+        type: 'service_ticket_completed',
+        recipient_type: 'guest',
+        recipient_id: request.guest_id,
+        title: 'Request Completed',
+        body: `Your request "${request.description}" has been completed.`,
+        source_module: 'Service',
+        source_event: 'completed',
+        reference_id: requestId,
+        reference_type: 'ServiceRequest'
+      });
     }
   } catch (error) {
     console.error('Error updating request status:', error);

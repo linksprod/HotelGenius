@@ -10,7 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { DatePicker } from '@/components/ui/date-picker';
 import { DateRange } from 'react-day-picker';
-import { supabase } from '@/integrations/supabase/client';
+import { createReservation } from '../services/reservationService';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 import { Restaurant } from '../types';
 
 interface RestaurantBookingFormProps {
@@ -34,6 +35,7 @@ export default function RestaurantBookingForm({
   existingBooking
 }: RestaurantBookingFormProps) {
   const { userData } = useAuth();
+  const { hotelId } = useCurrentHotelId();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     existingBooking?.date ? new Date(existingBooking.date) : undefined
   );
@@ -79,30 +81,24 @@ export default function RestaurantBookingForm({
     setIsSubmitting(true);
 
     try {
-      const bookingData = {
-        restaurant_id: restaurant.id,
-        user_id: userId,
-        guest_name: data.guestName,
-        guest_email: data.guestEmail,
-        guest_phone: data.guestPhone,
-        room_number: data.roomNumber,
+      const bookingDTO = {
+        restaurantId: restaurant.id,
+        userId: userId || undefined,
+        guestName: data.guestName,
+        guestEmail: data.guestEmail,
+        guestPhone: data.guestPhone,
+        roomNumber: data.roomNumber,
         date: selectedDate.toISOString().split('T')[0],
         time: selectedTime,
         guests: data.guests,
-        special_requests: data.specialRequests,
-        status: 'pending' as const
+        specialRequests: data.specialRequests,
+        status: 'pending' as const,
+        hotelId: hotelId || undefined
       };
 
-      console.log('Creating restaurant booking:', bookingData);
+      console.log('Creating restaurant booking with service:', bookingDTO);
 
-      const { data: result, error } = await supabase
-        .from('table_reservations')
-        .insert(bookingData);
-
-      if (error) {
-        console.error('Restaurant booking error:', error);
-        throw error;
-      }
+      const result = await createReservation(bookingDTO);
 
       toast.success("Restaurant booking request sent successfully!");
       if (onSuccess) {
@@ -222,7 +218,7 @@ export default function RestaurantBookingForm({
             type="number"
             min="1"
             max="20"
-            {...register("guests", { 
+            {...register("guests", {
               required: "Number of guests is required",
               min: { value: 1, message: "At least 1 guest required" },
               max: { value: 20, message: "Maximum 20 guests allowed" },
@@ -247,8 +243,8 @@ export default function RestaurantBookingForm({
           />
         </div>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={isSubmitting}
           className="w-full"
         >

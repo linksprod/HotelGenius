@@ -29,11 +29,20 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
   const today = new Date().toISOString().split('T')[0];
 
   // Helper to add hotel_id filter if present
-  const query = (table: string) => {
+  const query = (table: any) => {
     let q = supabase.from(table).select('*', { count: 'exact', head: true });
-    if (hotelId) q = q.eq('hotel_id', hotelId);
+    if (hotelId) q = q.eq('hotel_id' as any, hotelId);
     return q;
   };
+
+  let userIds: string[] = [];
+  if (hotelId) {
+    const { data: guests } = await supabase
+      .from('guests')
+      .select('user_id')
+      .eq('hotel_id', hotelId);
+    userIds = guests?.map(g => g.user_id).filter(Boolean) as string[] || [];
+  }
 
   // Specific query builders for different needs
   const guestsQuery = () => {
@@ -50,14 +59,19 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
   const serviceRequestsQuery = () => {
     let q = supabase.from('service_requests').select('status');
-    if (hotelId) q = q.eq('hotel_id', hotelId);
+    if (hotelId) {
+      if (userIds.length > 0) {
+        q = q.in('guest_id', userIds);
+      } else {
+        // Return a query that will result in empty data if no guests found
+        q = q.eq('guest_id', '00000000-0000-0000-0000-000000000000');
+      }
+    }
     return q;
   };
 
   const feedbackQuery = () => {
     let q = supabase.from('guest_feedback').select('rating');
-    // Assuming guest_feedback has hotel_id or we filter by joining guests (if schema doesn't support hotel_id directly yet)
-    // But since we are adding hotel_id to guest_feedback in migration, we use it directly.
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
