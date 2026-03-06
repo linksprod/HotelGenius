@@ -66,7 +66,7 @@ const RequestDialog = ({ isOpen, onOpenChange, room }: RequestDialogProps) => {
             Describe what you need and our team will assist you.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid gap-4 py-4">
           <Textarea
             placeholder="Describe your request here..."
@@ -75,16 +75,16 @@ const RequestDialog = ({ isOpen, onOpenChange, room }: RequestDialogProps) => {
             className="min-h-[100px]"
           />
         </div>
-        
+
         <DialogFooter>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
             Cancel
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={isSubmitting}
           >

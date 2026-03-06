@@ -30,10 +30,10 @@ export const useServiceRequests = () => {
 
       let query: any = supabase
         .from('service_requests')
-        .select('*, request_items(*)');
+        .select('*, request_categories!inner(hotel_id), request_items(*)');
 
       if (hotelId) {
-        query = query.eq('hotel_id', hotelId);
+        query = query.eq('request_categories.hotel_id', hotelId);
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });
@@ -53,10 +53,10 @@ export const useServiceRequests = () => {
 
       let query: any = supabase
         .from('service_requests')
-        .select('*, request_items(*)');
+        .select('*, guests!inner(hotel_id), request_items(*)');
 
       if (hotelId) {
-        query = query.eq('hotel_id', hotelId);
+        query = query.eq('guests.hotel_id', hotelId);
       }
 
       // Pour un utilisateur normal, privilégier le filtrage par numéro de chambre

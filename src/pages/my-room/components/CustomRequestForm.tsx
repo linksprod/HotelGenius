@@ -23,13 +23,13 @@ const CustomRequestForm = ({
   const handleCustomRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customRequest.trim() || !room) return;
-    
+
     console.log('Submitting custom request:', { room, customRequest });
-    
+
     try {
       const userInfo = getUserInfo();
       console.log('User info for request:', userInfo);
-      
+
       const result = await requestService(room.id, 'custom', customRequest, undefined, undefined);
       console.log('Request service result:', result);
       setCustomRequest('');
@@ -59,8 +59,8 @@ const CustomRequestForm = ({
             className="w-full"
           />
         </div>
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={!customRequest.trim() || !room}
           className="w-full sm:w-auto"
         >
