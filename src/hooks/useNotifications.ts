@@ -8,36 +8,57 @@ import { NotificationItem } from '@/types/notification';
 import { useNotificationsState } from './notifications/useNotificationsState';
 import { useNotificationsRealtime } from './notifications/useNotificationsRealtime';
 import { combineAndSortNotifications } from './notifications/notificationUtils';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { Notification as UnifiedNotification } from '@/types/notifications';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useNotifications = () => {
   const { user, userData } = useAuth();
   const userId = user?.id || localStorage.getItem('user_id');
   const userEmail = user?.email || localStorage.getItem('user_email');
   const userRoomNumber = userData?.room_number || localStorage.getItem('user_room_number');
-  
+
   // Get service requests, table reservations and spa bookings
   const { data: serviceRequests = [], refetch: refetchServices } = useServiceRequests();
   const { reservations = [], refetch: refetchReservations } = useTableReservations();
   const { bookings: spaBookings = [], refetch: refetchSpaBookings } = useSpaBookings();
   const { reservations: eventReservations = [], refetch: refetchEventReservations } = useEventReservations();
-  
+
+  // Unified notifications state
+  const [unifiedNotifications, setUnifiedNotifications] = useState<UnifiedNotification[]>([]);
+
+  const refetchUnified = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const { data, error } = await supabase
+        .from('notifications' as any)
+        .select('*')
+        .eq('recipient_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setUnifiedNotifications(data as unknown as UnifiedNotification[]);
+    } catch (err) {
+      console.error("Error refetching unified notifications:", err);
+    }
+  }, [userId]);
+
   // Get notification state management with timestamp tracking
-  const { 
-    hasNewNotifications, 
+  const {
+    hasNewNotifications,
     setHasNewNotifications,
     newNotificationCount,
     lastSeenAt,
-    markAsSeen 
+    markAsSeen
   } = useNotificationsState();
-  
+
   // Store email in localStorage for future reference
   useEffect(() => {
     if (user?.email && !localStorage.getItem('user_email')) {
       localStorage.setItem('user_email', user.email);
     }
   }, [user?.email]);
-  
+
   // Force a reload only once on mount to avoid excessive refetching
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -46,13 +67,14 @@ export const useNotifications = () => {
         refetchServices(),
         refetchReservations(),
         refetchSpaBookings(),
-        refetchEventReservations()
+        refetchEventReservations(),
+        refetchUnified()
       ]);
     };
-    
+
     fetchInitialData();
-  }, [refetchServices, refetchReservations, refetchSpaBookings, refetchEventReservations]);
-  
+  }, [refetchServices, refetchReservations, refetchSpaBookings, refetchEventReservations, refetchUnified]);
+
   // Set up real-time notification listeners
   useNotificationsRealtime(
     userId,
@@ -62,6 +84,7 @@ export const useNotifications = () => {
     refetchServices,
     refetchSpaBookings,
     refetchEventReservations,
+    refetchUnified,
     setHasNewNotifications
   );
 
@@ -81,12 +104,19 @@ export const useNotifications = () => {
     }
     // Otherwise count notifications updated after lastSeenAt
     const lastSeenDate = new Date(lastSeenAt);
-    return notifications.filter(n => {
+
+    // Count legacy unreads
+    const legacyUnreadCount = notifications.filter(n => {
       const notificationDate = n.time instanceof Date ? n.time : new Date(n.time);
-      return notificationDate > lastSeenDate && 
+      return notificationDate > lastSeenDate &&
         (n.status === 'pending' || n.status === 'in_progress' || n.status === 'confirmed');
     }).length;
-  }, [notifications, lastSeenAt, newNotificationCount]);
+
+    // Count unified unreads (status !== 'read')
+    const unifiedUnreadCount = unifiedNotifications.filter(n => n.status !== 'read').length;
+
+    return legacyUnreadCount + unifiedUnreadCount;
+  }, [notifications, unifiedNotifications, lastSeenAt, newNotificationCount]);
 
   const isAuthenticated = Boolean(userId);
 
@@ -97,6 +127,7 @@ export const useNotifications = () => {
     hasNewNotifications,
     setHasNewNotifications,
     markAsSeen,
+    refetchUnified,
     refetchServices,
     refetchReservations,
     refetchSpaBookings,

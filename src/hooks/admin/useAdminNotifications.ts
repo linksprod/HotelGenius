@@ -63,12 +63,12 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Restaurant reservations - global count for sidebar
   let restaurantQuery = supabase
     .from('table_reservations')
-    .select('id, restaurants!inner(hotel_id)', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('status', 'pending')
     .gt('created_at', getLastSeen('restaurants'));
 
   if (hotelId) {
-    restaurantQuery = restaurantQuery.eq('restaurants.hotel_id', hotelId);
+    restaurantQuery = restaurantQuery.eq('hotel_id', hotelId);
   }
   const { count: restaurantCount } = await restaurantQuery;
   counts.restaurants = restaurantCount || 0;
@@ -76,12 +76,12 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Per-restaurant pending counts (only new ones)
   let restaurantDetailsQuery = supabase
     .from('table_reservations')
-    .select('restaurant_id, restaurants!inner(hotel_id)')
+    .select('restaurant_id')
     .eq('status', 'pending')
     .gt('created_at', getLastSeen('restaurants'));
 
   if (hotelId) {
-    restaurantDetailsQuery = restaurantDetailsQuery.eq('restaurants.hotel_id', hotelId);
+    restaurantDetailsQuery = restaurantDetailsQuery.eq('hotel_id', hotelId);
   }
   const { data: restaurantReservations } = await restaurantDetailsQuery;
 
@@ -97,12 +97,12 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Spa bookings - global count for sidebar
   let spaQuery = supabase
     .from('spa_bookings')
-    .select('id, spa_services!inner(hotel_id)', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('status', 'pending')
     .gt('created_at', getLastSeen('spa'));
 
   if (hotelId) {
-    spaQuery = spaQuery.eq('spa_services.hotel_id', hotelId);
+    spaQuery = spaQuery.eq('hotel_id', hotelId);
   }
   const { count: spaCount } = await spaQuery;
   counts.spa = spaCount || 0;
@@ -110,11 +110,11 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Spa bookings - per-service counts
   let spaDetailsQuery = supabase
     .from('spa_bookings')
-    .select('service_id, created_at, spa_services!inner(hotel_id)')
+    .select('service_id, created_at')
     .eq('status', 'pending');
 
   if (hotelId) {
-    spaDetailsQuery = spaDetailsQuery.eq('spa_services.hotel_id', hotelId);
+    spaDetailsQuery = spaDetailsQuery.eq('hotel_id', hotelId);
   }
   const { data: spaBookings } = await spaDetailsQuery;
 
@@ -133,12 +133,12 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Event reservations
   let eventsQuery = supabase
     .from('event_reservations')
-    .select('id, events!inner(hotel_id)', { count: 'exact', head: true })
+    .select('id', { count: 'exact', head: true })
     .eq('status', 'pending')
     .gt('created_at', getLastSeen('events'));
 
   if (hotelId) {
-    eventsQuery = eventsQuery.eq('events.hotel_id', hotelId);
+    eventsQuery = eventsQuery.eq('hotel_id', hotelId);
   }
   const { count: eventsCount } = await eventsQuery;
   counts.events = eventsCount || 0;
@@ -147,12 +147,12 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   const chatLastSeen = getLastSeen('chat');
   let chatQuery = supabase
     .from('messages')
-    .select('conversation_id, conversations!inner(hotel_id)')
+    .select('conversation_id')
     .eq('sender_type', 'guest')
     .gt('created_at', chatLastSeen);
 
   if (hotelId) {
-    chatQuery = chatQuery.eq('conversations.hotel_id', hotelId);
+    chatQuery = chatQuery.eq('hotel_id', hotelId);
   }
 
   const { data: newGuestMessages } = await chatQuery;
@@ -165,12 +165,25 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Service requests by category
   let serviceRequestsQuery = supabase
     .from('service_requests')
-    .select('category_id, created_at, request_categories!inner(hotel_id)')
+    .select('category_id, created_at, guest_id')
     .eq('status', 'pending');
 
+  let userIds: string[] = [];
   if (hotelId) {
-    serviceRequestsQuery = serviceRequestsQuery.eq('request_categories.hotel_id', hotelId);
+    const { data: guests } = await supabase
+      .from('guests')
+      .select('user_id')
+      .eq('hotel_id', hotelId);
+    userIds = guests?.map(g => g.user_id).filter(Boolean) as string[] || [];
+
+    if (userIds.length > 0) {
+      serviceRequestsQuery = serviceRequestsQuery.in('guest_id', userIds);
+    } else {
+      // If no guests for this hotel, we won't have matching requests
+      return { counts: counts as Record<SectionKey, number>, restaurantCounts, spaServiceCounts };
+    }
   }
+
   const { data: serviceRequests } = await serviceRequestsQuery;
 
   if (serviceRequests) {

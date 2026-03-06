@@ -5,6 +5,7 @@ import { reservationTransformers } from './reservations/reservationTransformers'
 import { toast } from 'sonner';
 import { useEffect } from 'react';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { updateReservationStatus } from '@/features/dining/services/reservationService';
 
 interface UseAllTableReservationsOptions {
   restaurantId?: string;
@@ -63,12 +64,8 @@ export const useAllTableReservations = (options?: UseAllTableReservationsOptions
   }, [queryClient]);
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
-        .from('table_reservations')
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (error) throw error;
+    mutationFn: async ({ id, status }: { id: string; status: 'confirmed' | 'cancelled' | 'pending' }) => {
+      await updateReservationStatus({ id, status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allTableReservations'] });

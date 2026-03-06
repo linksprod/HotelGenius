@@ -5,13 +5,16 @@ import { Card, CardContent } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import type { NotificationItem } from '../types/notificationTypes';
-import { Bell, Calendar, CheckCircle, XCircle, Clock, ShowerHead, Utensils, FileText, Edit, Trash2 } from 'lucide-react';
+import { Bell, Calendar, CheckCircle, XCircle, Clock, ShowerHead, Utensils, FileText, Edit, Trash2, Check } from 'lucide-react';
+import { NotificationService } from '@/services/NotificationService';
+import { toast } from 'sonner';
 
 interface NotificationCardProps {
   notification: NotificationItem;
+  onRefresh?: () => void;
 }
 
-export const NotificationCard: React.FC<NotificationCardProps> = ({ notification }) => {
+export const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onRefresh }) => {
   // Get icon based on notification type
   function getNotificationIcon(type: string) {
     switch (type) {
@@ -21,7 +24,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
       default: return <Bell className="h-5 w-5" />;
     }
   }
-  
+
   // Get color based on notification status
   function getStatusColor(status: string) {
     switch (status) {
@@ -43,7 +46,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
       default: return 'Pending';
     }
   }
-  
+
   function getStatusIcon(status: string) {
     switch (status) {
       case 'confirmed':
@@ -58,7 +61,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
       return 'recently';
     }
-    
+
     try {
       return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
     } catch (error) {
@@ -77,7 +80,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
       default: return 'bg-yellow-50';
     }
   }
-  
+
   // Get type label based on notification type
   function getTypeLabel(type: string) {
     switch (type) {
@@ -92,11 +95,35 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
   function getActionButtons() {
     const canCancel = ['pending', 'confirmed', 'in_progress'].includes(notification.status);
     const canEdit = ['pending'].includes(notification.status);
-    
-    if (!canCancel && !canEdit) return null;
-    
+    const isUnified = !!notification.data?.notification_id;
+    const isUnread = isUnified && notification.status !== 'read';
+
+    const handleMarkAsRead = async (e: React.MouseEvent) => {
+      e.preventDefault(); e.stopPropagation();
+      if (!notification.data?.notification_id) return;
+
+      const success = await NotificationService.markAsRead(notification.data.notification_id);
+      if (success) {
+        toast.success('Marked as read');
+        onRefresh?.();
+      } else {
+        toast.error('Failed to update notification');
+      }
+    };
+
+    if (!canCancel && !canEdit && !isUnread) return null;
+
     return (
-      <div className="mt-2 flex gap-2">
+      <div className="mt-3 flex gap-2">
+        {isUnread && (
+          <button
+            onClick={handleMarkAsRead}
+            className="p-1.5 rounded bg-green-100 text-green-700 text-xs flex items-center hover:bg-green-200 transition-colors"
+          >
+            <Check className="h-3.5 w-3.5 mr-1" />
+            Mark as read
+          </button>
+        )}
         {canEdit && (
           <Link to={`${notification.link}/edit`} className="p-1.5 rounded bg-blue-100 text-blue-600 text-xs flex items-center">
             <Edit className="h-3 w-3 mr-1" />
@@ -116,7 +143,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
   function getSummary() {
     // Check if data exists before trying to access its properties
     if (!notification.data) return null;
-    
+
     if (notification.type === 'spa_booking') {
       return (
         <div className="mt-1.5">
@@ -154,7 +181,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
         </div>
       );
     }
-    
+
     return null;
   }
 
@@ -166,7 +193,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
 
   return (
     <Link to={getNotificationDetailUrl()} className="block">
-      <Card className={`hover:shadow-md transition-shadow cursor-pointer ${getCardBackgroundColor(notification.status)}`}>
+      <Card className={`hover:shadow-md transition-shadow cursor-pointer relative overflow-hidden ${getCardBackgroundColor(notification.status)}`}>
+        {/* Unread indicator bar */}
+        {notification.data?.notification_id && notification.status !== 'read' && (
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
+        )}
         <CardContent className="p-4">
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-3">
@@ -175,7 +206,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
                   {getNotificationIcon(notification.type)}
                 </div>
               </div>
-              
+
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="font-medium">{notification.title}</h3>
@@ -183,26 +214,26 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
                     {getTypeLabel(notification.type)}
                   </span>
                 </div>
-                
+
                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">{notification.description}</p>
-                
+
                 {getSummary()}
-                
+
                 {notification.data?.room_number && !getSummary() && (
                   <div className="mt-1.5 text-xs bg-gray-100 text-gray-700 inline-block px-2 py-0.5 rounded-full">
                     Room: {notification.data.room_number}
                   </div>
                 )}
-                
+
                 <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
                   <Clock className="h-3 w-3" />
                   {formatTimeAgo(notification.time)}
                 </div>
-                
+
                 {getActionButtons()}
               </div>
             </div>
-            
+
             <div className={`text-xs px-2 py-1 rounded-full ${getStatusColor(notification.status)} ml-2 whitespace-nowrap flex items-center gap-1`}>
               {getStatusIcon(notification.status)}
               <span>{getStatusText(notification.status)}</span>

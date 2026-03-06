@@ -28,12 +28,34 @@ export const useServiceRequests = () => {
 
       console.log('Admin view: Fetching service requests', hotelId ? `for hotel ${hotelId}` : 'all hotels');
 
-      let query: any = supabase
-        .from('service_requests')
-        .select('*, request_categories!inner(hotel_id), request_items(*)');
+      let userIds: string[] = [];
 
       if (hotelId) {
-        query = query.eq('request_categories.hotel_id', hotelId);
+        // Double fetch: first get all guest user_ids for this hotel
+        const { data: guests, error: guestsError } = await supabase
+          .from('guests')
+          .select('user_id')
+          .eq('hotel_id', hotelId);
+
+        if (guestsError) {
+          console.error('Error fetching guests for hotel:', guestsError);
+          throw guestsError;
+        }
+
+        userIds = guests.map(g => g.user_id).filter(Boolean) as string[];
+
+        if (userIds.length === 0) {
+          console.log('No guests found for this hotel, returning empty requests');
+          return [];
+        }
+      }
+
+      let query = supabase
+        .from('service_requests')
+        .select('*, request_items(*)');
+
+      if (hotelId && userIds.length > 0) {
+        query = query.in('guest_id', userIds);
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });
@@ -53,19 +75,16 @@ export const useServiceRequests = () => {
 
       let query: any = supabase
         .from('service_requests')
-        .select('*, guests!inner(hotel_id), request_items(*)');
+        .select('*, request_items(*)');
 
-      if (hotelId) {
-        query = query.eq('guests.hotel_id', hotelId);
-      }
-
-      // Pour un utilisateur normal, privilégier le filtrage par numéro de chambre
-      if (userRoomNumber) {
+      // For guests, we rely on guest_id or room_number for isolation
+      // We remove the hotel_id filter because the column is missing in the DB
+      if (userId) {
+        console.log(`Fetching service requests for guest_id: ${userId}`);
+        query = query.eq('guest_id', userId);
+      } else if (userRoomNumber) {
         console.log(`Fetching service requests for room number: ${userRoomNumber}`);
         query = query.eq('room_number', userRoomNumber);
-      } else if (userId) {
-        console.log(`Fetching service requests for user ID: ${userId}`);
-        query = query.eq('guest_id', userId);
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });

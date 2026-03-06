@@ -7,6 +7,8 @@ import { Room } from '@/hooks/useRoom';
 import { requestService } from '@/features/rooms/controllers/roomService';
 import { useToast } from '@/hooks/use-toast';
 
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+
 interface RequestDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
@@ -17,6 +19,7 @@ const RequestDialog = ({ isOpen, onOpenChange, room }: RequestDialogProps) => {
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { hotelId } = useCurrentHotelId();
 
   const handleSubmit = async () => {
     if (!description.trim()) {
@@ -34,7 +37,10 @@ const RequestDialog = ({ isOpen, onOpenChange, room }: RequestDialogProps) => {
       await requestService(
         roomId,
         'service',
-        description
+        description,
+        undefined,
+        undefined,
+        hotelId
       );
 
       toast({
