@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { useEventReservations } from '@/hooks/useEventReservations';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { useTranslation } from 'react-i18next';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 // We'll create the schema dynamically to use translations
 const createReservationSchema = (t: any) => z.object({
@@ -60,6 +61,7 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
   const {
     userData
   } = useAuth();
+  const { hotelId } = useCurrentHotelId();
   const { t } = useTranslation();
   const isEditing = !!existingReservation;
 
@@ -129,7 +131,8 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
         roomNumber: values.roomNumber,
         date: eventDate,
         guests: values.guests,
-        specialRequests: values.specialRequests || undefined
+        specialRequests: values.specialRequests || undefined,
+        hotelId: hotelId || undefined
       };
       await createReservation(reservationData);
       toast({
@@ -155,37 +158,37 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
   }, (_, i) => i + 1);
 
   return <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <GuestInfoFields form={form} />
-        
-        <div className="form-field">
-          <label className="block text-sm font-medium text-foreground mb-1">
-            {t('forms.labels.participants')}
-          </label>
-          <select 
-            className="w-full p-2 border border-gray-300 rounded-md bg-zinc-100"
-            {...form.register("guests", { valueAsNumber: true })}
-          >
-            {guestOptions.map(num => (
-              <option key={num} value={num}>
-                {num} {num === 1 ? t('forms.labels.person') : t('forms.labels.people')}
-              </option>
-            ))}
-          </select>
-          {form.formState.errors.guests && (
-            <p className="text-red-500 text-sm mt-1">
-              {form.formState.errors.guests.message}
-            </p>
-          )}
-        </div>
-        
-        <SpecialRequests form={form} />
-        
-        <Button type="submit" className="w-full" disabled={isCreating}>
-          {isCreating ? t('forms.buttons.processing') : (buttonText || t('forms.buttons.reserve'))}
-        </Button>
-      </form>
-    </Form>;
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <GuestInfoFields form={form} />
+
+      <div className="form-field">
+        <label className="block text-sm font-medium text-foreground mb-1">
+          {t('forms.labels.participants')}
+        </label>
+        <select
+          className="w-full p-2 border border-gray-300 rounded-md bg-zinc-100"
+          {...form.register("guests", { valueAsNumber: true })}
+        >
+          {guestOptions.map(num => (
+            <option key={num} value={num}>
+              {num} {num === 1 ? t('forms.labels.person') : t('forms.labels.people')}
+            </option>
+          ))}
+        </select>
+        {form.formState.errors.guests && (
+          <p className="text-red-500 text-sm mt-1">
+            {form.formState.errors.guests.message}
+          </p>
+        )}
+      </div>
+
+      <SpecialRequests form={form} />
+
+      <Button type="submit" className="w-full" disabled={isCreating}>
+        {isCreating ? t('forms.buttons.processing') : (buttonText || t('forms.buttons.reserve'))}
+      </Button>
+    </form>
+  </Form>;
 };
 
 export default EventReservationForm;

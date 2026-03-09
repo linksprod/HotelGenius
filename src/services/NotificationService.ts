@@ -3,8 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import {
     Notification,
     CreateNotificationParams,
-    NotificationStatus
+    NotificationStatus,
+    NotificationType
 } from '../types/notifications';
+import { TemplateService } from './TemplateService';
 
 export class NotificationService {
     /**
@@ -24,8 +26,9 @@ export class NotificationService {
                     channel: params.channel || 'in_app',
                     recipient_type: params.recipient_type,
                     recipient_id: params.recipient_id,
-                    title: params.title,
-                    body: params.body,
+                    title: params.title || (params.template_data ? TemplateService.getTemplate(params.type, params.template_data).title : 'Notification'),
+                    body: params.body || (params.template_data ? TemplateService.getTemplate(params.type, params.template_data).body : ''),
+                    data: params.template_data || {},
                     priority: params.priority || 'normal',
                     source_module: params.source_module,
                     source_event: params.source_event,

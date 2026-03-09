@@ -42,6 +42,7 @@ export interface EventReservation {
   guests: number;
   specialRequests?: string;
   status: 'pending' | 'confirmed' | 'cancelled';
+  hotelId?: string;
   createdAt: string;
 }
 
@@ -56,6 +57,7 @@ export interface CreateEventReservationDTO {
   guests: number;
   specialRequests?: string;
   status?: 'pending' | 'confirmed' | 'cancelled';
+  hotelId?: string;
 }
 
 export interface UpdateEventReservationStatusDTO {

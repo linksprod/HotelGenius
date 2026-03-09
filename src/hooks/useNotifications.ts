@@ -88,12 +88,13 @@ export const useNotifications = () => {
     setHasNewNotifications
   );
 
-  // Combine and sort notifications
+  // Combine and sort all notifications
   const notifications: NotificationItem[] = combineAndSortNotifications(
     serviceRequests,
     reservations,
     spaBookings,
-    eventReservations
+    eventReservations,
+    unifiedNotifications
   );
 
   // Count unread notifications (those created after lastSeenAt)

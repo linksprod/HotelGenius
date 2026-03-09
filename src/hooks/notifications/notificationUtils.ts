@@ -6,7 +6,7 @@ import { NotificationItem } from '@/types/notification';
 // Safely create a Date object from a string
 export const createSafeDate = (dateString: string | null | undefined): Date | null => {
   if (!dateString) return null;
-  
+
   const date = new Date(dateString);
   return !isNaN(date.getTime()) ? date : null;
 };
@@ -16,7 +16,7 @@ export const formatTimeAgo = (date: Date | null | undefined): string => {
   if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
     return 'recently';
   }
-  
+
   try {
     return formatDistanceToNow(date, { addSuffix: true });
   } catch (error) {
@@ -33,7 +33,7 @@ function getServiceIcon(type: string): string {
 // Transform service requests to notifications
 export const transformServiceRequests = (requests: any[]): NotificationItem[] => {
   if (!Array.isArray(requests)) return [];
-  
+
   return requests.map(request => ({
     id: request.id || `req-${Math.random().toString(36).substr(2, 9)}`,
     type: 'request',
@@ -54,7 +54,7 @@ export const transformServiceRequests = (requests: any[]): NotificationItem[] =>
 // Transform reservations to notifications
 export const transformTableReservations = (reservations: any[]): NotificationItem[] => {
   if (!Array.isArray(reservations)) return [];
-  
+
   return reservations.map(reservation => ({
     id: reservation.id || `res-${Math.random().toString(36).substr(2, 9)}`,
     type: 'reservation',
@@ -78,7 +78,7 @@ export const transformTableReservations = (reservations: any[]): NotificationIte
 // Transform spa bookings to notifications
 export const transformSpaBookings = (bookings: any[]): NotificationItem[] => {
   if (!Array.isArray(bookings)) return [];
-  
+
   return bookings.map(booking => ({
     id: booking.id || `spa-${Math.random().toString(36).substr(2, 9)}`,
     type: 'spa_booking',
@@ -101,7 +101,7 @@ export const transformSpaBookings = (bookings: any[]): NotificationItem[] => {
 // Transform event reservations to notifications
 export const transformEventReservations = (reservations: any[]): NotificationItem[] => {
   if (!Array.isArray(reservations)) return [];
-  
+
   return reservations.map(reservation => ({
     id: reservation.id || `event-${Math.random().toString(36).substr(2, 9)}`,
     type: 'event_reservation',
@@ -121,29 +121,67 @@ export const transformEventReservations = (reservations: any[]): NotificationIte
   }));
 };
 
+// Transform unified notifications from the notifications table
+export const transformUnifiedNotifications = (notifications: any[]): NotificationItem[] => {
+  if (!Array.isArray(notifications)) return [];
+
+  return notifications.map(n => ({
+    id: n.notification_id || n.id,
+    type: (n.type === 'spa_booking' ? 'spa_booking' :
+      n.type === 'table_reservation' ? 'reservation' :
+        n.type === 'service_ticket_created' ? 'request' : 'general') as any,
+    title: n.title,
+    description: n.body,
+    icon: n.type === 'spa_booking' ? '💆' :
+      n.type === 'table_reservation' ? '🍽️' :
+        n.type === 'service_ticket_created' ? '🔔' : '🔔',
+    status: n.status === 'read' ? 'read' : 'pending',
+    time: createSafeDate(n.created_at) || new Date(),
+    link: n.reference_type === 'SpaBooking' ? `/spa/booking/${n.reference_id}` :
+      n.reference_type === 'TableReservation' ? `/dining/reservations/${n.reference_id}` :
+        n.reference_type === 'ServiceRequest' ? `/requests/${n.reference_id}` : '#',
+    data: n.data || {}
+  }));
+};
+
 // Combine and sort all notifications
 export const combineAndSortNotifications = (
   serviceRequests: any[] = [],
   reservations: any[] = [],
   spaBookings: any[] = [],
-  eventReservations: any[] = []
+  eventReservations: any[] = [],
+  unifiedNotifications: any[] = []
 ): NotificationItem[] => {
   // Transform the different types of notifications
   const requestNotifications = transformServiceRequests(serviceRequests);
   const reservationNotifications = transformTableReservations(reservations);
   const spaNotifications = transformSpaBookings(spaBookings);
   const eventNotifications = transformEventReservations(eventReservations);
-  
+  const centralNotifications = transformUnifiedNotifications(unifiedNotifications);
+
   // Combine all notifications
   const allNotifications = [
     ...requestNotifications,
     ...reservationNotifications,
     ...spaNotifications,
-    ...eventNotifications
+    ...eventNotifications,
+    ...centralNotifications
   ];
-  
+
+  // Filter out duplicates based on id or reference_id 
+  // (to avoid showing the same thing from legacy and unified)
+  const seenIds = new Set();
+  const uniqueNotifications = allNotifications.filter(n => {
+    // If it's from the unified table, use it preferentially
+    // We can use the reference ID to find duplicates from legacy tables
+    const refId = n.data?.reference_id || n.id;
+    if (seenIds.has(refId)) return false;
+    seenIds.add(refId);
+    return true;
+  });
+
   // Sort by date, newest first
-  return allNotifications.sort((a, b) => {
+  return uniqueNotifications.sort((a, b) => {
     const timeA = a.time instanceof Date ? a.time.getTime() : 0;
     const timeB = b.time instanceof Date ? b.time.getTime() : 0;
     return timeB - timeA;

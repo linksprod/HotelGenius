@@ -12,10 +12,18 @@ export const useSpaBookingMutations = () => {
 
   // Créer une nouvelle réservation
   const createBookingMutation = useMutation({
-    mutationFn: async (booking: Omit<SpaBooking, 'id' | 'created_at' | 'updated_at'>) => {
+    mutationFn: async (bookingWithExtras: any) => {
+      // Destructure service_name and hotel_id (if passed) to avoid inserting them into spa_bookings table
+      // which might not have these columns or might fail on extra fields
+      const { service_name, hotel_id: providedHotelId, ...bookingData } = bookingWithExtras;
+      const finalHotelId = providedHotelId || hotelId;
+
       const { data, error } = await supabase
         .from('spa_bookings')
-        .insert(booking)
+        .insert({
+          ...bookingData,
+          hotel_id: finalHotelId
+        })
         .select()
         .single();
 
@@ -26,17 +34,41 @@ export const useSpaBookingMutations = () => {
 
       // Notify staff
       await NotificationService.createNotification({
-        hotel_id: hotelId || undefined,
-        type: 'system_alert' as any,
+        hotel_id: providedHotelId || hotelId || undefined,
+        type: 'spa_booking',
         recipient_type: 'staff',
         recipient_id: '00000000-0000-0000-0000-000000000000',
-        title: 'New Spa Booking',
-        body: `New ${booking.guest_name} booked a session on ${booking.date} at ${booking.time}.`,
+        template_data: {
+          service_name: service_name || 'Spa Service',
+          guest_name: bookingData.guest_name || 'Guest',
+          date: bookingData.date,
+          time: bookingData.time
+        },
         source_module: 'Spa',
         source_event: 'created',
         reference_id: data.id,
         reference_type: 'SpaBooking'
       });
+
+      // Also notify guest to appear in their unified notifications list
+      if (bookingData.user_id) {
+        await NotificationService.createNotification({
+          hotel_id: providedHotelId || hotelId || undefined,
+          type: 'spa_booking',
+          recipient_type: 'guest',
+          recipient_id: bookingData.user_id,
+          template_data: {
+            service_name: service_name || 'Spa Service',
+            date: bookingData.date,
+            time: bookingData.time,
+            hotel_name: 'Hotel Genius'
+          },
+          source_module: 'Spa',
+          source_event: 'requested',
+          reference_id: data.id,
+          reference_type: 'SpaBooking'
+        });
+      }
 
       return data;
     },
@@ -72,14 +104,20 @@ export const useSpaBookingMutations = () => {
       }
 
       // Notify guest on priority changes
-      if (status === 'confirmed' && booking.user_id) {
+      if (booking && (status === 'confirmed' || status === 'cancelled')) {
         await NotificationService.createNotification({
-          type: 'booking_confirmed',
+          hotel_id: (booking as any).hotel_id,
+          type: status === 'confirmed' ? 'booking_confirmed' : 'booking_cancelled',
           recipient_type: 'guest',
           recipient_id: booking.user_id,
-          title: 'Spa Booking Confirmed',
-          body: `Your spa session on ${booking.date} at ${booking.time} has been confirmed.`,
+          template_data: {
+            guest_name: booking.guest_name || 'Guest',
+            date: booking.date,
+            time: booking.time,
+            hotel_name: 'Hotel Genius' // Should ideally come from hotel config
+          },
           source_module: 'Spa',
+          source_event: status,
           reference_id: id,
           reference_type: 'SpaBooking'
         });
@@ -117,18 +155,23 @@ export const useSpaBookingMutations = () => {
         throw error;
       }
 
-      if (booking.user_id) {
-        await NotificationService.createNotification({
-          type: 'booking_cancelled',
-          recipient_type: 'guest',
-          recipient_id: booking.user_id,
-          title: 'Spa Booking Cancelled',
-          body: `Your spa session on ${booking.date} at ${booking.time} has been cancelled.`,
-          source_module: 'Spa',
-          reference_id: id,
-          reference_type: 'SpaBooking'
-        });
-      }
+      // Notify guest
+      await NotificationService.createNotification({
+        hotel_id: (booking as any).hotel_id,
+        type: 'booking_cancelled',
+        recipient_type: 'guest',
+        recipient_id: booking.user_id,
+        template_data: {
+          guest_name: booking.guest_name || 'Guest',
+          date: booking.date,
+          time: booking.time,
+          hotel_name: 'Hotel Genius'
+        },
+        source_module: 'Spa',
+        source_event: 'cancelled',
+        reference_id: id,
+        reference_type: 'SpaBooking'
+      });
 
       return { id, status: 'cancelled' };
     },

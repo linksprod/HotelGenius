@@ -16,12 +16,13 @@ export const mapRowToEventReservation = (row: EventReservationRow): EventReserva
     guests: row.guests,
     specialRequests: row.special_requests || undefined,
     status: row.status as 'pending' | 'confirmed' | 'cancelled',
+    hotelId: row.hotel_id || undefined,
     createdAt: row.created_at
   };
-};
+}
 
 export const mapDtoToRow = (
-  dto: CreateEventReservationDTO, 
+  dto: CreateEventReservationDTO,
   userId?: string | null
 ): Omit<EventReservationRow, 'id' | 'created_at' | 'updated_at'> => {
   return {
@@ -35,5 +36,6 @@ export const mapDtoToRow = (
     guests: dto.guests,
     special_requests: dto.specialRequests || null,
     status: dto.status || 'pending',
+    hotel_id: dto.hotelId || null,
   };
 };

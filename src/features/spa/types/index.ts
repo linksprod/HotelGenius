@@ -41,6 +41,7 @@ export interface SpaBooking {
   room_number?: string;
   special_requests?: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  hotel_id?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -53,4 +54,5 @@ export interface SpaBookingFormData {
   guest_phone?: string;
   room_number?: string;
   special_requests?: string;
+  hotel_id?: string;
 }

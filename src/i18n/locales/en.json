@@ -144,6 +144,11 @@
     "assistance": {
       "title": "Need Assistance?",
       "subtitle": "We're here to help 24/7"
+    },
+    "welcome": {
+      "greeting": "Welcome {{name}}",
+      "message": "We are delighted to have you with us. Enjoy your stay at {{hotelName}}!",
+      "seeReservation": "See reservation"
     }
   },
   "auth": {
@@ -163,7 +168,14 @@
     "forgotPassword": "Forgot Password?",
     "rememberMe": "Remember me",
     "alreadyHaveAccount": "Already have an account?",
-    "dontHaveAccount": "Don't have an account?"
+    "dontHaveAccount": "Don't have an account?",
+    "logoutSuccess": "Logout successful",
+    "logoutSuccessDesc": "You have been logged out successfully",
+    "logoutError": "Logout error",
+    "logoutErrorDesc": "An unexpected error occurred, attempting forced cleanup...",
+    "loginRedirectMessage": "Redirecting to login page from:",
+    "registering": "Registering...",
+    "accessApp": "Access Application"
   },
   "user": {
     "guestStatus": "Guest",
@@ -341,20 +353,31 @@
   },
   "contact": {
     "title": "Contact Us",
+    "form": {
+      "title": "Send us a message",
+      "yourName": "Your Name",
+      "yourEmail": "Your Email",
+      "subject": "Subject",
+      "yourMessage": "Your Message",
+      "sendMessage": "Send Message"
+    },
+    "info": {
+      "phone": "Phone",
+      "phoneNumber": "+1 234 567 890",
+      "available247": "Available 24/7",
+      "email": "Email",
+      "primaryEmail": "info@staygenius.com",
+      "supportEmail": "support@staygenius.com",
+      "address": "Address",
+      "fullAddress": "123 Luxury Avenue\nParadise City, PC 12345\nUnited States"
+    },
     "subtitle": "Get in touch with our team",
     "generalInquiries": "General Inquiries",
     "reservations": "Reservations",
     "concierge": "Concierge",
     "emergency": "Emergency",
     "feedback": "Feedback",
-    "address": "Address",
-    "phone": "Phone",
-    "email": "Email",
-    "hours": "Operating Hours",
-    "getInTouch": "Get in Touch",
-    "message": "Message",
-    "subject": "Subject",
-    "sendMessage": "Send Message"
+    "hours": "Operating Hours"
   },
   "notifications": {
     "title": "Notifications",
@@ -482,32 +505,6 @@
       "reservationCreationError": "Error creating reservation"
     }
   },
-  "auth": {
-    "loginTitle": "Welcome Back",
-    "loginSubtitle": "Sign in to your account",
-    "authRequired": "Authentication Required",
-    "authRequiredDesc": "Please log in to access this page",
-    "register": "Register",
-    "registerTitle": "Create Account",
-    "registerSubtitle": "Join our hotel experience",
-    "email": "Email",
-    "password": "Password",
-    "confirmPassword": "Confirm Password",
-    "firstName": "First Name",
-    "lastName": "Last Name",
-    "phone": "Phone Number",
-    "forgotPassword": "Forgot Password?",
-    "rememberMe": "Remember me",
-    "alreadyHaveAccount": "Already have an account?",
-    "dontHaveAccount": "Don't have an account?",
-    "logoutSuccess": "Logout successful",
-    "logoutSuccessDesc": "You have been logged out successfully",
-    "logoutError": "Logout error",
-    "logoutErrorDesc": "An unexpected error occurred, attempting forced cleanup...",
-    "loginRedirectMessage": "Redirecting to login page from:",
-    "registering": "Registering...",
-    "accessApp": "Access Application"
-  },
   "activities": {
     "title": "Things To Do",
     "subtitle": "Discover activities and experiences",
@@ -523,27 +520,6 @@
       "success": "Your activity has been booked successfully!",
       "failed": "Booking Failed",
       "signInRequired": "Please sign in to book an activity"
-    }
-  },
-  "contact": {
-    "title": "Contact Us",
-    "form": {
-      "title": "Send us a message",
-      "yourName": "Your Name",
-      "yourEmail": "Your Email",
-      "subject": "Subject",
-      "yourMessage": "Your Message",
-      "sendMessage": "Send Message"
-    },
-    "info": {
-      "phone": "Phone",
-      "phoneNumber": "+1 234 567 890",
-      "available247": "Available 24/7",
-      "email": "Email",
-      "primaryEmail": "info@staygenius.com",
-      "supportEmail": "support@staygenius.com",
-      "address": "Address",
-      "fullAddress": "123 Luxury Avenue\nParadise City, PC 12345\nUnited States"
     }
   },
   "shopsPage": {

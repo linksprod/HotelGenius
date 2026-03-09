@@ -95,8 +95,9 @@ export interface CreateNotificationParams {
     channel?: NotificationChannel;
     recipient_type: RecipientType;
     recipient_id: string;
-    title: string;
-    body: string;
+    title?: string;
+    body?: string;
+    template_data?: Record<string, string>;
     priority?: NotificationPriority;
     source_module?: string;
     source_event?: string;

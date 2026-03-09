@@ -14,6 +14,7 @@ export interface EventReservationRow {
   guests: number;
   special_requests: string | null;
   status: string;
+  hotel_id: string | null;
   created_at: string;
   updated_at: string;
 }

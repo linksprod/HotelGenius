@@ -41,7 +41,8 @@ export const useStaffNotifications = () => {
         reference_id: n.reference_id,
         reference_type: n.reference_type,
         is_read: n.status === 'read',
-        created_at: n.created_at
+        created_at: n.created_at,
+        data: n.data
       }));
       setNotifications(mappedNotifs);
       setUnreadCount(mappedNotifs.filter((n) => !n.is_read).length);

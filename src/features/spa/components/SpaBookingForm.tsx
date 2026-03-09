@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { DatePicker } from '@/components/ui/date-picker';
 import { DateRange } from 'react-day-picker';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 interface SpaBookingFormProps {
   service: SpaService;
   onSuccess?: () => void;
@@ -35,6 +36,7 @@ export default function SpaBookingForm({
   const {
     userData
   } = useAuth();
+  const { hotelId } = useCurrentHotelId();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(existingBooking?.date ? new Date(existingBooking.date) : undefined);
   const [selectedTime, setSelectedTime] = useState<string>(existingBooking?.time || '');
   const userId = localStorage.getItem('user_id');
@@ -79,9 +81,12 @@ export default function SpaBookingForm({
         date: selectedDate.toISOString().split('T')[0],
         time: selectedTime,
         special_requests: data.specialRequests,
-        status: 'pending' as 'pending' | 'confirmed' | 'cancelled' | 'completed'
+        status: 'pending' as 'pending' | 'confirmed' | 'cancelled' | 'completed',
+        hotel_id: hotelId || undefined,
+        // Add service_name for notification purposes even if not in DB schema
+        service_name: service.name
       };
-      await createBooking(bookingData);
+      await createBooking(bookingData as any);
       toast.success("Spa booking request sent successfully");
       if (onSuccess) {
         onSuccess();
@@ -92,60 +97,60 @@ export default function SpaBookingForm({
     }
   };
   return <div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Label htmlFor="guestName">Name</Label>
-          <Input id="guestName" type="text" {...register("guestName", {
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <Label htmlFor="guestName">Name</Label>
+        <Input id="guestName" type="text" {...register("guestName", {
           required: true
         })} className={cn({
           "focus-visible:ring-red-500": errors.guestName
         })} />
-          {errors.guestName && <p className="text-red-500 text-sm mt-1">Required field</p>}
-        </div>
-        <div>
-          <Label htmlFor="guestEmail">Email</Label>
-          <Input id="guestEmail" type="email" {...register("guestEmail")} className={cn({
+        {errors.guestName && <p className="text-red-500 text-sm mt-1">Required field</p>}
+      </div>
+      <div>
+        <Label htmlFor="guestEmail">Email</Label>
+        <Input id="guestEmail" type="email" {...register("guestEmail")} className={cn({
           "focus-visible:ring-red-500": errors.guestEmail
         })} />
-          {errors.guestEmail && <p className="text-red-500 text-sm mt-1">Invalid email</p>}
-        </div>
-        <div>
-          <Label htmlFor="guestPhone">Phone</Label>
-          <Input id="guestPhone" type="tel" {...register("guestPhone")} className={cn({
+        {errors.guestEmail && <p className="text-red-500 text-sm mt-1">Invalid email</p>}
+      </div>
+      <div>
+        <Label htmlFor="guestPhone">Phone</Label>
+        <Input id="guestPhone" type="tel" {...register("guestPhone")} className={cn({
           "focus-visible:ring-red-500": errors.guestPhone
         })} />
-          {errors.guestPhone && <p className="text-red-500 text-sm mt-1">Invalid phone number</p>}
-        </div>
-        <div>
-          <Label htmlFor="roomNumber">Room Number</Label>
-          <Input id="roomNumber" type="text" {...register("roomNumber", {
+        {errors.guestPhone && <p className="text-red-500 text-sm mt-1">Invalid phone number</p>}
+      </div>
+      <div>
+        <Label htmlFor="roomNumber">Room Number</Label>
+        <Input id="roomNumber" type="text" {...register("roomNumber", {
           required: true
         })} className={cn({
           "focus-visible:ring-red-500": errors.roomNumber
         })} />
-          {errors.roomNumber && <p className="text-red-500 text-sm mt-1">Required field</p>}
-        </div>
-        <div>
-          <Label>Booking Date</Label>
-          <DatePicker mode="single" selected={selectedDate} onSelect={handleDateSelect} minDate={new Date()} maxDate={addDays(new Date(), 30)} required />
-        </div>
-        <div>
-          <Label htmlFor="time">Time</Label>
-          <select id="time" value={selectedTime} onChange={e => setSelectedTime(e.target.value)} required className="w-full p-2 border rounded bg-background">
-            <option value="">Select a time</option>
-            {[...Array(24)].map((_, i) => {
+        {errors.roomNumber && <p className="text-red-500 text-sm mt-1">Required field</p>}
+      </div>
+      <div>
+        <Label>Booking Date</Label>
+        <DatePicker mode="single" selected={selectedDate} onSelect={handleDateSelect} minDate={new Date()} maxDate={addDays(new Date(), 30)} required />
+      </div>
+      <div>
+        <Label htmlFor="time">Time</Label>
+        <select id="time" value={selectedTime} onChange={e => setSelectedTime(e.target.value)} required className="w-full p-2 border rounded bg-background">
+          <option value="">Select a time</option>
+          {[...Array(24)].map((_, i) => {
             const hour = i.toString().padStart(2, '0');
             return <option key={hour + ':00'} value={hour + ':00'}>
-                  {hour}:00
-                </option>;
+              {hour}:00
+            </option>;
           })}
-          </select>
-        </div>
-        <div>
-          <Label htmlFor="specialRequests">Special Requests</Label>
-          <Textarea id="specialRequests" {...register("specialRequests")} className="w-full border rounded" />
-        </div>
-        <Button type="submit">Submit Booking Request</Button>
-      </form>
-    </div>;
+        </select>
+      </div>
+      <div>
+        <Label htmlFor="specialRequests">Special Requests</Label>
+        <Textarea id="specialRequests" {...register("specialRequests")} className="w-full border rounded" />
+      </div>
+      <Button type="submit">Submit Booking Request</Button>
+    </form>
+  </div>;
 }
