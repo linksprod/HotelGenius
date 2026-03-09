@@ -100,12 +100,14 @@ export const createServiceRequest = async (requestData: {
 
     // Trigger notification for staff
     await NotificationService.createNotification({
-      hotel_id: (data as any).hotel_id, // We might need to fetch this or expect it in requestData
+      hotel_id: (data as any).hotel_id,
       type: 'service_ticket_created',
       recipient_type: 'staff',
-      recipient_id: '00000000-0000-0000-0000-000000000000', // System/Global for now
-      title: 'New Service Request',
-      body: `Room ${requestData.room_number}: ${requestData.description}`,
+      recipient_id: '00000000-0000-0000-0000-000000000000',
+      template_data: {
+        room_number: requestData.room_number || 'N/A',
+        description: requestData.description
+      },
       source_module: 'Service',
       source_event: 'created',
       reference_id: data.id,
@@ -303,8 +305,10 @@ export const requestService = async (
         type: 'service_ticket_created',
         recipient_type: 'staff',
         recipient_id: '00000000-0000-0000-0000-000000000000',
-        title: 'New Service Request',
-        body: `Room ${room_number}: ${description}`,
+        template_data: {
+          room_number: room_number || 'N/A',
+          description: description
+        },
         source_module: 'Service',
         source_event: 'created',
         reference_id: data[0].id,
@@ -350,8 +354,9 @@ export const updateRequestStatus = async (
         type: 'service_ticket_completed',
         recipient_type: 'guest',
         recipient_id: request.guest_id,
-        title: 'Request Completed',
-        body: `Your request "${request.description}" has been completed.`,
+        template_data: {
+          description: request.description
+        },
         source_module: 'Service',
         source_event: 'completed',
         reference_id: requestId,

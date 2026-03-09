@@ -6,6 +6,7 @@ import HeroSection from '@/components/home/HeroSection';
 import MainServicesSection from '@/components/home/MainServicesSection';
 import FeaturedExperienceSection from '@/components/home/FeaturedExperienceSection';
 import EventsStories from '@/components/EventsStories';
+import WelcomeCard from '@/components/home/WelcomeCard';
 import TodayHighlightsSection from '@/components/home/TodayHighlightsSection';
 import AdditionalServicesSection from '@/components/home/AdditionalServicesSection';
 import AssistanceSection from '@/components/home/AssistanceSection';
@@ -114,6 +115,11 @@ const Index = () => {
             )}
           </Suspense>
         </SectionWrapper>
+
+        {/* Welcome Card for Authenticated Guests - Moved outside hero section wrapper to avoid container styles */}
+        {isAuthenticated && userName && (
+          <WelcomeCard firstName={userName} />
+        )}
 
         {/* Main Services Section */}
         <SectionWrapper id="main-services">

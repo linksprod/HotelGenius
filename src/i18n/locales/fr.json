@@ -123,6 +123,11 @@
     "assistance": {
       "title": "Besoin d'Aide ?",
       "subtitle": "Nous sommes là pour vous aider 24h/24 et 7j/7"
+    },
+    "welcome": {
+      "greeting": "Bienvenue {{name}}",
+      "message": "Nous sommes ravis de vous accueillir. Profitez de votre séjour au {{hotelName}} !",
+      "seeReservation": "Voir la réservation"
     }
   },
   "auth": {
@@ -320,20 +325,31 @@
   },
   "contact": {
     "title": "Contactez-Nous",
+    "form": {
+      "title": "Envoyez-nous un message",
+      "yourName": "Votre Nom",
+      "yourEmail": "Votre Email",
+      "subject": "Sujet",
+      "yourMessage": "Votre Message",
+      "sendMessage": "Envoyer le Message"
+    },
+    "info": {
+      "phone": "Téléphone",
+      "phoneNumber": "+1 234 567 890",
+      "available247": "Disponible 24h/24 et 7j/7",
+      "email": "Email",
+      "primaryEmail": "info@staygenius.com",
+      "supportEmail": "support@staygenius.com",
+      "address": "Adresse",
+      "fullAddress": "123 Luxury Avenue\nParadise City, PC 12345\nÉtats-Unis"
+    },
     "subtitle": "Entrez en contact avec notre équipe",
     "generalInquiries": "Demandes Générales",
     "reservations": "Réservations",
     "concierge": "Conciergerie",
     "emergency": "Urgence",
     "feedback": "Commentaires",
-    "address": "Adresse",
-    "phone": "Téléphone",
-    "email": "E-mail",
-    "hours": "Heures d'Ouverture",
-    "getInTouch": "Prendre Contact",
-    "message": "Message",
-    "subject": "Sujet",
-    "sendMessage": "Envoyer le Message"
+    "hours": "Heures d'Ouverture"
   },
   "notifications": {
     "title": "Notifications",
@@ -439,27 +455,6 @@
       "signInRequired": "Veuillez vous connecter pour réserver une activité"
     }
   },
-  "contact": {
-    "title": "Contactez-Nous",
-    "form": {
-      "title": "Envoyez-nous un message",
-      "yourName": "Votre Nom",
-      "yourEmail": "Votre Email",
-      "subject": "Sujet",
-      "yourMessage": "Votre Message",
-      "sendMessage": "Envoyer le Message"
-    },
-    "info": {
-      "phone": "Téléphone",
-      "phoneNumber": "+1 234 567 890",
-      "available247": "Disponible 24h/24 et 7j/7",
-      "email": "Email",
-      "primaryEmail": "info@staygenius.com",
-      "supportEmail": "support@staygenius.com",
-      "address": "Adresse",
-      "fullAddress": "123 Luxury Avenue\nParadise City, PC 12345\nÉtats-Unis"
-    }
-  },
   "shopsPage": {
     "hotelShops": {
       "title": "Boutiques de l'Hôtel",
@@ -537,27 +532,6 @@
       "landmarks": "Monuments",
       "cafes": "Cafés",
       "shopping": "Shopping"
-    }
-  },
-  "restaurants": {
-    "cuisine": {
-      "Italienne": "Italienne",
-      "Italian": "Italienne",
-      "Cigar Bar": "Bar à Cigares",
-      "International": "International",
-      "Buffet / international": "Buffet / International",
-      "Cocktails bar": "Bar à Cocktails",
-      "Non veg": "Non Végétarien"
-    },
-    "location": {
-      "2nd Floor": "2ème Étage",
-      "Main Lobby": "Hall Principal",
-      "Room": "Chambre",
-      "Outdoor": "Extérieur",
-      "Poolside": "Au Bord de la Piscine"
-    },
-    "description": {
-      "default": "Découvrez une cuisine d'exception avec des plats soigneusement préparés et un service impeccable."
     }
   },
   "forms": {

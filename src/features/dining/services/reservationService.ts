@@ -144,8 +144,12 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
       type: 'table_reservation',
       recipient_type: 'staff',
       recipient_id: '00000000-0000-0000-0000-000000000000',
-      title: 'New Table Reservation',
-      body: `New reservation for ${typedData.guests} guests on ${typedData.date} at ${typedData.time} by ${typedData.guest_name}.`,
+      template_data: {
+        guests: typedData.guests.toString(),
+        date: typedData.date,
+        time: typedData.time,
+        guest_name: typedData.guest_name || 'Guest'
+      },
       source_module: 'Dining',
       source_event: 'reservation_created',
       reference_id: typedData.id,
@@ -159,8 +163,11 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
         type: 'table_reservation',
         recipient_type: 'guest',
         recipient_id: userId,
-        title: 'Table Reservation Requested',
-        body: `Your reservation at ${reservation.restaurantId} for ${typedData.date} at ${typedData.time} is pending.`,
+        template_data: {
+          date: typedData.date,
+          time: typedData.time,
+          hotel_name: 'the restaurant' // Fallback
+        },
         source_module: 'Dining',
         source_event: 'requested',
         reference_id: typedData.id,
@@ -217,8 +224,11 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
         type: 'booking_confirmed',
         recipient_type: 'guest',
         recipient_id: reservation.user_id,
-        title: 'Table Reservation Confirmed',
-        body: `Your reservation on ${reservation.date} at ${reservation.time} has been confirmed.`,
+        template_data: {
+          guest_name: reservation.guest_name || 'Guest',
+          date: reservation.date,
+          hotel_name: 'the hotel'
+        },
         source_module: 'Dining',
         source_event: 'confirmed',
         reference_id: id,
@@ -229,8 +239,9 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
         type: 'booking_cancelled',
         recipient_type: 'guest',
         recipient_id: reservation.user_id,
-        title: 'Table Reservation Cancelled',
-        body: `Your reservation on ${reservation.date} at ${reservation.time} has been cancelled.`,
+        template_data: {
+          date: reservation.date
+        },
         source_module: 'Dining',
         source_event: 'cancelled',
         reference_id: id,
