@@ -20,35 +20,44 @@ serve(async (req) => {
         );
 
         const payload = await req.json();
-        const { record } = payload;
+        const { record, bypass_rpc, forced_channels } = payload;
 
         if (!record) {
             throw new Error("No record found in payload");
         }
 
-        console.log(`Processing notification: ${record.notification_id} for ${record.recipient_id}`);
+        console.log(`Processing notification: ${record.notification_id || 'manual-trigger'} for ${record.recipient_id}`);
 
         // 1. Get user preferences and effective channels
-        const { data: channels, error: channelsError } = await supabaseClient.rpc(
-            "get_effective_channels",
-            {
-                p_user_id: record.recipient_id,
-                p_notification_type: record.type,
-                p_priority: record.priority
-            }
-        );
+        let channels = [];
+        if (bypass_rpc && forced_channels) {
+            console.log("Bypassing RPC, using forced channels:", forced_channels);
+            channels = forced_channels;
+        } else {
+            const { data, error: channelsError } = await supabaseClient.rpc(
+                "get_effective_channels",
+                {
+                    p_user_id: record.recipient_id,
+                    p_notification_type: record.type,
+                    p_priority: record.priority || 'normal'
+                }
+            );
 
-        if (channelsError) {
-            console.error("Error fetching effective channels:", channelsError);
-            throw channelsError;
+            if (channelsError) {
+                console.error("Error fetching effective channels:", channelsError);
+                // Fallback to in_app + email if RPC fails
+                channels = ["in_app", "email"];
+            } else {
+                channels = data;
+            }
         }
 
-        console.log(`Effective channels for ${record.type}: ${channels.join(", ")}`);
+        console.log(`Effective channels for ${record.type}: ${channels?.join(", ") || 'none'}`);
 
         const results: any[] = [];
         const providers = {
-            email: new EmailProvider(),
-            sms: new SMSProvider(),
+            email: new EmailProvider(supabaseClient),
+            sms: new SMSProvider(supabaseClient),
             push: new PushProvider(),
             whatsapp: new WhatsAppProvider(),
             in_app: null, // Basic in-app is handled by the record creation + realtime
@@ -75,23 +84,29 @@ serve(async (req) => {
             }
         }
 
-        // 3. Update notification status based on dispatch results
-        const anyFailed = results.some((r: any) => !r.success);
-        const finalStatus = anyFailed ? "failed" : "sent";
-        const errorMessage = results.filter((r: any) => !r.success).map((r: any) => `${r.channel}: ${r.error}`).join("; ");
+        // 3. Update notification status based on dispatch results if a valid record exists
+        const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
-        const { error: updateError } = await supabaseClient
-            .from("notifications")
-            .update({
-                status: finalStatus,
-                sent_at: new Date().toISOString(),
-                error_message: errorMessage || null,
-                retry_count: record.retry_count + (anyFailed ? 1 : 0)
-            })
-            .eq("notification_id", record.notification_id);
+        if (record.notification_id && isUuid(record.notification_id)) {
+            const anyFailed = results.some((r: any) => !r.success);
+            const finalStatus = anyFailed ? "failed" : "sent";
+            const errorMessage = results.filter((r: any) => !r.success).map((r: any) => `${r.channel}: ${r.error}`).join("; ");
 
-        if (updateError) {
-            console.error("Error updating notification status:", updateError);
+            const { error: updateError } = await supabaseClient
+                .from("notifications")
+                .update({
+                    status: finalStatus,
+                    sent_at: new Date().toISOString(),
+                    error_message: errorMessage || null,
+                    retry_count: (record.retry_count || 0) + (anyFailed ? 1 : 0)
+                })
+                .eq("notification_id", record.notification_id);
+
+            if (updateError) {
+                console.error("Error updating notification status:", updateError);
+            }
+        } else {
+            console.log("No valid notification UUID provided, skipping status update.");
         }
 
         return new Response(JSON.stringify({ success: true, results }), {

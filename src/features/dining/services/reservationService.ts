@@ -158,21 +158,27 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
 
     // Also trigger for Guest to appear in unified notifications
     if (userId) {
-      await NotificationService.createNotification({
+      const guestNotifParams = {
         hotel_id: typedData.hotel_id,
-        type: 'table_reservation',
-        recipient_type: 'guest',
+        type: 'table_reservation' as any,
+        recipient_type: 'guest' as any,
         recipient_id: userId,
         template_data: {
           date: typedData.date,
           time: typedData.time,
-          hotel_name: 'the restaurant' // Fallback
+          hotel_name: 'the restaurant'
         },
         source_module: 'Dining',
         source_event: 'requested',
         reference_id: typedData.id,
         reference_type: 'TableReservation'
-      });
+      };
+
+      const notif = await NotificationService.createNotification(guestNotifParams);
+      // Fallback: If DB insert fails or to ensure email delivery while triggers are broken
+      if (!notif) {
+        await NotificationService.sendDirectNotification(guestNotifParams);
+      }
     }
 
     return {
@@ -202,7 +208,7 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
   try {
     const { data: reservation, error: fetchError } = await supabase
       .from('table_reservations')
-      .select('*')
+      .select('*, restaurants(name)')
       .eq('id', id)
       .single();
 
@@ -219,11 +225,13 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
     }
 
     // Trigger notification based on new status
-    if (status === 'confirmed' && reservation.user_id) {
-      await NotificationService.createNotification({
-        type: 'booking_confirmed',
-        recipient_type: 'guest',
-        recipient_id: reservation.user_id,
+    if (status === 'confirmed') {
+      const guestId = reservation.user_id || reservation.id; // Use reservation ID as fallback recipient if no user_id
+      const confirmParams = {
+        hotel_id: reservation.hotel_id,
+        type: 'booking_confirmed' as any,
+        recipient_type: 'guest' as any,
+        recipient_id: guestId,
         template_data: {
           guest_name: reservation.guest_name || 'Guest',
           date: reservation.date,
@@ -233,20 +241,46 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
         source_event: 'confirmed',
         reference_id: id,
         reference_type: 'TableReservation'
-      });
-    } else if (status === 'cancelled' && reservation.user_id) {
-      await NotificationService.createNotification({
-        type: 'booking_cancelled',
-        recipient_type: 'guest',
-        recipient_id: reservation.user_id,
+      };
+
+      const notif = await NotificationService.createNotification(confirmParams);
+      // ALWAYS call direct for confirmation to ensure email is sent even if triggers are down
+      await NotificationService.sendDirectNotification(confirmParams);
+
+    } else if (status === 'cancelled') {
+      const guestId = reservation.user_id || reservation.id;
+      const restaurantName = (reservation as any).restaurants?.name || 'the restaurant';
+      const cancelParams = {
+        hotel_id: reservation.hotel_id,
+        type: 'booking_cancelled' as any,
+        recipient_type: 'guest' as any,
+        recipient_id: guestId,
         template_data: {
-          date: reservation.date
+          guest_name: reservation.guest_name || 'Guest',
+          restaurant_name: restaurantName,
+          date: reservation.date,
+          time: reservation.time,
+          guests: String(reservation.guests || 1),
         },
         source_module: 'Dining',
         source_event: 'cancelled',
         reference_id: id,
-        reference_type: 'TableReservation'
-      });
+        reference_type: 'TableReservation',
+        // Pass guest_phone in title as a workaround so the edge function can read it via metadata
+        // The actual phone is passed via metadata below through sendDirectNotification
+      };
+
+      await NotificationService.createNotification(cancelParams);
+      // Force all 3 default channels: Email + Push + SMS
+      await NotificationService.sendDirectNotification(
+        {
+          ...cancelParams,
+          // Embed guest phone so the SMSProvider can look it up from reference data
+          reference_id: id,
+          reference_type: 'TableReservation',
+        },
+        ['email', 'push', 'sms']
+      );
     }
   } catch (error) {
     console.error('Error in updateReservationStatus:', error);

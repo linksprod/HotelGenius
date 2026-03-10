@@ -10,12 +10,12 @@ export class TemplateService {
     private static templates: Record<string, Partial<Record<NotificationType, Template>>> = {
         en: {
             booking_confirmed: {
-                title: "Booking Confirmed",
-                body: "Hello {{guest_name}}, your booking at {{hotel_name}} is confirmed for {{date}}."
+                title: "Booking Confirmed ✅",
+                body: "Hello {{guest_name}}, your table reservation at {{restaurant_name}} is confirmed for {{date}} at {{time}} ({{guests}} guests). Looking forward to welcoming you!"
             },
             booking_cancelled: {
-                title: "Booking Cancelled",
-                body: "Your booking for {{date}} has been cancelled."
+                title: "Reservation Cancelled ❌",
+                body: "Hi {{guest_name}},\n\nWe're sorry to let you know that your table reservation at {{restaurant_name}} on {{date}} at {{time}} for {{guests}} guest(s) has been cancelled.\n\nIf you have any questions or would like to make a new reservation, please contact us.\n\nWe hope to see you soon!"
             },
             service_ticket_created: {
                 title: "New Service Request",
@@ -40,12 +40,12 @@ export class TemplateService {
         },
         fr: {
             booking_confirmed: {
-                title: "Réservation Confirmée",
-                body: "Bonjour {{guest_name}}, votre réservation à {{hotel_name}} est confirmée pour le {{date}}."
+                title: "Réservation Confirmée ✅",
+                body: "Bonjour {{guest_name}}, votre réservation à {{restaurant_name}} est confirmée pour le {{date}} à {{time}} ({{guests}} personnes). Nous avons hâte de vous accueillir !"
             },
             booking_cancelled: {
-                title: "Réservation Annulée",
-                body: "Votre réservation pour le {{date}} a été annulée."
+                title: "Réservation Annulée ❌",
+                body: "Bonjour {{guest_name}},\n\nNous sommes désolés de vous informer que votre réservation de table au {{restaurant_name}} le {{date}} à {{time}} pour {{guests}} personne(s) a été annulée.\n\nSi vous avez des questions ou souhaitez effectuer une nouvelle réservation, n'hésitez pas à nous contacter.\n\nNous espérons vous voir bientôt !"
             },
             service_ticket_created: {
                 title: "Nouvelle Demande de Service",
@@ -71,6 +71,19 @@ export class TemplateService {
     };
 
     /**
+     * Short SMS templates — kept separate because 'booking_cancelled_sms' is not a NotificationType.
+     * SMS messages must stay under ~160 characters.
+     */
+    private static smsTemplates: Record<string, Partial<Record<NotificationType, string>>> = {
+        en: {
+            booking_cancelled: "Hi {{guest_name}}, your table at {{restaurant_name}} on {{date}} at {{time}} has been cancelled. Please contact us to rebook."
+        },
+        fr: {
+            booking_cancelled: "Bonjour {{guest_name}}, votre table au {{restaurant_name}} le {{date}} à {{time}} a été annulée. Contactez-nous pour une nouvelle réservation."
+        }
+    };
+
+    /**
      * Gets a formatted template based on type, language, and data
      */
     static getTemplate(
@@ -88,10 +101,26 @@ export class TemplateService {
     }
 
     /**
+     * Gets a short SMS body for the given notification type.
+     * Returns null if no SMS-specific template exists (fall back to standard body).
+     */
+    static getSmsBody(
+        type: NotificationType,
+        data: Record<string, string>,
+        lang: string = 'en'
+    ): string | null {
+        const langSms = this.smsTemplates[lang] || this.smsTemplates['en'];
+        const template = langSms[type];
+        if (!template) return null;
+        return this.interpolate(template, data);
+    }
+
+    /**
      * Simple interpolation for {{variable}} syntax
      */
     private static interpolate(text: string, data: Record<string, string>): string {
-        return text.replace(/{{(\w+)}}/g, (match, key) => {
+        return text.replace(/{{\w+}}/g, (match) => {
+            const key = match.slice(2, -2);
             return data[key] || match;
         });
     }

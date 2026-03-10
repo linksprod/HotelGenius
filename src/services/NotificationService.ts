@@ -8,6 +8,8 @@ import {
 } from '../types/notifications';
 import { TemplateService } from './TemplateService';
 
+const PROCESS_NOTIFICATION_FUNCTION = 'process-notification';
+
 export class NotificationService {
     /**
      * Creates a new notification with idempotency check
@@ -28,7 +30,6 @@ export class NotificationService {
                     recipient_id: params.recipient_id,
                     title: params.title || (params.template_data ? TemplateService.getTemplate(params.type, params.template_data).title : 'Notification'),
                     body: params.body || (params.template_data ? TemplateService.getTemplate(params.type, params.template_data).body : ''),
-                    data: params.template_data || {},
                     priority: params.priority || 'normal',
                     source_module: params.source_module,
                     source_event: params.source_event,
@@ -56,6 +57,53 @@ export class NotificationService {
         } catch (error) {
             console.error('NotificationService.createNotification failed:', error);
             return null;
+        }
+    }
+
+    /**
+     * Directly invokes the edge function to send a notification, bypassing database triggers.
+     * Use this when database RLS or triggers are blocking the normal flow.
+     */
+    static async sendDirectNotification(
+        params: CreateNotificationParams,
+        channels: string[] = ['email']
+    ): Promise<boolean> {
+        try {
+            console.log('[NotificationService] Invoking edge function directly for urgent delivery');
+
+            const payload = {
+                record: {
+                    notification_id: `manual-${Date.now()}`,
+                    hotel_id: params.hotel_id,
+                    type: params.type,
+                    recipient_id: params.recipient_id,
+                    recipient_type: params.recipient_type,
+                    title: params.title || (params.template_data ? TemplateService.getTemplate(params.type, params.template_data).title : 'Notification'),
+                    body: params.body || (params.template_data ? TemplateService.getTemplate(params.type, params.template_data).body : ''),
+                    priority: params.priority || 'normal',
+                    reference_id: params.reference_id,
+                    reference_type: params.reference_type,
+                    source_module: params.source_module,
+                    source_event: params.source_event
+                },
+                bypass_rpc: true,
+                forced_channels: channels
+            };
+
+            const { data, error } = await supabase.functions.invoke(PROCESS_NOTIFICATION_FUNCTION, {
+                body: payload
+            });
+
+            if (error) {
+                console.error('[NotificationService] Direct edge function call failed:', error);
+                return false;
+            }
+
+            console.log('[NotificationService] Direct edge function call successful:', data);
+            return true;
+        } catch (error) {
+            console.error('[NotificationService] Exception in sendDirectNotification:', error);
+            return false;
         }
     }
 
