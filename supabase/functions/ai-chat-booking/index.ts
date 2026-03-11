@@ -102,61 +102,69 @@ Always be friendly, professional, and helpful. If a request is completely outsid
   const tools = [
     {
       type: "function",
-      name: "book_restaurant",
-      description: "Book a table at a restaurant",
-      parameters: {
-        type: "object",
-        properties: {
-          restaurant_id: { type: "string" },
-          date: { type: "string", format: "date" },
-          time: { type: "string" },
-          guests: { type: "number" },
-          special_requests: { type: "string" }
-        },
-        required: ["restaurant_id", "date", "time", "guests"]
+      function: {
+        name: "book_restaurant",
+        description: "Book a table at a restaurant",
+        parameters: {
+          type: "object",
+          properties: {
+            restaurant_id: { type: "string" },
+            date: { type: "string", format: "date" },
+            time: { type: "string" },
+            guests: { type: "number" },
+            special_requests: { type: "string" }
+          },
+          required: ["restaurant_id", "date", "time", "guests"]
+        }
       }
     },
     {
       type: "function",
-      name: "book_spa_service",
-      description: "Book a spa service",
-      parameters: {
-        type: "object",
-        properties: {
-          service_id: { type: "string" },
-          date: { type: "string", format: "date" },
-          time: { type: "string" },
-          special_requests: { type: "string" }
-        },
-        required: ["service_id", "date", "time"]
+      function: {
+        name: "book_spa_service",
+        description: "Book a spa service",
+        parameters: {
+          type: "object",
+          properties: {
+            service_id: { type: "string" },
+            date: { type: "string", format: "date" },
+            time: { type: "string" },
+            special_requests: { type: "string" }
+          },
+          required: ["service_id", "date", "time"]
+        }
       }
     },
     {
       type: "function",
-      name: "book_event",
-      description: "Register for an event",
-      parameters: {
-        type: "object",
-        properties: {
-          event_id: { type: "string" },
-          date: { type: "string", format: "date" },
-          guests: { type: "number" },
-          special_requests: { type: "string" }
-        },
-        required: ["event_id", "date", "guests"]
+      function: {
+        name: "book_event",
+        description: "Register for an event",
+        parameters: {
+          type: "object",
+          properties: {
+            event_id: { type: "string" },
+            date: { type: "string", format: "date" },
+            guests: { type: "number" },
+            special_requests: { type: "string" }
+          },
+          required: ["event_id", "date", "guests"]
+        }
       }
     },
     {
       type: "function",
-      name: "create_service_request",
-      description: "Create a general service request",
-      parameters: {
-        type: "object",
-        properties: {
-          type: { type: "string" },
-          description: { type: "string" }
-        },
-        required: ["type", "description"]
+      function: {
+        name: "create_service_request",
+        description: "Create a general service request",
+        parameters: {
+          type: "object",
+          properties: {
+            type: { type: "string" },
+            description: { type: "string" }
+          },
+          required: ["type", "description"]
+        }
       }
     }
   ];
@@ -180,8 +188,21 @@ Always be friendly, professional, and helpful. If a request is completely outsid
     }),
   });
 
+  // Guard against non-OK responses from OpenAI (bad key, quota exceeded, etc.)
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    console.error('[AI] OpenAI API error:', response.status, JSON.stringify(errorBody));
+    const reason = (errorBody as any)?.error?.message || `HTTP ${response.status}`;
+    throw new Error(`OpenAI API error: ${reason}`);
+  }
+
   const data = await response.json();
-  console.log('OpenAI Response:', data);
+  console.log('[AI] OpenAI Response:', JSON.stringify(data).slice(0, 500));
+
+  if (!data.choices || data.choices.length === 0) {
+    console.error('[AI] No choices in OpenAI response:', JSON.stringify(data));
+    throw new Error('OpenAI returned an empty response. Please check your API key and quota.');
+  }
 
   let aiResponse = data.choices[0].message.content;
 
@@ -191,7 +212,7 @@ Always be friendly, professional, and helpful. If a request is completely outsid
     const functionName = toolCall.function.name;
     const functionArgs = JSON.parse(toolCall.function.arguments);
 
-    console.log('Function call:', functionName, functionArgs);
+    console.log('[AI] Function call:', functionName, functionArgs);
 
     let bookingResult;
 
@@ -224,7 +245,7 @@ Always be friendly, professional, and helpful. If a request is completely outsid
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message },
-          { role: 'assistant', content: data.choices[0].message.content, tool_calls: data.choices[0].message.tool_calls },
+          { role: 'assistant', content: data.choices[0].message.content ?? null, tool_calls: data.choices[0].message.tool_calls },
           { role: 'tool', tool_call_id: toolCall.id, content: JSON.stringify(bookingResult) }
         ],
         temperature: 0.7,
@@ -232,8 +253,14 @@ Always be friendly, professional, and helpful. If a request is completely outsid
       }),
     });
 
+    if (!followUpResponse.ok) {
+      const errBody = await followUpResponse.json().catch(() => ({}));
+      console.error('[AI] OpenAI follow-up error:', followUpResponse.status, JSON.stringify(errBody));
+      throw new Error(`OpenAI follow-up error: ${(errBody as any)?.error?.message || followUpResponse.status}`);
+    }
+
     const followUpData = await followUpResponse.json();
-    aiResponse = followUpData.choices[0].message.content;
+    aiResponse = followUpData.choices?.[0]?.message?.content ?? 'Your request has been processed.';
   }
 
   // Insert AI response to the new messages table (only if conversationId is provided)
