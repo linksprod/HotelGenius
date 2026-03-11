@@ -18,6 +18,7 @@ interface RestaurantBookingFormProps {
   restaurant: Restaurant;
   onSuccess?: () => void;
   existingBooking?: any;
+  isChatMode?: boolean;
 }
 
 interface RestaurantBookingFormValues {
@@ -32,7 +33,8 @@ interface RestaurantBookingFormValues {
 export default function RestaurantBookingForm({
   restaurant,
   onSuccess,
-  existingBooking
+  existingBooking,
+  isChatMode = false
 }: RestaurantBookingFormProps) {
   const { userData } = useAuth();
   const { hotelId } = useCurrentHotelId();
@@ -101,6 +103,17 @@ export default function RestaurantBookingForm({
       const result = await createReservation(bookingDTO);
 
       toast.success("Restaurant booking request sent successfully!");
+
+      // Dispatch event for AI chat to handle feedback
+      window.dispatchEvent(new CustomEvent('ai_reservation_submitted', {
+        detail: {
+          restaurantName: restaurant.name,
+          date: selectedDate.toISOString().split('T')[0],
+          time: selectedTime,
+          guests: data.guests
+        }
+      }));
+
       if (onSuccess) {
         onSuccess();
       }
@@ -115,64 +128,68 @@ export default function RestaurantBookingForm({
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <Label htmlFor="guestName">Name *</Label>
-          <Input
-            id="guestName"
-            type="text"
-            {...register("guestName", { required: "Name is required" })}
-            className={cn({
-              "focus-visible:ring-red-500": errors.guestName
-            })}
-          />
-          {errors.guestName && (
-            <p className="text-red-500 text-sm mt-1">{errors.guestName.message}</p>
-          )}
-        </div>
+        {!isChatMode && (
+          <>
+            <div>
+              <Label htmlFor="guestName">Name *</Label>
+              <Input
+                id="guestName"
+                type="text"
+                {...register("guestName", { required: "Name is required" })}
+                className={cn({
+                  "focus-visible:ring-red-500": errors.guestName
+                })}
+              />
+              {errors.guestName && (
+                <p className="text-red-500 text-sm mt-1">{errors.guestName.message}</p>
+              )}
+            </div>
 
-        <div>
-          <Label htmlFor="guestEmail">Email</Label>
-          <Input
-            id="guestEmail"
-            type="email"
-            {...register("guestEmail", {
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Invalid email address"
-              }
-            })}
-            className={cn({
-              "focus-visible:ring-red-500": errors.guestEmail
-            })}
-          />
-          {errors.guestEmail && (
-            <p className="text-red-500 text-sm mt-1">{errors.guestEmail.message}</p>
-          )}
-        </div>
+            <div>
+              <Label htmlFor="guestEmail">Email</Label>
+              <Input
+                id="guestEmail"
+                type="email"
+                {...register("guestEmail", {
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
+                className={cn({
+                  "focus-visible:ring-red-500": errors.guestEmail
+                })}
+              />
+              {errors.guestEmail && (
+                <p className="text-red-500 text-sm mt-1">{errors.guestEmail.message}</p>
+              )}
+            </div>
 
-        <div>
-          <Label htmlFor="guestPhone">Phone</Label>
-          <Input
-            id="guestPhone"
-            type="tel"
-            {...register("guestPhone")}
-          />
-        </div>
+            <div>
+              <Label htmlFor="guestPhone">Phone</Label>
+              <Input
+                id="guestPhone"
+                type="tel"
+                {...register("guestPhone")}
+              />
+            </div>
 
-        <div>
-          <Label htmlFor="roomNumber">Room Number *</Label>
-          <Input
-            id="roomNumber"
-            type="text"
-            {...register("roomNumber", { required: "Room number is required" })}
-            className={cn({
-              "focus-visible:ring-red-500": errors.roomNumber
-            })}
-          />
-          {errors.roomNumber && (
-            <p className="text-red-500 text-sm mt-1">{errors.roomNumber.message}</p>
-          )}
-        </div>
+            <div>
+              <Label htmlFor="roomNumber">Room Number *</Label>
+              <Input
+                id="roomNumber"
+                type="text"
+                {...register("roomNumber", { required: "Room number is required" })}
+                className={cn({
+                  "focus-visible:ring-red-500": errors.roomNumber
+                })}
+              />
+              {errors.roomNumber && (
+                <p className="text-red-500 text-sm mt-1">{errors.roomNumber.message}</p>
+              )}
+            </div>
+          </>
+        )}
 
         <div>
           <Label>Reservation Date *</Label>
@@ -189,48 +206,49 @@ export default function RestaurantBookingForm({
           )}
         </div>
 
-        <div>
-          <Label htmlFor="time">Time *</Label>
-          <select
-            id="time"
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-            required
-            className="w-full p-2 border rounded bg-background"
-          >
-            <option value="">Select a time</option>
-            {/* Restaurant hours typically 17:00 - 23:00 */}
-            {['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'].map((time) => (
-              <option key={time} value={time}>
-                {time}
-              </option>
-            ))}
-          </select>
-          {!selectedTime && (
-            <p className="text-red-500 text-sm mt-1">Please select a time</p>
-          )}
-        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="time">Time *</Label>
+            <select
+              id="time"
+              value={selectedTime}
+              onChange={(e) => setSelectedTime(e.target.value)}
+              required
+              className="w-full p-2 border rounded bg-background"
+            >
+              <option value="">Select a time</option>
+              {['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'].map((time) => (
+                <option key={time} value={time}>
+                  {time}
+                </option>
+              ))}
+            </select>
+            {!selectedTime && (
+              <p className="text-red-500 text-sm mt-1">Please select a time</p>
+            )}
+          </div>
 
-        <div>
-          <Label htmlFor="guests">Number of Guests *</Label>
-          <Input
-            id="guests"
-            type="number"
-            min="1"
-            max="20"
-            {...register("guests", {
-              required: "Number of guests is required",
-              min: { value: 1, message: "At least 1 guest required" },
-              max: { value: 20, message: "Maximum 20 guests allowed" },
-              valueAsNumber: true
-            })}
-            className={cn({
-              "focus-visible:ring-red-500": errors.guests
-            })}
-          />
-          {errors.guests && (
-            <p className="text-red-500 text-sm mt-1">{errors.guests.message}</p>
-          )}
+          <div>
+            <Label htmlFor="guests">Guests *</Label>
+            <Input
+              id="guests"
+              type="number"
+              min="1"
+              max="20"
+              {...register("guests", {
+                required: "Required",
+                min: { value: 1, message: "Min 1" },
+                max: { value: 20, message: "Max 20" },
+                valueAsNumber: true
+              })}
+              className={cn({
+                "focus-visible:ring-red-500": errors.guests
+              })}
+            />
+            {errors.guests && (
+              <p className="text-red-500 text-sm mt-1">{errors.guests.message}</p>
+            )}
+          </div>
         </div>
 
         <div>
@@ -238,8 +256,8 @@ export default function RestaurantBookingForm({
           <Textarea
             id="specialRequests"
             {...register("specialRequests")}
-            className="w-full border rounded"
-            placeholder="Any dietary restrictions, special occasions, or other requests..."
+            className="w-full border rounded min-h-[60px]"
+            placeholder="Dietary restrictions..."
           />
         </div>
 
@@ -248,7 +266,7 @@ export default function RestaurantBookingForm({
           disabled={isSubmitting}
           className="w-full"
         >
-          {isSubmitting ? 'Submitting...' : 'Submit Reservation Request'}
+          {isSubmitting ? 'Submitting...' : 'Confirm Reservation'}
         </Button>
       </form>
     </div>
