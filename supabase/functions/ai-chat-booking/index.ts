@@ -172,6 +172,35 @@ Always be friendly, professional, and helpful. If a request is completely outsid
           required: ["type", "description"]
         }
       }
+    },
+    {
+      type: "function",
+      function: {
+        name: "show_restaurant_list",
+        description: "Display a visual list of all available restaurants to the guest."
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "trigger_booking_form",
+        description: "Display a concrete reservation/booking form directly in the chat for the guest to fill out.",
+        parameters: {
+          type: "object",
+          properties: {
+            type: {
+              type: "string",
+              enum: ["restaurant", "spa", "event"],
+              description: "The type of form to display."
+            },
+            entity_id: {
+              type: "string",
+              description: "The ID of the specific restaurant, spa service, or event to book."
+            }
+          },
+          required: ["type", "entity_id"]
+        }
+      }
     }
   ];
 
@@ -234,6 +263,38 @@ Always be friendly, professional, and helpful. If a request is completely outsid
         break;
       case 'create_service_request':
         bookingResult = await createServiceRequest(functionArgs, userId, userName, roomNumber);
+        break;
+      case 'show_restaurant_list':
+        // Insert an action message to show the list
+        if (conversationId) {
+          await supabase.from('messages').insert({
+            conversation_id: conversationId,
+            sender_type: 'ai',
+            sender_name: 'AI Assistant',
+            content: "Here are our dining options:",
+            message_type: 'action',
+            metadata: { action_type: 'restaurant_list' }
+          });
+        }
+        bookingResult = { success: true, message: "Restaurant list displayed to the guest." };
+        break;
+      case 'trigger_booking_form':
+        // Insert an action message to trigger the form
+        if (conversationId) {
+          await supabase.from('messages').insert({
+            conversation_id: conversationId,
+            sender_type: 'ai',
+            sender_name: 'AI Assistant',
+            content: `I've opened the booking form for you.`,
+            message_type: 'action',
+            metadata: {
+              action_type: 'booking_form',
+              entity_type: functionArgs.type,
+              entity_id: functionArgs.entity_id
+            }
+          });
+        }
+        bookingResult = { success: true, message: `Booking form for ${functionArgs.type} displayed to the guest.` };
         break;
       default:
         bookingResult = { success: false, message: 'Unknown function' };
