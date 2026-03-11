@@ -109,7 +109,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">Your request has been sent to the hotel team.</p>
 
-                        <div className="grid grid-cols-2 gap-2 p-2 bg-background/50 rounded-lg border border-border/50">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2 bg-background/50 rounded-lg border border-border/50">
                             <div>
                                 <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Restaurant</p>
                                 <p className="text-xs font-medium">{metadata?.restaurantName || 'Restaurant'}</p>
@@ -137,9 +137,9 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                     <Utensils className="h-4 w-4" />
                     Our Featured Dining
                 </div>
-                <div className="flex overflow-x-auto pb-2 gap-3 snap-x no-scrollbar">
+                <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
                     {entities.map((r) => (
-                        <Card key={r.id} className="min-w-[200px] flex-shrink-0 snap-center overflow-hidden border-border bg-card">
+                        <Card key={r.id} className="min-w-[240px] max-w-[85vw] flex-shrink-0 snap-center overflow-hidden border-border bg-card shadow-md">
                             {r.images?.[0] && (
                                 <div className="h-24 w-full">
                                     <img src={r.images[0]} alt={r.name} className="h-full w-full object-cover" />
