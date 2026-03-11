@@ -7,12 +7,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const deepSeekApiKey = Deno.env.get('DEEPSEEK_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-if (!openAIApiKey) {
-  console.error('CRITICAL: OPENAI_API_KEY is not set in environment variables');
+if (!deepSeekApiKey) {
+  console.error('CRITICAL: DEEPSEEK_API_KEY is not set in environment variables');
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -23,8 +23,8 @@ serve(async (req) => {
   }
 
   try {
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key is missing. Please set the OPENAI_API_KEY secret in your Supabase dashboard.');
+    if (!deepSeekApiKey) {
+      throw new Error('DeepSeek API key is missing. Please set the DEEPSEEK_API_KEY secret in your Supabase dashboard.');
     }
 
     const { message, userId, userName, roomNumber, conversationId, hotelId } = await req.json();
@@ -169,14 +169,14 @@ Always be friendly, professional, and helpful. If a request is completely outsid
     }
   ];
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${openAIApiKey}`,
+      'Authorization': `Bearer ${deepSeekApiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o-mini',
+      model: 'deepseek-chat',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }
@@ -191,17 +191,17 @@ Always be friendly, professional, and helpful. If a request is completely outsid
   // Guard against non-OK responses from OpenAI (bad key, quota exceeded, etc.)
   if (!response.ok) {
     const errorBody = await response.json().catch(() => ({}));
-    console.error('[AI] OpenAI API error:', response.status, JSON.stringify(errorBody));
+    console.error('[AI] DeepSeek API error:', response.status, JSON.stringify(errorBody));
     const reason = (errorBody as any)?.error?.message || `HTTP ${response.status}`;
-    throw new Error(`OpenAI API error: ${reason}`);
+    throw new Error(`DeepSeek API error: ${reason}`);
   }
 
   const data = await response.json();
   console.log('[AI] OpenAI Response:', JSON.stringify(data).slice(0, 500));
 
   if (!data.choices || data.choices.length === 0) {
-    console.error('[AI] No choices in OpenAI response:', JSON.stringify(data));
-    throw new Error('OpenAI returned an empty response. Please check your API key and quota.');
+    console.error('[AI] No choices in DeepSeek response:', JSON.stringify(data));
+    throw new Error('DeepSeek returned an empty response. Please check your API key and quota.');
   }
 
   let aiResponse = data.choices[0].message.content;
@@ -234,14 +234,14 @@ Always be friendly, professional, and helpful. If a request is completely outsid
     }
 
     // Generate follow-up response based on booking result
-    const followUpResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+    const followUpResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${deepSeekApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'deepseek-chat',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message },
@@ -255,8 +255,8 @@ Always be friendly, professional, and helpful. If a request is completely outsid
 
     if (!followUpResponse.ok) {
       const errBody = await followUpResponse.json().catch(() => ({}));
-      console.error('[AI] OpenAI follow-up error:', followUpResponse.status, JSON.stringify(errBody));
-      throw new Error(`OpenAI follow-up error: ${(errBody as any)?.error?.message || followUpResponse.status}`);
+      console.error('[AI] DeepSeek follow-up error:', followUpResponse.status, JSON.stringify(errBody));
+      throw new Error(`DeepSeek follow-up error: ${(errBody as any)?.error?.message || followUpResponse.status}`);
     }
 
     const followUpData = await followUpResponse.json();
