@@ -65,15 +65,21 @@ async function sendChatMessage(message: string, userId: string, userName: string
 
   console.log(`[AI] Processing request for hotel: ${effectiveHotelId} (provided: ${hotelId})`);
 
-  // Get hotel data for AI context
+  // Get hotel data for AI context - LIMITING FIELDS AND RECORDS TO PREVENT CONTEXT OVERFLOW
   const [restaurants, spaServices, events, hotelInfo] = await Promise.all([
-    supabase.from('restaurants').select('*').eq('status', 'open').eq('hotel_id', effectiveHotelId),
-    supabase.from('spa_services').select('*, spa_facilities(*)').eq('status', 'available').eq('hotel_id', effectiveHotelId),
-    supabase.from('events').select('*').gte('date', new Date().toISOString().split('T')[0]).eq('hotel_id', effectiveHotelId),
-    supabase.from('hotel_about').select('*').eq('status', 'active').eq('hotel_id', effectiveHotelId).limit(1)
+    supabase.from('restaurants').select('id, name, description, cuisine, location').eq('status', 'open').eq('hotel_id', effectiveHotelId).limit(8),
+    supabase.from('spa_services').select('id, name, description, duration, price').eq('status', 'available').eq('hotel_id', effectiveHotelId).limit(8),
+    supabase.from('events').select('id, title, description, date, location').gte('date', new Date().toISOString().split('T')[0]).eq('hotel_id', effectiveHotelId).limit(8),
+    supabase.from('hotel_about').select('title, description, location, contact_email, contact_phone').eq('status', 'active').eq('hotel_id', effectiveHotelId).limit(1)
   ]);
 
   const hotelData = hotelInfo.data && hotelInfo.data.length > 0 ? hotelInfo.data[0] : null;
+
+  const truncate = (str: string, max = 200) => str?.length > max ? str.substring(0, max) + '...' : str;
+
+  const restaurantsList = (restaurants.data || []).map(r => ({ ...r, description: truncate(r.description) }));
+  const spaList = (spaServices.data || []).map(s => ({ ...s, description: truncate(s.description) }));
+  const eventsList = (events.data || []).map(e => ({ ...e, description: truncate(e.description) }));
 
   const systemPrompt = `You are a helpful hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
 You are a multi-purpose assistant. You should answer ANY questions from the guest, whether they are related to:
@@ -87,10 +93,10 @@ If you don't have a specific tool for a request, answer to the best of your know
 
 Current guest: ${userName} in room ${roomNumber}
 
-Available restaurants: ${JSON.stringify(restaurants.data)}
-Available spa services: ${JSON.stringify(spaServices.data)}
-Upcoming events: ${JSON.stringify(events.data)}
-Hotel information: ${JSON.stringify(hotelInfo.data)}
+Available restaurants: ${JSON.stringify(restaurantsList)}
+Available spa services: ${JSON.stringify(spaList)}
+Upcoming events: ${JSON.stringify(eventsList)}
+Hotel information: ${JSON.stringify(hotelData)}
 
 IMPORTANT BOOKING RULES:
 - NEVER call a booking function unless you have ALL required information (date, time, guests)
