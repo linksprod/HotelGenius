@@ -16,7 +16,7 @@ const CurrentStay = ({ userData, stayDuration }: CurrentStayProps) => {
   const [billDialogOpen, setBillDialogOpen] = useState(false);
   const formatCheckInDate = userData?.check_in_date ? formatDate(userData.check_in_date) : 'Not defined';
   const formatCheckOutDate = userData?.check_out_date ? formatDate(userData.check_out_date) : 'Not defined';
-  
+
   return (
     <Card className="mb-6">
       <CardContent className="p-0">
@@ -27,22 +27,22 @@ const CurrentStay = ({ userData, stayDuration }: CurrentStayProps) => {
           </div>
         </div>
         <div className="divide-y">
-          <div className="p-4 flex justify-between items-center">
+          <div className="p-4 flex flex-wrap justify-between items-center gap-3">
             <div className="flex items-center gap-3">
-              <Key className="h-5 w-5 text-gray-500" />
+              <Key className="h-5 w-5 text-gray-500 shrink-0" />
               <div>
                 <p className="font-medium">Room</p>
                 <p className="text-sm text-muted-foreground">{userData?.room_number || '406'}</p>
               </div>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex gap-2">
               <Button variant="outline" size="sm" className="gap-2">
                 <Key className="h-4 w-4" />
                 Mobile Key
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
+              <Button
+                variant="outline"
+                size="sm"
                 className="gap-2"
                 onClick={() => setBillDialogOpen(true)}
               >
@@ -51,11 +51,11 @@ const CurrentStay = ({ userData, stayDuration }: CurrentStayProps) => {
               </Button>
             </div>
           </div>
-          
-          <div className="p-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <Calendar className="h-5 w-5 text-gray-500" />
-              <div>
+
+          <div className="p-4 flex flex-wrap justify-between items-center gap-2">
+            <div className="flex items-center gap-3 min-w-0">
+              <Calendar className="h-5 w-5 text-gray-500 shrink-0" />
+              <div className="min-w-0">
                 <p className="font-medium">Stay Dates</p>
                 <p className="text-sm text-muted-foreground">
                   From {formatCheckInDate} to {formatCheckOutDate}
@@ -63,7 +63,7 @@ const CurrentStay = ({ userData, stayDuration }: CurrentStayProps) => {
               </div>
             </div>
             {stayDuration && (
-              <Badge variant="outline" className="ml-2">
+              <Badge variant="outline" className="shrink-0">
                 {stayDuration} {stayDuration > 1 ? 'nights' : 'night'}
               </Badge>
             )}
