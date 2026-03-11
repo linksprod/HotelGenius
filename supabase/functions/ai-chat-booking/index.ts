@@ -99,8 +99,10 @@ Upcoming events: ${JSON.stringify(eventsList)}
 Hotel information: ${JSON.stringify(hotelData)}
 
 IMPORTANT BOOKING RULES:
-- NEVER call a booking function unless you have ALL required information (date, time, guests)
-- If a guest wants to book something but hasn't provided details (date, time, guests), PROACTIVELY call 'trigger_booking_form' for that entity while asking for the missing info. This allows them to use the visual form immediately.
+- As soon as a guest expresses intent to book a specific restaurant, spa service, or event, you MUST IMMEDIATELY call 'trigger_booking_form' for that entity. 
+- NEVER ask the guest if they want to see the form; JUST TRIGGER IT as the first action. 
+- The form is the FASTEST way for guests to book. Use it immediately to collect missing information (date, time, etc.) visually.
+- After triggering the form, your response should invite the guest to fill it out and offer help with any specific questions.
 - Use 'show_restaurant_list' whenever someone asks about dining options generally.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
 
@@ -185,7 +187,7 @@ Always be friendly, professional, and helpful. If a request is completely outsid
       type: "function",
       function: {
         name: "trigger_booking_form",
-        description: "Display a concrete reservation/booking form directly in the chat for the guest to fill out.",
+        description: "CRITICAL: Call this IMMEDIATELY as your first action whenever the guest mentions a specific restaurant, spa, or event they want to book. This is the fastest way for them to book.",
         parameters: {
           type: "object",
           properties: {
