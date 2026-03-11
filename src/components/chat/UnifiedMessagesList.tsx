@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bot, User, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Message } from '@/types/chat';
+import { ChatActionRenderer } from './ChatActionRenderer';
 
 interface UnifiedMessagesListProps {
   messages: Message[];
@@ -85,7 +86,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                 </AvatarFallback>
               </Avatar>
 
-              <div className="flex flex-col">
+              <div className="flex flex-col w-full">
                 <div className={`rounded-xl px-4 py-2.5 ${getMessageStyle(message.sender_type)}`}>
                   {message.message_type === 'system' && (
                     <div className="text-[10px] opacity-75 mb-1 flex items-center gap-1">
@@ -95,6 +96,13 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                   )}
                   <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">{message.content}</p>
                 </div>
+
+                {message.message_type === 'action' && message.metadata && (
+                  <ChatActionRenderer
+                    type={message.metadata.action_type || 'booking_form'}
+                    metadata={message.metadata}
+                  />
+                )}
 
                 <div className={`flex items-center gap-2 mt-1.5 px-1 ${isCurrentUser(message.sender_type) ? 'justify-end' : 'justify-start'}`}>
                   <span className="text-[10px] text-muted-foreground font-bold tracking-tight">
