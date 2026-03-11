@@ -2,7 +2,7 @@ import React from 'react';
 import RestaurantBookingForm from '@/features/dining/components/RestaurantBookingForm';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Utensils, MessageSquare, Calendar, Info } from 'lucide-react';
+import { Utensils, Info, Calendar, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -75,6 +75,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                     </div>
                     <RestaurantBookingForm
                         restaurant={restaurant}
+                        isChatMode={true}
                         onSuccess={() => {
                             if (onSuccess) onSuccess();
                         }}
@@ -89,6 +90,41 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <p className="text-sm font-medium text-muted-foreground">
                     {metadata?.entity_type?.toUpperCase()} booking form coming soon.
                 </p>
+            </Card>
+        );
+    }
+
+    // Action: Reservation Pending Card
+    if (type === 'reservation_pending') {
+        return (
+            <Card className="p-4 border-amber-500/20 bg-amber-500/5 mt-2 animate-in fade-in zoom-in-95">
+                <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-full bg-amber-500 flex items-center justify-center text-white shrink-0 mt-0.5">
+                        <Calendar className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-semibold text-sm">Reservation Pending</h4>
+                            <span className="text-[10px] bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-full font-medium">Processing</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-2">Your request has been sent to the hotel team.</p>
+
+                        <div className="grid grid-cols-2 gap-2 p-2 bg-background/50 rounded-lg border border-border/50">
+                            <div>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Restaurant</p>
+                                <p className="text-xs font-medium">{metadata?.restaurantName || 'Restaurant'}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Date & Time</p>
+                                <p className="text-xs font-medium">{metadata?.date} • {metadata?.time}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Guests</p>
+                                <p className="text-xs font-medium">{metadata?.guests} Person(s)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </Card>
         );
     }

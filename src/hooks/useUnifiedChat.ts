@@ -314,6 +314,39 @@ export const useUnifiedChat = ({
     return () => window.removeEventListener('ai_trigger_form', handleTriggerForm);
   }, [chatState.conversation?.id]);
 
+  // Listen for reservation submissions to show pending state
+  useEffect(() => {
+    const handleReservationSubmitted = async (event: any) => {
+      if (!chatState.conversation?.id) return;
+
+      const { restaurantName, date, time, guests } = event.detail;
+
+      try {
+        await supabase
+          .from('messages')
+          .insert({
+            conversation_id: chatState.conversation.id,
+            sender_type: 'ai',
+            sender_name: 'AI Assistant',
+            content: `Your reservation request for ${restaurantName} has been received.`,
+            message_type: 'action',
+            metadata: {
+              action_type: 'reservation_pending',
+              restaurantName,
+              date,
+              time,
+              guests
+            }
+          });
+      } catch (error) {
+        console.error('Error inserting pending reservation message:', error);
+      }
+    };
+
+    window.addEventListener('ai_reservation_submitted', handleReservationSubmitted);
+    return () => window.removeEventListener('ai_reservation_submitted', handleReservationSubmitted);
+  }, [chatState.conversation?.id]);
+
   // Send message
   const sendMessage = async () => {
     if (!inputMessage.trim() || !chatState.conversation) return;
