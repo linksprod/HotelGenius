@@ -23,31 +23,31 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="container max-w-4xl py-8 pt-6 md:pt-8 bg-background text-foreground">
-        <ProfileHeader 
-          userData={userData} 
-          handleProfileImageChange={handleProfileImageChange} 
+      <div className="container max-w-4xl py-8 pt-6 md:pt-8 px-4 md:px-6 bg-background text-foreground">
+        <ProfileHeader
+          userData={userData}
+          handleProfileImageChange={handleProfileImageChange}
         />
-        
+
         <PersonalInformation userData={userData} />
-        
-        <CurrentStay 
-          userData={userData} 
-          stayDuration={stayDuration} 
+
+        <CurrentStay
+          userData={userData}
+          stayDuration={stayDuration}
         />
-        
+
         <PreferencesSection />
-        
-        <CompanionsList 
-          companions={companions} 
+
+        <CompanionsList
+          companions={companions}
           onAddCompanion={addCompanion}
         />
-        
-        <NotificationsList 
-          notifications={notifications} 
-          dismissNotification={dismissNotification} 
+
+        <NotificationsList
+          notifications={notifications}
+          dismissNotification={dismissNotification}
         />
-        
+
         <QuickActions />
       </div>
     </Layout>

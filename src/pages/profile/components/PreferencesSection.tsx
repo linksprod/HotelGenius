@@ -38,12 +38,12 @@ const PreferencesSection: React.FC = () => {
     <>
       <Card className="mb-6">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
-              <Sparkles className="h-5 w-5" />
-              Preferences & Medical Info
+              <Sparkles className="h-5 w-5 shrink-0" />
+              Preferences &amp; Medical Info
             </CardTitle>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={() => setAlertDialogOpen(true)}>
                 <ShieldAlert className="h-4 w-4 mr-1" />
                 Medical Alert

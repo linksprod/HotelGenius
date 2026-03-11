@@ -17,7 +17,7 @@ function Calendar({
 }: CalendarProps) {
   const [currentYear, setCurrentYear] = React.useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = React.useState(new Date().getMonth());
-  
+
   // Generate month names
   const months = React.useMemo(() => {
     return Array.from({ length: 12 }).map((_, i) => {
@@ -25,18 +25,18 @@ function Calendar({
       return date.toLocaleString('default', { month: 'long' });
     });
   }, []);
-  
+
   // Generate a range of years from 50 years ago to 50 years in the future
   const years = React.useMemo(() => {
     const currentYearNum = new Date().getFullYear();
     return Array.from({ length: 101 }, (_, i) => currentYearNum - 50 + i);
   }, []);
-  
+
   // Compute current displayed date
   const displayedDate = React.useMemo(() => {
     return new Date(currentYear, currentMonth, 1);
   }, [currentYear, currentMonth]);
-  
+
   // Navigation handlers
   const goToPreviousMonth = React.useCallback(() => {
     if (currentMonth === 0) {
@@ -46,7 +46,7 @@ function Calendar({
       setCurrentMonth(prev => prev - 1);
     }
   }, [currentMonth]);
-  
+
   const goToNextMonth = React.useCallback(() => {
     if (currentMonth === 11) {
       setCurrentMonth(0);
@@ -55,11 +55,11 @@ function Calendar({
       setCurrentMonth(prev => prev + 1);
     }
   }, [currentMonth]);
-  
+
   const goToPreviousYear = React.useCallback(() => {
     setCurrentYear(prev => prev - 1);
   }, []);
-  
+
   const goToNextYear = React.useCallback(() => {
     setCurrentYear(prev => prev + 1);
   }, []);
@@ -90,7 +90,7 @@ function Calendar({
             <span className="sr-only">Mois précédent</span>
           </button>
         </div>
-        
+
         <div className="flex items-center gap-1">
           <Select
             value={currentMonth.toString()}
@@ -107,7 +107,7 @@ function Calendar({
               ))}
             </SelectContent>
           </Select>
-          
+
           <Select
             value={currentYear.toString()}
             onValueChange={(value) => setCurrentYear(parseInt(value))}
@@ -124,7 +124,7 @@ function Calendar({
             </SelectContent>
           </Select>
         </div>
-        
+
         <div className="flex items-center">
           <button
             onClick={goToNextMonth}
@@ -159,7 +159,7 @@ function Calendar({
         setCurrentYear(month.getFullYear());
       }}
       showOutsideDays={showOutsideDays}
-      className={cn("p-3 pointer-events-auto bg-white rounded-xl shadow-lg", className)}
+      className={cn("p-3 pointer-events-auto bg-popover text-popover-foreground rounded-xl shadow-lg", className)}
       classNames={{
         months: "flex flex-col space-y-4",
         month: "space-y-2",
@@ -177,7 +177,7 @@ function Calendar({
         ),
         day_selected:
           "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
-        day_today: "border border-primary text-primary-dark rounded-full",
+        day_today: "border border-primary text-primary rounded-full",
         day_outside:
           "day-outside text-muted-foreground opacity-50",
         day_disabled: "text-muted-foreground opacity-50",
