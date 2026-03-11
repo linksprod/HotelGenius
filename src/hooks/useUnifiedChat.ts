@@ -282,6 +282,38 @@ export const useUnifiedChat = ({
     scrollToBottom();
   }, [chatState.messages]);
 
+  // Listen for client-side form triggers (from ChatActionRenderer)
+  useEffect(() => {
+    const handleTriggerForm = async (event: any) => {
+      const { type, id } = event.detail;
+      if (!chatState.conversation?.id) return;
+
+      console.log(`[useUnifiedChat] Triggering form for ${type} ${id}`);
+
+      try {
+        await supabase
+          .from('messages')
+          .insert({
+            conversation_id: chatState.conversation.id,
+            sender_type: 'ai',
+            sender_name: 'AI Assistant',
+            content: `I've opened the booking form for you.`,
+            message_type: 'action',
+            metadata: {
+              action_type: 'booking_form',
+              entity_type: type,
+              entity_id: id
+            }
+          });
+      } catch (error) {
+        console.error('Error triggering form from client:', error);
+      }
+    };
+
+    window.addEventListener('ai_trigger_form', handleTriggerForm);
+    return () => window.removeEventListener('ai_trigger_form', handleTriggerForm);
+  }, [chatState.conversation?.id]);
+
   // Send message
   const sendMessage = async () => {
     if (!inputMessage.trim() || !chatState.conversation) return;
