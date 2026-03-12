@@ -16,7 +16,7 @@ const PersonalInformation = ({ userData }: PersonalInformationProps) => {
         <div className="p-4 border-b">
           <div className="flex items-center gap-2 text-primary mb-1">
             <Users className="h-5 w-5" />
-            <h2 className="text-lg font-semibold">Informations personnelles</h2>
+            <h2 className="text-lg font-semibold">Personal Information</h2>
           </div>
         </div>
         <div className="divide-y">
@@ -31,25 +31,25 @@ const PersonalInformation = ({ userData }: PersonalInformationProps) => {
               </div>
             </div>
           )}
-          
+
           {userData?.birth_date && (
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <Calendar className="h-5 w-5 text-gray-500" />
                 <div>
-                  <p className="font-medium">Date de naissance</p>
+                  <p className="font-medium">Date of Birth</p>
                   <p className="text-sm text-muted-foreground">{formatDate(userData.birth_date)}</p>
                 </div>
               </div>
             </div>
           )}
-          
+
           {userData?.nationality && (
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <Flag className="h-5 w-5 text-gray-500" />
                 <div>
-                  <p className="font-medium">Nationalité</p>
+                  <p className="font-medium">Nationality</p>
                   <p className="text-sm text-muted-foreground">{userData.nationality}</p>
                 </div>
               </div>

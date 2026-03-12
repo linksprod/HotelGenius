@@ -35,7 +35,7 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     try {
       setIsUploading(true);
 
@@ -43,8 +43,8 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
       if (!file.type.startsWith('image/')) {
         toast({
           variant: "destructive",
-          title: "Erreur",
-          description: "Veuillez sélectionner une image valide."
+          title: "Error",
+          description: "Please select a valid image."
         });
         return;
       }
@@ -53,8 +53,8 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
       if (file.size > 5 * 1024 * 1024) {
         toast({
           variant: "destructive",
-          title: "Fichier trop volumineux",
-          description: "L'image ne doit pas dépasser 5 Mo."
+          title: "File too large",
+          description: "The image must not exceed 5 MB."
         });
         return;
       }
@@ -66,13 +66,13 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
         setCropperOpen(true);
       };
       reader.readAsDataURL(file);
-      
+
     } catch (error) {
-      console.error('Erreur lors du téléchargement de l\'image:', error);
+      console.error('Error uploading image:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors du téléchargement de l'image."
+        title: "Error",
+        description: "An error occurred while uploading the image."
       });
     } finally {
       setIsUploading(false);
@@ -84,34 +84,34 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
   const handleCropComplete = async (croppedImageData: string) => {
     try {
       setIsUploading(true);
-      
+
       // Convert the base64 string to a blob
       const response = await fetch(croppedImageData);
       const blob = await response.blob();
-      
+
       // Create a File object from the Blob
       // We need to convert the Blob to a File because compressAndConvertToWebP expects a File
       const fileName = `profile_${Date.now()}.jpg`;
       const fileFromBlob = new File([blob], fileName, { type: blob.type });
-      
+
       // Compress the cropped image
       const compressedImage = await compressAndConvertToWebP(fileFromBlob, 100);
-      
+
       setImage(compressedImage);
       onImageChange(compressedImage);
       setCropperOpen(false);
       setTempImage(null);
-      
+
       toast({
-        title: "Image téléchargée",
-        description: "Votre photo de profil a été mise à jour."
+        title: "Image uploaded",
+        description: "Your profile picture has been updated."
       });
     } catch (error) {
-      console.error('Erreur lors du traitement de l\'image:', error);
+      console.error('Error processing image:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors du traitement de l'image."
+        title: "Error",
+        description: "An error occurred while processing the image."
       });
     } finally {
       setIsUploading(false);
@@ -127,8 +127,8 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
     setImage(null);
     onImageChange(null);
     toast({
-      title: "Image supprimée",
-      description: "Votre photo de profil a été supprimée."
+      title: "Image deleted",
+      description: "Your profile picture has been deleted."
     });
   };
 
@@ -140,17 +140,17 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
     <div className="flex flex-col items-center gap-4">
       <div className="relative">
         <Avatar className="h-24 w-24 border-2 border-white shadow-md">
-          {image ? <AvatarImage src={image} alt="Photo de profil" /> : null}
+          {image ? <AvatarImage src={image} alt="Profile picture" /> : null}
           <AvatarFallback className="text-xl bg-primary text-primary-foreground">
             {getInitials()}
           </AvatarFallback>
         </Avatar>
-        
+
         <div className="absolute -bottom-2 -right-2 flex gap-1">
           <Button onClick={triggerFileInput} size="icon" className="h-8 w-8 rounded-full shadow" disabled={isUploading}>
             <Camera className="h-4 w-4" />
           </Button>
-          
+
           {image && (
             <Button onClick={handleRemoveImage} size="icon" variant="destructive" className="h-8 w-8 rounded-full shadow">
               <X className="h-4 w-4" />
@@ -158,9 +158,9 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
           )}
         </div>
       </div>
-      
+
       <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
-      
+
       <Dialog open={cropperOpen} onOpenChange={setCropperOpen}>
         <DialogContent className="sm:max-w-md">
           <div className="flex flex-col gap-4">
@@ -172,20 +172,20 @@ const ProfileImageUploader: React.FC<ProfileImageUploaderProps> = ({
               <h3 className="text-lg font-semibold">Adjust Image</h3>
               <div className="w-[72px]"></div>
             </div>
-            
+
             {tempImage && (
-              <ImageCropper 
-                image={tempImage} 
-                onCropComplete={handleCropComplete} 
+              <ImageCropper
+                image={tempImage}
+                onCropComplete={handleCropComplete}
                 isUploading={isUploading}
               />
             )}
           </div>
         </DialogContent>
       </Dialog>
-      
+
       <div className="text-center text-sm text-muted-foreground">
-        
+
       </div>
     </div>
   );
