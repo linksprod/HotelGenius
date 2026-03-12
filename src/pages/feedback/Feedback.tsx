@@ -16,6 +16,11 @@ const Feedback = () => {
   const [heroImage, setHeroImage] = useState('https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
   const { config, isLoading } = useHotelConfig();
 
+  // Scroll to top when page is accessed
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Load the hero image from the configuration
   useEffect(() => {
     console.log("Config loaded:", config);

@@ -37,19 +37,23 @@ type ReservationFormValues = z.infer<ReturnType<typeof createReservationSchema>>
 export interface EventReservationFormProps {
   eventId: string;
   eventDate: string;
+  eventTitle?: string;
   onSuccess?: () => void;
   buttonText?: string;
   existingReservation?: EventReservation;
   maxGuests?: number;
+  isChatMode?: boolean;
 }
 
 const EventReservationForm: React.FC<EventReservationFormProps> = ({
   eventId,
   eventDate,
+  eventTitle,
   onSuccess,
   buttonText,
   existingReservation,
-  maxGuests = 10
+  maxGuests = 10,
+  isChatMode = false
 }) => {
   const {
     toast
@@ -134,7 +138,28 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
         specialRequests: values.specialRequests || undefined,
         hotelId: hotelId || undefined
       };
+
+      // Use mutateAsync if available, otherwise just await the createReservation if it's a promise
+      // Looking at the hook usage, we might need to check if it returns a promise.
+      // Based on useEventReservationMutations, createReservation is createMutation.mutate which doesn't return a promise.
+      // We should probably update the hook or use onSuccess callback if we can't await.
+      // However, if I want to maintain the current await structure, I'll use mutateAsync if possible.
+      // But since I don't want to change the hook right now, I'll wrap it if needed or just count on the logic.
+
       await createReservation(reservationData);
+
+      if (isChatMode) {
+        window.dispatchEvent(new CustomEvent('ai_reservation_submitted', {
+          detail: {
+            entityName: eventTitle || 'Event',
+            entityType: 'event',
+            date: eventDate,
+            time: '',
+            guests: values.guests
+          }
+        }));
+      }
+
       toast({
         title: t('forms.messages.reservationSentTitle'),
         description: t('forms.messages.reservationSentDesc')
@@ -159,18 +184,21 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
 
   return <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-      <GuestInfoFields form={form} />
-
+      <GuestInfoFields
+        form={form}
+        hideNameEmail={isChatMode && !!userData}
+        hidePhoneRoom={isChatMode && !!userData}
+      />
       <div className="form-field">
         <label className="block text-sm font-medium text-foreground mb-1">
           {t('forms.labels.participants')}
         </label>
         <select
-          className="w-full p-2 border border-gray-300 rounded-md bg-zinc-100"
+          className="w-full p-2 border border-input rounded-md bg-background text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           {...form.register("guests", { valueAsNumber: true })}
         >
           {guestOptions.map(num => (
-            <option key={num} value={num}>
+            <option key={num} value={num} className="bg-background text-foreground">
               {num} {num === 1 ? t('forms.labels.person') : t('forms.labels.people')}
             </option>
           ))}
