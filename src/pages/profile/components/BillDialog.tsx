@@ -23,22 +23,22 @@ const BillDialog = ({ open, onOpenChange, firstName, lastName, stayDuration }: B
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Receipt className="h-5 w-5" />
-            Facture
+            Bill
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div className="border-b pb-4">
-            <h3 className="font-semibold mb-2">Informations client</h3>
+            <h3 className="font-semibold mb-2">Customer Information</h3>
             <p className="text-sm text-muted-foreground">
               {firstName} {lastName}
             </p>
           </div>
-          
+
           <div>
-            <h3 className="font-semibold mb-2">Détails du séjour</h3>
+            <h3 className="font-semibold mb-2">Stay Details</h3>
             <p className="text-sm text-muted-foreground">
-              Durée : {stayDuration} {stayDuration === 1 ? 'nuit' : 'nuits'}
+              Duration: {stayDuration} {stayDuration === 1 ? 'night' : 'nights'}
             </p>
           </div>
         </div>

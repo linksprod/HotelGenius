@@ -49,8 +49,8 @@ export const useProfileData = () => {
     if (!userId) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Utilisateur non authentifié."
+        title: "Error",
+        description: "User not authenticated."
       });
       return false;
     }
@@ -61,16 +61,16 @@ export const useProfileData = () => {
       setCompanions(newCompanions);
 
       toast({
-        title: "Accompagnateur ajouté",
-        description: "L'accompagnateur a été ajouté avec succès."
+        title: "Companion added",
+        description: "The companion has been successfully added."
       });
       return true;
     } catch (error) {
       console.error('Error adding companion:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible d'ajouter l'accompagnateur."
+        title: "Error",
+        description: "Unable to add companion."
       });
       return false;
     }
@@ -142,8 +142,8 @@ export const useProfileData = () => {
       refreshUserData().catch(err => console.warn('[useProfileData] Background refresh failed:', err));
 
       toast({
-        title: "Profil mis à jour",
-        description: "Votre photo de profil a été enregistrée sur le serveur."
+        title: "Profile updated",
+        description: "Your profile picture has been saved on the server."
       });
     } catch (error) {
       console.error('[useProfileData] Error syncing profile image:', error);
@@ -152,8 +152,8 @@ export const useProfileData = () => {
       setUserData(userData);
 
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Impossible d'enregistrer votre photo de profil.",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Unable to save your profile picture.",
         variant: "destructive"
       });
     } finally {
@@ -179,7 +179,7 @@ export const useProfileData = () => {
       message: notification.title,
       time: typeof notification.time === 'string'
         ? notification.time
-        : new Intl.DateTimeFormat('fr-FR', {
+        : new Intl.DateTimeFormat('en-US', {
           hour: '2-digit',
           minute: '2-digit',
           day: '2-digit',

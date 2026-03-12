@@ -17,11 +17,11 @@ interface CompanionsListProps {
 }
 
 const relationOptions = [
-  { value: "spouse", label: "Conjoint(e)" },
-  { value: "child", label: "Enfant" },
+  { value: "spouse", label: "Spouse" },
+  { value: "child", label: "Child" },
   { value: "parent", label: "Parent" },
-  { value: "friend", label: "Ami(e)" },
-  { value: "other", label: "Autre" },
+  { value: "friend", label: "Friend" },
+  { value: "other", label: "Other" },
 ];
 
 const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => {
@@ -38,8 +38,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
     if (!newCompanion.first_name || !newCompanion.last_name || !newCompanion.relation) {
       toast({
         variant: "destructive",
-        title: "Informations manquantes",
-        description: "Veuillez remplir tous les champs obligatoires."
+        title: "Missing Information",
+        description: "Please fill in all required fields."
       });
       return;
     }
@@ -65,30 +65,30 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
         // Add to the local list first for optimistic UI update
         const updatedCompanions = [...companions, companionData];
         await syncCompanions(user.id, updatedCompanions);
-        
+
         toast({
-          title: "Accompagnateur ajouté",
-          description: "L'accompagnateur a été ajouté avec succès."
+          title: "Companion added",
+          description: "The companion has been successfully added."
         });
-        
+
         setIsDialogOpen(false);
         resetForm();
-        
+
         // Force reload the page to refresh the companions list
         window.location.reload();
       } catch (error) {
         console.error("Erreur lors de l'ajout de l'accompagnateur:", error);
         toast({
           variant: "destructive",
-          title: "Erreur",
-          description: "Impossible d'ajouter l'accompagnateur. Veuillez réessayer."
+          title: "Error",
+          description: "Unable to add companion. Please try again."
         });
       }
     } else {
       toast({
         variant: "destructive",
-        title: "Erreur d'authentification",
-        description: "Vous devez être connecté pour ajouter un accompagnateur."
+        title: "Authentication Error",
+        description: "You must be logged in to add a companion."
       });
     }
   };
@@ -97,21 +97,21 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
     if (!companionId) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de supprimer cet accompagnateur."
+        title: "Error",
+        description: "Unable to delete this companion."
       });
       return;
     }
 
     try {
       const success = await deleteCompanion(companionId);
-      
+
       if (success) {
         toast({
-          title: "Accompagnateur supprimé",
-          description: "L'accompagnateur a été supprimé avec succès."
+          title: "Companion deleted",
+          description: "The companion has been successfully deleted."
         });
-        
+
         // Force reload the page to refresh the companions list
         window.location.reload();
       } else {
@@ -121,8 +121,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
       console.error("Erreur lors de la suppression de l'accompagnateur:", error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de supprimer l'accompagnateur. Veuillez réessayer."
+        title: "Error",
+        description: "Unable to delete companion. Please try again."
       });
     }
   };
@@ -141,7 +141,7 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
         <div className="p-4 border-b">
           <div className="flex items-center gap-2 text-primary mb-1">
             <Users className="h-5 w-5" />
-            <h2 className="text-lg font-semibold">Accompagnateurs</h2>
+            <h2 className="text-lg font-semibold">Companions</h2>
           </div>
         </div>
         {companions.length > 0 ? (
@@ -165,13 +165,13 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
           </div>
         ) : (
           <div className="p-4 text-center text-muted-foreground">
-            Aucun accompagnateur ajouté
+            No companions added
           </div>
         )}
         <div className="p-4 border-t">
           <Button variant="outline" className="w-full" onClick={() => setIsDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Ajouter un accompagnateur
+            Add a companion
           </Button>
         </div>
       </CardContent>
@@ -180,35 +180,35 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal={false}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Ajouter un accompagnateur</DialogTitle>
+            <DialogTitle>Add a Companion</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">Prénom</label>
-                <Input 
-                  value={newCompanion.first_name || ''} 
-                  onChange={(e) => setNewCompanion({...newCompanion, first_name: e.target.value})}
-                  placeholder="Prénom"
+                <label className="text-sm font-medium mb-1 block">First Name</label>
+                <Input
+                  value={newCompanion.first_name || ''}
+                  onChange={(e) => setNewCompanion({ ...newCompanion, first_name: e.target.value })}
+                  placeholder="First Name"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Nom</label>
-                <Input 
-                  value={newCompanion.last_name || ''} 
-                  onChange={(e) => setNewCompanion({...newCompanion, last_name: e.target.value})}
-                  placeholder="Nom"
+                <label className="text-sm font-medium mb-1 block">Last Name</label>
+                <Input
+                  value={newCompanion.last_name || ''}
+                  onChange={(e) => setNewCompanion({ ...newCompanion, last_name: e.target.value })}
+                  placeholder="Last Name"
                 />
               </div>
             </div>
             <div>
               <label className="text-sm font-medium mb-1 block">Relation</label>
-              <Select 
-                value={newCompanion.relation || ''} 
-                onValueChange={(value) => setNewCompanion({...newCompanion, relation: value})}
+              <Select
+                value={newCompanion.relation || ''}
+                onValueChange={(value) => setNewCompanion({ ...newCompanion, relation: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner" />
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent>
                   {relationOptions.map(option => (
@@ -221,8 +221,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Annuler</Button>
-            <Button onClick={handleAddCompanion}>Ajouter</Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleAddCompanion}>Add</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

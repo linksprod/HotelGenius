@@ -77,7 +77,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, isUp
     // Set the canvas size to match the crop size
     const cropWidth = completedCrop.width * scaleX;
     const cropHeight = completedCrop.height * scaleY;
-    
+
     // Canvas size will be the maximum of width or height to allow for rotation
     const maxSize = Math.max(cropWidth, cropHeight);
     canvas.width = maxSize;
@@ -85,14 +85,14 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, isUp
 
     // Move to center of canvas
     ctx.translate(canvas.width / 2, canvas.height / 2);
-    
+
     // Rotate around the center
     ctx.rotate((rotation * Math.PI) / 180);
-    
+
     // Draw the image centered on the canvas
     const sourceX = completedCrop.x * scaleX;
     const sourceY = completedCrop.y * scaleY;
-    
+
     ctx.drawImage(
       img,
       sourceX,
@@ -124,7 +124,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, isUp
             ref={imgRef}
             src={image}
             alt="Profile image to crop"
-            style={{ 
+            style={{
               transform: `rotate(${rotation}deg)`,
               maxHeight: '50vh',
               maxWidth: '100%'
@@ -133,33 +133,33 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ image, onCropComplete, isUp
           />
         </ReactCrop>
       </div>
-      
+
       <div className="flex gap-2 justify-center">
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           onClick={rotateLeft}
           disabled={isUploading}
         >
           <RotateCcw className="h-4 w-4" />
         </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           onClick={rotateRight}
           disabled={isUploading}
         >
           <RotateCw className="h-4 w-4" />
         </Button>
       </div>
-      
-      <Button 
-        onClick={createCroppedImage} 
+
+      <Button
+        onClick={createCroppedImage}
         disabled={isUploading || !completedCrop?.width || !completedCrop?.height}
         className="w-full"
       >
         <CropIcon className="mr-2 h-4 w-4" />
-        Appliquer
+        Apply
       </Button>
     </div>
   );
