@@ -1,8 +1,10 @@
 import React from 'react';
 import RestaurantBookingForm from '@/features/dining/components/RestaurantBookingForm';
+import EventReservationForm from '@/components/events/EventReservationForm';
+import SpaBookingForm from '@/features/spa/components/SpaBookingForm';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Utensils, Info, Calendar, CheckCircle } from 'lucide-react';
+import { Utensils, Info, Calendar, CheckCircle, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -19,22 +21,42 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
 }) => {
     const [entities, setEntities] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(
-        (type === 'booking_form' && metadata?.entity_type === 'restaurant') ||
+        (type === 'booking_form' && (metadata?.entity_type === 'restaurant' || metadata?.entity_type === 'event' || metadata?.entity_type === 'spa')) ||
         type === 'restaurant_list'
     );
 
     React.useEffect(() => {
         const fetchEntities = async () => {
             try {
-                if (type === 'booking_form' && metadata?.entity_type === 'restaurant' && metadata?.entity_id) {
-                    const { data, error } = await supabase
-                        .from('restaurants')
-                        .select('*')
-                        .eq('id', metadata.entity_id)
-                        .single();
+                if (type === 'booking_form' && metadata?.entity_id) {
+                    if (metadata?.entity_type === 'restaurant') {
+                        const { data, error } = await supabase
+                            .from('restaurants')
+                            .select('*')
+                            .eq('id', metadata.entity_id)
+                            .single();
 
-                    if (error) throw error;
-                    setEntities([data]);
+                        if (error) throw error;
+                        setEntities([data]);
+                    } else if (metadata?.entity_type === 'event') {
+                        const { data, error } = await supabase
+                            .from('events')
+                            .select('*')
+                            .eq('id', metadata.entity_id)
+                            .single();
+
+                        if (error) throw error;
+                        setEntities([data]);
+                    } else if (metadata?.entity_type === 'spa') {
+                        const { data, error } = await supabase
+                            .from('spa_services')
+                            .select('*')
+                            .eq('id', metadata.entity_id)
+                            .single();
+
+                        if (error) throw error;
+                        setEntities([data]);
+                    }
                 } else if (type === 'restaurant_list') {
                     const { data, error } = await supabase
                         .from('restaurants')
@@ -65,16 +87,56 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
 
     // Action: Display a booking form
     if (type === 'booking_form') {
-        const restaurant = entities[0];
-        if (metadata?.entity_type === 'restaurant' && restaurant) {
+        const entity = entities[0];
+
+        if (metadata?.entity_type === 'restaurant' && entity) {
             return (
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Utensils className="h-5 w-5" />
-                        <h4 className="font-semibold">Book a table at {restaurant.name}</h4>
+                        <h4 className="font-semibold">Book a table at {entity.name}</h4>
                     </div>
                     <RestaurantBookingForm
-                        restaurant={restaurant}
+                        restaurant={entity}
+                        isChatMode={true}
+                        onSuccess={() => {
+                            if (onSuccess) onSuccess();
+                        }}
+                    />
+                </Card>
+            );
+        }
+
+        if (metadata?.entity_type === 'event' && entity) {
+            return (
+                <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
+                    <div className="flex items-center gap-2 mb-4 text-primary">
+                        <Calendar className="h-5 w-5" />
+                        <h4 className="font-semibold">Book your spot for {entity.title}</h4>
+                    </div>
+                    <EventReservationForm
+                        eventId={entity.id}
+                        eventDate={entity.date || new Date().toISOString()}
+                        eventTitle={entity.title}
+                        maxGuests={entity.capacity || 10}
+                        isChatMode={true}
+                        onSuccess={() => {
+                            if (onSuccess) onSuccess();
+                        }}
+                    />
+                </Card>
+            );
+        }
+
+        if (metadata?.entity_type === 'spa' && entity) {
+            return (
+                <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
+                    <div className="flex items-center gap-2 mb-4 text-primary">
+                        <Sparkles className="h-5 w-5" />
+                        <h4 className="font-semibold">Book your {entity.name} treatment</h4>
+                    </div>
+                    <SpaBookingForm
+                        service={entity}
                         isChatMode={true}
                         onSuccess={() => {
                             if (onSuccess) onSuccess();
@@ -96,6 +158,11 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
 
     // Action: Reservation Pending Card
     if (type === 'reservation_pending') {
+        const isEvent = metadata?.entityType === 'event';
+        const isSpa = metadata?.entityType === 'spa';
+        const entityLabel = isEvent ? 'Event' : isSpa ? 'Spa Service' : 'Restaurant';
+        const entityName = metadata?.entityName || metadata?.restaurantName || entityLabel;
+
         return (
             <Card className="p-4 border-amber-500/20 bg-amber-500/5 mt-2 animate-in fade-in zoom-in-95">
                 <div className="flex items-start gap-3">
@@ -111,8 +178,8 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2 bg-background/50 rounded-lg border border-border/50">
                             <div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Restaurant</p>
-                                <p className="text-xs font-medium">{metadata?.restaurantName || 'Restaurant'}</p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">{entityLabel}</p>
+                                <p className="text-xs font-medium">{entityName}</p>
                             </div>
                             <div>
                                 <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Date & Time</p>

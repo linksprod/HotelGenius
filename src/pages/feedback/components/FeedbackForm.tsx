@@ -10,8 +10,12 @@ import { supabase } from '@/integrations/supabase/client';
 import StarRating from './StarRating';
 import { FeedbackType } from '../types/feedbackTypes';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/features/auth/hooks/useAuthContext';
 
 const FeedbackForm = () => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [comment, setComment] = useState('');
@@ -25,8 +29,18 @@ const FeedbackForm = () => {
 
     if (!name || !email || !rating) {
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires.",
+        title: t('common.error'),
+        description: t('forms.validation.pleaseProvideName'),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!hotelId) {
+      console.error('No hotel ID found for feedback submission');
+      toast({
+        title: t('common.error'),
+        description: "Hotel identification is missing. Please refresh and try again.",
         variant: "destructive"
       });
       return;
@@ -35,32 +49,42 @@ const FeedbackForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Utiliser le type FeedbackType pour l'insertion
-      const { error } = await supabase.from('guest_feedback').insert({
-        guest_name: name,
-        guest_email: email,
-        rating,
-        comment
-        // hotel_id is handled by DB trigger (if logged in) or needs other context
+      console.log('Submitting feedback via RPC. Hotel ID:', hotelId, 'User ID:', user?.id);
+
+      // Use RPC to bypass PostgREST schema cache issues with newly added columns
+      const { data, error } = await supabase.rpc('submit_guest_feedback', {
+        p_guest_name: name,
+        p_guest_email: email,
+        p_rating: rating,
+        p_comment: comment,
+        p_hotel_id: hotelId,
+        p_guest_id: user?.id || null
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase feedback RPC error:', error);
+        throw error;
+      }
+
+      const response = data as { status: string; message?: string };
+      if (response && response.status === 'error') {
+        throw new Error(response.message || 'Error from server while submitting feedback');
+      }
 
       toast({
-        title: "Merci pour votre avis !",
-        description: "Votre feedback a été envoyé avec succès."
+        title: t('feedback.thankYou'),
+        description: t('forms.messages.reservationSentDesc')
       });
 
-      // Réinitialiser le formulaire
       setName('');
       setEmail('');
       setComment('');
       setRating(0);
-    } catch (error) {
-      console.error('Erreur lors de la soumission du feedback:', error);
+    } catch (error: any) {
+      console.error('Error submitting feedback:', error);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi de votre feedback.",
+        title: t('common.error'),
+        description: error.message || t('forms.messages.reservationError'),
         variant: "destructive"
       });
     } finally {
@@ -72,29 +96,29 @@ const FeedbackForm = () => {
     <div className="my-10">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Partagez votre expérience</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('feedback.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Nom <span className="text-red-500">*</span></Label>
+                <Label htmlFor="name">{t('forms.labels.name')} <span className="text-red-500">*</span></Label>
                 <Input
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Votre nom"
+                  placeholder={t('forms.labels.namePlaceholder')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
+                <Label htmlFor="email">{t('forms.labels.email')} <span className="text-red-500">*</span></Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Votre email"
+                  placeholder={t('forms.labels.emailPlaceholder')}
                   required
                 />
               </div>
@@ -103,12 +127,12 @@ const FeedbackForm = () => {
             <StarRating rating={rating} setRating={setRating} />
 
             <div className="space-y-2">
-              <Label htmlFor="comment">Commentaire</Label>
+              <Label htmlFor="comment">{t('feedback.comments')}</Label>
               <Textarea
                 id="comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                placeholder="Partagez votre expérience avec nous..."
+                placeholder={t('feedback.subtitle')}
                 rows={4}
               />
             </div>
@@ -118,7 +142,7 @@ const FeedbackForm = () => {
               className="w-full md:w-auto"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Envoi en cours...' : 'Envoyer mon avis'}
+              {isSubmitting ? t('forms.buttons.processing') : t('feedback.submitFeedback')}
             </Button>
           </form>
         </CardContent>

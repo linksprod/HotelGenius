@@ -319,7 +319,8 @@ export const useUnifiedChat = ({
     const handleReservationSubmitted = async (event: any) => {
       if (!chatState.conversation?.id) return;
 
-      const { restaurantName, date, time, guests } = event.detail;
+      const { restaurantName, entityName, date, time, guests, entityType } = event.detail;
+      const displayName = entityName || restaurantName || 'your request';
 
       try {
         await supabase
@@ -328,11 +329,13 @@ export const useUnifiedChat = ({
             conversation_id: chatState.conversation.id,
             sender_type: 'ai',
             sender_name: 'AI Assistant',
-            content: `Your reservation request for ${restaurantName} has been received.`,
+            content: `Your reservation request for ${displayName} has been received.`,
             message_type: 'action',
             metadata: {
               action_type: 'reservation_pending',
-              restaurantName,
+              restaurantName: restaurantName || entityName,
+              entityName: entityName || restaurantName,
+              entityType,
               date,
               time,
               guests

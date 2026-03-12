@@ -1,156 +1,205 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { SpaService } from '../types';
 import { useSpaBookings } from '@/hooks/useSpaBookings';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 import { addDays } from 'date-fns';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 import { DatePicker } from '@/components/ui/date-picker';
-import { DateRange } from 'react-day-picker';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import GuestInfoFields from '@/components/reservation/GuestInfoFields';
+import { useTranslation } from 'react-i18next';
+
+const createSpaBookingSchema = (t: any) => z.object({
+  guestName: z.string().min(1, { message: t('forms.validation.nameRequired') }),
+  guestEmail: z.string().email({ message: t('forms.validation.emailInvalid') }).optional().or(z.literal('')),
+  guestPhone: z.string().optional().or(z.literal('')),
+  roomNumber: z.string().min(1, { message: t('forms.validation.roomNumberRequired') }),
+  date: z.date({ required_error: "Please select a date" }),
+  time: z.string().min(1, { message: "Please select a time" }),
+  specialRequests: z.string().optional().or(z.literal(''))
+});
+
+type SpaBookingFormValues = z.infer<ReturnType<typeof createSpaBookingSchema>>;
+
 interface SpaBookingFormProps {
   service: SpaService;
   onSuccess?: () => void;
   existingBooking?: any;
+  isChatMode?: boolean;
 }
-interface SpaBookingFormValues {
-  guestName: string;
-  guestEmail: string;
-  guestPhone: string;
-  roomNumber: string;
-  specialRequests: string;
-}
+
 export default function SpaBookingForm({
   service,
   onSuccess,
-  existingBooking
+  existingBooking,
+  isChatMode = false
 }: SpaBookingFormProps) {
-  const {
-    createBooking
-  } = useSpaBookings();
-  const {
-    userData
-  } = useAuth();
+  const { toast } = useToast();
+  const { createBooking } = useSpaBookings();
+  const { userData } = useAuth();
   const { hotelId } = useCurrentHotelId();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(existingBooking?.date ? new Date(existingBooking.date) : undefined);
-  const [selectedTime, setSelectedTime] = useState<string>(existingBooking?.time || '');
+  const { t } = useTranslation();
   const userId = localStorage.getItem('user_id');
-  const {
-    register,
-    handleSubmit,
-    formState: {
-      errors
-    },
-    setValue
-  } = useForm<SpaBookingFormValues>();
-  useEffect(() => {
-    if (userData) {
-      setValue('guestName', userData.first_name + ' ' + userData.last_name);
-      setValue('guestEmail', userData.email);
-      setValue('guestPhone', userData.phone);
-      setValue('roomNumber', userData.room_number);
-    }
-  }, [userData, setValue]);
 
-  // Handle date selection with proper typing
-  const handleDateSelect = (date: Date | Date[] | DateRange | undefined) => {
-    // Handle only single date selection for this form
-    if (date instanceof Date) {
-      setSelectedDate(date);
+  const form = useForm<SpaBookingFormValues>({
+    resolver: zodResolver(createSpaBookingSchema(t)),
+    defaultValues: {
+      guestName: existingBooking?.guest_name || '',
+      guestEmail: existingBooking?.guest_email || '',
+      guestPhone: existingBooking?.guest_phone || '',
+      roomNumber: existingBooking?.room_number || '',
+      date: existingBooking?.date ? new Date(existingBooking.date) : undefined,
+      time: existingBooking?.time || '',
+      specialRequests: existingBooking?.special_requests || ''
     }
-  };
-  const onSubmit = async (data: SpaBookingFormValues) => {
-    if (!selectedDate || !selectedTime) {
-      toast.error("Please select a date and time");
-      return;
+  });
+
+  useEffect(() => {
+    if (userData && !existingBooking) {
+      const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
+      form.setValue('guestName', fullName);
+      form.setValue('guestEmail', userData.email || '');
+      form.setValue('guestPhone', userData.phone || '');
+      form.setValue('roomNumber', userData.room_number || '');
     }
+  }, [userData, existingBooking, form]);
+
+  const onSubmit = async (values: SpaBookingFormValues) => {
     try {
       const bookingData = {
         service_id: service.id,
         facility_id: service.facility_id,
         user_id: userId,
-        guest_name: data.guestName,
-        guest_email: data.guestEmail,
-        guest_phone: data.guestPhone,
-        room_number: data.roomNumber,
-        date: selectedDate.toISOString().split('T')[0],
-        time: selectedTime,
-        special_requests: data.specialRequests,
-        status: 'pending' as 'pending' | 'confirmed' | 'cancelled' | 'completed',
+        guest_name: values.guestName,
+        guest_email: values.guestEmail,
+        guest_phone: values.guestPhone,
+        room_number: values.roomNumber,
+        date: values.date.toISOString().split('T')[0],
+        time: values.time,
+        special_requests: values.specialRequests,
+        status: 'pending' as const,
         hotel_id: hotelId || undefined,
-        // Add service_name for notification purposes even if not in DB schema
         service_name: service.name
       };
+
       await createBooking(bookingData as any);
-      toast.success("Spa booking request sent successfully");
+
+      if (isChatMode) {
+        window.dispatchEvent(new CustomEvent('ai_reservation_submitted', {
+          detail: {
+            entityName: service.name,
+            entityType: 'spa',
+            date: values.date.toISOString().split('T')[0],
+            time: values.time,
+            guests: 1 // Spa bookings are usually for one service session
+          }
+        }));
+      }
+
+      toast({
+        title: "Spa booking request sent",
+        description: "We've received your request and will confirm shortly."
+      });
+
       if (onSuccess) {
         onSuccess();
       }
+      if (!existingBooking) {
+        form.reset();
+      }
     } catch (error) {
       console.error("Error creating spa booking:", error);
-      toast.error("Error sending spa booking request");
+      toast({
+        title: "Error",
+        description: "Failed to send spa booking request.",
+        variant: "destructive"
+      });
     }
   };
-  return <div>
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <Label htmlFor="guestName">Name</Label>
-        <Input id="guestName" type="text" {...register("guestName", {
-          required: true
-        })} className={cn({
-          "focus-visible:ring-red-500": errors.guestName
-        })} />
-        {errors.guestName && <p className="text-red-500 text-sm mt-1">Required field</p>}
-      </div>
-      <div>
-        <Label htmlFor="guestEmail">Email</Label>
-        <Input id="guestEmail" type="email" {...register("guestEmail")} className={cn({
-          "focus-visible:ring-red-500": errors.guestEmail
-        })} />
-        {errors.guestEmail && <p className="text-red-500 text-sm mt-1">Invalid email</p>}
-      </div>
-      <div>
-        <Label htmlFor="guestPhone">Phone</Label>
-        <Input id="guestPhone" type="tel" {...register("guestPhone")} className={cn({
-          "focus-visible:ring-red-500": errors.guestPhone
-        })} />
-        {errors.guestPhone && <p className="text-red-500 text-sm mt-1">Invalid phone number</p>}
-      </div>
-      <div>
-        <Label htmlFor="roomNumber">Room Number</Label>
-        <Input id="roomNumber" type="text" {...register("roomNumber", {
-          required: true
-        })} className={cn({
-          "focus-visible:ring-red-500": errors.roomNumber
-        })} />
-        {errors.roomNumber && <p className="text-red-500 text-sm mt-1">Required field</p>}
-      </div>
-      <div>
-        <Label>Booking Date</Label>
-        <DatePicker mode="single" selected={selectedDate} onSelect={handleDateSelect} minDate={new Date()} maxDate={addDays(new Date(), 30)} required />
-      </div>
-      <div>
-        <Label htmlFor="time">Time</Label>
-        <select id="time" value={selectedTime} onChange={e => setSelectedTime(e.target.value)} required className="w-full p-2 border rounded bg-background">
-          <option value="">Select a time</option>
-          {[...Array(24)].map((_, i) => {
-            const hour = i.toString().padStart(2, '0');
-            return <option key={hour + ':00'} value={hour + ':00'}>
-              {hour}:00
-            </option>;
-          })}
-        </select>
-      </div>
-      <div>
-        <Label htmlFor="specialRequests">Special Requests</Label>
-        <Textarea id="specialRequests" {...register("specialRequests")} className="w-full border rounded" />
-      </div>
-      <Button type="submit">Submit Booking Request</Button>
-    </form>
-  </div>;
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <GuestInfoFields
+          form={form}
+          hideNameEmail={isChatMode && !!userData}
+          hidePhoneRoom={isChatMode && !!userData}
+        />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Booking Date</FormLabel>
+                <DatePicker
+                  mode="single"
+                  selected={field.value}
+                  onSelect={field.onChange}
+                  minDate={new Date()}
+                  maxDate={addDays(new Date(), 30)}
+                  required
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    <option value="">Select a time</option>
+                    {[...Array(13)].map((_, i) => {
+                      const hour = (i + 9).toString().padStart(2, '0');
+                      return (
+                        <React.Fragment key={hour}>
+                          <option value={`${hour}:00`}>{hour}:00</option>
+                          <option value={`${hour}:30`}>{hour}:30</option>
+                        </React.Fragment>
+                      );
+                    })}
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="specialRequests"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Special Requests</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Any details for your treatment?" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="w-full">
+          {existingBooking ? 'Update Booking' : 'Submit Booking Request'}
+        </Button>
+      </form>
+    </Form>
+  );
 }

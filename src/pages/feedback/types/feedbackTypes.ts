@@ -5,6 +5,7 @@ export interface FeedbackType {
   guest_email: string;
   rating: number;
   comment?: string;
+  hotel_id: string;
   created_at: string;
   updated_at?: string;
 }
