@@ -328,7 +328,23 @@ CRITICAL CONCIERGE RULES:
         bookingResult = { success: false, message: 'Unknown function' };
     }
 
-    // Generate follow-up response based on booking result
+    // For visual tools, we return immediately to prevent the follow-up text from overriding cards
+    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list'].includes(functionName)) {
+      if (conversationId) {
+        await supabase
+          .from('messages')
+          .insert({
+            conversation_id: conversationId,
+            sender_type: 'ai',
+            sender_name: 'AI Assistant',
+            content: bookingResult.message || 'I\'ve opened that for you.',
+            message_type: 'text'
+          });
+      }
+      return { response: bookingResult.message || 'I\'ve opened that for you.' };
+    }
+
+    // Generate follow-up response based on booking result for other tools (like actual bookings)
     const followUpResponse = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
