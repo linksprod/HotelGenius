@@ -81,7 +81,8 @@ async function sendChatMessage(message: string, userId: string, userName: string
   const spaList = (spaServices.data || []).map(s => ({ ...s, description: truncate(s.description) }));
   const eventsList = (events.data || []).map(e => ({ ...e, description: truncate(e.description) }));
 
-  const systemPrompt = `You are a helpful hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
+  const systemPrompt = `CORE_VERSION: 3.0.4.
+You are a helpful hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
 You are a multi-purpose assistant. You should answer ANY questions from the guest, whether they are related to:
 - Using the app and its features
 - Booking restaurants, spa services, and events (you have tools for these)
@@ -231,7 +232,7 @@ CRITICAL CONCIERGE RULES:
       ],
       tools: tools,
       tool_choice: "auto",
-      temperature: 0.7,
+      temperature: 0.1, // Lower temperature for more consistent tool usage
       max_tokens: 1000
     }),
   });
