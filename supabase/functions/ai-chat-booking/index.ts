@@ -292,17 +292,22 @@ CRITICAL CONCIERGE RULES:
       case 'show_service_categories':
         // Insert an action message to show the categories
         if (conversationId) {
-          await supabase.from('messages').insert({
-            conversation_id: conversationId,
-            sender_type: 'ai',
-            sender_name: 'AI Assistant',
-            content: functionArgs.category ? `I've opened the ${functionArgs.category} menu for you.` : "Please choose a service category:",
-            message_type: 'action',
-            metadata: {
-              action_type: 'service_request_flow',
-              category: functionArgs.category
-            }
-          });
+          try {
+            const { error: insertError } = await supabase.from('messages').insert({
+              conversation_id: conversationId,
+              sender_type: 'ai',
+              sender_name: 'AI Assistant',
+              content: functionArgs.category ? `I've opened the ${functionArgs.category} menu for you.` : "Please choose a service category:",
+              message_type: 'action',
+              metadata: {
+                action_type: 'service_request_flow',
+                category: functionArgs.category
+              }
+            });
+            if (insertError) console.error('[AI] Action message insert error:', insertError);
+          } catch (e) {
+            console.error('[AI] Action message insert exception:', e);
+          }
         }
         bookingResult = { success: true, message: "Service categories displayed to the guest." };
         break;
