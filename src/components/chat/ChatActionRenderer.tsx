@@ -4,15 +4,178 @@ import EventReservationForm from '@/components/events/EventReservationForm';
 import SpaBookingForm from '@/features/spa/components/SpaBookingForm';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Utensils, Info, Calendar, CheckCircle, Sparkles } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useRequestCategories, useRequestItems } from '@/hooks/useRequestCategories';
+import { requestService } from '@/features/rooms/controllers/roomService';
+import {
+    Utensils, Info, Calendar, CheckCircle, Sparkles,
+    Wrench, Trash2, Monitor, Shield, ChevronRight,
+    Loader2, Check, Settings
+} from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ChatActionRendererProps {
     type: string;
     metadata: any;
     onSuccess?: () => void;
 }
+
+const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () => void }> = ({ initialCategory, onSuccess }) => {
+    const [step, setStep] = React.useState<'categories' | 'items' | 'submitting' | 'confirmed'>(initialCategory ? 'items' : 'categories');
+    const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
+    const { categories, isLoading: loadingCats } = useRequestCategories();
+    // Use the hook to fetch items for the selected category
+    const { data: items, isLoading: loadingItems } = useRequestItems(selectedCategory?.id);
+
+    React.useEffect(() => {
+        if (initialCategory && categories.length > 0 && !selectedCategory) {
+            const cat = categories.find(c =>
+                c.id === initialCategory ||
+                c.name.toLowerCase().includes(initialCategory.toLowerCase())
+            );
+            if (cat) {
+                setSelectedCategory(cat);
+                setStep('items');
+            } else {
+                setStep('categories');
+            }
+        }
+    }, [initialCategory, categories, selectedCategory]);
+
+    const handleCategorySelect = (category: any) => {
+        setSelectedCategory(category);
+        setStep('items');
+    };
+
+    const handleItemSelect = async (item: any) => {
+        setStep('submitting');
+        try {
+            await requestService(
+                '', // Room ID will be handled by the controller
+                'service',
+                item.name,
+                item.id,
+                selectedCategory.id
+            );
+            setStep('confirmed');
+            if (onSuccess) onSuccess();
+        } catch (error) {
+            console.error('Error submitting service request:', error);
+            setStep('categories');
+            toast.error('Failed to submit request. Please try again.');
+        }
+    };
+
+    const getCategoryIcon = (name: string) => {
+        const lowerName = name.toLowerCase();
+        if (lowerName.includes('housekeeping')) return <Trash2 className="h-5 w-5" />;
+        if (lowerName.includes('maintenance')) return <Wrench className="h-5 w-5" />;
+        if (lowerName.includes('it') || lowerName.includes('tech')) return <Monitor className="h-5 w-5" />;
+        if (lowerName.includes('security')) return <Shield className="h-5 w-5" />;
+        return <Settings className="h-5 w-5" />;
+    };
+
+    if (loadingCats) {
+        return (
+            <div className="flex items-center justify-center p-8">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+        );
+    }
+
+    if (step === 'categories') {
+        return (
+            <div className="grid grid-cols-2 gap-3 mt-2 animate-in fade-in slide-in-from-bottom-2">
+                {categories.map((cat) => (
+                    <Card
+                        key={cat.id}
+                        className="p-4 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all border-border/50 bg-card group"
+                        onClick={() => handleCategorySelect(cat)}
+                    >
+                        <div className="flex flex-col items-center gap-2 text-center">
+                            <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                {getCategoryIcon(cat.name)}
+                            </div>
+                            <span className="text-xs font-semibold">{cat.name}</span>
+                        </div>
+                    </Card>
+                ))}
+            </div>
+        );
+    }
+
+    if (step === 'items') {
+        return (
+            <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-right-2">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2 text-primary">
+                        {getCategoryIcon(selectedCategory.name)}
+                        <h4 className="font-semibold text-sm">{selectedCategory.name}</h4>
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-[10px] h-6"
+                        onClick={() => setStep('categories')}
+                    >
+                        Back
+                    </Button>
+                </div>
+
+                {loadingItems ? (
+                    <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-2">
+                        {items && items.length > 0 ? (
+                            items.map((item) => (
+                                <Button
+                                    key={item.id}
+                                    variant="outline"
+                                    className="justify-between text-xs h-9 bg-background/50 border-primary/10 hover:border-primary/30 hover:bg-primary/5 group"
+                                    onClick={() => handleItemSelect(item)}
+                                >
+                                    {item.name}
+                                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </Button>
+                            ))
+                        ) : (
+                            <p className="text-[10px] text-muted-foreground text-center py-2">No items available in this category.</p>
+                        )}
+                    </div>
+                )}
+            </Card>
+        );
+    }
+
+    if (step === 'submitting') {
+        return (
+            <Card className="p-6 flex flex-col items-center justify-center gap-3 bg-muted/30 border-dashed mt-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm font-medium text-muted-foreground">Sending your request...</p>
+            </Card>
+        );
+    }
+
+    if (step === 'confirmed') {
+        return (
+            <Card className="p-4 bg-green-500/10 border-green-500/20 mt-2 animate-in fade-in zoom-in-95">
+                <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white">
+                        <Check className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <h4 className="font-semibold text-sm">Request Confirmed</h4>
+                        <p className="text-xs text-muted-foreground">We've received your request and our team is on it!</p>
+                    </div>
+                </div>
+            </Card>
+        );
+    }
+
+    return null;
+};
 
 export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     type,
@@ -235,7 +398,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     }
 
     // Action: Simple Confirmation
-    if (type === 'confirmation') {
+    if (type === 'confirmation' || type === 'confirmed') {
         return (
             <Card className="p-4 bg-green-500/10 border-green-500/20 mt-2 animate-in fade-in zoom-in-95">
                 <div className="flex items-center gap-3">
@@ -249,6 +412,11 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 </div>
             </Card>
         );
+    }
+
+    // Action: Service Request Flow
+    if (type === 'service_request_flow') {
+        return <ServiceRequestFlow initialCategory={metadata?.category} onSuccess={onSuccess} />;
     }
 
     // Action: General Message or fallback

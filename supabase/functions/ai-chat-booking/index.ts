@@ -103,10 +103,17 @@ IMPORTANT BOOKING RULES:
 - NEVER ask the guest if they want to see the form; JUST TRIGGER IT as the first action. 
 - The form is the FASTEST way for guests to book. Use it immediately to collect missing information (date, time, etc.) visually.
 - After triggering the form, your response should invite the guest to fill it out and offer help with any specific questions.
-- Use 'show_restaurant_list' whenever someone asks about dining options generally.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
 
-Always be friendly, professional, and helpful. If a request is completely outside your capabilities, invite the guest to speak with a human staff member, but always try to help yourself first.`;
+Always be friendly, professional, and helpful. If a request is completely outside your capabilities, invite the guest to speak with a human staff member, but always try to help yourself first. (Note: Room service for food is related to dining, but room care/cleaning is Guest Services handled by the visual tool).
+
+CRITICAL CONCIERGE RULES:
+1. For ANY housekeeping, maintenance, IT, or security request, YOU MUST CALL 'show_service_categories'.
+2. NEVER explain how to request something in text. NEVER list options in text. 
+3. If guest says "I need X", and X is a room service/assistance item, TRIGGER THE TOOL IMMEDIATELY as your first and only action.
+4. FEW-SHOT EXAMPLE: Guest: "I need towels" -> Action: show_service_categories(category="Housekeeping") -> Content: "I've opened the housekeeping menu for you."
+5. FEW-SHOT EXAMPLE: Guest: "The WiFi is slow" -> Action: show_service_categories(category="IT") -> Content: "I've opened the IT support menu for you."
+6. ALWAYS favor visual tools over text descriptions.`;
 
   const tools = [
     {
@@ -161,26 +168,29 @@ Always be friendly, professional, and helpful. If a request is completely outsid
         }
       }
     },
-    {
-      type: "function",
-      function: {
-        name: "create_service_request",
-        description: "Create a general service request",
-        parameters: {
-          type: "object",
-          properties: {
-            type: { type: "string" },
-            description: { type: "string" }
-          },
-          required: ["type", "description"]
-        }
-      }
-    },
+    // General service request tool removed - use show_service_categories instead
+
     {
       type: "function",
       function: {
         name: "show_restaurant_list",
         description: "Display a visual list of all available restaurants to the guest."
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "show_service_categories",
+        description: "CRITICAL: Displays visual cards for service categories (Maintenance, Housekeeping, IT, Security). Use this whenever a guest needs room assistance, cleaning, repairs, or 'room services' related to their stay experience.",
+        parameters: {
+          type: "object",
+          properties: {
+            category: {
+              type: "string",
+              description: "Optional: The name of the category to show directly (e.g., 'Housekeeping', 'Maintenance', 'IT', 'Security'). Skip to this if the guest mentioned it."
+            }
+          }
+        }
       }
     },
     {
@@ -264,9 +274,7 @@ Always be friendly, professional, and helpful. If a request is completely outsid
       case 'book_event':
         bookingResult = await bookEvent(functionArgs, userId, userName, roomNumber);
         break;
-      case 'create_service_request':
-        bookingResult = await createServiceRequest(functionArgs, userId, userName, roomNumber);
-        break;
+
       case 'show_restaurant_list':
         // Insert an action message to show the list
         if (conversationId) {
@@ -280,6 +288,23 @@ Always be friendly, professional, and helpful. If a request is completely outsid
           });
         }
         bookingResult = { success: true, message: "Restaurant list displayed to the guest." };
+        break;
+      case 'show_service_categories':
+        // Insert an action message to show the categories
+        if (conversationId) {
+          await supabase.from('messages').insert({
+            conversation_id: conversationId,
+            sender_type: 'ai',
+            sender_name: 'AI Assistant',
+            content: functionArgs.category ? `I've opened the ${functionArgs.category} menu for you.` : "Please choose a service category:",
+            message_type: 'action',
+            metadata: {
+              action_type: 'service_request_flow',
+              category: functionArgs.category
+            }
+          });
+        }
+        bookingResult = { success: true, message: "Service categories displayed to the guest." };
         break;
       case 'trigger_booking_form':
         // Insert an action message to trigger the form
