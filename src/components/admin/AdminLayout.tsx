@@ -38,7 +38,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <SidebarInset className="min-h-svh flex flex-col bg-background">
+      <SidebarInset className="min-h-svh flex flex-col bg-background overflow-x-hidden w-full max-w-[100vw]">
         {/* Mobile Header - Elevated z-index to stay above the landing animation if active */}
         <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background border-b border-border shadow-sm">
           <div className="flex items-center gap-2">
