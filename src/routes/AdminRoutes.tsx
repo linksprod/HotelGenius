@@ -27,6 +27,9 @@ import GuestDetailPage from '@/pages/admin/GuestDetailPage';
 import StaffManager from '@/pages/admin/StaffManager';
 import HotelsManager from '@/pages/admin/HotelsManager';
 import HotelProfile from '@/pages/admin/HotelProfile';
+import AIConcierge from '@/pages/admin/AIConcierge';
+import NotificationCentre from '@/pages/admin/NotificationCentre';
+import SuperDashboard from '@/pages/admin/super/SuperDashboard';
 
 
 const AdminRoutes = () => {
@@ -51,13 +54,26 @@ const AdminRoutes = () => {
             <Route path="chat" element={<AdminChatDashboard />} />
             <Route path="about" element={<AboutEditor />} />
             <Route path="feedback" element={<FeedbackManager />} />
-            <Route path="information-technology" element={<InformationTechnologyManager />} />
-            <Route path="restaurants/:id/events" element={<RestaurantEventsManager />} />
-            <Route path="restaurants/:id/reservations" element={<RestaurantReservationsManager />} />
-            <Route path="destination-admin" element={<DestinationAdmin />} />
-            <Route path="demo" element={<DemoManager />} />
-            <Route path="staff" element={<StaffManager />} />
-            <Route path="hotel-profile" element={<HotelProfile />} />
+        
+        {/* Super Admin Routes */}
+        {/* Super Admin Dedicated Routes */}
+        <Route path="super" element={<AdminRoleGuard allowedRoles={['super_admin']} />}>
+          <Route path="dashboard" element={<SuperDashboard />} />
+          <Route path="hotels" element={<HotelsManager />} />
+          <Route path="users" element={<StaffManager />} />
+          <Route path="ai" element={<AIConcierge />} />
+          <Route path="notifications" element={<NotificationCentre />} />
+        </Route>
+
+        <Route path="information-technology" element={<InformationTechnologyManager />} />
+        <Route path="restaurants/:id/events" element={<RestaurantEventsManager />} />
+        <Route path="restaurants/:id/reservations" element={<RestaurantReservationsManager />} />
+        <Route path="destination-admin" element={<DestinationAdmin />} />
+        <Route path="demo" element={<DemoManager />} />
+        <Route path="staff" element={<StaffManager />} />
+        <Route path="hotel-profile" element={<HotelProfile />} />
+        <Route path="agent/concierge" element={<AIConcierge />} />
+        <Route path="notifications" element={<NotificationCentre />} />
 
           </Routes>
         </AdminLayout>

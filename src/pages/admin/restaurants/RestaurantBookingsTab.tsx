@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { useAllTableReservations } from '@/hooks/useAllTableReservations';
 import { useRestaurants } from '@/hooks/useRestaurants';
 import StatusDialog from '@/components/admin/reservations/StatusDialog';
@@ -51,7 +51,7 @@ const RestaurantBookingsTab = () => {
 
   const formatDate = (dateStr: string) => {
     try {
-      return format(new Date(dateStr), 'dd MMM yyyy', { locale: fr });
+      return format(new Date(dateStr), 'dd MMM yyyy', { locale: enUS });
     } catch {
       return dateStr;
     }
@@ -60,11 +60,11 @@ const RestaurantBookingsTab = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <Badge className="bg-green-100 text-green-800 border-green-200">Confirmée</Badge>;
+        return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">Confirmed</Badge>;
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-800 border-red-200">Annulée</Badge>;
+        return <Badge className="bg-rose-500/10 text-rose-500 border-rose-500/20">Cancelled</Badge>;
       default:
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">En attente</Badge>;
+        return <Badge className="bg-amber-500/10 text-amber-500 border-amber-500/20">Pending</Badge>;
     }
   };
 
@@ -75,10 +75,10 @@ const RestaurantBookingsTab = () => {
           <div className="flex flex-wrap gap-3 items-center">
             <Select value={selectedRestaurantId} onValueChange={setSelectedRestaurantId}>
               <SelectTrigger className="w-[220px]">
-                <SelectValue placeholder="Tous les restaurants" />
+                <SelectValue placeholder="All restaurants" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les restaurants</SelectItem>
+                <SelectItem value="all">All restaurants</SelectItem>
                 {restaurants?.map((restaurant) => (
                   <SelectItem key={restaurant.id} value={restaurant.id}>
                     {restaurant.name}
@@ -89,13 +89,13 @@ const RestaurantBookingsTab = () => {
 
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Tous les statuts" />
+                <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="pending">En attente</SelectItem>
-                <SelectItem value="confirmed">Confirmée</SelectItem>
-                <SelectItem value="cancelled">Annulée</SelectItem>
+                <SelectItem value="all">All statuses</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -108,7 +108,7 @@ const RestaurantBookingsTab = () => {
             className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Rafraîchir
+            Refresh
           </Button>
         </div>
 
@@ -121,12 +121,12 @@ const RestaurantBookingsTab = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Client</TableHead>
+                  <TableHead>Guest</TableHead>
                   <TableHead>Restaurant</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Heure</TableHead>
-                  <TableHead>Couverts</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Guests</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -155,7 +155,7 @@ const RestaurantBookingsTab = () => {
                           {reservation.roomNumber && (
                             <div className="flex items-center gap-1 text-xs text-muted-foreground">
                               <Home className="h-3 w-3" />
-                              Ch. {reservation.roomNumber}
+                              Rm. {reservation.roomNumber}
                             </div>
                           )}
                         </div>
@@ -184,7 +184,7 @@ const RestaurantBookingsTab = () => {
                         size="sm"
                         onClick={() => handleOpenStatusDialog(reservation)}
                       >
-                        Modifier
+                        Edit
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -194,7 +194,7 @@ const RestaurantBookingsTab = () => {
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">Aucune réservation trouvée</p>
+            <p className="text-muted-foreground">No reservations found</p>
           </div>
         )}
         

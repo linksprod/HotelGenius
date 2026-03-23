@@ -95,7 +95,7 @@ export default function SpaServiceDialog({
           .eq('id', service.id);
           
         if (error) throw error;
-        toast.success('Service mis à jour avec succès');
+        toast.success('Service updated successfully');
       } else {
         // Create new service
         const { error } = await supabase
@@ -113,13 +113,13 @@ export default function SpaServiceDialog({
           });
           
         if (error) throw error;
-        toast.success('Service créé avec succès');
+        toast.success('Service created successfully');
       }
       
       onClose(true);
     } catch (error) {
       console.error('Error saving service:', error);
-      toast.error('Erreur lors de l\'enregistrement du service');
+      toast.error('Error while saving the service');
     } finally {
       setIsSubmitting(false);
     }
@@ -127,9 +127,9 @@ export default function SpaServiceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-card dark:bg-zinc-900 border-border dark:border-white/5 text-foreground">
         <DialogHeader>
-          <DialogTitle>{service ? 'Modifier le service' : 'Ajouter un service'}</DialogTitle>
+          <DialogTitle>{service ? 'Edit Service' : 'Add Service'}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
@@ -145,11 +145,12 @@ export default function SpaServiceDialog({
                   variant="outline"
                   onClick={() => onOpenChange(false)}
                   disabled={isSubmitting}
+                  className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 text-foreground hover:bg-secondary rounded-xl font-bold"
                 >
-                  Annuler
+                  Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Enregistrement...' : service ? 'Mettre à jour' : 'Créer'}
+                <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20">
+                  {isSubmitting ? 'Saving...' : service ? 'Update' : 'Create'}
                 </Button>
               </DialogFooter>
             </form>

@@ -29,9 +29,9 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
   const today = new Date().toISOString().split('T')[0];
 
   // Helper to add hotel_id filter if present
-  const query = (table: any) => {
-    let q = supabase.from(table).select('*', { count: 'exact', head: true });
-    if (hotelId) q = q.eq('hotel_id' as any, hotelId);
+  const query = (table: string) => {
+    let q = supabase.from(table as any).select('*', { count: 'exact', head: true });
+    if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
@@ -46,32 +46,25 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
   // Specific query builders for different needs
   const guestsQuery = () => {
-    let q = supabase.from('guests').select('*', { count: 'exact', head: true }).gte('check_out_date', today);
+    let q = supabase.from('guests' as any).select('*', { count: 'exact', head: true }).gte('check_out_date', today);
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const eventsQuery = () => {
-    let q = supabase.from('events').select('*', { count: 'exact', head: true }).gte('date', today);
+    let q = supabase.from('events' as any).select('*', { count: 'exact', head: true }).gte('date', today);
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const serviceRequestsQuery = () => {
-    let q = supabase.from('service_requests').select('status');
-    if (hotelId) {
-      if (userIds.length > 0) {
-        q = q.in('guest_id', userIds);
-      } else {
-        // Return a query that will result in empty data if no guests found
-        q = q.eq('guest_id', '00000000-0000-0000-0000-000000000000');
-      }
-    }
+    let q = supabase.from('service_requests' as any).select('status');
+    if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const feedbackQuery = () => {
-    let q = supabase.from('guest_feedback').select('rating');
+    let q = supabase.from('guest_feedback' as any).select('rating');
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
@@ -83,13 +76,13 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
   };
 
   const todayMessagesQuery = () => {
-    let q = supabase.from('messages').select('*', { count: 'exact', head: true }).gte('created_at', `${today}T00:00:00`);
+    let q = supabase.from('messages' as any).select('*', { count: 'exact', head: true }).gte('created_at', `${today}T00:00:00`);
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const unansweredMessagesQuery = () => {
-    let q = supabase.from('conversations').select('*', { count: 'exact', head: true }).eq('status', 'active').eq('current_handler', 'ai');
+    let q = supabase.from('conversations' as any).select('*', { count: 'exact', head: true }).eq('status', 'active').eq('current_handler', 'ai');
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
@@ -124,14 +117,14 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
   ]);
 
   // Calculate service request stats
-  const serviceRequests = serviceRequestsResult.data || [];
-  const pendingCount = serviceRequests.filter(r => r.status === 'pending').length;
-  const completedCount = serviceRequests.filter(r => r.status === 'completed').length;
+  const serviceRequests = (serviceRequestsResult.data as any) || [];
+  const pendingCount = serviceRequests.filter((r: any) => r.status === 'pending').length;
+  const completedCount = serviceRequests.filter((r: any) => r.status === 'completed').length;
 
   // Calculate average rating
-  const ratings = feedbackResult.data || [];
+  const ratings = (feedbackResult.data as any) || [];
   const avgRating = ratings.length > 0
-    ? ratings.reduce((sum, f) => sum + (f.rating || 0), 0) / ratings.length
+    ? ratings.reduce((sum: number, f: any) => sum + (f.rating || 0), 0) / ratings.length
     : 0;
 
   return {
@@ -160,14 +153,38 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
 export const useAdminDashboardStats = () => {
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
 
   return useQuery({
     queryKey: ['admin-dashboard-stats', hotelId, isSuperAdmin],
-    queryFn: () => fetchDashboardStats(hotelId),
-    refetchInterval: 30000, // Refresh every 30 seconds
-    staleTime: 10000, // Consider data stale after 10 seconds
-    enabled: true, // Always enable, fetchDashboardStats handles null hotelId (it just won't filter) 
-    // OR you might want to return empty/loading if hotelId is missing but required. 
-    // For Super Admin, hotelId might be null if they see ALL, but currently we focus on filtering.
+    queryFn: async () => {
+      const stats = await fetchDashboardStats(hotelId);
+      
+      if (isDemo) {
+        return {
+          ...stats,
+          totalReservations: 48,
+          currentGuests: 124,
+          serviceRequests: {
+            total: 20,
+            pending: 0,
+            completed: 20
+          },
+          guestSatisfaction: 9.2, // We'll handle the /10 in the UI
+          feedbackCount: 45,
+          conversationsCount: 15,
+          todayActivity: {
+            newReservations: 48,
+            newMessages: 12,
+            unansweredMessages: 0
+          }
+        };
+      }
+      
+      return stats;
+    },
+    refetchInterval: 30000,
+    staleTime: 10000,
+    enabled: true,
   });
 };

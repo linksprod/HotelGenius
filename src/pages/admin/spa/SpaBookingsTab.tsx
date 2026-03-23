@@ -89,11 +89,11 @@ export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProp
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'pending': return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
+      case 'confirmed': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+      case 'cancelled': return 'bg-rose-500/10 text-rose-500 border-rose-500/20';
+      case 'completed': return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -112,7 +112,7 @@ export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProp
     const formattedDate = format(bookingDate, 'EEEE, MMMM d, yyyy', { locale: enUS });
 
     return (
-      <Card key={booking.id} className="mb-4">
+      <Card key={booking.id} className="mb-4 bg-card border-border/50">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div>
             <CardTitle className="text-lg">{booking.guest_name}</CardTitle>
@@ -213,10 +213,10 @@ export default function SpaBookingsTab({ onServiceSelected }: SpaBookingsTabProp
             <p className="text-muted-foreground">Loading services...</p>
           </div>
         ) : services.length === 0 ? (
-          <div className="text-center py-8 px-4 border rounded-lg bg-gray-50 border-dashed">
-            <RefreshCw className="h-8 w-8 text-gray-300 mx-auto mb-3" />
-            <p className="text-muted-foreground">No spa services found for this hotel.</p>
-            <p className="text-xs text-muted-foreground mt-1">Please add services in the 'Services' tab first.</p>
+          <div className="text-center py-8 px-4 border rounded-lg bg-muted/30 border-dashed">
+            <RefreshCw className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-muted-foreground font-medium">No spa services found for this hotel.</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">Please add services in the 'Services' tab first.</p>
           </div>
         ) : (
           <div className="space-y-2">

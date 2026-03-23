@@ -45,13 +45,13 @@ const EventImageUploader = ({ value, onChange }: EventImageUploaderProps) => {
       <div className="flex items-center space-x-4">
         <Input 
           type="text" 
-          placeholder="URL de l'image" 
+          placeholder="Image URL" 
           value={value} 
           onChange={(e) => {
             onChange(e.target.value);
             setPreview(e.target.value);
           }}
-          className="flex-grow"
+          className="flex-grow bg-card dark:bg-zinc-900/40 border-border dark:border-white/5"
         />
         <Button 
           type="button" 
@@ -72,8 +72,8 @@ const EventImageUploader = ({ value, onChange }: EventImageUploaderProps) => {
       </div>
       
       {isUploading && (
-        <div className="w-full h-12 flex items-center justify-center bg-muted rounded-md">
-          <div className="animate-pulse">Téléchargement en cours...</div>
+        <div className="w-full h-12 flex items-center justify-center bg-muted rounded-md border border-border dark:border-white/5">
+          <div className="animate-pulse text-sm font-medium text-muted-foreground">Uploading...</div>
         </div>
       )}
       
@@ -101,9 +101,9 @@ const EventImageUploader = ({ value, onChange }: EventImageUploaderProps) => {
             </button>
           </div>
           {!(/^data:/.test(preview)) && (
-            <div className="mt-2 flex items-center text-xs text-muted-foreground">
+            <div className="mt-2 flex items-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
               <ExternalLink className="h-3 w-3 mr-1" />
-              Image externe
+              External Image
             </div>
           )}
         </div>

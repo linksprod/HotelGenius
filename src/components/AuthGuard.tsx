@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useAuth } from '@/features/auth/hooks/useAuthContext';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -13,31 +14,32 @@ interface AuthGuardProps {
   publicAccess?: boolean;
 }
 
+// Public routes that should always be accessible
+const PUBLIC_ROUTES = [
+  '/',
+  '/about',
+  '/contact',
+  '/destination',
+  '/map',
+  '/feedback',
+];
+
 const AuthGuard = ({
   children,
   adminRequired = false,
   publicAccess = false
 }: AuthGuardProps) => {
   const { loading, authorized, isAuthPage } = useAuthGuard(adminRequired);
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
   const { resolvePath } = useHotelPath();
 
-  // Public routes that should always be accessible
-  const publicRoutes = [
-    '/',
-    '/about',
-    '/contact',
-    '/destination',
-    '/map',
-    '/feedback',
-  ];
-
   useEffect(() => {
     // Check if the current route is a public route
-    const isPublicRoute = publicRoutes.some(route => {
+    const isPublicRoute = PUBLIC_ROUTES.some(route => {
       const resolved = resolvePath(route);
       return location.pathname === resolved || location.pathname.startsWith(resolved + '/');
     });
@@ -47,7 +49,17 @@ const AuthGuard = ({
       return;
     }
 
-    // If not authorized and not on an auth page
+    // 1. Super Admin Redirection (Isolation)
+    const isSuperAdminEmail = user?.email === 'projects@hotelgenius.app';
+    const isGuestPath = !location.pathname.includes('/admin') && !location.pathname.startsWith('/administration');
+    
+    if (isSuperAdminEmail && isGuestPath && !isAuthPage() && !isPublicRoute) {
+      console.log('Super Admin detected on guest route, redirecting to platform dashboard');
+      navigate('/administration/super/dashboard', { replace: true });
+      return;
+    }
+
+    // 2. Standard Auth Check
     if (!isAuthPage() && !authorized && !loading) {
       console.log(t('auth.loginRedirectMessage'), location.pathname);
 
@@ -58,9 +70,10 @@ const AuthGuard = ({
       });
 
       // Rediriger vers la page de connexion
-      navigate(resolvePath('/auth/login'), { state: { from: location.pathname } });
+      const loginTarget = adminRequired ? '/login' : resolvePath('/auth/login');
+      navigate(loginTarget, { state: { from: location.pathname } });
     }
-  }, [authorized, isAuthPage, loading, navigate, toast, location, publicRoutes, publicAccess]);
+  }, [authorized, isAuthPage, loading, navigate, toast, location, PUBLIC_ROUTES, publicAccess]);
 
   // Only show full-page spinner on initial load, not during navigation when already authorized
   if (loading && !authorized) {
@@ -68,7 +81,7 @@ const AuthGuard = ({
   }
 
   // Allow access if authorized or on auth page or public route
-  return (isAuthPage() || authorized || publicRoutes.some(route => {
+  return (isAuthPage() || authorized || PUBLIC_ROUTES.some(route => {
     const resolved = resolvePath(route);
     return location.pathname === resolved || location.pathname.startsWith(resolved + '/');
   }) ||

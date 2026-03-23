@@ -37,24 +37,26 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <SidebarInset>
+      <SidebarInset className="h-screen overflow-hidden">
         <div className="flex h-14 shrink-0 items-center px-4 lg:hidden">
           <SidebarTrigger className="-ml-1" />
         </div>
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
           {children}
         </div>
       </SidebarInset>
-
-      {/* Onboarding overlay — works for any section */}
-      <AdminOnboardingOverlay
-        isActive={isActive}
-        currentStep={currentStep}
-        currentStepIndex={currentStepIndex}
-        totalSteps={totalSteps}
-        onNext={nextStep}
-        onSkip={skipTour}
-      />
+      
+      {/* Onboarding overlay — works for any section except dashboard */}
+      {sectionId !== 'dashboard' && (
+        <AdminOnboardingOverlay
+          isActive={isActive}
+          currentStep={currentStep}
+          currentStepIndex={currentStepIndex}
+          totalSteps={totalSteps}
+          onNext={nextStep}
+          onSkip={skipTour}
+        />
+      )}
     </SidebarProvider>
   );
 };

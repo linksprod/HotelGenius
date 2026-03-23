@@ -94,7 +94,7 @@ export const StoryForm: React.FC<StoryFormProps> = ({
   };
 
   return (
-    <ScrollArea className="h-[80vh] w-full rounded-md">
+    <ScrollArea className="h-[80vh] w-full rounded-md bg-card dark:bg-transparent">
       <div className="p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -232,11 +232,11 @@ export const StoryForm: React.FC<StoryFormProps> = ({
               control={form.control}
               name="is_active"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border dark:border-white/5 p-4 bg-muted/30 dark:bg-white/5">
                   <div className="space-y-0.5">
-                    <FormLabel>Active</FormLabel>
-                    <FormDescription>
-                      This story will be visible to users
+                    <FormLabel className="font-bold">Active</FormLabel>
+                    <FormDescription className="text-[10px] text-muted-foreground">
+                      This story will be visible to users in the mobile app
                     </FormDescription>
                   </div>
                   <FormControl>

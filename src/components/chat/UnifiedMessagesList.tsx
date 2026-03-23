@@ -94,7 +94,9 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                       System Message
                     </div>
                   )}
-                  <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">
+                    {message.content.replace(/<[^>]*?DSML[\s\S]*?\/[^>]*?DSML[^>]*?>/gi, '').trim() || (message.sender_type === 'ai' ? 'Action performed...' : '')}
+                  </p>
                 </div>
 
                 {message.message_type === 'action' && message.metadata && (

@@ -65,8 +65,8 @@ export const useUserRole = () => {
     hotelId,
     hotelSlug,
     loading,
-    isSuperAdmin: role === 'super_admin',
-    isAdmin: role === 'admin' || role === 'hotel_admin' || role === 'super_admin',
+    isSuperAdmin: role === 'super_admin' || user?.email === 'projects@hotelgenius.app',
+    isAdmin: role === 'admin' || role === 'hotel_admin' || role === 'super_admin' || user?.email === 'projects@hotelgenius.app',
     isModerator: role === 'moderator'
   };
 };

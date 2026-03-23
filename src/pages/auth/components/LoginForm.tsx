@@ -57,13 +57,26 @@ const LoginForm: React.FC = () => {
             user_id: session.user.id
           });
 
-          if (isStaff || isSuperAdmin) {
-            navigate(resolvePath('/admin'));
+          // Priority 1: Always send super admin to their dashboard
+          if (isSuperAdmin || values.email === 'projects@hotelgenius.app') {
+            navigate('/administration/super/dashboard', { replace: true });
+            return;
+          }
+
+          // Priority 2: Use the 'from' path if it exists (e.g. from AuthGuard)
+          const state = window.history.state?.usr;
+          const from = state?.from;
+
+          if (from) {
+            navigate(from, { replace: true });
+          } else if (isStaff) {
+            // Priority 3: Hotel staff go to their hotel admin panel
+            navigate(resolvePath('/admin'), { replace: true });
           } else {
-            navigate(resolvePath('/'));
+            navigate(resolvePath('/'), { replace: true });
           }
         } else {
-          navigate(resolvePath('/'));
+          navigate(resolvePath('/'), { replace: true });
         }
       } else {
         console.error('Login failed:', result.error);

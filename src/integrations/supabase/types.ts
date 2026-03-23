@@ -797,6 +797,50 @@ export type Database = {
           },
         ]
       }
+      hotel_knowledge: {
+        Row: {
+          id: string
+          hotel_id: string
+          content: string
+          embedding: string | null
+          metadata: Json
+          source_type: string | null
+          source_name: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          hotel_id: string
+          content: string
+          embedding?: string | null
+          metadata?: Json
+          source_type?: string | null
+          source_name?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          hotel_id?: string
+          content?: string
+          embedding?: string | null
+          metadata?: Json
+          source_type?: string | null
+          source_name?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hotel_knowledge_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       hotel_config: {
         Row: {
           contact_email: string | null
@@ -1393,16 +1437,14 @@ export type Database = {
         Row: {
           created_at: string | null
           date: string
-          facility_id: string | null
           guest_email: string
           guest_name: string
-          guest_phone: string | null
           hotel_id: string | null
           id: string
           room_number: string | null
           service_id: string | null
           special_requests: string | null
-          status: string
+          status: string | null
           time: string
           updated_at: string | null
           user_id: string | null
@@ -1410,15 +1452,14 @@ export type Database = {
         Insert: {
           created_at?: string | null
           date: string
-          facility_id?: string | null
           guest_email: string
           guest_name: string
-          guest_phone?: string | null
+          hotel_id?: string | null
           id?: string
           room_number?: string | null
           service_id?: string | null
           special_requests?: string | null
-          status?: string
+          status?: string | null
           time: string
           updated_at?: string | null
           user_id?: string | null
@@ -1426,25 +1467,24 @@ export type Database = {
         Update: {
           created_at?: string | null
           date?: string
-          facility_id?: string | null
           guest_email?: string
           guest_name?: string
-          guest_phone?: string | null
+          hotel_id?: string | null
           id?: string
           room_number?: string | null
           service_id?: string | null
           special_requests?: string | null
-          status?: string
+          status?: string | null
           time?: string
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "spa_bookings_facility_id_fkey"
-            columns: ["facility_id"]
+            foreignKeyName: "spa_bookings_hotel_id_fkey"
+            columns: ["hotel_id"]
             isOneToOne: false
-            referencedRelation: "spa_facilities"
+            referencedRelation: "hotels"
             referencedColumns: ["id"]
           },
           {
@@ -1454,88 +1494,91 @@ export type Database = {
             referencedRelation: "spa_services"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "spa_bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
         ]
       }
       spa_facilities: {
         Row: {
-          capacity: number | null
           created_at: string | null
           description: string | null
+          hotel_id: string | null
           id: string
           image_url: string | null
-          location: string | null
           name: string
-          opening_hours: string | null
-          status: string
           updated_at: string | null
         }
         Insert: {
-          capacity?: number | null
           created_at?: string | null
           description?: string | null
+          hotel_id?: string | null
           id?: string
           image_url?: string | null
-          location?: string | null
           name: string
-          opening_hours?: string | null
-          status?: string
           updated_at?: string | null
         }
         Update: {
-          capacity?: number | null
           created_at?: string | null
           description?: string | null
+          hotel_id?: string | null
           id?: string
           image_url?: string | null
-          location?: string | null
           name?: string
-          opening_hours?: string | null
-          status?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "spa_facilities_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       spa_services: {
         Row: {
-          category: string
           created_at: string | null
-          description: string
-          duration: string
+          description: string | null
+          duration_minutes: number
           facility_id: string | null
+          hotel_id: string | null
           id: string
-          image: string | null
-          is_featured: boolean | null
+          image_url: string | null
           name: string
           price: number
-          status: string
+          status: string | null
           updated_at: string | null
         }
         Insert: {
-          category: string
           created_at?: string | null
-          description: string
-          duration: string
+          description?: string | null
+          duration_minutes: number
           facility_id?: string | null
+          hotel_id?: string | null
           id?: string
-          image?: string | null
-          is_featured?: boolean | null
+          image_url?: string | null
           name: string
           price: number
-          status?: string
+          status?: string | null
           updated_at?: string | null
         }
         Update: {
-          category?: string
           created_at?: string | null
-          description?: string
-          duration?: string
+          description?: string | null
+          duration_minutes?: number
           facility_id?: string | null
+          hotel_id?: string | null
           id?: string
-          image?: string | null
-          is_featured?: boolean | null
+          image_url?: string | null
           name?: string
           price?: number
-          status?: string
+          status?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -1546,6 +1589,13 @@ export type Database = {
             referencedRelation: "spa_facilities"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "spa_services_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          }
         ]
       }
       staff_notifications: {

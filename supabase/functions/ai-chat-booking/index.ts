@@ -8,11 +8,15 @@ const corsHeaders = {
 };
 
 const deepSeekApiKey = Deno.env.get('DEEPSEEK_API_KEY');
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 if (!deepSeekApiKey) {
   console.error('CRITICAL: DEEPSEEK_API_KEY is not set in environment variables');
+}
+if (!openAIApiKey) {
+  console.error('CRITICAL: OPENAI_API_KEY is not set (required for RAG embeddings)');
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -38,7 +42,7 @@ serve(async (req) => {
       });
     }
 
-    const response = await sendChatMessage(message, userId, userName, roomNumber, conversationId, hotelId);
+    const response = await sendChatMessage(message, userId, userName, roomNumber, hotelId, conversationId);
 
     return new Response(JSON.stringify(response), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -59,13 +63,52 @@ serve(async (req) => {
   }
 });
 
-async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, conversationId?: string, hotelId?: string) {
+async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, hotelId: string, conversationId?: string) {
   // Determine the effective hotel ID (fallback to demo hotel if missing)
   const effectiveHotelId = hotelId || '00000000-0000-0000-0000-000000000000';
+  
+  console.log(`[AI] Processing request for hotel: ${effectiveHotelId}`);
 
-  console.log(`[AI] Processing request for hotel: ${effectiveHotelId} (provided: ${hotelId})`);
+  // 1. Get Hotel Knowledge (RAG) - Only if OpenAI key is available
+  let knowledgeContext = '';
+  if (openAIApiKey) {
+    try {
+      // First, generate embedding for the search query
+      const embeddingResponse = await fetch('https://api.openai.com/v1/embeddings', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openAIApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'text-embedding-3-small',
+          input: message,
+        }),
+      });
+      
+      if (embeddingResponse.ok) {
+        const embeddingData = await embeddingResponse.json();
+        const embedding = embeddingData.data[0].embedding;
 
-  // Get hotel data for AI context - LIMITING FIELDS AND RECORDS TO PREVENT CONTEXT OVERFLOW
+        // Perform similarity search on hotel_knowledge
+        const { data: knowledgeDocs } = await supabase.rpc('match_hotel_knowledge', {
+          query_embedding: embedding,
+          match_threshold: 0.5,
+          match_count: 5,
+          p_hotel_id: effectiveHotelId
+        });
+        
+        knowledgeContext = knowledgeDocs?.map((doc: any) => doc.content).join('\n\n') || '';
+      } else {
+        const errorBody = await embeddingResponse.json();
+        console.error('[AI] OpenAI Embedding Error:', embeddingResponse.status, JSON.stringify(errorBody));
+      }
+    } catch (e) {
+      console.error('[AI] RAG Error:', e);
+    }
+  }
+
+  // 2. Get real-time hotel data for AI context
   const [restaurants, spaServices, events, hotelInfo] = await Promise.all([
     supabase.from('restaurants').select('id, name, description, cuisine, location').eq('status', 'open').eq('hotel_id', effectiveHotelId).limit(8),
     supabase.from('spa_services').select('id, name, description, duration, price').eq('status', 'available').eq('hotel_id', effectiveHotelId).limit(8),
@@ -74,26 +117,20 @@ async function sendChatMessage(message: string, userId: string, userName: string
   ]);
 
   const hotelData = hotelInfo.data && hotelInfo.data.length > 0 ? hotelInfo.data[0] : null;
-
   const truncate = (str: string, max = 200) => str?.length > max ? str.substring(0, max) + '...' : str;
 
   const restaurantsList = (restaurants.data || []).map(r => ({ ...r, description: truncate(r.description) }));
   const spaList = (spaServices.data || []).map(s => ({ ...s, description: truncate(s.description) }));
   const eventsList = (events.data || []).map(e => ({ ...e, description: truncate(e.description) }));
 
-  const systemPrompt = `CORE_VERSION: 3.0.4.
+  const systemPrompt = `CORE_VERSION: 3.1.0 (Neural Command Integrated).
 You are a helpful hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
-You are a multi-purpose assistant. You should answer ANY questions from the guest, whether they are related to:
-- Using the app and its features
-- Booking restaurants, spa services, and events (you have tools for these)
-- General hotel information, policies, and amenities
-- Local recommendations and general concierge assistance
-- ANY other requests or questions the guest may have.
+You answer ANY questions from the guest, from hotel policies to booking requests.
 
-If you don't have a specific tool for a request, answer to the best of your knowledge based on the hotel information provided.
+EXCLUSIVE HOTEL KNOWLEDGE (RAG):
+${knowledgeContext || 'No specific deep knowledge available for this hotel yet.'}
 
-Current guest: ${userName} in room ${roomNumber}
-
+AVAILABLE SERVICES:
 Available restaurants: ${JSON.stringify(restaurantsList)}
 Available spa services: ${JSON.stringify(spaList)}
 Upcoming events: ${JSON.stringify(eventsList)}
@@ -106,15 +143,14 @@ IMPORTANT BOOKING RULES:
 - After triggering the form, your response should invite the guest to fill it out and offer help with any specific questions.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
 
-Always be friendly, professional, and helpful. If a request is completely outside your capabilities, invite the guest to speak with a human staff member, but always try to help yourself first. (Note: Room service for food is related to dining, but room care/cleaning is Guest Services handled by the visual tool).
-
 CRITICAL CONCIERGE RULES:
 1. For ANY housekeeping, maintenance, IT, or security request, YOU MUST CALL 'show_service_categories'.
 2. NEVER explain how to request something in text. NEVER list options in text. 
 3. If guest says "I need X", and X is a room service/assistance item, TRIGGER THE TOOL IMMEDIATELY as your first and only action.
 4. FEW-SHOT EXAMPLE: Guest: "I need towels" -> Action: show_service_categories(category="Housekeeping") -> Content: "I've opened the housekeeping menu for you."
-5. FEW-SHOT EXAMPLE: Guest: "The WiFi is slow" -> Action: show_service_categories(category="IT") -> Content: "I've opened the IT support menu for you."
-6. ALWAYS favor visual tools over text descriptions.`;
+5. ALWAYS favor visual tools over text descriptions.
+
+Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to answer specific questions about hotel history, policies, or unique services.`;
 
   const tools = [
     {
@@ -169,8 +205,27 @@ CRITICAL CONCIERGE RULES:
         }
       }
     },
-    // General service request tool removed - use show_service_categories instead
-
+    {
+      type: "function",
+      function: {
+        name: "create_service_request",
+        description: "Create a service request for the guest (e.g., housekeeping, maintenance, IT, security).",
+        parameters: {
+          type: "object",
+          properties: {
+            type: {
+              type: "string",
+              description: "The type of service request (e.g., 'Housekeeping', 'Maintenance', 'IT', 'Security')."
+            },
+            description: {
+              type: "string",
+              description: "A detailed description of the service needed."
+            }
+          },
+          required: ["type", "description"]
+        }
+      }
+    },
     {
       type: "function",
       function: {
@@ -237,26 +292,10 @@ CRITICAL CONCIERGE RULES:
     }),
   });
 
-  // Guard against non-OK responses from OpenAI (bad key, quota exceeded, etc.)
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    console.error('[AI] DeepSeek API error:', response.status, JSON.stringify(errorBody));
-    const reason = (errorBody as any)?.error?.message || `HTTP ${response.status}`;
-    throw new Error(`DeepSeek API error: ${reason}`);
-  }
-
   const data = await response.json();
-  console.log('[AI] OpenAI Response:', JSON.stringify(data).slice(0, 500));
-
-  if (!data.choices || data.choices.length === 0) {
-    console.error('[AI] No choices in DeepSeek response:', JSON.stringify(data));
-    throw new Error('DeepSeek returned an empty response. Please check your API key and quota.');
-  }
-
   let aiResponse = data.choices[0].message.content;
 
   if (data.choices[0].message.tool_calls) {
-    // Handle function calls
     const toolCall = data.choices[0].message.tool_calls[0];
     const functionName = toolCall.function.name;
     const functionArgs = JSON.parse(toolCall.function.arguments);
@@ -267,68 +306,25 @@ CRITICAL CONCIERGE RULES:
 
     switch (functionName) {
       case 'book_restaurant':
-        bookingResult = await bookRestaurant(functionArgs, userId, userName, roomNumber);
+        bookingResult = await bookRestaurant(functionArgs, userId, userName, roomNumber, hotelId);
         break;
       case 'book_spa_service':
-        bookingResult = await bookSpaService(functionArgs, userId, userName, roomNumber);
+        bookingResult = await bookSpaService(functionArgs, userId, userName, roomNumber, hotelId);
         break;
       case 'book_event':
-        bookingResult = await bookEvent(functionArgs, userId, userName, roomNumber);
+        bookingResult = await bookEvent(functionArgs, userId, userName, roomNumber, hotelId);
         break;
-
+      case 'create_service_request':
+        bookingResult = await createServiceRequest(functionArgs, userId, userName, roomNumber, hotelId);
+        break;
       case 'show_restaurant_list':
-        // Insert an action message to show the list
-        if (conversationId) {
-          await supabase.from('messages').insert({
-            conversation_id: conversationId,
-            sender_type: 'ai',
-            sender_name: 'AI Assistant',
-            content: "Here are our dining options:",
-            message_type: 'action',
-            metadata: { action_type: 'restaurant_list' }
-          });
-        }
-        bookingResult = { success: true, message: "Restaurant list displayed to the guest." };
+        bookingResult = { success: true, message: 'I\'ve opened the restaurant list for you.' };
         break;
       case 'show_service_categories':
-        // Insert an action message to show the categories
-        if (conversationId) {
-          try {
-            const { error: insertError } = await supabase.from('messages').insert({
-              conversation_id: conversationId,
-              sender_type: 'ai',
-              sender_name: 'AI Assistant',
-              content: functionArgs.category ? `I've opened the ${functionArgs.category} menu for you.` : "Please choose a service category:",
-              message_type: 'action',
-              metadata: {
-                action_type: 'service_request_flow',
-                category: functionArgs.category
-              }
-            });
-            if (insertError) console.error('[AI] Action message insert error:', insertError);
-          } catch (e) {
-            console.error('[AI] Action message insert exception:', e);
-          }
-        }
-        bookingResult = { success: true, message: "Service categories displayed to the guest." };
+        bookingResult = { success: true, message: `I've opened the service menu for you${functionArgs.category ? ` for ${functionArgs.category}.` : '.'}` };
         break;
       case 'trigger_booking_form':
-        // Insert an action message to trigger the form
-        if (conversationId) {
-          await supabase.from('messages').insert({
-            conversation_id: conversationId,
-            sender_type: 'ai',
-            sender_name: 'AI Assistant',
-            content: `I've opened the booking form for you.`,
-            message_type: 'action',
-            metadata: {
-              action_type: 'booking_form',
-              entity_type: functionArgs.type,
-              entity_id: functionArgs.entity_id
-            }
-          });
-        }
-        bookingResult = { success: true, message: `Booking form for ${functionArgs.type} displayed to the guest.` };
+        bookingResult = { success: true, message: `I've opened the booking form for the ${functionArgs.type}. Please fill in the details.` };
         break;
       default:
         bookingResult = { success: false, message: 'Unknown function' };
@@ -380,183 +376,97 @@ CRITICAL CONCIERGE RULES:
     aiResponse = followUpData.choices?.[0]?.message?.content ?? 'Your request has been processed.';
   }
 
-  // Insert AI response to the new messages table (only if conversationId is provided)
   if (conversationId) {
-    await supabase
-      .from('messages')
-      .insert({
-        conversation_id: conversationId,
-        sender_type: 'ai',
-        sender_name: 'AI Assistant',
-        content: aiResponse,
-        message_type: 'text'
-      });
+    await supabase.from('messages').insert({
+      conversation_id: conversationId,
+      sender_type: 'ai',
+      sender_name: 'AI Assistant',
+      content: aiResponse,
+      message_type: 'text',
+      hotel_id: hotelId
+    });
   }
 
   return { response: aiResponse };
 }
 
-async function bookRestaurant(args: any, userId: string, userName: string, roomNumber: string) {
+async function bookRestaurant(args: any, userId: string, userName: string, roomNumber: string, hotelId: string) {
   try {
-    // Validate required parameters
-    if (!args.restaurant_id || !args.date || !args.time || !args.guests) {
-      throw new Error(`Missing required booking information. Need: restaurant_id, date, time, guests. Got: ${JSON.stringify(args)}`);
-    }
-
-    const { data, error } = await supabase
-      .from('table_reservations')
-      .insert({
-        restaurant_id: args.restaurant_id,
-        user_id: userId,
-        date: args.date,
-        time: args.time,
-        guests: args.guests,
-        guest_name: userName,
-        room_number: roomNumber,
-        special_requests: args.special_requests || null,
-        status: 'confirmed'
-      })
-      .select()
-      .single();
-
+    const { data, error } = await supabase.from('table_reservations').insert({
+      restaurant_id: args.restaurant_id,
+      user_id: userId,
+      date: args.date,
+      time: args.time,
+      guests: args.guests,
+      guest_name: userName,
+      room_number: roomNumber,
+      special_requests: args.special_requests || null,
+      status: 'confirmed',
+      hotel_id: hotelId
+    }).select().single();
     if (error) throw error;
-
-    return {
-      success: true,
-      message: `Restaurant reservation confirmed for ${args.date} at ${args.time} for ${args.guests} guests`,
-      reservation_id: data.id,
-      details: {
-        date: args.date,
-        time: args.time,
-        guests: args.guests
-      }
-    };
+    return { success: true, message: `Reservation confirmed for ${args.date} at ${args.time}`, reservation_id: data.id };
   } catch (error) {
-    console.error('Error booking restaurant:', error);
-    return {
-      success: false,
-      message: `Failed to book restaurant: ${error.message}`
-    };
+    return { success: false, message: `Failed to book: ${error.message}` };
   }
 }
 
-async function bookSpaService(args: any, userId: string, userName: string, roomNumber: string) {
+async function bookSpaService(args: any, userId: string, userName: string, roomNumber: string, hotelId: string) {
   try {
-    // Validate required parameters
-    if (!args.service_id || !args.date || !args.time) {
-      throw new Error(`Missing required booking information. Need: service_id, date, time. Got: ${JSON.stringify(args)}`);
-    }
-
-    const { data, error } = await supabase
-      .from('spa_bookings')
-      .insert({
-        service_id: args.service_id,
-        user_id: userId,
-        date: args.date,
-        time: args.time,
-        guest_name: userName,
-        guest_email: '', // We'll need to get this from user profile
-        room_number: roomNumber,
-        special_requests: args.special_requests || null,
-        status: 'confirmed'
-      })
-      .select()
-      .single();
-
+    const { data, error } = await supabase.from('spa_bookings').insert({
+      service_id: args.service_id,
+      user_id: userId,
+      date: args.date,
+      time: args.time,
+      guest_name: userName,
+      guest_email: '', 
+      room_number: roomNumber,
+      special_requests: args.special_requests || null,
+      status: 'confirmed',
+      hotel_id: hotelId
+    }).select().single();
     if (error) throw error;
-
-    return {
-      success: true,
-      message: `Spa service booking confirmed for ${args.date} at ${args.time}`,
-      booking_id: data.id,
-      details: {
-        date: args.date,
-        time: args.time
-      }
-    };
+    return { success: true, message: `Spa booking confirmed for ${args.date} at ${args.time}`, booking_id: data.id };
   } catch (error) {
-    console.error('Error booking spa service:', error);
-    return {
-      success: false,
-      message: `Failed to book spa service: ${error.message}`
-    };
+    return { success: false, message: `Failed to book: ${error.message}` };
   }
 }
 
-async function bookEvent(args: any, userId: string, userName: string, roomNumber: string) {
+async function bookEvent(args: any, userId: string, userName: string, roomNumber: string, hotelId: string) {
   try {
-    // Validate required parameters  
-    if (!args.event_id || !args.date || !args.guests) {
-      throw new Error(`Missing required booking information. Need: event_id, date, guests. Got: ${JSON.stringify(args)}`);
-    }
-
-    const { data, error } = await supabase
-      .from('event_reservations')
-      .insert({
-        event_id: args.event_id,
-        user_id: userId,
-        date: args.date,
-        guests: args.guests,
-        guest_name: userName,
-        room_number: roomNumber,
-        special_requests: args.special_requests || null,
-        status: 'confirmed'
-      })
-      .select()
-      .single();
-
+    const { data, error } = await supabase.from('event_reservations').insert({
+      event_id: args.event_id,
+      user_id: userId,
+      date: args.date,
+      guests: args.guests,
+      guest_name: userName,
+      room_number: roomNumber,
+      special_requests: args.special_requests || null,
+      status: 'confirmed',
+      hotel_id: hotelId
+    }).select().single();
     if (error) throw error;
-
-    return {
-      success: true,
-      message: `Event registration confirmed for ${args.date} for ${args.guests} guests`,
-      reservation_id: data.id,
-      details: {
-        date: args.date,
-        guests: args.guests
-      }
-    };
+    return { success: true, message: `Event registration confirmed for ${args.date}`, reservation_id: data.id };
   } catch (error) {
-    console.error('Error booking event:', error);
-    return {
-      success: false,
-      message: `Failed to register for event: ${error.message}`
-    };
+    return { success: false, message: `Failed to book: ${error.message}` };
   }
 }
 
-async function createServiceRequest(args: any, userId: string, userName: string, roomNumber: string) {
+async function createServiceRequest(args: any, userId: string, userName: string, roomNumber: string, hotelId: string) {
   try {
-    const { data, error } = await supabase
-      .from('service_requests')
-      .insert({
-        guest_id: userId,
-        room_id: roomNumber,
-        type: args.type,
-        description: args.description,
-        guest_name: userName,
-        room_number: roomNumber,
-        status: 'pending'
-      })
-      .select()
-      .single();
-
+    const { data, error } = await supabase.from('service_requests').insert({
+      guest_id: userId,
+      room_id: roomNumber,
+      type: args.type,
+      description: args.description,
+      guest_name: userName,
+      room_number: roomNumber,
+      status: 'pending',
+      hotel_id: hotelId
+    }).select().single();
     if (error) throw error;
-
-    return {
-      success: true,
-      message: `Service request created`,
-      request_id: data.id,
-      details: {
-        type: args.type,
-        description: args.description
-      }
-    };
+    return { success: true, message: `Service request created`, request_id: data.id };
   } catch (error) {
-    console.error('Error creating service request:', error);
-    return {
-      success: false,
-      message: `Failed to create service request: ${error.message}`
-    };
+    return { success: false, message: `Failed to create request: ${error.message}` };
   }
 }

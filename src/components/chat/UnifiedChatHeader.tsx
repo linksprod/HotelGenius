@@ -46,8 +46,18 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
         </Avatar>
 
         <div className="min-w-0">
-          <h3 className="font-bold text-[15px] text-foreground leading-tight">
-            {isAIHandling ? 'AI Assistant' : 'Concierge'}
+          <h3 className="text-sm font-black text-foreground flex items-center gap-2">
+            {conversation?.status === 'active' && conversation.current_handler === 'ai' ? (
+              <>
+                <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
+                Aura AI
+              </>
+            ) : (
+              <>
+                <div className="h-2 w-2 rounded-full bg-blue-500" />
+                Human Agent
+              </>
+            )}
           </h3>
           <p className="text-[12px] text-muted-foreground font-medium">
             {isAIHandling ? '24/7 Available' : 'Live Support'}

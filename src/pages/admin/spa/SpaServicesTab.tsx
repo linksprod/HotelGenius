@@ -53,11 +53,11 @@ export default function SpaServicesTab() {
       
       if (error) throw error;
       
-      toast.success('Service supprimé avec succès');
+      toast.success('Service deleted successfully');
       refetch();
     } catch (error) {
       console.error('Error deleting service:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error('Error deleting service');
     } finally {
       setIsDeleting(false);
       setDeleteId(null);
@@ -80,9 +80,9 @@ export default function SpaServicesTab() {
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'massage': return 'Massage';
-      case 'facial': return 'Soin du visage';
-      case 'body': return 'Soin du corps';
-      case 'wellness': return 'Bien-être';
+      case 'facial': return 'Facial';
+      case 'body': return 'Body Treatment';
+      case 'wellness': return 'Wellness';
       default: return category;
     }
   };
@@ -98,8 +98,8 @@ export default function SpaServicesTab() {
         </div>
         <div className="flex space-x-2 items-center">
           {service.is_featured && (
-            <Badge variant="outline" className="mr-2 bg-amber-100 text-amber-800 border-amber-200">
-              Mis en avant
+            <Badge variant="outline" className="mr-2 bg-amber-500/10 text-amber-500 border-amber-500/20">
+              Featured
             </Badge>
           )}
           <Button 
@@ -119,21 +119,21 @@ export default function SpaServicesTab() {
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-card dark:bg-zinc-900 border-border dark:border-white/5 text-foreground">
               <AlertDialogHeader>
-                <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Cette action supprimera définitivement le service "{service.name}".
+                  This action will permanently delete the service "{service.name}".
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogCancel className="bg-secondary text-foreground border-border hover:bg-secondary/80">Cancel</AlertDialogCancel>
                 <AlertDialogAction 
                   onClick={confirmDelete}
-                  className="bg-red-500 hover:bg-red-600"
+                  className="bg-rose-500 hover:bg-rose-600 text-white border-none"
                   disabled={isDeleting}
                 >
-                  {isDeleting ? 'Suppression...' : 'Supprimer'}
+                  {isDeleting ? 'Deleting...' : 'Delete'}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -147,13 +147,13 @@ export default function SpaServicesTab() {
             <p className="text-sm text-muted-foreground">{service.description}</p>
           </div>
           <div>
-            <h4 className="text-sm font-medium">Détails</h4>
-            <div className="text-sm text-muted-foreground">
-              <p>Durée: {service.duration}</p>
-              <p>Prix: {service.price} €</p>
-              <p>Catégorie: {getCategoryLabel(service.category)}</p>
-              <p>Status: <span className={service.status === 'available' ? 'text-green-500' : 'text-red-500'}>
-                {service.status === 'available' ? 'Disponible' : 'Indisponible'}
+            <h4 className="text-sm font-bold text-foreground">Details</h4>
+            <div className="text-sm text-muted-foreground space-y-1 mt-1">
+              <p><span className="font-medium">Duration:</span> {service.duration}</p>
+              <p><span className="font-medium">Price:</span> {service.price} €</p>
+              <p><span className="font-medium">Category:</span> {getCategoryLabel(service.category)}</p>
+              <p><span className="font-medium">Status:</span> <span className={service.status === 'available' ? 'text-emerald-500' : 'text-rose-500'}>
+                {service.status === 'available' ? 'Available' : 'Unavailable'}
               </span></p>
             </div>
           </div>
@@ -174,19 +174,19 @@ export default function SpaServicesTab() {
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Services Spa</h2>
+        <h2 className="text-2xl font-bold text-foreground">Spa Services</h2>
         <div className="flex space-x-2">
           <Button
             variant="outline"
             onClick={() => refetch()}
-            className="flex items-center"
+            className="flex items-center bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
+            Refresh
           </Button>
-          <Button onClick={handleAddNew} className="flex items-center">
+          <Button onClick={handleAddNew} className="flex items-center bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20">
             <PlusCircle className="h-4 w-4 mr-2" />
-            Ajouter
+            Add New
           </Button>
         </div>
       </div>
@@ -211,11 +211,11 @@ export default function SpaServicesTab() {
           ))}
         </div>
       ) : services.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground mb-4">Aucun service trouvé</p>
-          <Button onClick={handleAddNew}>
+        <div className="text-center py-12 border-2 border-dashed border-border rounded-[2rem] bg-muted/20">
+          <p className="text-muted-foreground font-medium mb-4">No services found</p>
+          <Button onClick={handleAddNew} className="bg-primary hover:bg-primary/90 text-white font-bold rounded-xl px-8">
             <PlusCircle className="h-4 w-4 mr-2" />
-            Ajouter un service
+            Add your first service
           </Button>
         </div>
       ) : (

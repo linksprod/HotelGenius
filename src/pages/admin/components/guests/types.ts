@@ -1,6 +1,13 @@
 import { Tables } from '@/integrations/supabase/types';
 
-export type Guest = Tables<'guests'>;
+export type Guest = Tables<'guests'> & {
+  is_vip?: boolean;
+  total_stays?: number;
+  total_spent?: number;
+  gender?: string;
+  profile_image?: string;
+  ai_summary?: string;
+};
 export type Room = Tables<'rooms'>;
 export type Companion = Tables<'companions'>;
 export type ServiceRequest = Tables<'service_requests'>;

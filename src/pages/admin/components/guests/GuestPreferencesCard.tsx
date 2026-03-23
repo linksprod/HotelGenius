@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Sparkles, Plus, Bed, Utensils, ConciergeBell } from 'lucide-react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Card, CardContent } from '@/components/ui/card';
+import { Brain, Sparkles, Thermometer, Moon, Coffee, Waves, Leaf, Anchor } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import AddPreferenceDialog from '@/pages/profile/components/AddPreferenceDialog';
 
 interface GuestPreferencesCardProps {
   guestId: string;
 }
 
-const categoryConfig = [
-  { id: 'room', label: 'ROOM', icon: Bed },
-  { id: 'dining', label: 'DINING', icon: Utensils },
-  { id: 'service', label: 'SERVICE', icon: ConciergeBell },
-];
+const PREF_ICONS: Record<string, any> = {
+  'Room 22°C': Thermometer,
+  'Extra Pillows': Moon,
+  'Oat Milk Latte': Coffee,
+  'Ocean View': Waves,
+  'Vegan Menu': Leaf,
+  'Morning Yoga': Anchor,
+};
 
 const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const queryClient = useQueryClient();
+  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
 
   const { data: preferences = [] } = useQuery({
     queryKey: ['admin-guest-preferences', guestId],
@@ -32,81 +30,45 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
       if (error) throw error;
       return data as { id: string; category: string; value: string }[];
     },
-    enabled: !!guestId,
+    enabled: !!guestId && !isDemo,
   });
 
-  const addPreference = useMutation({
-    mutationFn: async ({ category, value }: { category: string; value: string }) => {
-      const { error } = await supabase
-        .from('guest_preferences')
-        .insert({ guest_id: guestId, category, value });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-guest-preferences', guestId] });
-      toast.success('Preference added');
-    },
-    onError: () => toast.error('Failed to add preference'),
-  });
+  const demoPreferences = [
+    { value: 'Room 22°C', color: 'text-rose-400 bg-rose-400/10' },
+    { value: 'Extra Pillows', color: 'text-blue-400 bg-blue-400/10' },
+    { value: 'Oat Milk Latte', color: 'text-amber-400 bg-amber-400/10' },
+    { value: 'Ocean View', color: 'text-cyan-400 bg-cyan-400/10' },
+    { value: 'Vegan Menu', color: 'text-emerald-400 bg-emerald-400/10' },
+    { value: 'Morning Yoga', color: 'text-purple-400 bg-purple-400/10' },
+  ];
 
-  const grouped = preferences.reduce<Record<string, string[]>>((acc, p) => {
-    (acc[p.category] = acc[p.category] || []).push(p.value);
-    return acc;
-  }, {});
+  const displayPrefs = isDemo ? demoPreferences : preferences.map(p => ({ value: p.value, color: 'text-primary bg-primary/10' }));
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Sparkles className="h-4 w-4" />
-            Preferences (Guest DNA)
-          </CardTitle>
-          <Button variant="outline" size="sm" className="h-8 text-xs" onClick={() => setDialogOpen(true)}>
-            <Plus className="h-3.5 w-3.5 mr-1" />
-            Add
-          </Button>
+    <Card className="overflow-hidden border border-border dark:border-none bg-card/50 dark:bg-zinc-900/50 backdrop-blur-xl shadow-sm dark:shadow-2xl rounded-[2rem] cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors">
+      <CardContent className="p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-zinc-100 dark:bg-white/5 rounded-xl">
+            <Brain className="h-5 w-5 text-rose-500" />
+          </div>
+          <h3 className="text-lg font-bold text-foreground dark:text-white tracking-tight">Remembered Preferences</h3>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {categoryConfig.map((category, index) => {
-          const Icon = category.icon;
-          const prefs = grouped[category.id] || [];
-          return (
-            <React.Fragment key={category.id}>
-              {index > 0 && <Separator />}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  <Icon className="h-3.5 w-3.5" />
-                  {category.label}
-                </div>
-                {prefs.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {prefs.map((pref, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1.5 text-sm bg-primary/10 text-primary rounded-full"
-                      >
-                        {pref}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    No preferences
-                  </p>
-                )}
-              </div>
-            </React.Fragment>
-          );
-        })}
-      </CardContent>
 
-      <AddPreferenceDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onAdd={(category, value) => addPreference.mutate({ category, value })}
-      />
+        <div className="flex flex-wrap gap-3">
+          {displayPrefs.map((pref, i) => {
+            const Icon = PREF_ICONS[pref.value] || Sparkles;
+            return (
+              <div
+                key={i}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-100 dark:border-white/5 transition-transform hover:scale-105 active:scale-95 ${pref.color}`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span className="text-xs font-bold tracking-wide uppercase">{pref.value}</span>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
     </Card>
   );
 };
