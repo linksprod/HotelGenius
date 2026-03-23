@@ -403,7 +403,12 @@
     "iosAddLabel": "＋ Sur l'écran d'accueil",
     "iosConfirmLabel": "Ajouter",
     "iosPointingLabel": "Le bouton de partage est ici ↓",
-    "inAppWarning": "Appuyez sur ... ou sur l'icône Boussole et sélectionnez \"Ouvrir dans Safari\"."
+    "inAppWarning": "Appuyez sur ... ou sur l'icône Boussole et sélectionnez \"Ouvrir dans Safari\".",
+    "openInSafari": "Ouvrir dans Safari",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié !",
+    "safariRecommended": "Safari est recommandé pour une meilleure expérience sur iOS.",
+    "tapToInstall": "Installer"
   },
   "profile": {
     "title": "Mon Profil",

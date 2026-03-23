@@ -651,6 +651,11 @@
     "iosAddLabel": "＋ Add to Home Screen",
     "iosConfirmLabel": "Add",
     "iosPointingLabel": "Share button is here ↓",
-    "inAppWarning": "Tap ... or the Compass icon and select \"Open in Safari\" first."
+    "inAppWarning": "Tap ... or the Compass icon and select \"Open in Safari\" first.",
+    "openInSafari": "Open in Safari",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied!",
+    "safariRecommended": "Safari is recommended for the best experience on iOS.",
+    "tapToInstall": "Tap to Install"
   }
 }

@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { Download, X, Smartphone, MoreVertical } from 'lucide-react';
+import { Download, X, MoreVertical, ExternalLink, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+    Drawer,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerClose
+} from '@/components/ui/drawer';
+import { toast } from 'sonner';
 
 // iOS Share icon (exact SVG from Apple's UI guidelines)
 const IOSShareIcon = () => (
@@ -20,7 +30,6 @@ const PWAInstallBanner: React.FC = () => {
         canShowNativePrompt,
         isIOS,
         isSafari,
-        isFirefox,
         promptInstall,
         dismiss,
     } = usePWAInstall();
@@ -38,6 +47,8 @@ const PWAInstallBanner: React.FC = () => {
     );
 
     const [installing, setInstalling] = useState(false);
+    const [isInstructionOpen, setIsInstructionOpen] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     if (!shouldShow && !forceShow) return null;
 
@@ -46,195 +57,191 @@ const PWAInstallBanner: React.FC = () => {
             setInstalling(true);
             await promptInstall();
             setInstalling(false);
+        } else {
+            setIsInstructionOpen(true);
         }
-        // For iOS/manual browsers: the banner itself already shows instructions,
-        // so no extra step needed — instructions are inline below.
     };
 
-    const needsManualInstructions = !canShowNativePrompt;
-    // const isIOSDevice = isIOS || isSafari; // This line is now redundant and removed.
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        toast.success(t('pwa.linkCopied'));
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     return (
-        <AnimatePresence>
-            <motion.div
-                key="pwa-banner"
-                initial={{ opacity: 0, y: 80 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 80 }}
-                transition={{ type: 'spring', damping: 22, stiffness: 280 }}
-                className="fixed bottom-20 left-3 right-3 z-[9000] md:left-auto md:right-4 md:bottom-4 md:max-w-sm"
-            >
-                <div className="bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
-                    {/* Brand accent */}
-                    <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+        <>
+            <AnimatePresence>
+                {!isInstructionOpen && (
+                    <motion.div
+                        key="pwa-pill"
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 50, scale: 0.9 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9000] w-auto whitespace-nowrap"
+                    >
+                        <button
+                            onClick={handleInstallClick}
+                            className="flex items-center gap-2.5 bg-primary/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full shadow-lg border border-white/10 font-semibold text-sm transition-all hover:bg-primary active:scale-[0.98]"
+                        >
+                            <Download className="h-4 w-4" />
+                            {isIOSDevice ? t('pwa.tapToInstall') : t('pwa.installButton')}
 
-                    <div className="p-4">
-                        {/* Header row */}
-                        <div className="flex items-start gap-3 mb-3">
-                            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                                <Smartphone className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-foreground text-sm flex items-center gap-2">
-                                    {isIOSDevice ? t('pwa.addToHomeTitle') : t('pwa.installTitle')}
-                                    {forceShow && <span className="bg-amber-500/20 text-amber-600 text-[10px] px-1.5 rounded-full border border-amber-500/20">{t('pwa.debugMode')}</span>}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
-                                    {isInAppBrowser
-                                        ? t('pwa.inAppSubtitle')
-                                        : isIOSDevice
-                                            ? t('pwa.iosSubtitle')
-                                            : isFirefox
-                                                ? t('pwa.firefoxSubtitle')
-                                                : t('pwa.installSubtitle')}
-                                </p>
-                            </div>
-                            <button
-                                onClick={dismiss}
-                                className="p-1 rounded-lg hover:bg-muted transition-colors text-muted-foreground shrink-0 -mt-0.5"
-                                aria-label="Dismiss"
+                            <div className="w-px h-4 bg-white/20 mx-0.5" />
+
+                            <div
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    dismiss();
+                                }}
+                                className="p-1 -mr-1 hover:bg-white/10 rounded-full transition-colors"
                             >
-                                <X className="h-4 w-4" />
-                            </button>
+                                <X className="h-3.5 w-3.5" />
+                            </div>
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            <Drawer open={isInstructionOpen} onOpenChange={setIsInstructionOpen}>
+                <DrawerContent className="max-h-[90vh] z-[9001] outline-none">
+                    <div className="mx-auto w-full max-w-sm px-4 focus-visible:outline-none">
+                        <DrawerHeader className="pb-2">
+                            <div className="flex justify-center mb-4">
+                                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center p-3 border border-primary/20">
+                                    <img
+                                        src="/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png"
+                                        alt="Logo"
+                                        className="w-full h-full object-contain rounded-lg shadow-sm"
+                                    />
+                                </div>
+                            </div>
+                            <DrawerTitle className="text-xl text-center">
+                                {isIOSDevice ? t('pwa.addToHomeTitle') : t('pwa.installTitle')}
+                            </DrawerTitle>
+                            <DrawerDescription className="text-center mt-1">
+                                {t('pwa.installSubtitle')}
+                            </DrawerDescription>
+                        </DrawerHeader>
+
+                        <div className="p-4 pt-1 space-y-4 overflow-y-auto max-h-[50vh]">
+                            {/* ── iOS but NOT Safari: "Open in Safari" Call to Action ── */}
+                            {isIOSDevice && !isSafari && (
+                                <div className="space-y-4 py-2">
+                                    <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-4 border border-amber-200/50 dark:border-amber-500/20">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="h-8 w-8 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0">
+                                                <ExternalLink className="h-4 w-4" />
+                                            </div>
+                                            <p className="font-semibold text-amber-900 dark:text-amber-100 text-sm">
+                                                {t('pwa.openInSafari')}
+                                            </p>
+                                        </div>
+                                        <p className="text-sm text-amber-800 dark:text-amber-200 mb-4 leading-relaxed">
+                                            {t('pwa.safariRecommended')}
+                                        </p>
+
+                                        <div className="flex flex-col gap-2">
+                                            <button
+                                                onClick={copyToClipboard}
+                                                className="w-full flex items-center justify-center gap-2 bg-white dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800 font-medium text-sm py-2.5 rounded-xl transition-all active:scale-[0.98]"
+                                            >
+                                                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                                {copied ? t('pwa.linkCopied') : t('pwa.copyLink')}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3 px-1">
+                                        <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center shrink-0 text-[10px] font-bold">1</div>
+                                        <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: t('pwa.inAppWarning') }} />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ── iOS Safari: Visual instructions ── */}
+                            {isIOSDevice && isSafari && (
+                                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                                    {/* Step 1 */}
+                                    <div className="flex items-center gap-4 bg-muted/40 rounded-2xl p-3 border border-border/50">
+                                        <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-bold shadow-sm">1</div>
+                                        <div className="flex flex-wrap items-center gap-2 text-sm text-foreground">
+                                            <span>{t('pwa.iosStep1')}</span>
+                                            <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-1 font-medium text-xs shadow-sm">
+                                                <IOSShareIcon />
+                                                {t('pwa.iosShareLabel')}
+                                            </span>
+                                            <span className="text-muted-foreground text-xs italic">{t('pwa.iosStep1Detail')}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-center -my-2 opacity-30">
+                                        <motion.div animate={{ y: [0, 3, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>↓</motion.div>
+                                    </div>
+
+                                    {/* Step 2 */}
+                                    <div className="flex items-center gap-4 bg-muted/40 rounded-2xl p-3 border border-border/50">
+                                        <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-bold shadow-sm">2</div>
+                                        <div className="flex flex-wrap items-center gap-2 text-sm text-foreground">
+                                            <span>{t('pwa.iosStep2')}</span>
+                                            <span className="inline-flex items-center gap-1 bg-background border border-border rounded-lg px-2 py-1 font-medium text-xs shadow-sm text-foreground">
+                                                {t('pwa.iosAddLabel')}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-center -my-2 opacity-30">
+                                        <motion.div animate={{ y: [0, 3, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}>↓</motion.div>
+                                    </div>
+
+                                    {/* Step 3 */}
+                                    <div className="flex items-center gap-4 bg-muted/40 rounded-2xl p-3 border border-border/50">
+                                        <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-bold shadow-sm">3</div>
+                                        <div className="flex items-center gap-2 text-sm text-foreground">
+                                            <span>{t('pwa.iosStep3')}</span>
+                                            <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-1 font-medium text-xs shadow-sm">
+                                                {t('pwa.iosConfirmLabel')}
+                                            </span>
+                                            <span className="text-muted-foreground text-xs">{t('pwa.iosStep3Detail')}</span>
+                                        </div>
+                                    </div>
+
+                                    <motion.div
+                                        animate={{ y: [0, 5, 0] }}
+                                        transition={{ repeat: Infinity, duration: 1.2 }}
+                                        className="flex flex-col items-center pt-2"
+                                    >
+                                        <span className="text-xs text-muted-foreground mb-1">{t('pwa.iosPointingLabel')}</span>
+                                        <div className="text-primary text-xl">↓</div>
+                                    </motion.div>
+                                </div>
+                            )}
+
+                            {/* ── Chrome/Edge: already handled by button, but show if drawer accidentally opens ── */}
+                            {canShowNativePrompt && (
+                                <button
+                                    onClick={handleInstallClick}
+                                    disabled={installing}
+                                    className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground text-sm font-semibold py-3 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-70"
+                                >
+                                    <Download className="h-4 w-4" />
+                                    {installing ? t('pwa.installing') : t('pwa.installButton')}
+                                </button>
+                            )}
                         </div>
 
-                        {/* ── Chrome/Edge: one-click install button ── */}
-                        {canShowNativePrompt && (
-                            <button
-                                onClick={handleInstallClick}
-                                disabled={installing}
-                                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground text-sm font-semibold py-2.5 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-70"
-                            >
-                                <Download className="h-4 w-4" />
-                                {installing ? t('pwa.installing') : t('pwa.installButton')}
-                            </button>
-                        )}
-
-                        {/* ── iOS In-App Browser (WhatsApp, Instagram, etc) ── */}
-                        {isInAppBrowser && (
-                            <div className="mt-1 space-y-2">
-                                <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-900/10 rounded-xl px-3 py-2.5 border border-amber-200/50 dark:border-amber-500/20">
-                                    <div className="h-6 w-6 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0 text-xs font-bold">!</div>
-                                    <div className="text-sm text-amber-800 dark:text-amber-200 leading-tight font-medium" dangerouslySetInnerHTML={{ __html: t('pwa.inAppWarning') }} />
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── iOS Safari: Visual inline instructions ── */}
-                        {isIOSDevice && !isInAppBrowser && (
-                            <div className="mt-1 space-y-2">
-                                {/* Step 1 */}
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">1</div>
-                                    <div className="flex items-center gap-2 text-sm text-foreground min-w-0">
-                                        <span>{t('pwa.iosStep1')}</span>
-                                        <span className="inline-flex items-center gap-1 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-lg px-2 py-0.5 font-medium text-xs">
-                                            <IOSShareIcon />
-                                            {t('pwa.iosShareLabel')}
-                                        </span>
-                                        <span className="text-muted-foreground text-xs">{t('pwa.iosStep1Detail')}</span>
-                                    </div>
-                                </div>
-                                {/* Arrow */}
-                                <div className="flex justify-center">
-                                    <motion.div
-                                        animate={{ y: [0, 4, 0] }}
-                                        transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
-                                        className="text-primary"
-                                    >
-                                        ↓
-                                    </motion.div>
-                                </div>
-                                {/* Step 2 */}
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">2</div>
-                                    <div className="flex items-center gap-2 text-sm text-foreground min-w-0">
-                                        <span>{t('pwa.iosStep2')}</span>
-                                        <span className="inline-flex items-center gap-1 bg-muted border border-border rounded-lg px-2 py-0.5 font-medium text-xs text-foreground">
-                                            {t('pwa.iosAddLabel')}
-                                        </span>
-                                    </div>
-                                </div>
-                                {/* Arrow */}
-                                <div className="flex justify-center">
-                                    <motion.div
-                                        animate={{ y: [0, 4, 0] }}
-                                        transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut', delay: 0.2 }}
-                                        className="text-primary"
-                                    >
-                                        ↓
-                                    </motion.div>
-                                </div>
-                                {/* Step 3 */}
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">3</div>
-                                    <div className="flex items-center gap-2 text-sm text-foreground min-w-0">
-                                        <span>{t('pwa.iosStep3')}</span>
-                                        <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-0.5 font-medium text-xs">
-                                            {t('pwa.iosConfirmLabel')}
-                                        </span>
-                                        <span className="text-muted-foreground text-xs">{t('pwa.iosStep3Detail')}</span>
-                                    </div>
-                                </div>
-
-                                {/* Pointing arrow at bottom of screen */}
-                                <motion.div
-                                    animate={{ y: [0, 6, 0] }}
-                                    transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }}
-                                    className="flex flex-col items-center pt-1 pb-0.5"
-                                >
-                                    <div className="text-xs text-muted-foreground mb-0.5">{t('pwa.iosPointingLabel')}</div>
-                                    <div className="text-primary text-lg">↓</div>
-                                </motion.div>
-                            </div>
-                        )}
-
-                        {/* ── Firefox / Generic: minimal instructions ── */}
-                        {isFirefox && (
-                            <div className="mt-1 space-y-2">
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">1</div>
-                                    <div className="flex items-center gap-2 text-sm text-foreground">
-                                        <span>Tap</span>
-                                        <span className="inline-flex items-center gap-1 bg-muted border border-border rounded-lg px-2 py-0.5 text-xs font-medium">
-                                            <MoreVertical className="h-3 w-3" /> Menu
-                                        </span>
-                                        <span className="text-muted-foreground text-xs">in toolbar</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">2</div>
-                                    <div className="text-sm text-foreground">
-                                        Tap <strong>&quot;Add to Home Screen&quot;</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* ── Other browser without native prompt ── */}
-                        {!canShowNativePrompt && !isIOSDevice && !isFirefox && (
-                            <div className="mt-1 space-y-2">
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">1</div>
-                                    <div className="flex items-center gap-2 text-sm text-foreground">
-                                        <span>Open browser</span>
-                                        <span className="inline-flex items-center gap-1 bg-muted border border-border rounded-lg px-2 py-0.5 text-xs font-medium">
-                                            <MoreVertical className="h-3 w-3" /> Menu
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
-                                    <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">2</div>
-                                    <div className="text-sm text-foreground">
-                                        Tap <strong>&quot;Install App&quot;</strong> or <strong>&quot;Add to Home Screen&quot;</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        <DrawerFooter className="pt-2 border-t mt-auto mb-4">
+                            <DrawerClose asChild>
+                                <button className="w-full py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                                    {t('common.close')}
+                                </button>
+                            </DrawerClose>
+                        </DrawerFooter>
                     </div>
-                </div>
-            </motion.div>
-        </AnimatePresence>
+                </DrawerContent>
+            </Drawer>
+        </>
     );
 };
 
