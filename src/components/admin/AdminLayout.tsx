@@ -4,6 +4,7 @@ import { AdminSidebar } from './AdminSidebar';
 import { useAdminOnboarding } from '@/hooks/admin/useAdminOnboarding';
 import AdminOnboardingOverlay from './AdminOnboardingOverlay';
 import { useLocation } from 'react-router-dom';
+import { StaffNotificationBell } from './StaffNotificationBell';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -37,15 +38,27 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <SidebarInset className="h-screen overflow-hidden">
-        <div className="flex h-14 shrink-0 items-center px-4 lg:hidden">
-          <SidebarTrigger className="-ml-1" />
-        </div>
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <SidebarInset className="h-screen overflow-hidden flex flex-col">
+        {/* Mobile Header - Always visible on small screens */}
+        <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background/80 backdrop-blur-md border-b border-border/50">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-primary transition-colors" />
+            <div className="h-4 w-px bg-border/50 mx-1" />
+            <span className="text-sm font-semibold tracking-tight">
+              {sectionId === 'dashboard' ? 'Dashboard' : sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <StaffNotificationBell />
+          </div>
+        </header>
+
+        <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
           {children}
-        </div>
+        </main>
       </SidebarInset>
-      
+
       {/* Onboarding overlay — works for any section except dashboard */}
       {sectionId !== 'dashboard' && (
         <AdminOnboardingOverlay
