@@ -216,7 +216,7 @@ export const AdminSidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, userData } = useAuth();
-  const { state } = useSidebar();
+  const { state, setOpenMobile } = useSidebar();
   const { i18n } = useTranslation();
   const isCollapsed = state === 'collapsed';
   const { counts } = useAdminNotifications();
@@ -265,21 +265,21 @@ export const AdminSidebar: React.FC = () => {
             items: section.items.filter(item => item.title !== 'Hotels')
           };
         }
-        
+
         if (role === 'moderator') {
           return {
             ...section,
             items: section.items.filter((item) => moderatorAllowedUrls.includes(item.url)),
           };
         }
-        
+
         if (role === 'staff') {
           return {
             ...section,
             items: section.items.filter((item) => staffAllowedUrls.includes(item.url)),
           };
         }
-        
+
         return section;
       })
       .filter((section) => section.items.length > 0);
@@ -402,6 +402,7 @@ export const AdminSidebar: React.FC = () => {
                               isActive={isActive(item.url)}
                               tooltip={item.title}
                               className="h-9 rounded-lg transition-all duration-150"
+                              onClick={() => setOpenMobile(false)}
                             >
                               <NavLink to={resolvePath(item.url)} end={item.url === '/admin'}>
                                 <item.icon className={`h-4 w-4 ${isActive(item.url) ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -512,8 +513,8 @@ export const AdminSidebar: React.FC = () => {
         )}
 
         {/* User Profile */}
-        <div 
-          id="admin-ob-user-profile" 
+        <div
+          id="admin-ob-user-profile"
           className="flex items-center gap-2.5 rounded-lg p-2 hover:bg-sidebar-accent transition-colors cursor-pointer group"
           onClick={() => setProfileOpen(true)}
         >
