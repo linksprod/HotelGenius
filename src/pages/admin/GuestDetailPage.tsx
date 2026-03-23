@@ -135,15 +135,15 @@ const DEMO_GUESTS: Record<string, any> = {
   },
   'demo-6': {
     id: 'demo-6',
-    first_name: 'Yuki',
-    last_name: 'Tanaka',
-    email: 'yuki.t@tokyo.jp',
+    first_name: 'Sofia',
+    last_name: 'Anderson',
+    email: 'sofia.a@hospitality.com',
     room_number: '1505',
     is_vip: false,
     check_in_date: new Date().toISOString(),
     check_out_date: new Date(Date.now() + 86400000 * 3).toISOString(),
-    profile_image: '/demo/guests/yuki.png',
-    nationality: 'Japan',
+    profile_image: '/demo/guests/sofia-2.png',
+    nationality: 'United States',
     gender: 'Female',
     birth_date: 'May 05, 2002',
     total_stays: 1,
@@ -180,7 +180,7 @@ const GuestDetailPage: React.FC = () => {
     queryKey: ['guest', guestId],
     queryFn: async () => {
       if (!guestId) return null;
-      
+
       if (isDemo && guestId.startsWith('demo-')) {
         return DEMO_GUESTS[guestId] || DEMO_GUESTS['demo-1'];
       }
@@ -202,11 +202,11 @@ const GuestDetailPage: React.FC = () => {
     queryFn: async () => {
       if (!guest?.room_number) return null;
       if (isDemo) {
-        return { 
+        return {
           id: 'demo-room-1',
           hotel_id: 'demo-hotel',
-          room_number: guest.room_number, 
-          type: 'Suite', 
+          room_number: guest.room_number,
+          type: 'Suite',
           status: 'Occupied',
           capacity: 2,
           price: 450,
@@ -269,7 +269,7 @@ const GuestDetailPage: React.FC = () => {
 
   return (
     <div className="flex-1 min-h-screen bg-background text-foreground overflow-x-hidden">
-      <motion.div 
+      <motion.div
         className="p-8 max-w-[1600px] mx-auto space-y-12"
         variants={containerVariants}
         initial="hidden"
@@ -303,7 +303,7 @@ const GuestDetailPage: React.FC = () => {
                 <Brain className="h-4 w-4 text-rose-500" />
                 <span className="text-[10px] font-bold text-rose-500 uppercase tracking-[0.2em]">Guest Insight Engine</span>
               </div>
-              
+
               <h2 className="text-3xl font-bold tracking-tight text-foreground leading-tight">
                 AI Driven Intelligence
               </h2>
@@ -320,17 +320,17 @@ const GuestDetailPage: React.FC = () => {
 
 // Help Brain icon 
 const Brain = ({ className }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
-    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.48Z"/>
-    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.48Z"/>
+    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.48Z" />
+    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.48Z" />
   </svg>
 );
 

@@ -118,96 +118,96 @@ const GuestsManager: React.FC = () => {
       if (isDemo) {
         // Return rich mock data for instant demo performance
         const demoGuests = [
-            {
-              id: 'demo-1',
-              first_name: 'Sofia',
-              last_name: 'Al-Fayed',
-              email: 'sofia.fayed@emirates.com',
-              phone: '+971 50 123 4567',
-              room_number: '1202',
-              check_in_date: new Date().toISOString(),
-              check_out_date: new Date(Date.now() + 86400000 * 5).toISOString(),
-              created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
-              hotel_id: hotelId || 'demo-hotel',
-              guest_type: 'VIP',
-              is_vip: true,
-              profile_image: '/demo/guests/sofia.png'
-            },
-            {
-              id: 'demo-2',
-              first_name: 'James',
-              last_name: 'Wilson',
-              email: 'j.wilson@techcorp.uk',
-              phone: '+44 7700 900123',
-              room_number: '405',
-              check_in_date: new Date(Date.now() - 86400000 * 2).toISOString(),
-              check_out_date: new Date(Date.now() + 86400000).toISOString(),
-              created_at: new Date(Date.now() - 86400000 * 40).toISOString(),
-              hotel_id: hotelId || 'demo-hotel',
-              guest_type: 'Business',
-              is_vip: false,
-              profile_image: '/demo/guests/james.png'
-            },
-            {
-              id: 'demo-3',
-              first_name: 'Elena',
-              last_name: 'Rodríguez',
-              email: 'elena.rod@madrid.es',
-              phone: '+34 600 123 456',
-              room_number: '812',
-              check_in_date: new Date().toISOString(),
-              check_out_date: new Date(Date.now() + 86400000 * 7).toISOString(),
-              created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
-              hotel_id: hotelId || 'demo-hotel',
-              guest_type: 'Leisure',
-              is_vip: true,
-              profile_image: '/demo/guests/elena.png'
-            },
-            {
-              id: 'demo-4',
-              first_name: 'Marcus',
-              last_name: 'Chen',
-              email: 'marcus.chen@singaporeair.sg',
-              phone: '+65 9123 4567',
-              room_number: 'PH1',
-              check_in_date: new Date(Date.now() + 86400000).toISOString(),
-              check_out_date: new Date(Date.now() + 86400000 * 14).toISOString(),
-              created_at: new Date(Date.now() - 86400000 * 60).toISOString(),
-              hotel_id: hotelId || 'demo-hotel',
-              guest_type: 'VIP',
-              is_vip: true,
-              profile_image: '/demo/guests/marcus.png'
-            },
-            {
-              id: 'demo-5',
-              first_name: 'Sarah',
-              last_name: 'Jenkins',
-              email: 'sarah.j@outlook.com',
-              phone: '+1 212 555 0198',
-              room_number: '302',
-              check_in_date: new Date(Date.now() - 86400000 * 10).toISOString(),
-              check_out_date: new Date(Date.now() - 86400000 * 1).toISOString(),
-              created_at: new Date(Date.now() - 86400000 * 90).toISOString(),
-              hotel_id: hotelId || 'demo-hotel',
-              guest_type: 'Past',
-              is_vip: false,
-              profile_image: '/demo/guests/sarah.png'
-            },
-            {
-              id: 'demo-6',
-              first_name: 'Yuki',
-              last_name: 'Tanaka',
-              email: 'yuki.t@tokyo.jp',
-              phone: '+81 90 1234 5678',
-              room_number: '1505',
-              check_in_date: new Date().toISOString(),
-              check_out_date: new Date(Date.now() + 86400000 * 3).toISOString(),
-              created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
-              hotel_id: hotelId || 'demo-hotel',
-              guest_type: 'New',
-              is_vip: false,
-              profile_image: '/demo/guests/yuki.png'
-            }
+          {
+            id: 'demo-1',
+            first_name: 'Sofia',
+            last_name: 'Al-Fayed',
+            email: 'sofia.fayed@emirates.com',
+            phone: '+971 50 123 4567',
+            room_number: '1202',
+            check_in_date: new Date().toISOString(),
+            check_out_date: new Date(Date.now() + 86400000 * 5).toISOString(),
+            created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
+            hotel_id: hotelId || 'demo-hotel',
+            guest_type: 'VIP',
+            is_vip: true,
+            profile_image: '/demo/guests/sofia.png'
+          },
+          {
+            id: 'demo-2',
+            first_name: 'James',
+            last_name: 'Wilson',
+            email: 'j.wilson@techcorp.uk',
+            phone: '+44 7700 900123',
+            room_number: '405',
+            check_in_date: new Date(Date.now() - 86400000 * 2).toISOString(),
+            check_out_date: new Date(Date.now() + 86400000).toISOString(),
+            created_at: new Date(Date.now() - 86400000 * 40).toISOString(),
+            hotel_id: hotelId || 'demo-hotel',
+            guest_type: 'Business',
+            is_vip: false,
+            profile_image: '/demo/guests/james.png'
+          },
+          {
+            id: 'demo-3',
+            first_name: 'Elena',
+            last_name: 'Rodríguez',
+            email: 'elena.rod@madrid.es',
+            phone: '+34 600 123 456',
+            room_number: '812',
+            check_in_date: new Date().toISOString(),
+            check_out_date: new Date(Date.now() + 86400000 * 7).toISOString(),
+            created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+            hotel_id: hotelId || 'demo-hotel',
+            guest_type: 'Leisure',
+            is_vip: true,
+            profile_image: '/demo/guests/elena.png'
+          },
+          {
+            id: 'demo-4',
+            first_name: 'Marcus',
+            last_name: 'Chen',
+            email: 'marcus.chen@singaporeair.sg',
+            phone: '+65 9123 4567',
+            room_number: 'PH1',
+            check_in_date: new Date(Date.now() + 86400000).toISOString(),
+            check_out_date: new Date(Date.now() + 86400000 * 14).toISOString(),
+            created_at: new Date(Date.now() - 86400000 * 60).toISOString(),
+            hotel_id: hotelId || 'demo-hotel',
+            guest_type: 'VIP',
+            is_vip: true,
+            profile_image: '/demo/guests/marcus.png'
+          },
+          {
+            id: 'demo-5',
+            first_name: 'Sarah',
+            last_name: 'Jenkins',
+            email: 'sarah.j@outlook.com',
+            phone: '+1 212 555 0198',
+            room_number: '302',
+            check_in_date: new Date(Date.now() - 86400000 * 10).toISOString(),
+            check_out_date: new Date(Date.now() - 86400000 * 1).toISOString(),
+            created_at: new Date(Date.now() - 86400000 * 90).toISOString(),
+            hotel_id: hotelId || 'demo-hotel',
+            guest_type: 'Past',
+            is_vip: false,
+            profile_image: '/demo/guests/sarah.png'
+          },
+          {
+            id: 'demo-6',
+            first_name: 'Sofia',
+            last_name: 'Anderson',
+            email: 'sofia.a@hospitality.com',
+            phone: '+1 212 555 0199',
+            room_number: '1505',
+            check_in_date: new Date().toISOString(),
+            check_out_date: new Date(Date.now() + 86400000 * 3).toISOString(),
+            created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+            hotel_id: hotelId || 'demo-hotel',
+            guest_type: 'New',
+            is_vip: false,
+            profile_image: '/demo/guests/sofia-2.png'
+          }
         ] as any as Guest[];
         return demoGuests;
       }
@@ -249,7 +249,7 @@ const GuestsManager: React.FC = () => {
 
     if (isToday(checkInDate)) statuses.push('arrivals-today');
     if (isToday(checkOutDate)) statuses.push('departures-today');
-    
+
     // In-house: Stay includes today (not including those arriving today if we want distinctness, but usually in-house means they have a room)
     if (!isBefore(today, checkInDate) && !isAfter(today, checkOutDate)) {
       statuses.push('in-house');
@@ -258,7 +258,7 @@ const GuestsManager: React.FC = () => {
     // Pre-arrival: Any future arrival
     if (isAfter(checkInDate, today)) {
       statuses.push('pre-arrival');
-      
+
       // 3-Day Arrival: specifically tomorrow through 3 days out
       const diffDays = differenceInDays(checkInDate, today);
       if (diffDays > 0 && diffDays <= 3) {
@@ -386,9 +386,9 @@ const GuestsManager: React.FC = () => {
           animate="visible"
         >
           {/* Header */}
-          <motion.div 
+          <motion.div
             id="admin-ob-guests-header"
-            variants={itemVariants} 
+            variants={itemVariants}
             className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8"
           >
             <div className="space-y-1">
@@ -401,9 +401,9 @@ const GuestsManager: React.FC = () => {
               <h1 className="text-4xl font-black tracking-tighter text-foreground dark:text-white">Guest 360°</h1>
               <p className="text-muted-foreground font-medium text-sm">Real-time guest profiles and stay preferences.</p>
             </div>            <div className="flex items-center gap-3">
-              <Button 
+              <Button
                 onClick={() => setActiveFilter('all')}
-                variant="outline" 
+                variant="outline"
                 className={cn(
                   "h-10 px-4 rounded-xl font-bold border-border dark:border-white/5 shadow-sm transition-all text-xs",
                   activeFilter === 'all' ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card/40 dark:bg-zinc-900/40 text-foreground dark:text-white hover:bg-secondary dark:hover:bg-zinc-900"
@@ -411,13 +411,13 @@ const GuestsManager: React.FC = () => {
               >
                 {activeFilter === 'all' ? 'All Guests' : 'Reset Filter'}
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 className="h-10 px-4 rounded-xl bg-card/40 dark:bg-zinc-900/40 text-muted-foreground hover:text-foreground dark:hover:text-zinc-300 hover:bg-secondary dark:hover:bg-zinc-900 border-border dark:border-white/5 font-bold transition-all text-xs"
               >
                 Export PDF
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 className="h-10 px-4 rounded-xl bg-card/40 dark:bg-zinc-900/40 text-muted-foreground hover:text-foreground dark:hover:text-zinc-300 hover:bg-secondary dark:hover:bg-zinc-900 border-border dark:border-white/5 font-bold transition-all text-xs"
               >
@@ -427,17 +427,17 @@ const GuestsManager: React.FC = () => {
           </motion.div>
 
           {/* Filters Bar */}
-          <motion.div 
+          <motion.div
             id="admin-ob-guests-filters"
-            variants={itemVariants} 
+            variants={itemVariants}
             className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8"
           >
             {filterCards.map((card) => {
               const Icon = card.icon;
               const isActive = activeFilter === card.id;
-              
+
               return (
-                <Card 
+                <Card
                   key={card.id}
                   onClick={() => setActiveFilter(isActive ? 'all' : card.id)}
                   className={cn(
@@ -447,7 +447,7 @@ const GuestsManager: React.FC = () => {
                   )}
                 >
                   {isActive && (
-                    <motion.div 
+                    <motion.div
                       layoutId="activeFilter"
                       className="absolute inset-0 bg-white/5 pointer-events-none"
                       initial={{ opacity: 0 }}
@@ -478,7 +478,7 @@ const GuestsManager: React.FC = () => {
           </motion.div>
 
           {/* Main Content Area */}
-          <motion.div 
+          <motion.div
             id="admin-ob-guests-table"
             variants={itemVariants}
           >
@@ -509,7 +509,7 @@ const GuestsManager: React.FC = () => {
                         {sortedGuests.map((guest) => {
                           const statuses = getGuestStatus(guest.check_in_date, guest.check_out_date);
                           const isInHouse = statuses.includes('in-house');
-                          
+
                           return (
                             <TableRow key={guest.id} className="border-border dark:border-white/[0.03] hover:bg-muted/20 dark:hover:bg-white/[0.02] transition-colors group">
                               <TableCell className="py-4">
@@ -546,17 +546,17 @@ const GuestsManager: React.FC = () => {
                                   {guest.is_vip ? 'VIP Executive' : 'Standard'}
                                 </Badge>
                               </TableCell>
-                            <TableCell className="font-mono text-xs text-muted-foreground dark:text-zinc-400">
-                              {guest.room_number || 'TBA'}
-                            </TableCell>
-                            <TableCell className="text-xs text-muted-foreground dark:text-zinc-400 font-medium">
-                              {formatDate(guest.check_in_date)} — {formatDate(guest.check_out_date)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button variant="ghost" size="sm" onClick={() => navigate(`/demo/admin/guests/${guest.id}`)} className="text-primary hover:bg-primary/10 font-bold h-8 px-4 rounded-lg">
-                                View 360°
-                              </Button>
-                            </TableCell>
+                              <TableCell className="font-mono text-xs text-muted-foreground dark:text-zinc-400">
+                                {guest.room_number || 'TBA'}
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground dark:text-zinc-400 font-medium">
+                                {formatDate(guest.check_in_date)} — {formatDate(guest.check_out_date)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="ghost" size="sm" onClick={() => navigate(`/demo/admin/guests/${guest.id}`)} className="text-primary hover:bg-primary/10 font-bold h-8 px-4 rounded-lg">
+                                  View 360°
+                                </Button>
+                              </TableCell>
                             </TableRow>
                           );
                         })}
