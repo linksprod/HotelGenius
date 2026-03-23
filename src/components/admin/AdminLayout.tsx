@@ -38,12 +38,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <SidebarInset className="h-screen overflow-hidden flex flex-col">
-        {/* Mobile Header - Always visible on small screens */}
-        <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background/80 backdrop-blur-md border-b border-border/50">
+      <SidebarInset className="min-h-svh flex flex-col bg-background">
+        {/* Mobile Header - Sticky and with explicit z-index/background */}
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background border-b border-border shadow-sm">
           <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-primary transition-colors" />
-            <div className="h-4 w-px bg-border/50 mx-1" />
+            <SidebarTrigger className="-ml-1 text-foreground" />
+            <div className="h-4 w-px bg-border mx-1" />
             <span className="text-sm font-semibold tracking-tight">
               {sectionId === 'dashboard' ? 'Dashboard' : sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}
             </span>
@@ -54,7 +54,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </div>
         </header>
 
-        <main className="flex-1 flex flex-col min-h-0 overflow-hidden relative">
+        <main className="flex-1 w-full relative">
           {children}
         </main>
       </SidebarInset>

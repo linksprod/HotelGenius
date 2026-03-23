@@ -87,11 +87,11 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="w-full bg-background">
       {showLanding && (
         <AdminLandingAnimation onDismiss={handleLandingComplete} />
       )}
-      <ScrollArea className="flex-1 h-full">
+      <div className="w-full min-h-screen">
         <div className={`flex-1 space-y-4 md:space-y-6 p-3 sm:p-4 md:p-8 md:pb-0 transition-all duration-500 ${showLanding ? 'blur-sm grayscale-[0.5] opacity-50 overflow-hidden' : ''}`}>
           {/* Header - Hidden on small mobile as it's now in the sticky header */}
           <div className="hidden sm:flex items-center justify-between gap-3 mb-2">
@@ -391,7 +391,7 @@ const AdminDashboard = () => {
             </motion.div>
           </motion.div>
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
