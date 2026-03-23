@@ -631,5 +631,26 @@
       "title": "Welcome Back",
       "message": "Good to see you again, {{name}}"
     }
+  },
+  "pwa": {
+    "installTitle": "Install Hotel Genius",
+    "addToHomeTitle": "Add to Home Screen",
+    "installSubtitle": "Get instant access — works offline too",
+    "iosSubtitle": "Add to your Home Screen for the best app experience",
+    "inAppSubtitle": "Please open in Safari to add to your Home Screen",
+    "firefoxSubtitle": "Add to your Home Screen from the browser menu",
+    "installButton": "Install App",
+    "installing": "Installing...",
+    "debugMode": "Debug Mode",
+    "iosStep1": "Tap",
+    "iosStep1Detail": "(bottom of Safari)",
+    "iosStep2": "Tap",
+    "iosStep3": "Tap",
+    "iosStep3Detail": "— Done! ✓",
+    "iosShareLabel": "Share",
+    "iosAddLabel": "＋ Add to Home Screen",
+    "iosConfirmLabel": "Add",
+    "iosPointingLabel": "Share button is here ↓",
+    "inAppWarning": "Tap ... or the Compass icon and select \"Open in Safari\" first."
   }
 }

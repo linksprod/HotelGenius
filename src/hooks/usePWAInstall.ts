@@ -82,39 +82,6 @@ export function usePWAInstall() {
             const promptEvent = e as BeforeInstallPromptEvent;
             setDeferredPrompt(promptEvent);
             promptRef.current = promptEvent;
-
-            // Auto-trigger the native prompt on the FIRST user click/tap
-            // Browsers require a user gesture, so we attach to the first interaction
-            const alreadyPrompted = sessionStorage.getItem(AUTO_PROMPT_KEY);
-            if (!alreadyPrompted && !autoPromptedRef.current) {
-                autoPromptedRef.current = true;
-
-                const autoTrigger = async () => {
-                    // Remove the listener immediately so it only fires once
-                    document.removeEventListener('click', autoTrigger, true);
-                    document.removeEventListener('touchend', autoTrigger, true);
-
-                    const prompt = promptRef.current;
-                    if (!prompt) return;
-
-                    try {
-                        await prompt.prompt();
-                        const { outcome } = await prompt.userChoice;
-                        sessionStorage.setItem(AUTO_PROMPT_KEY, 'true');
-                        if (outcome === 'accepted') {
-                            setIsInstalled(true);
-                        }
-                        setDeferredPrompt(null);
-                        promptRef.current = null;
-                    } catch (err) {
-                        console.warn('Auto PWA prompt failed:', err);
-                    }
-                };
-
-                // Attach to document — fires on ANY click/tap (the user gesture)
-                document.addEventListener('click', autoTrigger, { capture: true, once: true });
-                document.addEventListener('touchend', autoTrigger, { capture: true, once: true });
-            }
         };
 
         window.addEventListener('beforeinstallprompt', handler);
