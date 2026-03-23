@@ -21,85 +21,95 @@ export const EventTable: React.FC<EventTableProps> = ({
   onSelectEvent,
   stories = []
 }) => {
-  // Create a Map of events linked to stories
-  const eventInStoryMap = new Map(
-    stories
-      .filter(story => story.eventId)
-      .map(story => [story.eventId, story.title])
-  );
-
   return (
-    <div className="border rounded-md">
-      <div className="p-4 border-b">
-        <h3 className="font-medium">Events</h3>
-      </div>
-      
+    <div className="rounded-2xl border border-border dark:border-white/5 bg-card dark:bg-zinc-900/40 backdrop-blur-md overflow-hidden shadow-2xl">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Location</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Featured</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+        <TableHeader className="bg-muted/50 dark:bg-white/5">
+          <TableRow className="border-border dark:border-white/5 hover:bg-transparent">
+            <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground py-4 px-6">Event Experience</TableHead>
+            <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Classification</TableHead>
+            <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Location</TableHead>
+            <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Date & Time</TableHead>
+            <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Visibility</TableHead>
+            <TableHead className="text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground pr-6">Management</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {events.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-4">
-                No events available
+              <TableCell colSpan={6} className="text-center py-10 text-muted-foreground font-medium italic">
+                No active experiences available...
               </TableCell>
             </TableRow>
           ) : (
-            events.map((event) => (
-              <TableRow key={event.id} className={selectedEventId === event.id ? "bg-muted" : ""}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-md overflow-hidden flex-shrink-0">
-                      <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
+            events.map((event, idx) => (
+              <TableRow 
+                key={event.id} 
+                className={cn(
+                  "border-border dark:border-white/5 transition-all group cursor-pointer",
+                  selectedEventId === event.id ? "bg-muted/50 dark:bg-white/[0.05] shadow-[inset_4px_0_0_0_#9333ea]" : "hover:bg-muted/30 dark:hover:bg-white/[0.02]"
+                )}
+                onClick={() => onSelectEvent(event.id)}
+              >
+                <TableCell className="py-4 px-6">
+                  <div className="flex items-center gap-4">
+                    <div className="relative h-12 w-12 rounded-xl overflow-hidden ring-1 ring-white/10 group-hover:ring-purple-500/50 transition-all">
+                      <img src={event.image} alt={event.title} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     </div>
-                    <span className="font-medium">{event.title}</span>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-foreground leading-tight">{event.title}</span>
+                      <span className="text-[10px] font-medium text-muted-foreground/60">REF: {event.id.slice(0, 8)}</span>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="capitalize">
-                    {event.category === 'event' ? 'Event' : 'Promotion'}
+                  <Badge variant="outline" className={cn(
+                    "text-[10px] font-bold uppercase tracking-widest border-none px-0 bg-transparent shadow-none",
+                    event.category === 'event' ? "text-purple-500" : "text-amber-500"
+                  )}>
+                    {event.category}
                   </Badge>
                 </TableCell>
-                <TableCell>{event.location || '-'}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs font-medium">
+                    <MapPin className="h-3 w-3" />
+                    {event.location || 'Universal'}
+                  </div>
+                </TableCell>
                 <TableCell>
                   <div className="flex flex-col">
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-2 opacity-70" />
-                      {format(new Date(event.date), 'dd MMM yyyy', { locale: enUS })}
+                    <div className="flex items-center text-xs font-bold text-foreground">
+                      <Calendar className="h-3 w-3 mr-1.5 text-muted-foreground" />
+                      {format(new Date(event.date), 'MMM dd, yyyy')}
                     </div>
                     {event.time && (
-                      <div className="text-xs text-muted-foreground mt-1">{event.time}</div>
+                      <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest mt-0.5">{event.time}</div>
                     )}
                   </div>
                 </TableCell>
                 <TableCell>
                   {event.is_featured ? (
-                    <Badge variant="secondary" className="bg-amber-100 text-amber-800 hover:bg-amber-100">
-                      <Star className="h-3 w-3 mr-1 fill-amber-500" />
+                    <Badge className="bg-purple-500/10 text-purple-500 border border-purple-500/20 text-[10px] font-extrabold uppercase tracking-tighter px-2">
                       Featured
                     </Badge>
                   ) : (
-                    '-'
+                    <span className="text-muted-foreground/60 text-[10px] font-bold tracking-widest uppercase italic">Standard</span>
                   )}
                 </TableCell>
-                <TableCell>
-                  <div className="flex justify-end gap-2">
+                <TableCell className="pr-6">
+                  <div className="flex justify-end">
                     <Button 
-                      variant={selectedEventId === event.id ? "default" : "outline"}
+                      variant="ghost"
                       size="sm"
-                      onClick={() => onSelectEvent(event.id)}
-                      className="flex items-center gap-1"
+                      className={cn(
+                        "h-8 px-3 rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all",
+                        selectedEventId === event.id 
+                          ? "bg-purple-600 text-white hover:bg-purple-500 shadow-lg shadow-purple-600/20" 
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      )}
                     >
-                      <Users className="h-4 w-4" />
-                      {selectedEventId === event.id ? 'Selected' : 'Reservations'}
+                      {selectedEventId === event.id ? 'Viewing' : 'Inspect'}
                     </Button>
                   </div>
                 </TableCell>

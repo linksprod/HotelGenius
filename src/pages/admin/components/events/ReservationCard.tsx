@@ -6,7 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { Check, X, Eye, Phone, Calendar, User, Home, Mail } from 'lucide-react';
+import { Check, X, Eye, Phone, Calendar, User, Home, Mail, Users, Search } from 'lucide-react';
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface ReservationCardProps {
@@ -22,99 +25,88 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
   onUpdateStatus,
   isUpdating
 }) => {
-  const getStatusBadgeClass = (status: string) => {
+  const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-green-500';
-      case 'cancelled': return 'bg-red-500';
-      case 'pending': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case 'confirmed': return { label: 'Confirmed', color: 'text-emerald-500', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' };
+      case 'cancelled': return { label: 'Cancelled', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/20' };
+      case 'pending': return { label: 'Pending', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/20' };
+      default: return { label: status, color: 'text-muted-foreground', bg: 'bg-muted', border: 'border-border' };
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'confirmed': return 'Confirmed';
-      case 'cancelled': return 'Cancelled';
-      case 'pending': return 'Pending';
-      default: return status;
-    }
-  };
+  const status = getStatusConfig(reservation.status);
 
   return (
-    <Card className="overflow-hidden">
-      <div className={`h-2 w-full ${getStatusBadgeClass(reservation.status)}`} />
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="font-semibold">{reservation.guestName}</h3>
-          <Badge className={getStatusBadgeClass(reservation.status)}>
-            {getStatusLabel(reservation.status)}
+    <Card className="relative overflow-hidden border-border dark:border-white/5 bg-card dark:bg-zinc-900/40 backdrop-blur-md rounded-2xl group transition-all hover:bg-secondary/50 dark:hover:bg-zinc-800/50">
+      <div className={cn("absolute top-0 left-0 w-1 h-full", status.color.replace('text-', 'bg-'))} />
+      
+      <CardContent className="p-5">
+        <div className="flex justify-between items-start mb-5">
+          <div>
+            <h3 className="text-foreground font-black tracking-tighter uppercase text-sm">{reservation.guestName}</h3>
+            <p className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase mt-0.5">Booking REF: {reservation.id.slice(0, 8)}</p>
+          </div>
+          <Badge className={cn("text-[9px] font-black uppercase tracking-tighter border shadow-none", status.bg, status.color, status.border)}>
+            {status.label}
           </Badge>
         </div>
 
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center text-sm">
-            <Calendar className="h-4 w-4 mr-2 opacity-70" />
-            <span>{format(new Date(reservation.date), 'dd MMMM yyyy', { locale: enUS })}</span>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <User className="h-4 w-4 mr-2 opacity-70" />
-            <span>{reservation.guests} {reservation.guests > 1 ? 'participants' : 'participant'}</span>
-          </div>
-          
-          <div className="flex items-center text-sm">
-            <Home className="h-4 w-4 mr-2 opacity-70" />
-            <span>Room: {reservation.roomNumber || '-'}</span>
-          </div>
-          
-          {reservation.guestEmail && (
-            <div className="flex items-center text-sm overflow-hidden">
-              <Mail className="h-4 w-4 mr-2 flex-shrink-0 opacity-70" />
-              <span className="truncate">{reservation.guestEmail}</span>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <Calendar className="h-3 w-3 text-muted-foreground/60" />
+              {format(new Date(reservation.date), 'MMM dd, yyyy')}
             </div>
-          )}
-          
-          {reservation.guestPhone && (
-            <div className="flex items-center text-sm">
-              <Phone className="h-4 w-4 mr-2 opacity-70" />
-              <span>{reservation.guestPhone}</span>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <Users className="h-3 w-3 text-muted-foreground/60" />
+              {reservation.guests} {reservation.guests > 1 ? 'Guests' : 'Guest'}
             </div>
-          )}
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <Home className="h-3 w-3 text-muted-foreground/60" />
+              Room {reservation.roomNumber || 'TBD'}
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              <Mail className="h-3 w-3 text-muted-foreground/60" />
+              <span className="truncate max-w-[80px]">Profile</span>
+            </div>
+          </div>
         </div>
 
-        <div className="flex space-x-2 mt-4 pt-4 border-t">
+        <div className="flex gap-2 pt-4 border-t border-border dark:border-white/5">
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="sm" 
-            className="flex-1"
+            className="flex-1 h-8 rounded-lg bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80 text-[10px] font-black uppercase tracking-widest transition-all"
             onClick={() => onViewDetails(reservation)}
           >
-            <Eye className="h-4 w-4 mr-1" />
-            Details
+            <Eye className="h-3.5 w-3.5 mr-1.5" />
+            Inspect
           </Button>
           
           {reservation.status === 'pending' && (
             <>
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm"
-                className="flex-1 border-green-500 text-green-500 hover:bg-green-50"
+                className="flex-1 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 text-[10px] font-black uppercase tracking-widest transition-all border border-emerald-500/20"
                 onClick={() => onUpdateStatus(reservation.id, 'confirmed')}
                 disabled={isUpdating}
               >
-                <Check className="h-4 w-4 mr-1" />
-                Confirm
+                <Check className="h-3.5 w-3.5 mr-1.5" />
+                Approve
               </Button>
               
               <Button 
-                variant="outline" 
+                variant="ghost" 
                 size="sm"
-                className="flex-1 border-red-500 text-red-500 hover:bg-red-50"
+                className="flex-1 h-8 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 text-[10px] font-black uppercase tracking-widest transition-all border border-rose-500/20"
                 onClick={() => onUpdateStatus(reservation.id, 'cancelled')}
                 disabled={isUpdating}
               >
-                <X className="h-4 w-4 mr-1" />
-                Decline
+                <X className="h-3.5 w-3.5 mr-1.5" />
+                Reject
               </Button>
             </>
           )}
@@ -123,28 +115,28 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   size="sm"
-                  className="flex-1 border-red-500 text-red-500 hover:bg-red-50"
+                  className="flex-1 h-8 rounded-lg bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 text-[10px] font-black uppercase tracking-widest transition-all border border-rose-500/20"
                 >
-                  <X className="h-4 w-4 mr-1" />
-                  Cancel
+                  <X className="h-3.5 w-3.5 mr-1.5" />
+                  Recall
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="bg-card dark:bg-zinc-900 border-border dark:border-white/10 text-foreground">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Cancel Reservation</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to cancel this reservation? This action is irreversible.
+                  <AlertDialogTitle className="text-xl font-black uppercase tracking-tighter">Confirm Cancellation</AlertDialogTitle>
+                  <AlertDialogDescription className="text-muted-foreground font-medium">
+                    This will invalidate the guest's digital pass for this experience. This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="bg-transparent border-border dark:border-white/10 text-muted-foreground hover:text-foreground h-9">Back</AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={() => onUpdateStatus(reservation.id, 'cancelled')}
-                    className="bg-red-500 hover:bg-red-600"
+                    className="bg-rose-600 hover:bg-rose-500 text-white h-9"
                   >
-                    Confirm Cancellation
+                    Confirm Recall
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

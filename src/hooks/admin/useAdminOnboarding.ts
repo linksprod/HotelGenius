@@ -284,8 +284,9 @@ export function useAdminOnboarding(sectionId: string = 'dashboard') {
         if (roleLoading || !userId || steps.length === 0) return;
 
         const timer = setTimeout(() => {
+            const isDemoMode = window.location.pathname.includes('/demo/');
             const seen = localStorage.getItem(storageKey);
-            if (!seen) {
+            if (!seen || isDemoMode) {
                 setIsActive(true);
                 setCurrentStepIndex(0);
             }

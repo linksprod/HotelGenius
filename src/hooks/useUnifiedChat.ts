@@ -12,13 +12,15 @@ interface UseUnifiedChatProps {
   isAdmin?: boolean;
   conversationType?: 'concierge' | 'safety_ai';
   conversationId?: string; // Load specific conversation by ID (for admin)
+  hotelId: string | null;
 }
 
 export const useUnifiedChat = ({ 
   userInfo, 
   isAdmin = false, 
   conversationType = 'concierge',
-  conversationId 
+  conversationId,
+  hotelId
 }: UseUnifiedChatProps) => {
   const [chatState, setChatState] = useState<ChatState>({
     conversation: null,
@@ -83,7 +85,10 @@ export const useUnifiedChat = ({
         setChatState(prev => ({ ...prev, isLoading: true }));
 
         const { data: user } = await supabase.auth.getUser();
-        if (!user.user) return;
+        if (!user.user) {
+          setChatState(prev => ({ ...prev, isLoading: false }));
+          return;
+        }
 
         const { data: existingConversation } = await supabase
           .from('conversations')
@@ -105,7 +110,8 @@ export const useUnifiedChat = ({
               room_number: userInfo?.roomNumber,
               status: 'active',
               current_handler: conversationType === 'concierge' ? 'human' : 'ai',
-              conversation_type: conversationType
+              conversation_type: conversationType,
+              hotel_id: hotelId
             })
             .select()
             .single();
@@ -124,7 +130,8 @@ export const useUnifiedChat = ({
               sender_type: conversationType === 'concierge' ? 'staff' : 'ai',
               sender_name: conversationType === 'safety_ai' ? 'AI Assistant' : 'Hotel Team',
               content: welcomeMessage,
-              message_type: 'text'
+              message_type: 'text',
+              hotel_id: hotelId
             });
         }
 
@@ -151,6 +158,8 @@ export const useUnifiedChat = ({
           description: "Failed to initialize chat. Please try again.",
           variant: "destructive"
         });
+      } finally {
+        setChatState(prev => ({ ...prev, isLoading: false }));
       }
     };
 
@@ -286,7 +295,8 @@ export const useUnifiedChat = ({
           sender_id: user.user.id,
           sender_name: isAdmin ? 'Staff' : userInfo?.name || 'Guest',
           content: messageContent,
-          message_type: 'text'
+          message_type: 'text',
+          hotel_id: hotelId
         });
 
       if (chatState.currentHandler === 'ai' && !isAdmin && chatState.conversation.conversation_type === 'safety_ai') {
@@ -316,7 +326,8 @@ export const useUnifiedChat = ({
           userId: user.user.id,
           userName: userInfo.name,
           roomNumber: userInfo.roomNumber || 'N/A',
-          conversationId: chatState.conversation?.id
+          conversationId: chatState.conversation?.id,
+          hotelId: hotelId
         }
       });
 
@@ -334,7 +345,8 @@ export const useUnifiedChat = ({
           sender_type: 'ai',
           sender_name: 'AI Assistant',
           content: 'I apologize, but I encountered an error. A human staff member will assist you shortly.',
-          message_type: 'system'
+          message_type: 'system',
+          hotel_id: hotelId
         });
 
       await escalateToHuman('AI Error');
@@ -370,7 +382,8 @@ export const useUnifiedChat = ({
           sender_type: 'ai',
           sender_name: 'AI Assistant',
           content: 'I\'m connecting you with a human staff member who will be able to provide more personalized assistance. Please hold on for a moment.',
-          message_type: 'system'
+          message_type: 'system',
+          hotel_id: hotelId
         });
 
       toast({

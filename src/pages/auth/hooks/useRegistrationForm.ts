@@ -28,9 +28,13 @@ export const registerSchema = z.object({
       message: "You must be at least 18 years old",
     }),
   nationality: z.string().min(2, { message: "Nationality is required" }),
-  roomNumber: z.string().min(1, { message: "Room number is required" }),
+  roomNumber: z.string().optional().or(z.literal("")),
   checkInDate: z.date({ required_error: "Check-in date is required" })
-    .refine((date) => date >= new Date(), {
+    .refine((date) => {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      return date >= now;
+    }, {
       message: "Check-in date cannot be in the past",
     }),
   checkOutDate: z.date({ required_error: "Check-out date is required" }),
@@ -46,7 +50,7 @@ export const registerSchema = z.object({
 
 export type RegistrationFormValues = z.infer<typeof registerSchema>;
 
-// Helper function to convert CompanionType to CompanionData
+// Helper function to convert CompanionData
 const mapCompanionsToCompanionData = (companions: CompanionType[]): CompanionData[] => {
   return companions.map(companion => ({
     first_name: companion.firstName,
@@ -60,6 +64,7 @@ const mapCompanionsToCompanionData = (companions: CompanionType[]): CompanionDat
 
 export const useRegistrationForm = () => {
   const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hotelId } = useHotel();
@@ -78,84 +83,77 @@ export const useRegistrationForm = () => {
       password: "",
       confirmPassword: "",
     },
+    mode: "onChange"
   });
 
-  const handleRegister = async (values: RegistrationFormValues) => {
-    setLoading(true);
+  const nextStep = async () => {
+    let fields: (keyof RegistrationFormValues)[] = [];
+    
+    if (currentStep === 1) {
+      fields = ["firstName", "lastName", "birthDate", "nationality"];
+    } else if (currentStep === 2) {
+      fields = ["checkInDate", "checkOutDate", "roomNumber"];
+    }
 
+    const isValid = await registerForm.trigger(fields);
+    if (isValid) {
+      setCurrentStep(prev => Math.min(prev + 1, 3));
+    }
+  };
+
+  const prevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleRegister = async (values: RegistrationFormValues) => {
+    if (currentStep < 3) {
+      await nextStep();
+      return;
+    }
+
+    setLoading(true);
     try {
-      // Préparer les données utilisateur 
+      // Logic for final step submission remains the same but handles null/empty roomNumber
       const userData = {
         first_name: values.firstName,
         last_name: values.lastName,
         birth_date: values.birthDate,
         nationality: values.nationality,
-        room_number: values.roomNumber,
+        room_number: values.roomNumber || null,
         check_in_date: values.checkInDate,
         check_out_date: values.checkOutDate,
         companions: mapCompanionsToCompanionData(companions),
       };
 
-      // Enregistrer l'utilisateur avec Supabase Auth
       const result = await registerUser(values.email, values.password, userData);
 
       if (!result.success) {
         throw new Error(result.error || "Registration failed");
       }
 
-      // Si userId est défini, synchroniser avec Supabase
       if (result.userId) {
-        // Créer directement l'entrée dans la table guests
-        const guestData = {
-          user_id: result.userId,
-          first_name: values.firstName,
-          last_name: values.lastName,
-          email: values.email,
-          room_number: values.roomNumber,
-          nationality: values.nationality,
-          birth_date: values.birthDate.toISOString().split('T')[0],
-          check_in_date: values.checkInDate.toISOString().split('T')[0],
-          check_out_date: values.checkOutDate.toISOString().split('T')[0],
-          hotel_id: hotelId
-        };
-
-        // Créer l'invité directement dans la table guests
-        const { error } = await supabase
-          .from('guests')
-          .insert([guestData]);
-
-        if (error) {
-          console.error('Error creating guest:', error);
-          toast({
-            variant: "destructive",
-            title: "Error creating guest profile",
-            description: "Your account was created but we couldn't save your guest profile.",
-          });
-        }
-
-        // Synchroniser également avec la méthode existante pour la compatibilité
-        const syncSuccess = await syncUserData({
+        await syncUserData({
           ...userData,
           email: values.email,
           id: result.userId
         });
-
-        if (!syncSuccess) {
-          toast({
-            variant: "destructive",
-            title: "Sync failed",
-            description: "Data was saved locally but server sync failed.",
-          });
-        }
       }
 
       toast({
         title: "Registration successful",
-        description: "Welcome to Stay Genius",
+        description: "Welcome back!",
       });
 
-      // Rediriger vers la page d'accueil
-      navigate(resolvePath('/'));
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data: isSuperAdmin } = session?.user?.id 
+        ? await supabase.rpc('is_super_admin', { user_id: session.user.id })
+        : { data: false };
+
+      if (isSuperAdmin || values.email === 'projects@hotelgenius.app') {
+        navigate('/administration/super/dashboard', { replace: true });
+      } else {
+        navigate(resolvePath('/'));
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -172,6 +170,9 @@ export const useRegistrationForm = () => {
     companions,
     setCompanions,
     registerForm,
-    handleRegister
+    handleRegister,
+    currentStep,
+    nextStep,
+    prevStep
   };
 };

@@ -52,15 +52,15 @@ const SpaFacilitiesTab = () => {
     <div className="space-y-6">
       <Tabs defaultValue="facilities" value={activeTab} onValueChange={(value) => setActiveTab(value as 'facilities' | 'events')}>
         <div className="flex justify-between items-center mb-4">
-          <TabsList>
-            <TabsTrigger value="facilities">Installations</TabsTrigger>
-            <TabsTrigger value="events">Événements</TabsTrigger>
+          <TabsList className="bg-muted/50 border border-border/50">
+            <TabsTrigger value="facilities">Facilities</TabsTrigger>
+            <TabsTrigger value="events">Events</TabsTrigger>
           </TabsList>
           
           {activeTab === 'facilities' && (
-            <Button onClick={() => setIsDialogOpen(true)} className="bg-[#00AEBB]">
+            <Button onClick={() => setIsDialogOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20">
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter une installation
+              Add Facility
             </Button>
           )}
         </div>
@@ -76,25 +76,26 @@ const SpaFacilitiesTab = () => {
                     className="rounded-lg object-cover w-full h-full"
                   />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{facility.name}</h3>
-                <p className="text-gray-600 mb-4">{facility.description}</p>
-                <div className="flex justify-between items-center">
-                  <Button variant="outline" onClick={() => handleEditFacility(facility)}>
-                    Modifier
+                <h3 className="text-xl font-bold text-foreground mb-2">{facility.name}</h3>
+                <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{facility.description}</p>
+                <div className="flex justify-between items-center gap-2">
+                  <Button variant="outline" onClick={() => handleEditFacility(facility)} className="flex-1 bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground font-bold h-10 rounded-xl">
+                    Edit
                   </Button>
                   <Button 
+                    className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-10 rounded-xl shadow-lg shadow-primary/10"
                     onClick={() => {
                       setSelectedFacility(facility);
                       handleAddEvent();
                     }}
                   >
-                    Ajouter un événement
+                    Add Event
                   </Button>
                 </div>
 
                 {selectedFacility?.id === facility.id && (
-                  <div className="mt-6">
-                    <h4 className="text-lg font-semibold mb-4">Événements</h4>
+                  <div className="mt-6 pt-6 border-t border-border/50">
+                    <h4 className="text-lg font-bold text-foreground mb-4">Events</h4>
                     <SpaEventsList 
                       events={filteredEvents}
                       onEditEvent={handleEditEvent}

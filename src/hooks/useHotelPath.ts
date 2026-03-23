@@ -17,7 +17,12 @@ export const useHotelPath = () => {
         // Fallback: try to extract slug from current path if hotel context isn't ready
         let slug = hotel?.slug;
         if (!slug && location.pathname !== '/') {
-            slug = location.pathname.split('/')[1];
+            const pathSlug = location.pathname.split('/')[1];
+            // Reserved global routes should not be treated as hotel slugs
+            const reservedSlugs = ['administration', 'demo', 'login', 'auth'];
+            if (!reservedSlugs.includes(pathSlug)) {
+                slug = pathSlug;
+            }
         }
 
         // If we have a slug, prefix the path

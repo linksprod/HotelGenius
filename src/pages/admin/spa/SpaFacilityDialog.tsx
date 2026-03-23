@@ -85,9 +85,9 @@ export default function SpaFacilityDialog({ open, onOpenChange, facility, onClos
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-card dark:bg-zinc-900 border-border dark:border-white/5 text-foreground">
         <DialogHeader>
-          <DialogTitle>{facility ? 'Modifier l\'installation' : 'Ajouter une installation'}</DialogTitle>
+          <DialogTitle>{facility ? 'Edit Facility' : 'Add Facility'}</DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
@@ -103,11 +103,12 @@ export default function SpaFacilityDialog({ open, onOpenChange, facility, onClos
                   variant="outline"
                   onClick={() => onOpenChange(false)}
                   disabled={isLoading}
+                  className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 text-foreground hover:bg-secondary rounded-xl font-bold"
                 >
-                  Annuler
+                  Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? 'Enregistrement...' : facility ? 'Mettre à jour' : 'Créer'}
+                <Button type="submit" disabled={isLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20">
+                  {isLoading ? 'Saving...' : facility ? 'Update' : 'Create'}
                 </Button>
               </DialogFooter>
             </form>

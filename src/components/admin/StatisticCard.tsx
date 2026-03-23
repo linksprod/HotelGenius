@@ -2,8 +2,10 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import CountUp from './CountUp';
 
 interface StatisticCardProps {
+  id?: string;
   title: string;
   value: number | string;
   icon: LucideIcon;
@@ -12,6 +14,9 @@ interface StatisticCardProps {
   suffix?: string;
   iconColor?: 'amber' | 'emerald' | 'pink' | 'yellow' | 'blue' | 'purple' | 'green';
   loading?: boolean;
+  className?: string;
+  decimals?: number;
+  delay?: number;
 }
 
 const iconColorClasses = {
@@ -33,6 +38,7 @@ const subtitleColorClasses = {
 };
 
 const StatisticCard: React.FC<StatisticCardProps> = ({
+  id,
   title,
   value,
   icon: Icon,
@@ -41,6 +47,9 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   suffix = '',
   iconColor = 'amber',
   loading = false,
+  className,
+  decimals = 0,
+  delay = 0,
 }) => {
   if (loading) {
     return (
@@ -60,14 +69,23 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   }
 
   return (
-    <Card className="h-full bg-card border shadow-sm hover:shadow-md transition-shadow">
+    <Card id={id} className={cn("h-full bg-card border shadow-sm hover:shadow-md transition-shadow", className)}>
       <CardContent className="p-3 sm:p-5">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
             <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{title}</p>
             <div className="flex items-baseline gap-1">
               <h3 className="text-lg sm:text-2xl font-bold text-card-foreground">
-                {typeof value === 'number' ? value.toLocaleString() : value}
+                {typeof value === 'number' ? (
+                  <CountUp 
+                    to={value} 
+                    decimals={decimals} 
+                    delay={delay} 
+                    duration={1.5}
+                  />
+                ) : (
+                  value
+                )}
               </h3>
               {suffix && <span className="text-xs sm:text-sm text-muted-foreground">{suffix}</span>}
             </div>

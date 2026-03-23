@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { AuthProvider } from '@/features/auth/hooks/useAuthContext';
+import AuthGuard from '@/components/AuthGuard';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 import { Toaster } from 'sonner';
@@ -11,6 +12,14 @@ import { Toaster as ShadcnToaster } from '@/components/ui/toaster';
 import PublicRoutes from './routes/PublicRoutes';
 import AuthenticatedRoutes from './routes/AuthenticatedRoutes';
 import AdminRoutes from './routes/AdminRoutes';
+import Login from '@/pages/auth/Login';
+const SuperDashboard = React.lazy(() => import('@/pages/admin/super/SuperDashboard'));
+const AdminLayout = React.lazy(() => import('@/components/admin/AdminLayout'));
+const AdminRoleGuard = React.lazy(() => import('@/components/admin/AdminRoleGuard'));
+const HotelsManager = React.lazy(() => import('@/pages/admin/HotelsManager'));
+const StaffManager = React.lazy(() => import('@/pages/admin/StaffManager'));
+const SuperAIInfrastructure = React.lazy(() => import('@/pages/admin/super/SuperAIInfrastructure'));
+const NotificationCentre = React.lazy(() => import('@/pages/admin/NotificationCentre'));
 import TenantGuard from './components/TenantGuard';
 import PWAInstallBanner from './components/PWAInstallBanner';
 import './i18n';
@@ -28,6 +37,16 @@ function App() {
             <Routes>
               {/* Redirect root to a default hotel context */}
               <Route path="/" element={<Navigate to="/demo" replace />} />
+              <Route path="/login" element={
+                <HotelProvider>
+                  <Login />
+                </HotelProvider>
+              } />
+              <Route path="/auth/login" element={
+                <HotelProvider>
+                  <Login />
+                </HotelProvider>
+              } />
 
               {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
               <Route path="/:slug/*" element={
@@ -43,6 +62,33 @@ function App() {
                       <Route path="/*" element={<PublicRoutes />} />
                     </Routes>
                   </TenantGuard>
+                </HotelProvider>
+              } />
+
+              <Route path="/administration/*" element={
+                <HotelProvider>
+                  <AuthGuard adminRequired={true}>
+                    <React.Suspense fallback={
+                      <div className="h-screen w-full flex items-center justify-center bg-background">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      </div>
+                    }>
+                      <AdminRoleGuard allowedRoles={['super_admin']}>
+                        <AdminLayout>
+                          <Routes>
+                            <Route path="super/dashboard" element={<SuperDashboard />} />
+                            <Route path="super/hotels" element={<HotelsManager />} />
+                            <Route path="super/users" element={<StaffManager />} />
+                            <Route path="super/ai" element={<SuperAIInfrastructure />} />
+                            <Route path="super/notifications" element={<NotificationCentre />} />
+                            <Route path="super/settings" element={<HotelsManager />} />
+                            <Route path="super/destinations" element={<HotelsManager />} />
+                            <Route path="*" element={<Navigate to="super/dashboard" replace />} />
+                          </Routes>
+                        </AdminLayout>
+                      </AdminRoleGuard>
+                    </React.Suspense>
+                  </AuthGuard>
                 </HotelProvider>
               } />
 

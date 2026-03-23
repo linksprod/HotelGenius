@@ -61,12 +61,14 @@ import {
   UserCog,
   Building2,
   ImageIcon,
+  Bell,
 } from 'lucide-react';
 import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import AdminProfileDialog from './AdminProfileDialog';
 
 interface NavItem {
   title: string;
@@ -87,6 +89,14 @@ const navigationSections: NavSection[] = [
     label: 'Overview',
     items: [
       { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
+      { title: 'Notifications', url: '/admin/notifications', icon: Bell, notificationKey: 'general' },
+    ],
+    defaultOpen: true,
+  },
+  {
+    label: 'Agent',
+    items: [
+      { title: 'AI Concierge', url: '/admin/agent/concierge', icon: Sparkles },
     ],
     defaultOpen: true,
   },
@@ -151,6 +161,34 @@ const navigationSections: NavSection[] = [
   },
 ];
 
+const globalNavigationSections: NavSection[] = [
+  {
+    label: 'Platform Control',
+    items: [
+      { title: 'Global Insights', url: '/administration/super/dashboard', icon: Globe },
+      { title: 'Hotels Portfolio', url: '/administration/super/hotels', icon: Building2 },
+      { title: 'System Users', url: '/administration/super/users', icon: UserCog },
+    ],
+    defaultOpen: true,
+  },
+  {
+    label: 'Network Status',
+    items: [
+      { title: 'AI Infrastructure', url: '/administration/super/ai', icon: Sparkles },
+      { title: 'Global Notifications', url: '/administration/super/notifications', icon: Bell },
+    ],
+    defaultOpen: true,
+  },
+  {
+    label: 'System Settings',
+    items: [
+      { title: 'Platform Config', url: '/administration/super/settings', icon: Settings },
+      { title: 'Global Destinations', url: '/administration/super/destinations', icon: MapPin },
+    ],
+    defaultOpen: false,
+  },
+];
+
 const languages = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
@@ -182,9 +220,10 @@ export const AdminSidebar: React.FC = () => {
   const { i18n } = useTranslation();
   const isCollapsed = state === 'collapsed';
   const { counts } = useAdminNotifications();
-  const { role } = useUserRole();
+  const { role, isSuperAdmin } = useUserRole();
   const { resolvePath } = useHotelPath();
   const { hotel } = useHotel();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   // Role-based allowed paths
   const superAdminAllowedUrls = [
@@ -208,37 +247,42 @@ export const AdminSidebar: React.FC = () => {
     '/admin/restaurants',
   ];
 
+  const isGlobalContext = location.pathname.startsWith('/administration/super');
+
   const filteredSections = (() => {
-    // Super Admin should see Hotels
-    if (role === 'super_admin') {
-      return navigationSections; // Super admin sees everything for now, or specifically filtered
+    // If in Global Context, show only Super Admin sections
+    if (isGlobalContext && isSuperAdmin) {
+      return globalNavigationSections;
     }
 
-    // Hotel Admin (default 'admin' or new 'hotel_admin')
-    if (role === 'admin' || role === 'hotel_admin') {
-      return navigationSections.map(section => ({
-        ...section,
-        items: section.items.filter(item => item.title !== 'Hotels') // Hide Hotels manager from normal admins
-      })).filter(section => section.items.length > 0);
-    }
-
-    if (role === 'moderator') {
-      return navigationSections
-        .map((section) => ({
-          ...section,
-          items: section.items.filter((item) => moderatorAllowedUrls.includes(item.url)),
-        }))
-        .filter((section) => section.items.length > 0);
-    }
-    if (role === 'staff') {
-      return navigationSections
-        .map((section) => ({
-          ...section,
-          items: section.items.filter((item) => staffAllowedUrls.includes(item.url)),
-        }))
-        .filter((section) => section.items.length > 0);
-    }
-    return navigationSections;
+    // Otherwise, filter standard sections
+    return navigationSections
+      .filter(section => section.label !== 'Platform')
+      .map(section => {
+        if (section.label === 'Administration') {
+          return {
+            ...section,
+            items: section.items.filter(item => item.title !== 'Hotels')
+          };
+        }
+        
+        if (role === 'moderator') {
+          return {
+            ...section,
+            items: section.items.filter((item) => moderatorAllowedUrls.includes(item.url)),
+          };
+        }
+        
+        if (role === 'staff') {
+          return {
+            ...section,
+            items: section.items.filter((item) => staffAllowedUrls.includes(item.url)),
+          };
+        }
+        
+        return section;
+      })
+      .filter((section) => section.items.length > 0);
   })();
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
@@ -303,10 +347,10 @@ export const AdminSidebar: React.FC = () => {
         <div className="flex items-center gap-3">
           {/* Hotel logo or fallback icon */}
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary/80 shadow-sm">
-            {hotel?.logo_url ? (
+            {(hotel?.logo_url || hotel?.slug === 'demo') ? (
               <img
-                src={hotel.logo_url}
-                alt={hotel.name}
+                src={hotel?.slug === 'demo' ? 'https://hotelgenius.online/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png' : hotel?.logo_url}
+                alt={hotel?.name || "Hotel Logo"}
                 className="h-full w-full object-contain"
               />
             ) : (
@@ -315,10 +359,12 @@ export const AdminSidebar: React.FC = () => {
           </div>
           {!isCollapsed && (
             <div className="flex flex-1 flex-col overflow-hidden">
-              <span className="truncate text-sm font-semibold tracking-tight text-sidebar-foreground">
-                {hotel?.name || 'Admin Panel'}
+              <span className="truncate text-sm font-bold tracking-tight text-sidebar-foreground">
+                {hotel?.slug === 'demo' ? 'HotelDemo' : (hotel?.name || 'HotelGenius Platform')}
               </span>
-              <span className="text-[11px] text-muted-foreground">Hotel Management</span>
+              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-primary/70">
+                {hotel ? 'Hotel Management' : 'Global Control'}
+              </span>
             </div>
           )}
           <span id="admin-ob-notif-bell"><StaffNotificationBell /></span>
@@ -466,7 +512,11 @@ export const AdminSidebar: React.FC = () => {
         )}
 
         {/* User Profile */}
-        <div id="admin-ob-user-profile" className="flex items-center gap-2.5 rounded-lg p-2 hover:bg-sidebar-accent transition-colors">
+        <div 
+          id="admin-ob-user-profile" 
+          className="flex items-center gap-2.5 rounded-lg p-2 hover:bg-sidebar-accent transition-colors cursor-pointer group"
+          onClick={() => setProfileOpen(true)}
+        >
           <Avatar className="h-8 w-8 shrink-0">
             <AvatarImage src={userData?.profile_image || undefined} />
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
@@ -476,7 +526,7 @@ export const AdminSidebar: React.FC = () => {
           {!isCollapsed && (
             <>
               <div className="flex flex-1 flex-col overflow-hidden">
-                <span className="truncate text-sm font-medium text-sidebar-foreground leading-tight">
+                <span className="truncate text-sm font-medium text-sidebar-foreground leading-tight group-hover:text-primary transition-colors">
                   {userName}
                 </span>
                 <span className="truncate text-[11px] text-muted-foreground leading-tight">
@@ -488,7 +538,10 @@ export const AdminSidebar: React.FC = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={handleLogout}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLogout();
+                    }}
                     className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   >
                     <LogOut className="h-3.5 w-3.5" />
@@ -499,6 +552,7 @@ export const AdminSidebar: React.FC = () => {
             </>
           )}
         </div>
+        <AdminProfileDialog open={profileOpen} onOpenChange={setProfileOpen} />
       </SidebarFooter>
     </Sidebar>
   );

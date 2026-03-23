@@ -145,8 +145,20 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
 
         computePosition();
         window.addEventListener('resize', computePosition);
-        return () => window.removeEventListener('resize', computePosition);
-    }, [isActive, currentStep, currentStepIndex]);
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                onNext();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('resize', computePosition);
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isActive, currentStep, currentStepIndex, onNext]);
 
     if (!isActive || !currentStep) return null;
 
@@ -181,7 +193,6 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
                 {/* Spotlight: transparent box with box-shadow that darkens everything around it */}
                 {spotlight && (
                     <motion.div
-                        key={`spotlight-${currentStepIndex}`}
                         initial={{ opacity: 0 }}
                         animate={{
                             opacity: 1,
@@ -190,7 +201,7 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
                             width: spotlight.width,
                             height: spotlight.height,
                         }}
-                        transition={{ duration: 0.35, ease: 'easeOut' }}
+                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                         className="absolute"
                         style={{
                             boxShadow: '0 0 0 9999px rgba(0,0,0,0.55)',
@@ -208,11 +219,16 @@ const AdminOnboardingOverlay: React.FC<AdminOnboardingOverlayProps> = ({
 
                 {/* Tooltip card */}
                 <motion.div
-                    key={`tooltip-${currentStepIndex}`}
                     initial={{ opacity: 0, y: tooltipPos.placement === 'bottom' ? -10 : 10, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    animate={{ 
+                        opacity: 1, 
+                        y: 0, 
+                        scale: 1,
+                        top: tooltipPos.top,
+                        left: tooltipPos.left,
+                    }}
                     exit={{ opacity: 0, y: tooltipPos.placement === 'bottom' ? -10 : 10 }}
-                    transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
                     className="absolute w-[340px]"
                     style={{
                         top: tooltipPos.top,

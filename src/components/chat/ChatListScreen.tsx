@@ -21,7 +21,7 @@ export const ChatListScreen: React.FC<ChatListScreenProps> = ({
       <div className="bg-muted/30 border border-border/50 rounded-2xl px-8 py-10 mb-8 shadow-sm">
         <h1 className="text-3xl font-bold text-foreground">Messages</h1>
         <p className="text-muted-foreground mt-2 text-lg">
-          Connect with our team or AI assistant
+          Connect with our team or Aura AI
         </p>
       </div>
 
@@ -65,7 +65,7 @@ export const ChatListScreen: React.FC<ChatListScreenProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-xl text-foreground">AI Assistant</h3>
+              <h3 className="font-bold text-xl text-foreground">Aura AI</h3>
               <p className="text-muted-foreground mt-1">
                 Instant AI help, can escalate to staff
               </p>

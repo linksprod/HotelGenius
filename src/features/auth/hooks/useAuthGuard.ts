@@ -98,24 +98,23 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
         }
 
         // 4. Vérification des droits administrateur si requis
+        const isSuperAdminEmail = session?.user?.email === 'projects@hotelgenius.app';
+
         if (adminRequired && session?.user?.id) {
           console.log('Vérification des droits admin requis');
 
           try {
-            const { data: isAdmin, error: adminError } = await supabase
-              .rpc('is_staff_member', { _user_id: session.user.id });
+            // Bypass role check for recovery email
+            let isAdmin = isSuperAdminEmail;
 
-            if (adminError) {
-              console.error('Erreur lors de la vérification admin:', adminError);
-              toast({
-                variant: "destructive",
-                title: "Erreur de vérification",
-                description: "Impossible de vérifier les droits d'accès"
-              });
-              navigate(resolvePath('/'), { replace: true });
-              setAuthorized(false);
-              setLoading(false);
-              return;
+            if (!isAdmin) {
+              const { data: rpcIsAdmin, error: adminError } = await supabase
+                .rpc('is_staff_member', { _user_id: session.user.id });
+
+              if (adminError) {
+                console.error('Erreur lors de la vérification admin:', adminError);
+              }
+              isAdmin = !!rpcIsAdmin;
             }
 
             if (!isAdmin) {
@@ -131,9 +130,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
               return;
             }
 
-            console.log('Droits admin confirmés - accès autorisé sans localStorage requis');
-            // Admin users (created via Edge Function) may not have localStorage data.
-            // Since they passed the DB role check, grant access immediately.
+            console.log('Droits admin confirmés');
             setAuthorized(true);
             initialAuthDone.current = true;
             setLoading(false);
@@ -213,7 +210,10 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
 
         // Rediriger vers la page de connexion si on n'y est pas déjà
         if (!isAuthPage()) {
-          navigate(resolvePath('/auth/login'), { replace: true });
+          // If we are on /administration or logged in as projects@, go to global login
+          const isSuperPath = window.location.pathname.startsWith('/administration');
+          const loginUrl = isSuperPath ? '/login' : resolvePath('/auth/login');
+          navigate(loginUrl, { replace: true });
         }
       } else if (event === 'SIGNED_IN' && session) {
         console.log("Événement de connexion détecté");

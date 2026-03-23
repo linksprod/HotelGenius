@@ -93,7 +93,9 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                       System Message
                     </div>
                   )}
-                  <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">{message.content}</p>
+                  <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">
+                    {message.content.replace(/<[^>]*?DSML[\s\S]*?\/[^>]*?DSML[^>]*?>/gi, '').trim() || (message.sender_type === 'ai' ? 'Action performed...' : '')}
+                  </p>
                 </div>
 
                 <div className={`flex items-center gap-2 mt-1.5 px-1 ${isCurrentUser(message.sender_type) ? 'justify-end' : 'justify-start'}`}>

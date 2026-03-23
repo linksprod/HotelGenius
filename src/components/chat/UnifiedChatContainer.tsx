@@ -3,6 +3,7 @@ import { UnifiedChatHeader } from './UnifiedChatHeader';
 import { UnifiedMessagesList } from './UnifiedMessagesList';
 import { UnifiedChatInput } from './UnifiedChatInput';
 import { useUnifiedChat } from '@/hooks/useUnifiedChat';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 interface UnifiedChatContainerProps {
   userInfo: {
@@ -25,6 +26,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   conversationId,
   onGoBack
 }) => {
+  const { hotelId } = useCurrentHotelId();
+  
   const {
     conversation,
     messages,
@@ -38,7 +41,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     takeOverConversation,
     messagesEndRef,
     inputRef
-  } = useUnifiedChat({ userInfo, isAdmin, conversationType, conversationId });
+  } = useUnifiedChat({ userInfo, isAdmin, conversationType, conversationId, hotelId });
 
   if (isLoading) {
     return (

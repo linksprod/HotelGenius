@@ -5,7 +5,7 @@ import { UnifiedChatContainer } from '@/components/chat/UnifiedChatContainer';
 import { AdminChatDashboard } from '@/components/admin/chat/AdminChatDashboard';
 import { ChatListScreen } from '@/components/chat/ChatListScreen';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import { useMessageBadge } from '@/hooks/useMessageBadge';
 import Layout from '@/components/Layout';
 
@@ -38,62 +38,87 @@ const Messages = () => {
   }, [isAdmin, isLoading, markAsSeen]);
 
   useEffect(() => {
+    let isMounted = true;
+    
     const checkUserAndRole = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        console.log('[Messages] Initializing chat session...');
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError) throw authError;
 
-        // Check if user is admin (we still want to know this for other logic, but we won't show the dashboard here)
-        const { data: adminCheck } = await supabase.rpc('is_admin', { user_id: user.id });
-        setIsAdmin(adminCheck || false);
+        if (!user) {
+          console.warn('[Messages] No active session found, redirecting to login');
+          if (isMounted) {
+            const currentSlug = location.pathname.split('/')[1];
+            navigate(`/${currentSlug}/auth/login?redirect=${encodeURIComponent(location.pathname)}`);
+          }
+          return;
+        }
+
+        console.log('[Messages] User authenticated:', user.id);
+
+        // Check if user is admin
+        const { data: adminCheck, error: rpcError } = await supabase.rpc('is_admin', { user_id: user.id });
+        if (isMounted) setIsAdmin(!!adminCheck);
 
         if (!adminCheck) {
-          // Get guest info for regular users
-          const { data: guestData } = await supabase
+          console.log('[Messages] User is guest, fetching profile...');
+          const { data: guestData, error: guestError } = await supabase
             .from('guests')
             .select('first_name, last_name, email, room_number')
             .eq('user_id', user.id)
-            .single();
+            .maybeSingle();
 
-          if (guestData) {
+          if (isMounted) {
+            if (guestData) {
+              setUserInfo({
+                name: `${guestData.first_name} ${guestData.last_name}`,
+                email: guestData.email || user.email,
+                roomNumber: guestData.room_number || undefined
+              });
+            } else {
+              setUserInfo({
+                name: user.email?.split('@')[0] || 'Guest',
+                email: user.email || undefined
+              });
+            }
+          }
+        } else {
+          console.log('[Messages] User is admin');
+          if (isMounted) {
             setUserInfo({
-              name: `${guestData.first_name} ${guestData.last_name}`,
-              email: guestData.email || user.email,
-              roomNumber: guestData.room_number || undefined
-            });
-          } else {
-            // Fallback for users without guest record
-            setUserInfo({
-              name: user.email?.split('@')[0] || 'Guest',
+              name: 'Admin',
               email: user.email || undefined
             });
           }
-        } else {
-          // Admin fallback info
-          setUserInfo({
-            name: 'Admin',
-            email: user.email || undefined
-          });
         }
       } catch (error) {
-        console.error('Error checking user role:', error);
-        setUserInfo({
-          name: 'Guest'
-        });
+        console.error('[Messages] Critical error in session initialization:', error);
+        if (isMounted) {
+          setUserInfo({
+            name: 'Guest'
+          });
+        }
       } finally {
-        setIsLoading(false);
+        console.log('[Messages] Initialization complete');
+        if (isMounted) setIsLoading(false);
       }
     };
 
     checkUserAndRole();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate, location.pathname]);
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
+      <div className="fixed inset-0 bg-background flex items-center justify-center z-50">
         <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <div className="h-12 w-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto"></div>
+          <p className="text-muted-foreground font-medium animate-pulse">Initializing Neural Secure Chat...</p>
         </div>
       </div>
     );
@@ -101,11 +126,20 @@ const Messages = () => {
 
   if (!userInfo) {
     return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p className="text-muted-foreground">Unable to load user information</p>
+      <Layout>
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center p-6">
+          <div className="bg-muted rounded-full p-6 mb-6">
+            <User className="h-12 w-12 text-muted-foreground" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Session Required</h2>
+          <p className="text-muted-foreground mb-8 max-w-md">
+            Please log in to your account to access your personal messaging dashboard and stay in touch with our team.
+          </p>
+          <Button onClick={() => navigate(`/${location.pathname.split('/')[1]}/auth/login`)}>
+            Go to Login
+          </Button>
         </div>
-      </div>
+      </Layout>
     );
   }
 
