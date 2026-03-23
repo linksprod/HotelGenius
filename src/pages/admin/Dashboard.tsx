@@ -25,6 +25,7 @@ import AILiveIntelligence from '@/components/admin/AILiveIntelligence';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion } from 'framer-motion';
 import CountUp from '@/components/admin/CountUp';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,10 +52,22 @@ const itemVariants = {
 
 const AdminDashboard = () => {
   const { data: stats, isLoading, error } = useAdminDashboardStats();
-  const [showLanding, setShowLanding] = React.useState(true);
+  const isMobile = useIsMobile();
+  const [showLanding, setShowLanding] = React.useState(false); // Default to false
+
+  // Only show landing on desktop and only if it hasn't been shown in this session
+  React.useEffect(() => {
+    if (!isMobile) {
+      const hasShown = sessionStorage.getItem('admin_landing_shown');
+      if (!hasShown) {
+        setShowLanding(true);
+      }
+    }
+  }, [isMobile]);
 
   const handleLandingComplete = () => {
     setShowLanding(false);
+    sessionStorage.setItem('admin_landing_shown', 'true');
   };
 
   // Sample data for charts - in production, this would come from the API
