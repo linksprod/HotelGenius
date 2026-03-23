@@ -23,9 +23,21 @@ const PWAInstallBanner: React.FC = () => {
         dismiss,
     } = usePWAInstall();
 
+    const isIOSDevice = isIOS || isSafari;
+
+    // Check for force-show URL parameter
+    const searchParams = new URLSearchParams(window.location.search);
+    const forceShow = searchParams.get('pwa') === 'show' || searchParams.get('show_pwa') === '1';
+
+    // Check if we are in an in-app browser (like WhatsApp, Instagram, FB)
+    const isInAppBrowser = isIOSDevice && (
+        /FBAV|Instagram|FBAN|Messenger|Line|Signal|WhatsApp|Twitter|DuckDuckGo/i.test(navigator.userAgent) ||
+        (isSafari && !/Version\/[\d\.]+.*Safari/i.test(navigator.userAgent))
+    );
+
     const [installing, setInstalling] = useState(false);
 
-    if (!shouldShow) return null;
+    if (!shouldShow && !forceShow) return null;
 
     const handleInstallClick = async () => {
         if (canShowNativePrompt) {
@@ -38,7 +50,7 @@ const PWAInstallBanner: React.FC = () => {
     };
 
     const needsManualInstructions = !canShowNativePrompt;
-    const isIOSDevice = isIOS || isSafari;
+    // const isIOSDevice = isIOS || isSafari; // This line is now redundant and removed.
 
     return (
         <AnimatePresence>
@@ -61,13 +73,18 @@ const PWAInstallBanner: React.FC = () => {
                                 <Smartphone className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-foreground text-sm">Install Hotel Genius</p>
+                                <p className="font-semibold text-foreground text-sm flex items-center gap-2">
+                                    Install Hotel Genius
+                                    {forceShow && <span className="bg-amber-500/20 text-amber-600 text-[10px] px-1.5 rounded-full border border-amber-500/20">Debug Mode</span>}
+                                </p>
                                 <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
-                                    {isIOSDevice
-                                        ? 'Add to your Home Screen for the best app experience'
-                                        : isFirefox
-                                            ? 'Add to your Home Screen from the browser menu'
-                                            : 'Get instant access — works offline too'}
+                                    {isInAppBrowser
+                                        ? 'Please open in Safari to add to your Home Screen'
+                                        : isIOSDevice
+                                            ? 'Add to your Home Screen for the best app experience'
+                                            : isFirefox
+                                                ? 'Add to your Home Screen from the browser menu'
+                                                : 'Get instant access — works offline too'}
                                 </p>
                             </div>
                             <button
@@ -91,8 +108,20 @@ const PWAInstallBanner: React.FC = () => {
                             </button>
                         )}
 
+                        {/* ── iOS In-App Browser (WhatsApp, Instagram, etc) ── */}
+                        {isInAppBrowser && (
+                            <div className="mt-1 space-y-2">
+                                <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-900/10 rounded-xl px-3 py-2.5 border border-amber-200/50 dark:border-amber-500/20">
+                                    <div className="h-6 w-6 rounded-full bg-amber-500 text-white flex items-center justify-center shrink-0 text-xs font-bold">!</div>
+                                    <div className="text-sm text-amber-800 dark:text-amber-200 leading-tight">
+                                        Tap <strong>...</strong> or the <strong>Compass icon</strong> and select <strong>&quot;Open in Safari&quot;</strong> first.
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* ── iOS Safari: Visual inline instructions ── */}
-                        {isIOSDevice && (
+                        {isIOSDevice && !isInAppBrowser && (
                             <div className="mt-1 space-y-2">
                                 {/* Step 1 */}
                                 <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
