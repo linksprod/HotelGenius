@@ -40,9 +40,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       <AdminSidebar />
       <SidebarInset className="min-h-svh flex flex-col bg-background">
         {/* Mobile Header - Elevated z-index to stay above the landing animation if active */}
-        <header className="sticky top-0 z-[110] flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background border-b border-border shadow-sm">
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background border-b border-border shadow-sm">
           <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1 text-foreground bg-primary/5 hover:bg-primary/10 transition-colors" />
+            <SidebarTrigger className="-ml-1 text-foreground hover:bg-muted" />
             <div className="h-4 w-px bg-border mx-1" />
             <span className="text-sm font-semibold tracking-tight">
               {sectionId === 'dashboard' ? 'Dashboard' : sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}
