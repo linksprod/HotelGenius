@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
-import { Download, X, MoreVertical, ExternalLink, Copy, Check } from 'lucide-react';
+import { Download, X, ExternalLink, Copy, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Drawer,
@@ -35,16 +35,11 @@ const PWAInstallBanner: React.FC = () => {
     } = usePWAInstall();
 
     const isIOSDevice = isIOS || isSafari;
+    const isIOSInSafari = isIOSDevice && isSafari;
 
     // Check for force-show URL parameter
     const searchParams = new URLSearchParams(window.location.search);
     const forceShow = searchParams.get('pwa') === 'show' || searchParams.get('show_pwa') === '1';
-
-    // Check if we are in an in-app browser (like WhatsApp, Instagram, FB)
-    const isInAppBrowser = isIOSDevice && (
-        /FBAV|Instagram|FBAN|Messenger|Line|Signal|WhatsApp|Twitter|DuckDuckGo/i.test(navigator.userAgent) ||
-        (isSafari && !/Version\/[\d\.]+.*Safari/i.test(navigator.userAgent))
-    );
 
     const [installing, setInstalling] = useState(false);
     const [isInstructionOpen, setIsInstructionOpen] = useState(false);
@@ -76,36 +71,51 @@ const PWAInstallBanner: React.FC = () => {
                     <motion.div
                         key="pwa-pill"
                         initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        animate={{
+                            opacity: 1,
+                            y: 0,
+                            scale: 1,
+                            transition: {
+                                type: "spring",
+                                stiffness: 260,
+                                damping: 20
+                            }
+                        }}
                         exit={{ opacity: 0, y: 50, scale: 0.9 }}
                         whileTap={{ scale: 0.95 }}
                         className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[9000] w-auto whitespace-nowrap"
                     >
-                        <button
-                            onClick={handleInstallClick}
-                            className="flex items-center gap-2.5 bg-primary/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full shadow-lg border border-white/10 font-semibold text-sm transition-all hover:bg-primary active:scale-[0.98]"
+                        {/* Subtle bounce animation for visibility */}
+                        <motion.div
+                            animate={{ y: [0, -4, 0] }}
+                            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
                         >
-                            <Download className="h-4 w-4" />
-                            {isIOSDevice ? t('pwa.tapToInstall') : t('pwa.installButton')}
-
-                            <div className="w-px h-4 bg-white/20 mx-0.5" />
-
-                            <div
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    dismiss();
-                                }}
-                                className="p-1 -mr-1 hover:bg-white/10 rounded-full transition-colors"
+                            <button
+                                onClick={handleInstallClick}
+                                className="flex items-center gap-2.5 bg-primary/95 backdrop-blur-md text-white px-5 py-2.5 rounded-full shadow-lg border border-white/10 font-semibold text-sm transition-all hover:bg-primary active:scale-[0.98]"
                             >
-                                <X className="h-3.5 w-3.5" />
-                            </div>
-                        </button>
+                                <Download className="h-4 w-4" />
+                                {isIOSInSafari ? t('pwa.iosPillText') : (isIOSDevice ? t('pwa.tapToInstall') : t('pwa.installButton'))}
+
+                                <div className="w-px h-4 bg-white/20 mx-0.5" />
+
+                                <div
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        dismiss();
+                                    }}
+                                    className="p-1 -mr-1 hover:bg-white/10 rounded-full transition-colors"
+                                >
+                                    <X className="h-3.5 w-3.5" />
+                                </div>
+                            </button>
+                        </motion.div>
                     </motion.div>
                 )}
             </AnimatePresence>
 
             <Drawer open={isInstructionOpen} onOpenChange={setIsInstructionOpen}>
-                <DrawerContent className="max-h-[90vh] z-[9001] outline-none">
+                <DrawerContent className="max-h-[85vh] z-[9001] outline-none">
                     <div className="mx-auto w-full max-w-sm px-4 focus-visible:outline-none">
                         <DrawerHeader className="pb-2">
                             <div className="flex justify-center mb-4">
@@ -120,12 +130,17 @@ const PWAInstallBanner: React.FC = () => {
                             <DrawerTitle className="text-xl text-center">
                                 {isIOSDevice ? t('pwa.addToHomeTitle') : t('pwa.installTitle')}
                             </DrawerTitle>
-                            <DrawerDescription className="text-center mt-1">
-                                {t('pwa.installSubtitle')}
+                            <DrawerDescription className="text-center mt-1 flex flex-col gap-1">
+                                <span>{t('pwa.installSubtitle')}</span>
+                                {isIOSInSafari && (
+                                    <span className="text-amber-600 dark:text-amber-400 font-medium text-xs">
+                                        {t('pwa.iosSetupSubtitle')}
+                                    </span>
+                                )}
                             </DrawerDescription>
                         </DrawerHeader>
 
-                        <div className="p-4 pt-1 space-y-4 overflow-y-auto max-h-[50vh]">
+                        <div className="p-4 pt-1 space-y-4 overflow-y-auto max-h-[45vh]">
                             {/* ── iOS but NOT Safari: "Open in Safari" Call to Action ── */}
                             {isIOSDevice && !isSafari && (
                                 <div className="space-y-4 py-2">
@@ -161,38 +176,37 @@ const PWAInstallBanner: React.FC = () => {
                             )}
 
                             {/* ── iOS Safari: Visual instructions ── */}
-                            {isIOSDevice && isSafari && (
+                            {isIOSInSafari && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
                                     {/* Step 1 */}
                                     <div className="flex items-center gap-4 bg-muted/40 rounded-2xl p-3 border border-border/50">
                                         <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-bold shadow-sm">1</div>
-                                        <div className="flex flex-wrap items-center gap-2 text-sm text-foreground">
+                                        <div className="flex items-center gap-2 text-sm text-foreground">
                                             <span>{t('pwa.iosStep1')}</span>
-                                            <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-1 font-medium text-xs shadow-sm">
+                                            <span className="inline-flex items-center justify-center h-8 w-8 bg-blue-500/10 text-blue-600 rounded-lg shadow-sm border border-blue-200">
                                                 <IOSShareIcon />
-                                                {t('pwa.iosShareLabel')}
                                             </span>
-                                            <span className="text-muted-foreground text-xs italic">{t('pwa.iosStep1Detail')}</span>
+                                            <span className="text-muted-foreground text-xs">{t('pwa.iosStep1Detail')}</span>
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-center -my-2 opacity-30">
-                                        <motion.div animate={{ y: [0, 3, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>↓</motion.div>
+                                    <div className="flex justify-center -my-2 opacity-30 text-muted-foreground">
+                                        <ChevronRight className="rotate-90 h-4 w-4" />
                                     </div>
 
                                     {/* Step 2 */}
                                     <div className="flex items-center gap-4 bg-muted/40 rounded-2xl p-3 border border-border/50">
                                         <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-bold shadow-sm">2</div>
-                                        <div className="flex flex-wrap items-center gap-2 text-sm text-foreground">
+                                        <div className="flex items-center gap-2 text-sm text-foreground">
                                             <span>{t('pwa.iosStep2')}</span>
-                                            <span className="inline-flex items-center gap-1 bg-background border border-border rounded-lg px-2 py-1 font-medium text-xs shadow-sm text-foreground">
+                                            <span className="bg-background border border-border rounded px-2 py-0.5 font-medium text-xs shadow-sm">
                                                 {t('pwa.iosAddLabel')}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="flex justify-center -my-2 opacity-30">
-                                        <motion.div animate={{ y: [0, 3, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.2 }}>↓</motion.div>
+                                    <div className="flex justify-center -my-2 opacity-30 text-muted-foreground">
+                                        <ChevronRight className="rotate-90 h-4 w-4" />
                                     </div>
 
                                     {/* Step 3 */}
@@ -200,43 +214,50 @@ const PWAInstallBanner: React.FC = () => {
                                         <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 font-bold shadow-sm">3</div>
                                         <div className="flex items-center gap-2 text-sm text-foreground">
                                             <span>{t('pwa.iosStep3')}</span>
-                                            <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-1 font-medium text-xs shadow-sm">
-                                                {t('pwa.iosConfirmLabel')}
-                                            </span>
+                                            <span className="text-blue-600 font-bold px-1">{t('pwa.iosConfirmLabel')}</span>
                                             <span className="text-muted-foreground text-xs">{t('pwa.iosStep3Detail')}</span>
                                         </div>
                                     </div>
 
                                     <motion.div
                                         animate={{ y: [0, 5, 0] }}
-                                        transition={{ repeat: Infinity, duration: 1.2 }}
-                                        className="flex flex-col items-center pt-2"
+                                        transition={{ repeat: Infinity, duration: 1.5 }}
+                                        className="flex flex-col items-center pt-2 bg-primary/5 rounded-xl p-3 border border-dashed border-primary/20"
                                     >
-                                        <span className="text-xs text-muted-foreground mb-1">{t('pwa.iosPointingLabel')}</span>
-                                        <div className="text-primary text-xl">↓</div>
+                                        <span className="text-xs font-semibold text-primary mb-1 uppercase tracking-wider">
+                                            {t('pwa.iosPointingLabel')}
+                                        </span>
+                                        <div className="text-primary text-2xl font-bold">↓</div>
                                     </motion.div>
                                 </div>
                             )}
 
-                            {/* ── Chrome/Edge: already handled by button, but show if drawer accidentally opens ── */}
+                            {/* ── Chrome/Android: Native prompt logic ── */}
                             {canShowNativePrompt && (
-                                <button
-                                    onClick={handleInstallClick}
-                                    disabled={installing}
-                                    className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground text-sm font-semibold py-3 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-70"
-                                >
-                                    <Download className="h-4 w-4" />
-                                    {installing ? t('pwa.installing') : t('pwa.installButton')}
-                                </button>
+                                <div className="py-4">
+                                    <button
+                                        onClick={handleInstallClick}
+                                        disabled={installing}
+                                        className="w-full flex items-center justify-center gap-3 bg-primary text-primary-foreground text-base font-bold py-4 rounded-xl shadow-lg hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-70"
+                                    >
+                                        <Download className="h-5 w-5" />
+                                        {installing ? t('pwa.installing') : t('pwa.installButton')}
+                                    </button>
+                                </div>
                             )}
                         </div>
 
                         <DrawerFooter className="pt-2 border-t mt-auto mb-4">
                             <DrawerClose asChild>
-                                <button className="w-full py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                                <button className="w-full py-3.5 bg-muted/50 rounded-xl text-sm font-bold text-foreground hover:bg-muted transition-colors">
                                     {t('common.close')}
                                 </button>
                             </DrawerClose>
+                            {isIOSInSafari && (
+                                <p className="text-[10px] text-center text-muted-foreground mt-2 px-6">
+                                    Close this guide to access the buttons at the bottom of your browser.
+                                </p>
+                            )}
                         </DrawerFooter>
                     </div>
                 </DrawerContent>

@@ -633,7 +633,7 @@
     }
   },
   "pwa": {
-    "installTitle": "Install Hotel Genius",
+    "installTitle": "Install App",
     "addToHomeTitle": "Add to Home Screen",
     "installSubtitle": "Get instant access — works offline too",
     "iosSubtitle": "Add to your Home Screen for the best app experience",
@@ -642,20 +642,22 @@
     "installButton": "Install App",
     "installing": "Installing...",
     "debugMode": "Debug Mode",
-    "iosStep1": "Tap",
-    "iosStep1Detail": "(bottom of Safari)",
-    "iosStep2": "Tap",
+    "iosStep1": "Tap the",
+    "iosStep1Detail": "button at the bottom",
+    "iosStep2": "Scroll down and tap",
     "iosStep3": "Tap",
-    "iosStep3Detail": "— Done! ✓",
+    "iosStep3Detail": "in the top-right",
     "iosShareLabel": "Share",
-    "iosAddLabel": "＋ Add to Home Screen",
+    "iosAddLabel": "Add to Home Screen",
     "iosConfirmLabel": "Add",
-    "iosPointingLabel": "Share button is here ↓",
-    "inAppWarning": "Tap ... or the Compass icon and select \"Open in Safari\" first.",
+    "iosPointingLabel": "Share button is here",
+    "inAppWarning": "<strong>Note:</strong> Some apps (WhatsApp/Instagram) block installation. If you don't see the option, open this link in Safari.",
     "openInSafari": "Open in Safari",
     "copyLink": "Copy Link",
     "linkCopied": "Link copied!",
     "safariRecommended": "Safari is recommended for the best experience on iOS.",
-    "tapToInstall": "Tap to Install"
+    "tapToInstall": "Tap to Install",
+    "iosPillText": "Add to Home Screen",
+    "iosSetupSubtitle": "iPhone requires a quick manual setup (2s)"
   }
 }
