@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { NavLink } from '@/components/NavLink';
@@ -37,6 +37,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  TooltipProvider,
 } from '@/components/ui/tooltip';
 import {
   LayoutDashboard,
@@ -62,6 +63,7 @@ import {
   Building2,
   ImageIcon,
   Bell,
+  Home,
 } from 'lucide-react';
 import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
 import { ThemeToggle } from '../ThemeToggle';
@@ -483,6 +485,28 @@ export const AdminSidebar: React.FC = () => {
         {!isCollapsed && (
           <div className="flex items-center gap-2 mb-2">
             <ThemeToggle />
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    asChild
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  >
+                    <Link to={hotel?.slug ? (hotel.slug === 'demo' ? '/demo' : `/${hotel.slug}`) : '/'}>
+                      <Home className="h-4 w-4" />
+                      <span className="sr-only">View Public Site</span>
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">
+                  View Public Site
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
             <div className="h-4 w-px bg-border/40 mx-1" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
