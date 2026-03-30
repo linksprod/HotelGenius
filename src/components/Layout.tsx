@@ -49,26 +49,18 @@ const Layout = ({
               <MainMenu />
             </div>
 
-            {/* Center section - Logo */}
+            {/* Center section - Official Logo */}
             <div id="main-header-logo" className="flex justify-center items-center flex-1">
               <Link 
                 to={homeLink} 
-                className="main-header-logo hover:opacity-80 transition-opacity flex items-center justify-center"
+                className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center hover:opacity-80 transition-opacity"
               >
-                {hotel?.logo_url ? (
-                  <img
-                    src={hotel.logo_url}
-                    alt={hotel.name}
-                    className={cn("object-contain dark:brightness-0 dark:invert", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
-                  />
-                ) : (
-                  <span className={cn(
-                    "font-qurova font-bold tracking-tight text-foreground transition-colors",
-                    isMobile ? "text-xl" : "text-2xl"
-                  )}>
-                    {hotel?.name || "HotelGenius"}
-                  </span>
-                )}
+                <span className={cn(
+                  "font-qurova font-bold tracking-tight text-foreground transition-colors",
+                  isMobile ? "text-xl" : "text-2xl"
+                )}>
+                  HotelGenius
+                </span>
               </Link>
             </div>
 
