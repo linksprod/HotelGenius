@@ -29,9 +29,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
   const { resolvePath } = useHotelPath();
   const { theme } = useTheme();
 
-  const menuIconSrc = theme === 'dark'
-    ? menuIconWhite
-    : '/lovable-uploads/e2223a53-3149-4a08-a3f3-2bb8d3db515f.png';
+  const menuIconSrc = menuIconWhite;
 
   console.log('Current path in MainMenu:', location.pathname);
 
@@ -62,26 +60,24 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
         <Button
           id="onboarding-menu"
           variant="ghost"
-          size="icon"
-          className={cn("relative p-2 rounded-full hover:bg-accent/20", buttonClassName)}
+          size="sm"
+          className={cn("relative flex items-center justify-center p-2 rounded-full hover:bg-accent/20 h-10 w-10 group", buttonClassName)}
         >
-          <img
-            src={menuIconSrc}
-            alt="Menu"
-            className="h-6 w-6 object-contain"
-          />
-          <span className="absolute top-0 right-0 h-2 w-2 bg-primary rounded-full" />
+          {menuIconSrc && (
+            <img src={menuIconSrc} alt="Menu" className="w-6 h-6 object-contain" />
+          )}
+          <span className="absolute top-1 right-1 h-2 w-2 bg-primary rounded-full border-2 border-card shadow-sm" />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-80 sm:max-w-sm bg-card border-border">
         <div className="flex flex-col bg-card">
           <SheetHeader className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-b border-border">
             <div className="flex items-center gap-3">
-              <img
-                src={menuIconSrc}
-                alt="Logo"
-                className="h-8 w-8 object-contain"
-              />
+              <div className="flex items-center gap-1">
+                <span className="text-2xl font-qurova font-bold text-sidebar-foreground">
+                  Hotel<span className="text-primary italic">Genius</span>
+                </span>
+              </div>
               <SheetTitle className="text-2xl text-card-foreground font-semibold">{t('nav.services')}</SheetTitle>
             </div>
           </SheetHeader>

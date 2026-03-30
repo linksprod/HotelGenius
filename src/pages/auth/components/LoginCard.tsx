@@ -19,28 +19,15 @@ const LoginCard: React.FC = () => {
     >
       {/* ── Header: Logo + Brand ── */}
       <div className="text-center mb-8">
-        {/* Hotel logo or HG initials fallback */}
-        <div className="flex justify-center mb-4">
-          <div className="relative">
-            <div className="h-16 w-16 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-              {hotel?.logo_url ? (
-                <img
-                  src={hotel.logo_url}
-                  alt={hotel.name || 'Hotel Genius'}
-                  className="h-10 w-10 object-contain"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                />
-              ) : (
-                <Hotel className="h-8 w-8 text-primary-foreground" />
-              )}
-            </div>
-            {/* Green dot badge */}
-            <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-green-500 border-2 border-background" />
-          </div>
-        </div>
 
         <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          {hotel?.name || 'Hotel Genius'}
+          {(!hotel || hotel?.slug === 'demo') ? (
+            <span className="font-qurova">
+              HotelGenius
+            </span>
+          ) : (
+            hotel.name
+          )}
         </h1>
         <p className="text-muted-foreground text-sm mt-1.5">
           {activeTab === 'login'

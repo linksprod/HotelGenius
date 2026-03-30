@@ -147,12 +147,10 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   }
 
   // Service requests by category
-  const { data: serviceRequests } = await withHotel(
-    supabase
-      .from('service_requests')
-      .select('category_id, created_at')
-      .eq('status', 'pending')
-  );
+  const { data: serviceRequests } = await supabase
+    .from('service_requests')
+    .select('category_id, created_at')
+    .eq('status', 'pending');
 
   if (serviceRequests) {
     for (const req of serviceRequests) {

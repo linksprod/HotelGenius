@@ -49,29 +49,18 @@ const Layout = ({
               <MainMenu />
             </div>
 
-            {/* Center section - Logo */}
-            <div className="flex justify-center items-center flex-1">
-              <Link to={homeLink} className="hover:opacity-80 transition-opacity">
-                {hotel?.logo_url ? (
-                  <img
-                    src={hotel.logo_url}
-                    alt={hotel.name}
-                    className={cn("object-contain", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
-                  />
-                ) : hotel?.name ? (
-                  <span className={cn(
-                    "font-semibold tracking-tight text-foreground",
-                    isMobile ? "text-lg" : "text-2xl"
-                  )}>
-                    {hotel.name}
-                  </span>
-                ) : (
-                  <img
-                    src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
-                    alt="Hotel Genius"
-                    className={cn("filter brightness-110 dark:brightness-0 dark:invert object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
-                  />
-                )}
+            {/* Center section - Official Logo */}
+            <div id="main-header-logo" className="flex justify-center items-center flex-1">
+              <Link 
+                to={homeLink} 
+                className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center hover:opacity-80 transition-opacity"
+              >
+                <span className={cn(
+                  "font-qurova font-bold tracking-tight text-foreground transition-colors",
+                  isMobile ? "text-xl" : "text-2xl"
+                )}>
+                  HotelGenius
+                </span>
               </Link>
             </div>
 

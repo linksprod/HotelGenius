@@ -64,7 +64,8 @@ import {
   Bell,
 } from 'lucide-react';
 import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { ThemeToggle } from '../ThemeToggle';
+
 import { useUserRole } from '@/hooks/useUserRole';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import { useHotel } from '@/features/hotels/context/HotelContext';
@@ -249,6 +250,14 @@ export const AdminSidebar: React.FC = () => {
 
   const isGlobalContext = location.pathname.startsWith('/administration/super');
 
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    navigationSections.forEach((section) => {
+      initial[section.label] = section.defaultOpen ?? false;
+    });
+    return initial;
+  });
+
   const filteredSections = (() => {
     // If in Global Context, show only Super Admin sections
     if (isGlobalContext && isSuperAdmin) {
@@ -284,14 +293,6 @@ export const AdminSidebar: React.FC = () => {
       })
       .filter((section) => section.items.length > 0);
   })();
-
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {};
-    filteredSections.forEach((section) => {
-      initial[section.label] = section.defaultOpen ?? false;
-    });
-    return initial;
-  });
 
   const currentLanguage = languages.find((l) => l.code === i18n.language) || languages[0];
 
@@ -344,30 +345,27 @@ export const AdminSidebar: React.FC = () => {
     <Sidebar collapsible="icon" id="admin-ob-sidebar">
       {/* Header */}
       <SidebarHeader className="p-4 pb-3">
-        <div className="flex items-center gap-3">
-          {/* Hotel logo or fallback icon */}
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary/80 shadow-sm">
-            {(hotel?.logo_url || hotel?.slug === 'demo') ? (
-              <img
-                src={hotel?.slug === 'demo' ? 'https://hotelgenius.online/lovable-uploads/7d122e82-98d4-40e0-a1ab-a49791c14717.png' : hotel?.logo_url}
-                alt={hotel?.name || "Hotel Logo"}
-                className="h-full w-full object-contain"
-              />
+        <div className="flex items-center justify-between gap-3">
+          {/* Dynamic Branding */}
+          <div className="flex flex-col min-w-0">
+            {isGlobalContext || hotel?.slug === 'demo' ? (
+              <span className="text-xl font-qurova font-bold tracking-tight text-sidebar-foreground">
+                HotelGenius
+              </span>
             ) : (
-              <Hotel className="h-5 w-5 text-primary-foreground" />
+              <>
+                <span className="text-sm font-bold truncate text-sidebar-foreground">
+                  {hotel?.name || 'Hotel Admin'}
+                </span>
+                <span className="text-[10px] font-medium text-muted-foreground/60 flex items-center gap-1">
+                  Powered by <span className="font-qurova font-bold transition-colors">HotelGenius</span>
+                </span>
+              </>
             )}
           </div>
-          {!isCollapsed && (
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <span className="truncate text-sm font-bold tracking-tight text-sidebar-foreground">
-                {hotel?.slug === 'demo' ? 'HotelDemo' : (hotel?.name || 'HotelGenius Platform')}
-              </span>
-              <span className="text-[10px] uppercase font-black tracking-[0.2em] text-primary/70">
-                {hotel ? 'Hotel Management' : 'Global Control'}
-              </span>
-            </div>
-          )}
-          <span id="admin-ob-notif-bell"><StaffNotificationBell /></span>
+          <span id="admin-ob-notif-bell" className="shrink-0">
+            <StaffNotificationBell />
+          </span>
         </div>
       </SidebarHeader>
 
@@ -482,8 +480,9 @@ export const AdminSidebar: React.FC = () => {
       <SidebarFooter className="border-t border-sidebar-border p-3">
         {/* Theme Toggle & Language Selector */}
         {!isCollapsed && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 mb-2">
             <ThemeToggle />
+            <div className="h-4 w-px bg-border/40 mx-1" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -557,5 +556,6 @@ export const AdminSidebar: React.FC = () => {
     </Sidebar>
   );
 };
+
 
 export default AdminSidebar;

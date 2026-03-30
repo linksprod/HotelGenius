@@ -100,8 +100,8 @@ const AdminDashboard = () => {
                 <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Dashboard Overview</h1>
-                <p className="text-sm text-muted-foreground hidden sm:block">Real-time statistics and hotel management insights</p>
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Admin Command Center</h1>
+                <p className="text-sm text-muted-foreground hidden sm:block">Comprehensive oversight of your property's Neural Network and guest operations.</p>
               </div>
             </div>
           </div>
@@ -129,7 +129,7 @@ const AdminDashboard = () => {
                   iconColor="amber"
                   loading={isLoading}
                   delay={0.1}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -142,7 +142,7 @@ const AdminDashboard = () => {
                   iconColor="emerald"
                   loading={isLoading}
                   delay={0.2}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -155,7 +155,7 @@ const AdminDashboard = () => {
                   iconColor="pink"
                   loading={isLoading}
                   delay={0.3}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -168,7 +168,7 @@ const AdminDashboard = () => {
                   iconColor="purple"
                   loading={isLoading}
                   delay={0.4}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
             </motion.div>
@@ -185,7 +185,7 @@ const AdminDashboard = () => {
                   iconColor="yellow"
                   loading={isLoading}
                   delay={0.5}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -198,7 +198,7 @@ const AdminDashboard = () => {
                   iconColor="green"
                   loading={isLoading}
                   delay={0.6}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
                   loading={isLoading}
                   decimals={1}
                   delay={0.7}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
               <motion.div variants={itemVariants}>
@@ -227,7 +227,7 @@ const AdminDashboard = () => {
                   iconColor="blue"
                   loading={isLoading}
                   delay={0.8}
-                  className="cursor-pointer hover:bg-secondary/50 dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
+                  className="cursor-pointer hover:bg-muted dark:hover:bg-zinc-800/50 transition-all border-border dark:border-none bg-card dark:bg-zinc-900/40 backdrop-blur-md shadow-sm"
                 />
               </motion.div>
             </motion.div>
@@ -237,7 +237,7 @@ const AdminDashboard = () => {
             {/* Summary Cards */}
             <motion.div variants={itemVariants} id="admin-ob-summary" className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
               {/* Reservations Breakdown */}
-              <Card className="border border-border dark:border-none shadow-sm bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md">
+              <Card className="border border-border dark:border-none shadow-sm bg-card dark:bg-zinc-900/40 backdrop-blur-md">
                 <CardHeader className="pb-3 px-4 pt-4">
                   <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
                     Reservations
@@ -285,7 +285,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Today's Activity */}
-              <Card className="border border-border dark:border-none shadow-sm bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md">
+              <Card className="border border-border dark:border-none shadow-sm bg-card dark:bg-zinc-900/40 backdrop-blur-md">
                 <CardHeader className="pb-3 px-4 pt-4">
                   <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
                     Today's Activity
@@ -333,7 +333,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Service Status */}
-              <Card className="border border-border dark:border-none shadow-sm bg-card/40 dark:bg-zinc-900/40 backdrop-blur-md">
+              <Card className="border border-border dark:border-none shadow-sm bg-card dark:bg-zinc-900/40 backdrop-blur-md">
                 <CardHeader className="pb-3 px-4 pt-4">
                   <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
                     Service Status

@@ -288,7 +288,7 @@ const SuperAIInfrastructure: React.FC = () => {
               <TabsContent value="persona" className="space-y-8">
                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[600px]">
                     <Card className="lg:col-span-3 bg-card/40 border-border dark:border-white/5 rounded-3xl overflow-hidden shadow-2xl flex flex-col">
-                       <div className="bg-zinc-900 p-4 flex items-center justify-between border-b border-white/5">
+                       <div className="bg-zinc-100 dark:bg-zinc-900 p-4 flex items-center justify-between border-b border-zinc-200 dark:border-white/5">
                           <div className="flex items-center gap-3">
                              <Terminal className="h-4 w-4 text-emerald-500" />
                              <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">System Persona Instructions</span>
@@ -298,7 +298,7 @@ const SuperAIInfrastructure: React.FC = () => {
                              <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                           </div>
                        </div>
-                       <div className="flex-1 bg-zinc-950 p-8 font-mono text-sm leading-relaxed overflow-y-auto text-emerald-500/80">
+                       <div className="flex-1 bg-zinc-50 dark:bg-zinc-950 p-8 font-mono text-sm leading-relaxed overflow-y-auto text-emerald-600 dark:text-emerald-500/80">
                          <div className="space-y-2">
                            <p className="text-emerald-500 font-bold">// Platform-wide AI Instructions</p>
                            <p>"identity": "HotelGenius Neural Intelligence",</p>
@@ -314,7 +314,7 @@ const SuperAIInfrastructure: React.FC = () => {
                            <p>"hospitality_logic_bypass": false </p>
                          </div>
                        </div>
-                       <div className="p-4 bg-zinc-900 border-t border-white/5 flex justify-end">
+                       <div className="p-4 bg-zinc-100 dark:bg-zinc-900 border-t border-zinc-200 dark:border-white/5 flex justify-end">
                          <Button className="font-black uppercase text-[10px] tracking-widest rounded-xl px-10 h-12 shadow-xl shadow-primary/20">Commit Instructions</Button>
                        </div>
                     </Card>

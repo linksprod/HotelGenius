@@ -55,17 +55,9 @@ const Login = () => {
         {/* Logo */}
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center shadow-lg">
-              <img
-                src="/hotel-genius-logo.png"
-                alt="Hotel Genius"
-                className="h-7 w-7 object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </div>
-            <span className="text-white font-bold text-xl tracking-tight">Hotel Genius</span>
+            <span className="text-white font-qurova font-bold text-2xl tracking-tight">
+              HotelGenius
+            </span>
           </div>
         </div>
 
