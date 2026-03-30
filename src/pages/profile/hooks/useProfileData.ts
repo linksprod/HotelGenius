@@ -126,11 +126,18 @@ export const useProfileData = () => {
         hotel_id: hotelId || userData.hotel_id
       };
 
-      console.log('[useProfileData] Syncing guest data with URL:', finalImageUrl, 'for hotel:', updatedUserData.hotel_id);
+      console.log('[useProfileData] Syncing guest data with payload:', {
+        userId,
+        internalId: (userData as any)?.internal_id,
+        hotelId: updatedUserData.hotel_id,
+        hasImage: !!finalImageUrl
+      });
+      
       const syncSuccess = await syncGuestData(userId, updatedUserData);
 
       if (!syncSuccess) {
-        throw new Error("Échec de la synchronisation avec la base de données");
+        // The detailed error is already logged in syncGuestData
+        throw new Error("Échec de la synchronisation avec la base de données. Veuillez vérifier votre connexion ou contacter le support.");
       }
 
       // 4. Update global context and local state immediately with guaranteed fresh data

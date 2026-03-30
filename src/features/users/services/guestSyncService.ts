@@ -16,31 +16,46 @@ export const syncGuestData = async (userId: string, userData: UserData): Promise
       return false;
     }
 
+    // Data sanitization: convert empty strings to null for database compatibility
+    const sanitize = (val: any) => {
+      if (val === undefined || val === null) return null;
+      if (typeof val === 'string' && val.trim() === '') return null;
+      return val;
+    };
+
     const guestData: any = {
       user_id: userId,
-      first_name: userData.first_name,
-      last_name: userData.last_name,
-      email: userData.email,
-      room_number: userData.room_number || '',
+      first_name: sanitize(userData.first_name) || 'Utilisateur',
+      last_name: sanitize(userData.last_name) || '',
+      email: sanitize(userData.email),
+      room_number: sanitize(userData.room_number) || '',
       birth_date: formatDateToString(userData.birth_date),
-      nationality: userData.nationality,
+      nationality: sanitize(userData.nationality),
       check_in_date: formatDateToString(userData.check_in_date),
       check_out_date: formatDateToString(userData.check_out_date),
-      profile_image: userData.profile_image,
-      phone: userData.phone,
-      guest_type: userData.guest_type || 'Standard Guest',
-      hotel_id: userData.hotel_id
+      profile_image: sanitize(userData.profile_image),
+      phone: sanitize(userData.phone),
+      guest_type: sanitize(userData.guest_type) || 'Standard Guest',
     };
+
+    // Validate hotel_id as UUID or null
+    if (userData.hotel_id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userData.hotel_id)) {
+      guestData.hotel_id = userData.hotel_id;
+    } else {
+      console.warn('[guestSyncService] Invalid or missing hotel_id UUID, setting to null:', userData.hotel_id);
+      guestData.hotel_id = null;
+    }
 
     // If we have an internal record ID, use it for the upsert to be safe
     if ((userData as any).internal_id) {
       guestData.id = (userData as any).internal_id;
     }
 
-    console.log('[guestSyncService] Upserting guest data:', {
-      userId,
-      hotelId: guestData.hotel_id,
-      hasInternalId: !!guestData.id
+    console.log('[guestSyncService] Attempting upsert with payload:', {
+      id: guestData.id,
+      user_id: guestData.user_id,
+      hotel_id: guestData.hotel_id,
+      email: guestData.email
     });
 
     const { error } = await supabase
@@ -48,16 +63,20 @@ export const syncGuestData = async (userId: string, userData: UserData): Promise
       .upsert(guestData, { onConflict: guestData.id ? 'id' : 'user_id' });
 
     if (error) {
-      console.error('[guestSyncService] Error syncing guest data:', error);
-
-      // If upsert fails because of user_id conflict constraint missing, 
-      // we might want an even more manual approach, but typically RLS is the culprit.
+      console.error('[guestSyncService] Database error during sync:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       throw error;
     }
 
     console.log('[guestSyncService] Guest data synchronized successfully');
 
-    localStorage.setItem('user_data', JSON.stringify(userData));
+    // Update local preview/cache
+    const finalData = { ...userData, ...guestData };
+    localStorage.setItem('user_data', JSON.stringify(finalData));
     if (userData.room_number) {
       localStorage.setItem('user_room_number', userData.room_number);
     }

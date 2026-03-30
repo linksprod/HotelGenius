@@ -6,12 +6,14 @@ import { v4 as uuidv4 } from 'uuid';
  * @param dateValue Date à convertir
  * @returns Chaîne de caractères formatée YYYY-MM-DD ou undefined
  */
-export const formatDateToString = (dateValue: Date | string | undefined): string | undefined => {
-  if (!dateValue) return undefined;
+export const formatDateToString = (dateValue: Date | string | undefined | null): string | null => {
+  if (!dateValue) return null;
   if (dateValue instanceof Date) {
     return dateValue.toISOString().split('T')[0];
   }
-  return String(dateValue);
+  const str = String(dateValue).trim();
+  if (!str) return null;
+  return str;
 };
 
 /**
