@@ -398,7 +398,7 @@ const GuestsManager: React.FC = () => {
                   VIP Guest Management
                 </div>
               </div>
-              <h1 className="text-4xl font-black tracking-tighter text-foreground dark:text-white">Guest 360°</h1>
+              <h1 className="text-4xl font-black tracking-tighter text-foreground">Guest 360°</h1>
               <p className="text-muted-foreground font-medium text-sm">Real-time guest profiles and stay preferences.</p>
             </div>            <div className="flex items-center gap-3">
               <Button 
@@ -406,20 +406,20 @@ const GuestsManager: React.FC = () => {
                 variant="outline" 
                 className={cn(
                   "h-10 px-4 rounded-xl font-bold border-border dark:border-white/5 shadow-sm transition-all text-xs",
-                  activeFilter === 'all' ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card/40 dark:bg-zinc-900/40 text-foreground dark:text-white hover:bg-secondary dark:hover:bg-zinc-900"
+                  activeFilter === 'all' ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card/40 dark:bg-zinc-900/40 text-foreground dark:text-white hover:bg-muted dark:hover:bg-zinc-800"
                 )}
               >
                 {activeFilter === 'all' ? 'All Guests' : 'Reset Filter'}
               </Button>
               <Button 
                 variant="outline"
-                className="h-10 px-4 rounded-xl bg-card/40 dark:bg-zinc-900/40 text-muted-foreground hover:text-foreground dark:hover:text-zinc-300 hover:bg-secondary dark:hover:bg-zinc-900 border-border dark:border-white/5 font-bold transition-all text-xs"
+                className="h-10 px-4 rounded-xl bg-card/40 dark:bg-zinc-900/40 text-muted-foreground hover:text-foreground dark:hover:text-zinc-300 hover:bg-muted dark:hover:bg-zinc-800 border-border dark:border-white/5 font-bold transition-all text-xs"
               >
                 Export PDF
               </Button>
               <Button 
                 variant="outline"
-                className="h-10 px-4 rounded-xl bg-card/40 dark:bg-zinc-900/40 text-muted-foreground hover:text-foreground dark:hover:text-zinc-300 hover:bg-secondary dark:hover:bg-zinc-900 border-border dark:border-white/5 font-bold transition-all text-xs"
+                className="h-10 px-4 rounded-xl bg-card/40 dark:bg-zinc-900/40 text-muted-foreground hover:text-foreground dark:hover:text-zinc-300 hover:bg-muted dark:hover:bg-zinc-800 border-border dark:border-white/5 font-bold transition-all text-xs"
               >
                 Export CSV
               </Button>
@@ -462,7 +462,7 @@ const GuestsManager: React.FC = () => {
                     )}>
                       <Icon className="h-5 w-5" />
                     </div>
-                    <div className="text-2xl font-black text-foreground dark:text-white tracking-tighter">
+                    <div className="text-xl font-black text-foreground leading-none">
                       {filterCounts[card.id] || 0}
                     </div>
                     <div className={cn(

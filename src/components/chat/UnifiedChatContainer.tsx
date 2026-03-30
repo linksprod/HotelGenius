@@ -28,7 +28,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   hotelId,
   onGoBack
 }) => {
-  const { hotelId } = useCurrentHotelId();
+  const { hotelId: currentHotelId } = useCurrentHotelId();
+  const activeHotelId = hotelId || currentHotelId;
   
   const {
     conversation,
@@ -43,7 +44,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     takeOverConversation,
     messagesEndRef,
     inputRef
-  } = useUnifiedChat({ userInfo, isAdmin, conversationType, conversationId, hotelId });
+  } = useUnifiedChat({ userInfo, isAdmin, conversationType, conversationId, hotelId: activeHotelId });
 
   if (isLoading) {
     return (

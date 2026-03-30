@@ -168,7 +168,6 @@ export const FeedbackManager = () => {
             variant="outline" 
             onClick={fetchFeedbacks} 
             disabled={isLoadingFeedback} 
-            disabled={isLoadingFeedback} 
             className="h-12 px-6 gap-2 bg-card dark:bg-zinc-900 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-foreground rounded-xl shadow-sm transition-all"
           >
             <RefreshCw className={`h-4 w-4 ${isLoadingFeedback ? 'animate-spin' : ''}`} />
@@ -196,7 +195,7 @@ export const FeedbackManager = () => {
               <CardContent className="p-5 flex items-center justify-between relative z-10">
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{stat.label}</p>
-                  <div className="text-xl font-black text-white leading-none">{stat.value}</div>
+                  <div className="text-2xl font-black text-foreground tracking-tighter">{stat.value}</div>
                   <p className="text-[9px] text-zinc-500 font-medium">{stat.sub}</p>
                 </div>
                 <div className={cn("p-2 rounded-xl bg-white/5 group-hover:bg-white/10 transition-colors", stat.color)}>
@@ -212,13 +211,13 @@ export const FeedbackManager = () => {
         <Tabs defaultValue="reviews" onValueChange={setActiveTab} value={activeTab} className="h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <TabsList className="bg-card dark:bg-zinc-900/50 rounded-xl p-1 h-11 border border-border dark:border-white/5">
-              <TabsTrigger value="reviews" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-white rounded-lg">Recent Feedbacks</TabsTrigger>
-              <TabsTrigger value="appearance" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-white rounded-lg">Survey Design</TabsTrigger>
+              <TabsTrigger value="reviews" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-primary-foreground rounded-lg">Recent Feedbacks</TabsTrigger>
+              <TabsTrigger value="appearance" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-primary-foreground rounded-lg">Survey Design</TabsTrigger>
             </TabsList>
           </div>
 
           <TabsContent value="reviews" className="flex-1 m-0 overflow-hidden">
-            <div className="h-full bg-card/30 dark:bg-zinc-900/30 backdrop-blur-xl border border-border dark:border-white/[0.03] rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
+            <div className="h-full bg-card/80 dark:bg-zinc-900/30 backdrop-blur-xl border border-border dark:border-white/[0.03] rounded-[2rem] overflow-hidden shadow-sm flex flex-col">
               {isLoadingFeedback ? (
                 <div className="flex-1 flex items-center justify-center">
                   <RefreshCw className="h-8 w-8 text-rose-500 animate-spin opacity-50" />
@@ -242,7 +241,7 @@ export const FeedbackManager = () => {
                       const sentiment = getSentimentText(feedback.rating);
                       return (
                         <motion.div key={feedback.id} variants={itemVariants}>
-                          <Card className="bg-white/[0.03] border-white/[0.05] hover:bg-white/[0.05] transition-all group overflow-hidden relative">
+                          <Card className="bg-muted/30 dark:bg-white/[0.03] border-border dark:border-white/[0.05] hover:bg-muted/50 dark:hover:bg-white/[0.05] transition-all group overflow-hidden relative">
                             <CardContent className="p-6">
                               <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-4">
@@ -265,7 +264,7 @@ export const FeedbackManager = () => {
                                 <div className="flex flex-col items-end gap-1.5">
                                   <div className="flex items-center gap-0.5">
                                     {renderStars(feedback.rating)}
-                                    <span className="text-lg font-black text-white ml-2">{feedback.rating}<span className="text-[10px] text-zinc-500">/10</span></span>
+                                    <span className="text-lg font-black text-foreground ml-2">{feedback.rating}<span className="text-[10px] text-muted-foreground">/10</span></span>
                                   </div>
                                   <div className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border", sentiment.class)}>
                                     {sentiment.text}
@@ -304,7 +303,7 @@ export const FeedbackManager = () => {
             <Card className="bg-card/30 dark:bg-zinc-900/30 backdrop-blur-xl border border-border dark:border-white/[0.03] rounded-[2rem] h-full overflow-hidden shadow-sm">
               <CardContent className="p-12 space-y-8">
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white">Survey Customization</h3>
+                  <h3 className="text-2xl font-black text-foreground">Survey Customization</h3>
                   <p className="text-zinc-500 text-sm max-w-lg">Personalize the visual identity of your guest surveys to match your brand's aesthetic.</p>
                 </div>
                 
@@ -317,7 +316,7 @@ export const FeedbackManager = () => {
                     className="max-w-2xl bg-card dark:bg-zinc-900 shadow-sm"
                   />
                   <div className="flex justify-end pt-4">
-                    <Button onClick={handleImageUpdate} disabled={loading} className="h-12 px-8 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-xl">
+                    <Button onClick={handleImageUpdate} disabled={loading} className="h-12 px-8 bg-rose-500 hover:bg-rose-600 text-primary-foreground font-black rounded-xl">
                       {loading ? 'Processing...' : 'Save Appearance'}
                     </Button>
                   </div>

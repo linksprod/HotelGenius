@@ -11,9 +11,10 @@ export const fetchShopCategories = async (hotelId: string | null = null, isSuper
     .from('shop_categories')
     .select('*');
 
-  if (hotelId) {
-    query = query.eq('hotel_id', hotelId);
-  }
+  // Skip hotel_id filter as column is currently missing in DB schema
+  // if (hotelId) {
+  //   query = query.eq('hotel_id', hotelId);
+  // }
 
   const { data, error } = await query.order('name');
 

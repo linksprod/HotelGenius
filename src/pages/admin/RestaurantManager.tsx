@@ -237,7 +237,7 @@ const RestaurantManager = () => {
             </Button>
             <Button 
               onClick={() => setIsDialogOpen(true)}
-              className="h-11 px-6 rounded-xl bg-white text-black hover:bg-zinc-200 font-bold border-none shadow-xl transition-all"
+              className="h-12 px-6 rounded-xl bg-foreground dark:bg-white text-background dark:text-black hover:bg-foreground/90 dark:hover:bg-zinc-200 font-bold border-none shadow-xl transition-all"
             >
               <Plus className="mr-2 h-4 w-4" /> Add Venue
             </Button>
@@ -249,9 +249,9 @@ const RestaurantManager = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <TabsList id="admin-ob-restaurants-tabs" className="bg-card dark:bg-zinc-900/50 rounded-xl p-1 h-11 border border-border dark:border-white/5">
-                <TabsTrigger value="restaurants" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-white rounded-lg">Venues</TabsTrigger>
-                <TabsTrigger value="bookings" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-white rounded-lg">Reservations</TabsTrigger>
-                <TabsTrigger value="menus" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-white rounded-lg">Menus</TabsTrigger>
+                <TabsTrigger value="restaurants" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-primary-foreground rounded-lg">Venues</TabsTrigger>
+                <TabsTrigger value="bookings" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-primary-foreground rounded-lg">Reservations</TabsTrigger>
+                <TabsTrigger value="menus" className="px-6 text-[10px] font-bold uppercase tracking-tight data-[state=active]:bg-rose-500 data-[state=active]:text-primary-foreground rounded-lg">Menus</TabsTrigger>
               </TabsList>
             </div>
 

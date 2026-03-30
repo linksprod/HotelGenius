@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;800&display=swap');
+
+@font-face {
+  font-family: 'Qurova';
+  src: url('./assets/fonts/Qurova.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -85,97 +93,6 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', sans-serif;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-muted/20 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary/50 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary;
-  }
-  
-  /* Ensure dropdowns and select menus follow theme */
-  .radix-select-content,
-  [data-radix-popper-content-wrapper] {
-    z-index: 9999 !important;
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1) !important;
-    border-radius: 0.5rem !important;
-    pointer-events: auto !important;
-    border: 1px solid hsl(var(--border)) !important;
-  }
-
-  /* Calendar fixes */
-  .rdp-dropdown_month, 
-  .rdp-dropdown_year {
-    z-index: 9999 !important;
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-  }
-  
-  /* Fix for month and year selection dropdowns */
-  .rdp-dropdown_month > select,
-  .rdp-dropdown_year > select {
-    z-index: 9999 !important;
-    position: relative !important;
-    pointer-events: auto !important;
-    opacity: 1 !important;
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-  }
-  
-  /* Ensure calendar selection works properly */
-  .rdp {
-    position: relative !important;
-    z-index: 9999 !important;
-    pointer-events: auto !important;
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-  }
-
-  /* Make calendar day buttons clickable */
-  .rdp-button {
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    color: hsl(var(--card-foreground)) !important;
-  }
-  
-  /* Ensure select components follow theme */
-  .SelectContent, 
-  .select-content {
-    z-index: 9999 !important;
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-    pointer-events: auto !important;
-  }
-
-  /* Force dialogs and sheets to follow theme */
-  [data-radix-dialog-content] {
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-  }
-
-  /* Force dropdown menus to follow theme */
-  [data-radix-dropdown-menu-content] {
-    background-color: hsl(var(--card)) !important;
-    color: hsl(var(--card-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-  }
-
-  /* Ensure modal overlays are properly styled */
-  [data-radix-dialog-overlay] {
-    background-color: rgba(0, 0, 0, 0.5) !important;
   }
 }
 

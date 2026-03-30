@@ -59,7 +59,6 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
   const serviceRequestsQuery = () => {
     let q = supabase.from('service_requests' as any).select('status');
-    if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 

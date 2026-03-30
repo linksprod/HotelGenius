@@ -159,9 +159,9 @@ export default function SpaManager() {
         <motion.div variants={itemVariants}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="bg-card dark:bg-zinc-900/50 border border-border dark:border-white/5 p-1 h-12 rounded-xl">
-              <TabsTrigger value="bookings" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-foreground data-[state=active]:text-background rounded-lg">Reservations</TabsTrigger>
-              <TabsTrigger value="facilities" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-foreground data-[state=active]:text-background rounded-lg">Facilities</TabsTrigger>
-              <TabsTrigger value="services" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-foreground data-[state=active]:text-background rounded-lg">Treatments</TabsTrigger>
+              <TabsTrigger value="bookings" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">Reservations</TabsTrigger>
+              <TabsTrigger value="facilities" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">Facilities</TabsTrigger>
+              <TabsTrigger value="services" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-lg">Treatments</TabsTrigger>
             </TabsList>
 
             <TabsContent value="bookings" className="m-0 mt-6 focus-visible:outline-none focus-visible:ring-0">

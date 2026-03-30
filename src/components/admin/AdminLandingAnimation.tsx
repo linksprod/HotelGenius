@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useSpring, useTransform } from 'framer-motion';
-import { TrendingUp, DollarSign, ClipboardCheck, CalendarCheck, ChevronRight, Users, Star } from 'lucide-react';
+import { TrendingUp, DollarSign, ClipboardCheck, CalendarCheck, ChevronRight, Users, Star, Clock, Smartphone, Zap, ArrowRight, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface CountingNumberProps {
@@ -44,6 +44,7 @@ interface AdminLandingAnimationProps {
 const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [stage, setStage] = useState<'countdown' | 'stats'>('countdown');
+  const [statsPage, setStatsPage] = useState<1 | 2>(1);
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
@@ -57,6 +58,25 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
       }
     }
   }, [countdown, stage]);
+
+  useEffect(() => {
+    if (stage === 'stats' && statsPage === 1) {
+      const timer = setTimeout(() => {
+        setStatsPage(2);
+      }, 6500); // Wait for Slide 1 animations to breath before swapping
+      return () => clearTimeout(timer);
+    }
+  }, [stage, statsPage]);
+
+  useEffect(() => {
+    if (stage === 'stats' && statsPage === 2) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(onDismiss, 400);
+      }, 6500); // Auto-dismiss Slide 2 after showing impact cards
+      return () => clearTimeout(timer);
+    }
+  }, [stage, statsPage, onDismiss]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -77,10 +97,18 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
       scale: 1,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1], // Apple-style ease-out expo
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   };
+
+  const renderStars = () => (
+    <div className="flex gap-1">
+      {[...Array(5)].map((_, i) => (
+        <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+      ))}
+    </div>
+  );
 
   return (
     <AnimatePresence mode="wait">
@@ -90,7 +118,7 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md md:left-[240px]"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 dark:bg-black/40 backdrop-blur-md md:left-[240px]"
         >
           <AnimatePresence mode="wait">
             {stage === 'countdown' ? (
@@ -106,9 +134,9 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="text-white/60 text-lg font-light tracking-wide italic"
+                  className="text-muted-foreground text-lg font-light tracking-wide italic"
                 >
-                  Loading your Command Center...
+                  Initializing Admin Neural Interface...
                 </motion.p>
                 <div className="relative h-24 w-24 mx-auto flex items-center justify-center">
                    <AnimatePresence mode="popLayout">
@@ -118,7 +146,7 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 1.5, y: -20 }}
                       transition={{ duration: 0.5, ease: "backOut" }}
-                      className="text-7xl font-bold text-white tracking-tighter"
+                      className="text-7xl font-bold text-foreground dark:text-white tracking-tighter"
                     >
                       {countdown > 0 ? countdown : "Go"}
                     </motion.span>
@@ -131,102 +159,172 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="max-w-5xl w-full p-6 md:p-12 space-y-8"
+                className="max-w-4xl w-full p-4 md:p-6 space-y-4"
               >
-                {/* Main Animated Stats - Primary Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-                  {/* Revenue / Direct Bookings Panel - Apple Style Glassmorphism */}
-                  <motion.div
-                    variants={cardVariants}
-                    className="relative overflow-hidden bg-white/10 dark:bg-white/5 border border-white/20 rounded-[2rem] p-8 shadow-2xl backdrop-blur-2xl flex flex-col justify-between group"
-                  >
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="p-4 bg-primary/20 rounded-xl">
-                        <TrendingUp className="h-8 w-8 text-primary" />
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary/80">Live Performance</span>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-white">
-                        <CountingNumber value={34} suffix="%" />
-                      </h2>
-                      <p className="text-xl font-light text-white/70">Direct Bookings Growth</p>
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-white/10">
-                      <p className="text-xs text-white/40 font-medium tracking-wide italic">"Optimizing channel conversion"</p>
-                    </div>
-                  </motion.div>
-
-                  {/* Upsells Panel - Emerald Accent */}
-                  <motion.div
-                    variants={cardVariants}
-                    className="relative overflow-hidden bg-white/10 dark:bg-white/5 border border-white/20 rounded-[2rem] p-8 shadow-2xl backdrop-blur-2xl flex flex-col justify-between"
-                  >
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="p-4 bg-emerald-500/20 rounded-xl">
-                        <DollarSign className="h-8 w-8 text-emerald-400" />
-                      </div>
-                      <div className="text-right">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">Revenue Boost</span>
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-emerald-400">
-                        <CountingNumber value={2100} prefix="+ $" />
-                      </h2>
-                      <p className="text-xl font-light text-white/70">Weekly Upsell Revenue</p>
-                    </div>
-                    <div className="mt-6 pt-4 border-t border-white/10">
-                      <p className="text-xs text-white/40 font-medium tracking-wide italic">"Exceeding revenue targets"</p>
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Secondary Stats Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  {[
-                    { icon: ClipboardCheck, color: "text-blue-400", bg: "bg-blue-500/10", value: 20, label: "Requests Solved", prefix: "+ " },
-                    { icon: CalendarCheck, color: "text-orange-400", bg: "bg-orange-500/10", value: 48, label: "Bookings Today", prefix: "+ " },
-                    { icon: Users, color: "text-purple-400", bg: "bg-purple-500/10", value: 124, label: "Guests Connected", prefix: "" },
-                    { icon: Star, color: "text-amber-400", bg: "bg-amber-500/10", value: 9.2, label: "Feedback Rating", suffix: "/10", decimals: 1 },
-                  ].map((stat, idx) => (
+                <AnimatePresence mode="wait">
+                  {statsPage === 1 ? (
                     <motion.div
-                      key={idx}
-                      variants={cardVariants}
-                      className="flex flex-col gap-3 bg-white/5 border border-white/10 p-5 rounded-[1.5rem] backdrop-blur-xl hover:bg-white/10 transition-colors"
+                      key="page-1"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.5 }}
+                      className="space-y-8"
                     >
-                      <div className={`h-10 w-10 rounded-xl ${stat.bg} flex items-center justify-center ${stat.color}`}>
-                        <stat.icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-bold text-white leading-none">
-                          <CountingNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} decimals={stat.decimals} />
-                        </p>
-                        <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-bold mt-1">{stat.label}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                      {/* Main Animated Stats - Primary Section */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                        {/* Revenue / Direct Bookings Panel */}
+                        <motion.div
+                          variants={cardVariants}
+                          className="relative overflow-hidden bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 rounded-xl p-4 shadow-xl backdrop-blur-2xl flex flex-col justify-between group transition-all duration-300 hover:bg-white/10"
+                        >
+                          <div className="flex items-start justify-between mb-6">
+                            <div className="p-4 bg-primary/20 rounded-xl">
+                              <TrendingUp className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-primary/80">Live Performance</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <h2 className="text-2xl md:text-3xl font-bold tracking-tighter text-foreground dark:text-white">
+                              <CountingNumber value={34} suffix="%" />
+                            </h2>
+                            <p className="text-sm font-light text-muted-foreground dark:text-white/70">Direct Bookings Growth</p>
+                          </div>
+                          <div className="mt-4 pt-3 border-t border-white/5">
+                            <p className="text-[10px] text-muted-foreground/40 font-medium italic">"Organic growth from channel optimization"</p>
+                          </div>
+                        </motion.div>
 
-                {/* Action Button - Cinematic Transition */}
-                <motion.div
-                  variants={cardVariants}
-                  className="flex justify-center pt-8"
-                >
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      setIsVisible(false);
-                      setTimeout(onDismiss, 400);
-                    }}
-                    className="h-16 px-12 text-xl font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_20px_50px_rgba(22,163,74,0.3)] group transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                        {/* Upsells Panel */}
+                        <motion.div
+                          variants={cardVariants}
+                          className="relative overflow-hidden bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 rounded-xl p-4 shadow-xl backdrop-blur-2xl flex flex-col justify-between transition-all duration-300 hover:bg-white/10"
+                        >
+                          <div className="flex items-start justify-between mb-6">
+                            <div className="p-4 bg-emerald-500/20 rounded-xl">
+                              <DollarSign className="h-5 w-5 text-emerald-400" />
+                            </div>
+                            <div className="text-right">
+                              <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">Revenue Boost</span>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <h2 className="text-2xl md:text-3xl font-bold tracking-tighter text-emerald-500 dark:text-emerald-400">
+                              <CountingNumber value={2100} prefix="+ $" />
+                            </h2>
+                            <p className="text-sm font-light text-muted-foreground dark:text-white/70">Weekly Upsell Revenue</p>
+                          </div>
+                          <div className="mt-4 pt-3 border-t border-white/5">
+                            <p className="text-[10px] text-muted-foreground/40 font-medium italic">"Weekly secondary spend per active guest"</p>
+                          </div>
+                        </motion.div>
+                      </div>
+
+                      {/* Secondary Stats Grid */}
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                          { icon: ClipboardCheck, color: "text-blue-400", bg: "bg-blue-500/10", value: 20, label: "Requests Solved", prefix: "+ " },
+                          { icon: CalendarCheck, color: "text-orange-400", bg: "bg-orange-500/10", value: 48, label: "Bookings Today", prefix: "+ " },
+                          { icon: Users, color: "text-purple-400", bg: "bg-purple-500/10", value: 124, label: "Guests Connected", prefix: "" },
+                          { icon: Star, color: "text-amber-400", bg: "bg-amber-500/10", value: 9.2, label: "Feedback Rating", suffix: "/10", decimals: 1 },
+                        ].map((stat, idx) => (
+                          <motion.div
+                            key={idx}
+                            variants={cardVariants}
+                            className="flex flex-col gap-3 bg-card/60 dark:bg-white/5 border border-border dark:border-white/10 p-5 rounded-[1.5rem] backdrop-blur-xl hover:bg-card/80 dark:hover:bg-white/10 transition-colors"
+                          >
+                            <div className={`h-10 w-10 rounded-xl ${stat.bg} flex items-center justify-center ${stat.color}`}>
+                              <stat.icon className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <p className="text-2xl font-bold text-foreground dark:text-white leading-none">
+                                <CountingNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} decimals={stat.decimals} />
+                              </p>
+                              <p className="text-[9px] text-muted-foreground/60 dark:text-white/40 uppercase tracking-[0.2em] font-bold mt-1">{stat.label}</p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+
+                      <div className="h-2" /> {/* Spacer for auto-timed swap */}
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="page-2"
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit={{ opacity: 0, x: -20 }}
+                      className="space-y-8"
+                    >
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 items-stretch">
+                        {[
+                          { icon: ClipboardCheck, color: "text-blue-400", bg: "bg-blue-500/20", value: 60, suffix: "%", label: "Operations", sub: "Task Reduction", desc: "Front desk workload reduced in our pilot." },
+                          { icon: Clock, color: "text-emerald-400", bg: "bg-emerald-500/20", value: 45, suffix: " min", label: "Guest Time", sub: "Saved per Day", desc: "Faster check-ins via digital service." },
+                          { icon: Star, color: "text-amber-400", bg: "bg-amber-500/20", value: 5, label: "Satisfaction", sub: "Guest Rating", stars: true, desc: "Significant boost in feedback quality." },
+                          { icon: TrendingUp, color: "text-rose-400", bg: "bg-rose-500/20", value: 180, prefix: "+$", label: "Revenue", sub: "Extra per Stay", desc: "Upselling via AI concierge services." },
+                        ].map((stat, idx) => (
+                          <motion.div
+                            key={idx}
+                            variants={cardVariants}
+                            className="relative overflow-hidden bg-white/5 dark:bg-white/5 border border-white/10 dark:border-white/10 rounded-xl p-4 shadow-xl backdrop-blur-2xl flex flex-col justify-between group transition-all duration-300 hover:bg-white/10"
+                          >
+                            <div className="flex items-start justify-between mb-6">
+                              <div className={`p-4 ${stat.bg} rounded-xl`}>
+                                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                              </div>
+                              <div className="text-right">
+                                <span className={`text-[9px] font-bold uppercase tracking-wider ${stat.color}/80`}>{stat.label}</span>
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-3">
+                                <h2 className={`text-2xl md:text-3xl font-bold tracking-tighter ${stat.color}`}>
+                                  {stat.stars ? (
+                                    <div className="flex flex-col gap-2">
+                                      <span>5.0</span>
+                                      {renderStars()}
+                                    </div>
+                                  ) : (
+                                    <CountingNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
+                                  )}
+                                </h2>
+                              </div>
+                              <p className="text-sm font-medium text-muted-foreground dark:text-white/70">{stat.sub}</p>
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-white/5">
+                              <p className="text-[10px] text-muted-foreground/40 font-medium italic">"{stat.desc}"</p>
+                            </div>
+
+                          </motion.div>
+                        ))}
+                      </div>
+
+                      <div className="h-2" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {statsPage === 1 && (
+                  <motion.div
+                    variants={cardVariants}
+                    className="flex justify-center pt-4"
                   >
-                    Access Command Center
-                    <ChevronRight className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
-                  </Button>
-                </motion.div>
+                    <Button
+                      size="lg"
+                      onClick={() => {
+                        setIsVisible(false);
+                        setTimeout(onDismiss, 400);
+                      }}
+                      className="h-14 px-10 text-lg font-semibold rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_20px_50px_rgba(22,163,74,0.3)] group transition-all duration-300 hover:scale-[1.03] active:scale-95"
+                    >
+                      Enter Command Center
+                      <ChevronRight className="ml-3 h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" />
+                    </Button>
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

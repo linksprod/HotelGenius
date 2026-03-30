@@ -50,30 +50,28 @@ const Layout = ({
             </div>
 
             {/* Center section - Logo */}
-            <div className="flex justify-center items-center flex-1">
-              <Link to={homeLink} className="hover:opacity-80 transition-opacity">
+            <div id="main-header-logo" className="flex justify-center items-center flex-1">
+              <Link 
+                to={homeLink} 
+                className="main-header-logo hover:opacity-80 transition-opacity flex items-center justify-center"
+              >
                 {hotel?.logo_url ? (
                   <img
                     src={hotel.logo_url}
                     alt={hotel.name}
                     className={cn("object-contain dark:brightness-0 dark:invert", isMobile ? "h-7 max-w-[120px]" : "h-10 max-w-[200px]")}
                   />
-                ) : hotel?.name ? (
-                  <span className={cn(
-                    "font-semibold tracking-tight text-foreground transition-colors",
-                    isMobile ? "text-lg" : "text-2xl"
-                  )}>
-                    {hotel.name}
-                  </span>
                 ) : (
-                  <img
-                    src="/lovable-uploads/aab13959-5215-4313-87f8-c3012cdb27f0.png"
-                    alt="Hotel Genius"
-                    className={cn("brightness-0 dark:invert object-contain", isMobile ? "h-5 max-w-[120px]" : "h-7 max-w-[200px]")}
-                  />
+                  <span className={cn(
+                    "font-qurova font-bold tracking-tight text-foreground transition-colors",
+                    isMobile ? "text-xl" : "text-2xl"
+                  )}>
+                    {hotel?.name || "HotelGenius"}
+                  </span>
                 )}
               </Link>
             </div>
+
 
             {/* Right section - Notifications and User Menu */}
             <div className="flex items-center justify-end gap-1 flex-1">
