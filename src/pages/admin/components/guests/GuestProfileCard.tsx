@@ -17,7 +17,7 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
   const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
   const guestRole = guest.is_vip ? "VIP Member" : "Standard Guest";
   const staysCount = isDemo ? (guest.total_stays || 1) : 1;
-  const gender = guest.gender || (guest.first_name === 'Sofia' || guest.first_name === 'Elena' || guest.first_name === 'Sarah' || guest.first_name === 'Yuki' ? 'Female' : 'Male');
+  const gender = guest.gender || (guest.first_name === 'Sofia' || guest.first_name === 'Elena' || guest.first_name === 'Sarah' ? 'Female' : 'Male');
   const nationality = guest.nationality || (isDemo ? "International" : "N/A");
   const lifetimeValue = isDemo && guest.total_spent ? `$${guest.total_spent.toLocaleString()}` : "$1,240";
   const aiScore = isDemo ? (9.0 + (Math.random() * 0.9)).toFixed(1) : "8.5";
@@ -26,7 +26,7 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
     <Card className="relative overflow-hidden border border-border dark:border-none bg-card dark:bg-zinc-900 shadow-sm dark:shadow-2xl rounded-[2.5rem]">
       {/* Premium Cover Photo Effect */}
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-br from-rose-500/10 via-card dark:via-zinc-900 to-card dark:to-zinc-900 opacity-50 dark:opacity-50" />
-      
+
       {/* Header Area with AI Badge */}
       <div className="relative px-8 pt-8 pb-2 flex justify-between items-center z-10">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 backdrop-blur-md">
@@ -44,9 +44,9 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
           <div className="relative">
             <div className="absolute inset-0 bg-rose-500/10 dark:bg-rose-500/20 blur-2xl rounded-full" />
             <Avatar className="h-32 w-32 border-[6px] border-background shadow-xl relative z-20 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-              <AvatarImage 
-                src={guest.profile_image} 
-                alt={`${guest.first_name} ${guest.last_name}`} 
+              <AvatarImage
+                src={guest.profile_image}
+                alt={`${guest.first_name} ${guest.last_name}`}
                 className="object-cover h-full w-full"
               />
               <AvatarFallback className="bg-zinc-100 dark:bg-zinc-800 text-foreground dark:text-white font-black text-3xl">
@@ -57,7 +57,7 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
               <Star className="h-4 w-4 text-white fill-white" />
             </div>
           </div>
-          
+
           <div className="space-y-1">
             <h2 className="text-4xl font-black text-foreground tracking-tighter">
               {guest.first_name} {guest.last_name}

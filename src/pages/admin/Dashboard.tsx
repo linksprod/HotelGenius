@@ -25,6 +25,7 @@ import AILiveIntelligence from '@/components/admin/AILiveIntelligence';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { motion } from 'framer-motion';
 import CountUp from '@/components/admin/CountUp';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,10 +52,22 @@ const itemVariants = {
 
 const AdminDashboard = () => {
   const { data: stats, isLoading, error } = useAdminDashboardStats();
-  const [showLanding, setShowLanding] = React.useState(true);
+  const isMobile = useIsMobile();
+  const [showLanding, setShowLanding] = React.useState(false); // Default to false
+
+  // Only show landing on desktop and only if it hasn't been shown in this session
+  React.useEffect(() => {
+    if (!isMobile) {
+      const hasShown = sessionStorage.getItem('admin_landing_shown');
+      if (!hasShown) {
+        setShowLanding(true);
+      }
+    }
+  }, [isMobile]);
 
   const handleLandingComplete = () => {
     setShowLanding(false);
+    sessionStorage.setItem('admin_landing_shown', 'true');
   };
 
   // Sample data for charts - in production, this would come from the API
@@ -87,14 +100,14 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="w-full bg-background">
       {showLanding && (
         <AdminLandingAnimation onDismiss={handleLandingComplete} />
       )}
-      <ScrollArea className="flex-1 h-full">
-        <div className={`flex-1 space-y-4 md:space-y-6 p-4 md:p-8 md:pb-0 transition-all duration-500 ${showLanding ? 'blur-sm grayscale-[0.5] opacity-50 overflow-hidden' : ''}`}>
-          {/* Header */}
-          <div className="flex items-center justify-between gap-3 mb-2">
+      <div className="w-full min-h-screen">
+        <div className={`flex-1 space-y-4 md:space-y-6 p-3 sm:p-4 md:p-8 md:pb-0 transition-all duration-500 ${showLanding ? 'blur-sm grayscale-[0.5] opacity-50 overflow-hidden' : ''}`}>
+          {/* Header - Hidden on small mobile as it's now in the sticky header */}
+          <div className="hidden sm:flex items-center justify-between gap-3 mb-2">
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-primary/10">
                 <LayoutDashboard className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
@@ -118,7 +131,7 @@ const AdminDashboard = () => {
             </motion.div>
 
             {/* Stats Row 1 - Main metrics */}
-            <motion.div id="admin-ob-stats" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <motion.div id="admin-ob-stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <motion.div variants={itemVariants}>
                 <StatisticCard
                   title="Total Reservations"
@@ -174,7 +187,7 @@ const AdminDashboard = () => {
             </motion.div>
 
             {/* Stats Row 2 - Secondary metrics */}
-            <motion.div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <motion.div variants={itemVariants}>
                 <StatisticCard
                   title="Service Requests"
@@ -391,7 +404,7 @@ const AdminDashboard = () => {
             </motion.div>
           </motion.div>
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };

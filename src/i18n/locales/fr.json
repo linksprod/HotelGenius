@@ -384,6 +384,27 @@
       "housekeeping": "Ménage"
     }
   },
+  "pwa": {
+    "installTitle": "Installer l'application",
+    "addToHomeTitle": "Ajouter à l'accueil",
+    "installSubtitle": "Accès instantané — fonctionne aussi hors ligne",
+    "iosSubtitle": "Ajoutez à votre écran d'accueil pour une meilleure expérience",
+    "inAppSubtitle": "Veuillez ouvrir dans Safari pour l'installer",
+    "firefoxSubtitle": "Ajoutez à l'écran d'accueil depuis le menu du navigateur",
+    "installButton": "Installer l'application",
+    "installing": "Installation...",
+    "debugMode": "Mode Débogage",
+    "iosStep1": "Appuyez sur",
+    "iosStep1Detail": "(bas de Safari)",
+    "iosStep2": "Appuyez sur",
+    "iosStep3": "Appuyez sur",
+    "iosStep3Detail": "— C'est fait ! ✓",
+    "iosShareLabel": "Partager",
+    "iosAddLabel": "＋ Sur l'écran d'accueil",
+    "iosConfirmLabel": "Ajouter",
+    "iosPointingLabel": "Le bouton de partage est ici ↓",
+    "inAppWarning": "Appuyez sur ... ou sur l'icône Boussole et sélectionnez \"Ouvrir dans Safari\"."
+  },
   "profile": {
     "title": "Mon Profil",
     "subtitle": "Gérez les informations de votre compte",

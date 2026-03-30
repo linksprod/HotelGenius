@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { Download, X, Smartphone, MoreVertical } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,6 +14,7 @@ const IOSShareIcon = () => (
 );
 
 const PWAInstallBanner: React.FC = () => {
+    const { t } = useTranslation();
     const {
         shouldShow,
         canShowNativePrompt,
@@ -33,11 +35,8 @@ const PWAInstallBanner: React.FC = () => {
             await promptInstall();
             setInstalling(false);
         }
-        // For iOS/manual browsers: the banner itself already shows instructions,
-        // so no extra step needed — instructions are inline below.
     };
 
-    const needsManualInstructions = !canShowNativePrompt;
     const isIOSDevice = isIOS || isSafari;
 
     return (
@@ -61,13 +60,13 @@ const PWAInstallBanner: React.FC = () => {
                                 <Smartphone className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-semibold text-foreground text-sm">Install Hotel Genius</p>
+                                <p className="font-semibold text-foreground text-sm">{t('pwa.installTitle')}</p>
                                 <p className="text-xs text-muted-foreground mt-0.5 leading-snug">
                                     {isIOSDevice
-                                        ? 'Add to your Home Screen for the best app experience'
+                                        ? t('pwa.iosSubtitle')
                                         : isFirefox
-                                            ? 'Add to your Home Screen from the browser menu'
-                                            : 'Get instant access — works offline too'}
+                                            ? t('pwa.firefoxSubtitle')
+                                            : t('pwa.installSubtitle')}
                                 </p>
                             </div>
                             <button
@@ -87,7 +86,7 @@ const PWAInstallBanner: React.FC = () => {
                                 className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground text-sm font-semibold py-2.5 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-70"
                             >
                                 <Download className="h-4 w-4" />
-                                {installing ? 'Installing…' : 'Install App'}
+                                {installing ? t('pwa.installing') : t('pwa.installButton')}
                             </button>
                         )}
 
@@ -98,12 +97,12 @@ const PWAInstallBanner: React.FC = () => {
                                 <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
                                     <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">1</div>
                                     <div className="flex items-center gap-2 text-sm text-foreground min-w-0">
-                                        <span>Tap</span>
-                                        <span className="inline-flex items-center gap-1 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-lg px-2 py-0.5 font-medium text-xs">
+                                        <span>{t('pwa.iosStep1')}</span>
+                                        <span className="inline-flex items-center gap-1 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded-lg px-2 py-0.5 font-medium text-xs text-nowrap">
                                             <IOSShareIcon />
-                                            Share
+                                            {t('pwa.iosShareLabel')}
                                         </span>
-                                        <span className="text-muted-foreground text-xs">(bottom of Safari)</span>
+                                        <span className="text-muted-foreground text-xs">{t('pwa.iosStep1Detail')}</span>
                                     </div>
                                 </div>
                                 {/* Arrow */}
@@ -120,9 +119,9 @@ const PWAInstallBanner: React.FC = () => {
                                 <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
                                     <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">2</div>
                                     <div className="flex items-center gap-2 text-sm text-foreground min-w-0">
-                                        <span>Tap</span>
-                                        <span className="inline-flex items-center gap-1 bg-muted border border-border rounded-lg px-2 py-0.5 font-medium text-xs text-foreground">
-                                            ＋ Add to Home Screen
+                                        <span>{t('pwa.iosStep2')}</span>
+                                        <span className="inline-flex items-center gap-1 bg-muted border border-border rounded-lg px-2 py-0.5 font-medium text-xs text-foreground text-nowrap">
+                                            {t('pwa.iosAddLabel')}
                                         </span>
                                     </div>
                                 </div>
@@ -140,11 +139,11 @@ const PWAInstallBanner: React.FC = () => {
                                 <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
                                     <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">3</div>
                                     <div className="flex items-center gap-2 text-sm text-foreground min-w-0">
-                                        <span>Tap</span>
-                                        <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-0.5 font-medium text-xs">
-                                            Add
+                                        <span>{t('pwa.iosStep3')}</span>
+                                        <span className="inline-flex items-center gap-1 bg-blue-500 text-white rounded-lg px-2 py-0.5 font-medium text-xs text-nowrap">
+                                            {t('pwa.iosConfirmLabel')}
                                         </span>
-                                        <span className="text-muted-foreground text-xs">— Done! ✓</span>
+                                        <span className="text-muted-foreground text-xs">{t('pwa.iosStep3Detail')}</span>
                                     </div>
                                 </div>
 
@@ -154,7 +153,7 @@ const PWAInstallBanner: React.FC = () => {
                                     transition={{ repeat: Infinity, duration: 1, ease: 'easeInOut' }}
                                     className="flex flex-col items-center pt-1 pb-0.5"
                                 >
-                                    <div className="text-xs text-muted-foreground mb-0.5">Share button is here ↓</div>
+                                    <div className="text-xs text-muted-foreground mb-0.5">{t('pwa.iosPointingLabel')} ↓</div>
                                     <div className="text-primary text-lg">↓</div>
                                 </motion.div>
                             </div>
@@ -166,7 +165,7 @@ const PWAInstallBanner: React.FC = () => {
                                 <div className="flex items-center gap-3 bg-muted/60 rounded-xl px-3 py-2.5">
                                     <div className="h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 text-xs font-bold">1</div>
                                     <div className="flex items-center gap-2 text-sm text-foreground">
-                                        <span>Tap</span>
+                                        <span>{t('pwa.iosStep1')}</span>
                                         <span className="inline-flex items-center gap-1 bg-muted border border-border rounded-lg px-2 py-0.5 text-xs font-medium">
                                             <MoreVertical className="h-3 w-3" /> Menu
                                         </span>

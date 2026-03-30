@@ -118,7 +118,7 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 dark:bg-black/40 backdrop-blur-md md:left-[240px]"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 dark:bg-black/40 backdrop-blur-md md:left-[240px] overflow-y-auto pt-10 md:pt-0"
         >
           <AnimatePresence mode="wait">
             {stage === 'countdown' ? (
@@ -130,7 +130,7 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="text-center space-y-4"
               >
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
@@ -139,7 +139,7 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
                   Initializing Admin Neural Interface...
                 </motion.p>
                 <div className="relative h-24 w-24 mx-auto flex items-center justify-center">
-                   <AnimatePresence mode="popLayout">
+                  <AnimatePresence mode="popLayout">
                     <motion.span
                       key={countdown}
                       initial={{ opacity: 0, scale: 0.5, y: 20 }}
@@ -150,7 +150,7 @@ const AdminLandingAnimation: React.FC<AdminLandingAnimationProps> = ({ onDismiss
                     >
                       {countdown > 0 ? countdown : "Go"}
                     </motion.span>
-                   </AnimatePresence>
+                  </AnimatePresence>
                 </div>
               </motion.div>
             ) : (

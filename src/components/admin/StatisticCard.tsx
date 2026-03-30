@@ -69,18 +69,18 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   }
 
   return (
-    <Card id={id} className={cn("h-full bg-card border shadow-sm hover:shadow-md transition-shadow", className)}>
-      <CardContent className="p-3 sm:p-5">
+    <Card id={id} className={cn("h-full bg-card/60 dark:bg-zinc-900/60 backdrop-blur-md border-border dark:border-white/5 shadow-sm hover:shadow-md transition-all duration-300", className)}>
+      <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
             <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{title}</p>
             <div className="flex items-baseline gap-1">
               <h3 className="text-lg sm:text-2xl font-bold text-card-foreground">
                 {typeof value === 'number' ? (
-                  <CountUp 
-                    to={value} 
-                    decimals={decimals} 
-                    delay={delay} 
+                  <CountUp
+                    to={value}
+                    decimals={decimals}
+                    delay={delay}
                     duration={1.5}
                   />
                 ) : (

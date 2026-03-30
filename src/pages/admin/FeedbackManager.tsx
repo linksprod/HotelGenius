@@ -147,8 +147,8 @@ export const FeedbackManager = () => {
     <div className="flex flex-col h-full bg-background text-foreground overflow-hidden">
 
       {/* Header Area */}
-      <motion.div 
-        id="admin-ob-feedback-header" 
+      <motion.div
+        id="admin-ob-feedback-header"
         variants={itemVariants}
         className="shrink-0 p-8 pb-4 flex items-end justify-between"
       >
@@ -162,7 +162,7 @@ export const FeedbackManager = () => {
           <h1 className="text-4xl font-black tracking-tighter text-foreground">Guest Pulse & Reputation</h1>
           <p className="text-muted-foreground font-medium text-sm">Aggregating sentiment across all major travel platforms.</p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <Button 
             variant="outline" 
@@ -177,7 +177,7 @@ export const FeedbackManager = () => {
       </motion.div>
 
       {/* Reputation Command Bar */}
-      <motion.div 
+      <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -231,7 +231,7 @@ export const FeedbackManager = () => {
                 </div>
               ) : (
                 <ScrollArea className="h-full">
-                  <motion.div 
+                  <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
@@ -271,7 +271,7 @@ export const FeedbackManager = () => {
                                   </div>
                                 </div>
                               </div>
-                              
+
                               <div className="relative p-4 rounded-2xl bg-secondary/30 dark:bg-black/20 border border-border dark:border-white/5 mb-4 italic text-foreground/80 text-sm leading-relaxed">
                                 "{feedback.comment || "The guest didn't leave a specific comment, but the high rating indicates an exceptional experience."}"
                               </div>
@@ -306,7 +306,7 @@ export const FeedbackManager = () => {
                   <h3 className="text-2xl font-black text-foreground">Survey Customization</h3>
                   <p className="text-zinc-500 text-sm max-w-lg">Personalize the visual identity of your guest surveys to match your brand's aesthetic.</p>
                 </div>
-                
+
                 <div className="space-y-4">
                   <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Hero Header Image</span>
                   <ImageUpload

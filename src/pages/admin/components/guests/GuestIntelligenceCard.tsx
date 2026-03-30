@@ -86,7 +86,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
         { id: '1', alert_type: 'Dietary', severity: 'Medium', description: 'Gluten-free and Lactose-free' }
       ],
       notes: [
-        { team: 'Wellness Coach', date: 'Today', content: "Yuki joined the sunrise yoga session. Very enthusiastic." }
+        { team: 'Wellness Coach', date: 'Today', content: "Sofia joined the sunrise yoga session. Very enthusiastic." }
       ]
     }
   };
@@ -123,11 +123,11 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
             </div>
           </div>
 
-          <p 
+          <p
             className="text-xl text-foreground dark:text-zinc-200 leading-relaxed font-semibold"
             dangerouslySetInnerHTML={{ __html: isDemo ? currentDemo.summary : guest.ai_summary || 'No AI insights available yet.' }}
           />
-          
+
           <div className="pt-4 flex items-center gap-6">
             <div className="flex flex-col">
               <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest mb-1">Stay Duration</span>
