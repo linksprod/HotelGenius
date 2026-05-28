@@ -1,208 +1,48 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/features/auth/hooks/useAuthContext';
-import { supabase } from '@/integrations/supabase/client';
-import { NavLink } from '@/components/NavLink';
+import { NavLink, useLocation, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
+import { ChevronRight, LogOut, Globe, Home, Settings } from 'lucide-react';
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
   SidebarSeparator,
+  SidebarGroupLabel,
   useSidebar,
 } from '@/components/ui/sidebar';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useAuth } from '@/features/auth/hooks/useAuthContext';
+import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
+import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
+import { useUserRole } from '@/hooks/useUserRole';
+import { useHotelPath } from '@/hooks/useHotelPath';
+import { useHotel } from '@/features/hotels/context/HotelContext';
+import AdminProfileDialog from './AdminProfileDialog';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from '@/components/ui/tooltip';
-import {
-  LayoutDashboard,
-  Users,
-  Utensils,
-  Sparkles,
-  PartyPopper,
-  Store,
-  Trash2,
-  Wrench,
-  Wifi,
-  MapPin,
-  FileText,
-  MessageSquare,
-  LogOut,
-  Hotel,
-  Shield,
-  MessageCircle,
-  Settings,
-  ChevronRight,
-  Globe,
-  UserCog,
-  Building2,
-  ImageIcon,
-  Bell,
-  Home,
-} from 'lucide-react';
-import { StaffNotificationBell } from '@/components/admin/StaffNotificationBell';
-import { ThemeToggle } from '../ThemeToggle';
-
-import { useUserRole } from '@/hooks/useUserRole';
-import { useHotelPath } from '@/hooks/useHotelPath';
-import { useHotel } from '@/features/hotels/context/HotelContext';
-import AdminProfileDialog from './AdminProfileDialog';
-
-interface NavItem {
-  title: string;
-  url: string;
-  icon: React.ElementType;
-  disabled?: boolean;
-  notificationKey?: string;
-}
-
-interface NavSection {
-  label: string;
-  items: NavItem[];
-  defaultOpen?: boolean;
-}
-
-const navigationSections: NavSection[] = [
-  {
-    label: 'Overview',
-    items: [
-      { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
-      { title: 'Notifications', url: '/admin/notifications', icon: Bell, notificationKey: 'general' },
-    ],
-    defaultOpen: true,
-  },
-  {
-    label: 'Agent',
-    items: [
-      { title: 'AI Concierge', url: '/admin/agent/concierge', icon: Sparkles },
-    ],
-    defaultOpen: true,
-  },
-  {
-    label: 'Guest Management',
-    items: [
-      { title: 'Guests', url: '/admin/guests', icon: Users },
-      { title: 'Chat Manager', url: '/admin/chat', icon: MessageCircle, notificationKey: 'chat' },
-      { title: 'Feedback', url: '/admin/feedback', icon: MessageSquare },
-    ],
-    defaultOpen: true,
-  },
-  {
-    label: 'Services',
-    items: [
-      { title: 'Housekeeping', url: '/admin/housekeeping', icon: Trash2, notificationKey: 'housekeeping' },
-      { title: 'Maintenance', url: '/admin/maintenance', icon: Wrench, notificationKey: 'maintenance' },
-      { title: 'Security', url: '/admin/security', icon: Shield, notificationKey: 'security' },
-      { title: 'IT Support', url: '/admin/information-technology', icon: Wifi, notificationKey: 'information-technology' },
-    ],
-    defaultOpen: false,
-  },
-  {
-    label: 'F&B',
-    items: [
-      { title: 'Restaurants', url: '/admin/restaurants', icon: Utensils, notificationKey: 'restaurants' },
-    ],
-    defaultOpen: false,
-  },
-  {
-    label: 'Wellness',
-    items: [
-      { title: 'Spa', url: '/admin/spa', icon: Sparkles, notificationKey: 'spa' },
-    ],
-    defaultOpen: false,
-  },
-  {
-    label: 'Entertainment',
-    items: [
-      { title: 'Events', url: '/admin/events', icon: PartyPopper, notificationKey: 'events' },
-      { title: 'Shops', url: '/admin/shops', icon: Store },
-    ],
-    defaultOpen: false,
-  },
-  {
-    label: 'Hotel Info',
-    items: [
-      { title: 'Destinations', url: '/admin/destination-admin', icon: MapPin },
-      { title: 'About Editor', url: '/admin/about', icon: FileText },
-      { title: 'Hotel Profile', url: '/admin/hotel-profile', icon: ImageIcon },
-    ],
-    defaultOpen: false,
-  },
-  {
-    label: 'Administration',
-    items: [
-      { title: 'Hotels', url: '/admin/hotels', icon: Building2 },
-      { title: 'Staff Management', url: '/admin/staff', icon: UserCog },
-      { title: 'Demo Settings', url: '/admin/demo', icon: Settings },
-    ],
-    defaultOpen: false,
-  },
-];
-
-const globalNavigationSections: NavSection[] = [
-  {
-    label: 'Platform Control',
-    items: [
-      { title: 'Global Insights', url: '/administration/super/dashboard', icon: Globe },
-      { title: 'Hotels Portfolio', url: '/administration/super/hotels', icon: Building2 },
-      { title: 'System Users', url: '/administration/super/users', icon: UserCog },
-    ],
-    defaultOpen: true,
-  },
-  {
-    label: 'Network Status',
-    items: [
-      { title: 'AI Infrastructure', url: '/administration/super/ai', icon: Sparkles },
-      { title: 'Global Notifications', url: '/administration/super/notifications', icon: Bell },
-    ],
-    defaultOpen: true,
-  },
-  {
-    label: 'System Settings',
-    items: [
-      { title: 'Platform Config', url: '/administration/super/settings', icon: Settings },
-      { title: 'Global Destinations', url: '/administration/super/destinations', icon: MapPin },
-    ],
-    defaultOpen: false,
-  },
-];
-
-const languages = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-];
+} from "@/components/ui/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { adminNavigation, globalNavigation, NavSectionConfig, Role } from '@/config/admin/navigation';
 
 const NotificationBadge: React.FC<{ count: number }> = ({ count }) => {
   if (count <= 0) return null;
   return (
-    <SidebarMenuBadge className="bg-destructive text-destructive-foreground text-[10px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-medium">
+    <span className="bg-destructive text-destructive-foreground text-[10px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-medium absolute right-2 top-1/2 -translate-y-1/2">
       {count > 99 ? '99+' : count}
-    </SidebarMenuBadge>
+    </span>
   );
 };
 
@@ -214,6 +54,11 @@ const SectionBadge: React.FC<{ count: number }> = ({ count }) => {
     </span>
   );
 };
+
+const languages = [
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+];
 
 export const AdminSidebar: React.FC = () => {
   const location = useLocation();
@@ -228,73 +73,53 @@ export const AdminSidebar: React.FC = () => {
   const { hotel } = useHotel();
   const [profileOpen, setProfileOpen] = useState(false);
 
-  // Role-based allowed paths
-  const superAdminAllowedUrls = [
-    '/admin',
-    '/admin/hotels',
-    // Super admin can access everything, but mainly these for high level
-    '/admin/staff', // to manage other admins? possibly
-  ];
-
-  const moderatorAllowedUrls = [
-    '/admin',
-    '/admin/chat',
-    '/admin/housekeeping',
-    '/admin/maintenance',
-    '/admin/security',
-    '/admin/information-technology',
-  ];
-
-  const staffAllowedUrls = [
-    '/admin',
-    '/admin/restaurants',
-  ];
-
   const isGlobalContext = location.pathname.startsWith('/administration/super');
+  const baseNavigation = isGlobalContext && isSuperAdmin ? globalNavigation : adminNavigation;
+
+  // Filter sections based on roles and active modules
+  const filteredSections = baseNavigation.map(section => {
+    const filteredItems = section.items.filter(item => {
+      // Role Check
+      if (!isSuperAdmin && item.requiredRoles) {
+        if (!role || !item.requiredRoles.includes(role as Role)) return false;
+      }
+
+      // Module Check
+      if (!isSuperAdmin && item.requiredModules) {
+        if (!hotel?.active_modules) return false;
+        const hasModules = item.requiredModules.every(mod => hotel.active_modules!.includes(mod));
+        if (!hasModules) return false;
+      }
+
+      // Plan Check
+      if (!isSuperAdmin && item.requiredPlan) {
+        if (!hotel?.plan) return false;
+        const planHierarchy: Record<string, number> = {
+          'essential': 1,
+          'experience': 2,
+          'elite': 3
+        };
+        const currentPlanLevel = planHierarchy[hotel.plan] || 1;
+        const requiredPlanLevel = planHierarchy[item.requiredPlan] || 1;
+        
+        if (currentPlanLevel < requiredPlanLevel) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    return { ...section, items: filteredItems };
+  }).filter(section => section.items.length > 0);
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
-    navigationSections.forEach((section) => {
+    baseNavigation.forEach((section) => {
       initial[section.label] = section.defaultOpen ?? false;
     });
     return initial;
   });
-
-  const filteredSections = (() => {
-    // If in Global Context, show only Super Admin sections
-    if (isGlobalContext && isSuperAdmin) {
-      return globalNavigationSections;
-    }
-
-    // Otherwise, filter standard sections
-    return navigationSections
-      .filter(section => section.label !== 'Platform')
-      .map(section => {
-        if (section.label === 'Administration') {
-          return {
-            ...section,
-            items: section.items.filter(item => item.title !== 'Hotels')
-          };
-        }
-
-        if (role === 'moderator') {
-          return {
-            ...section,
-            items: section.items.filter((item) => moderatorAllowedUrls.includes(item.url)),
-          };
-        }
-
-        if (role === 'staff') {
-          return {
-            ...section,
-            items: section.items.filter((item) => staffAllowedUrls.includes(item.url)),
-          };
-        }
-
-        return section;
-      })
-      .filter((section) => section.items.length > 0);
-  })();
 
   const currentLanguage = languages.find((l) => l.code === i18n.language) || languages[0];
 
@@ -315,7 +140,7 @@ export const AdminSidebar: React.FC = () => {
     return location.pathname.startsWith(resolvedUrl);
   };
 
-  const isSectionActive = (section: NavSection) => {
+  const isSectionActive = (section: NavSectionConfig) => {
     return section.items.some((item) => isActive(item.url));
   };
 
@@ -326,7 +151,7 @@ export const AdminSidebar: React.FC = () => {
     }));
   };
 
-  const getSectionNotificationCount = (section: NavSection): number => {
+  const getSectionNotificationCount = (section: NavSectionConfig): number => {
     return section.items.reduce((sum, item) => {
       if (item.notificationKey && counts[item.notificationKey as keyof typeof counts]) {
         return sum + counts[item.notificationKey as keyof typeof counts];
@@ -349,25 +174,38 @@ export const AdminSidebar: React.FC = () => {
       <SidebarHeader className="p-4 pb-3">
         <div className="flex items-center justify-between gap-3">
           {/* Dynamic Branding */}
-          <div className="flex flex-col min-w-0">
-            {isGlobalContext || hotel?.slug === 'demo' ? (
-              <span className="text-xl font-qurova font-bold tracking-tight text-sidebar-foreground">
-                HotelGenius
-              </span>
-            ) : (
-              <>
-                <span className="text-sm font-bold truncate text-sidebar-foreground">
-                  {hotel?.name || 'Hotel Admin'}
-                </span>
-                <span className="text-[10px] font-medium text-muted-foreground/60 flex items-center gap-1">
-                  Powered by <span className="font-qurova font-bold transition-colors">HotelGenius</span>
-                </span>
-              </>
+          <div className="flex items-center gap-2.5 min-w-0">
+            {hotel?.logo_url ? (
+              <img
+                src={hotel.logo_url}
+                alt={`${hotel?.name || 'Hotel'} Logo`}
+                className="h-8 w-8 rounded-lg object-contain bg-background p-1 border shrink-0"
+              />
+            ) : null}
+            {!isCollapsed && (
+              <div className="flex flex-col min-w-0">
+                {isGlobalContext || hotel?.slug === 'demo' ? (
+                  <span className="text-xl font-qurova font-bold tracking-tight text-sidebar-foreground">
+                    HotelGenius
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-sm font-bold truncate text-sidebar-foreground">
+                      {hotel?.name || 'Hotel Admin'}
+                    </span>
+                    <span className="text-[10px] font-medium text-muted-foreground/60 flex items-center gap-1">
+                      Powered by <span className="font-qurova font-bold transition-colors">HotelGenius</span>
+                    </span>
+                  </>
+                )}
+              </div>
             )}
           </div>
-          <span id="admin-ob-notif-bell" className="shrink-0">
-            <StaffNotificationBell />
-          </span>
+          {!isCollapsed && (
+            <span id="admin-ob-notif-bell" className="shrink-0">
+              <StaffNotificationBell />
+            </span>
+          )}
         </div>
       </SidebarHeader>
 
@@ -401,7 +239,7 @@ export const AdminSidebar: React.FC = () => {
                               asChild
                               isActive={isActive(item.url)}
                               tooltip={item.title}
-                              className="h-9 rounded-lg transition-all duration-150"
+                              className="h-9 rounded-lg transition-all duration-150 relative"
                               onClick={() => setOpenMobile(false)}
                             >
                               <NavLink to={resolvePath(item.url)} end={item.url === '/admin'}>
@@ -449,20 +287,12 @@ export const AdminSidebar: React.FC = () => {
                                   asChild
                                   isActive={isActive(item.url)}
                                   tooltip={item.title}
-                                  disabled={item.disabled}
-                                  className="h-9 rounded-lg transition-all duration-150"
+                                  className="h-9 rounded-lg transition-all duration-150 relative"
                                 >
-                                  {item.disabled ? (
-                                    <span className="flex items-center gap-2 opacity-40 cursor-not-allowed px-2 py-1.5">
-                                      <item.icon className="h-4 w-4" />
-                                      <span>{item.title}</span>
-                                    </span>
-                                  ) : (
-                                    <NavLink to={resolvePath(item.url)} end={item.url === '/admin'}>
-                                      <item.icon className={`h-4 w-4 ${isActive(item.url) ? 'text-primary' : 'text-muted-foreground'}`} />
-                                      <span>{item.title}</span>
-                                    </NavLink>
-                                  )}
+                                  <NavLink to={resolvePath(item.url)} end={item.url === '/admin'}>
+                                    <item.icon className={`h-4 w-4 ${isActive(item.url) ? 'text-primary' : 'text-muted-foreground'}`} />
+                                    <span>{item.title}</span>
+                                  </NavLink>
                                 </SidebarMenuButton>
                                 <NotificationBadge count={itemCount} />
                               </SidebarMenuItem>
@@ -535,6 +365,18 @@ export const AdminSidebar: React.FC = () => {
           </div>
         )}
 
+        {/* Settings Link */}
+        <SidebarMenuButton
+          asChild
+          isActive={location.pathname.startsWith(resolvePath('/admin/settings'))}
+          className="h-9 rounded-lg transition-all duration-150 mb-2 w-full justify-start text-muted-foreground hover:text-foreground"
+        >
+          <NavLink to={resolvePath('/admin/settings/hotel-profile')}>
+            <Settings className="h-4 w-4" />
+            {!isCollapsed && <span>Hotel Settings</span>}
+          </NavLink>
+        </SidebarMenuButton>
+
         {/* User Profile */}
         <div
           id="admin-ob-user-profile"
@@ -581,6 +423,5 @@ export const AdminSidebar: React.FC = () => {
     </Sidebar>
   );
 };
-
 
 export default AdminSidebar;

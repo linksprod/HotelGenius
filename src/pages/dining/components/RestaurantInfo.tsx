@@ -8,12 +8,14 @@ interface RestaurantInfoProps {
   restaurant: Restaurant;
   onBookingClick: () => void;
   onViewMenuClick?: () => void;  // New prop for viewing menu
+  showBookingButton?: boolean;
 }
 
 const RestaurantInfo = ({ 
   restaurant, 
   onBookingClick, 
-  onViewMenuClick  // Add this prop
+  onViewMenuClick,
+  showBookingButton = true
 }: RestaurantInfoProps) => {
   return (
     <div className="space-y-6">
@@ -34,12 +36,14 @@ const RestaurantInfo = ({
       </div>
       
       <div className="flex gap-4">
-        <Button 
-          onClick={onBookingClick} 
-          className="flex-1"
-        >
-          Book a Table
-        </Button>
+        {showBookingButton && (
+          <Button 
+            onClick={onBookingClick} 
+            className="flex-1"
+          >
+            Book a Table
+          </Button>
+        )}
         {onViewMenuClick && (
           <Button 
             onClick={onViewMenuClick} 

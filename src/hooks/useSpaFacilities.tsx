@@ -9,6 +9,9 @@ export const useSpaFacilities = () => {
   const queryClient = useQueryClient();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
+  // Determine if we are in the admin dashboard to bypass the draft filter
+  const isAdminView = window.location.pathname.startsWith('/admin');
+
   // Récupérer toutes les installations spa
   const fetchFacilities = async (): Promise<SpaFacility[]> => {
     if (!hotelId && !isSuperAdmin) {
@@ -21,6 +24,10 @@ export const useSpaFacilities = () => {
 
     if (hotelId) {
       query = query.eq('hotel_id', hotelId);
+    }
+    
+    if (!isAdminView && !isSuperAdmin) {
+      query = query.eq('is_published', true);
     }
 
     const { data, error } = await query.order('name');
@@ -126,7 +133,7 @@ export const useSpaFacilities = () => {
   });
 
   const { data = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['spa-facilities', hotelId, isSuperAdmin],
+    queryKey: ['spa-facilities', hotelId, isSuperAdmin, isAdminView],
     queryFn: fetchFacilities,
   });
 

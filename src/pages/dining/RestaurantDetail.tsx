@@ -20,6 +20,7 @@ import RestaurantInfo from './components/RestaurantInfo';
 import { useRestaurantMenus } from '@/hooks/useRestaurantMenus';
 import RestaurantBookingDialog from '@/features/dining/components/RestaurantBookingDialog';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const RestaurantDetail = () => {
   const { id } = useParams();
@@ -29,6 +30,7 @@ const RestaurantDetail = () => {
   const { toast } = useToast();
   const { requireAuth } = useRequireAuth();
   const { upcomingEvents } = useEvents();
+  const { hotel } = useHotel();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("info");
   const { menuItems, isLoading: menuLoading } = useRestaurantMenus(restaurantId);
@@ -118,9 +120,11 @@ const RestaurantDetail = () => {
                       <span>{restaurant.location}</span>
                     </div>
                     <p className="text-muted-foreground mb-6">{restaurant.description}</p>
-                    <Button onClick={handleBookTable}>
-                      {restaurant.actionText || "Book a Table"}
-                    </Button>
+                    {hotel?.plan !== 'essential' && (
+                      <Button onClick={handleBookTable}>
+                        {restaurant.actionText || "Book a Table"}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </Card>
@@ -142,6 +146,7 @@ const RestaurantDetail = () => {
                       restaurant={restaurant}
                       onBookingClick={handleBookTable}
                       onViewMenuClick={() => setActiveTab("menu")}
+                      showBookingButton={hotel?.plan !== 'essential'}
                     />
                   </TabsContent>
                   <TabsContent value="menu" className="p-4">

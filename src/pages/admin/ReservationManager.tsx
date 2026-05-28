@@ -11,6 +11,8 @@ import ReservationList from '@/components/admin/reservations/ReservationList';
 import ErrorState from '@/components/admin/reservations/ErrorState';
 import { toast } from 'sonner';
 import { TableReservation } from '@/features/dining/types';
+import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
+import { Calendar } from 'lucide-react';
 
 const ReservationManager = () => {
   const { id } = useParams<{ id: string }>();
@@ -72,8 +74,11 @@ const ReservationManager = () => {
       </div>
 
       <div className="mb-6">
-        <h1 className="text-3xl font-semibold">{restaurant.name}</h1>
-        <p className="text-muted-foreground">Gestion des Réservations</p>
+        <AdminPageHeader
+          title={restaurant.name}
+          description="Gestion des Réservations"
+          icon={<Calendar className="h-5 w-5 text-primary" />}
+        />
       </div>
 
       {error && (

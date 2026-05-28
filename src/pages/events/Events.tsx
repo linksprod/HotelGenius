@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const Events = () => {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ const Events = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const { toast } = useToast();
   const { requireAuth } = useRequireAuth();
+  const { hotel } = useHotel();
 
   const handleBookEvent = (event: Event) => {
     requireAuth(() => {
@@ -139,12 +141,14 @@ const Events = () => {
                   </p>
 
                   {/* Book Button */}
-                  <Button 
-                    onClick={() => handleBookEvent(event)}
-                    className="w-full"
-                  >
-                    {t('common.book', 'Book')}
-                  </Button>
+                  {hotel?.plan !== 'essential' && (
+                    <Button 
+                      onClick={() => handleBookEvent(event)}
+                      className="w-full"
+                    >
+                      {t('common.book', 'Book')}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}

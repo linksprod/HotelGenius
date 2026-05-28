@@ -9,6 +9,9 @@ export const useSpaServices = () => {
   const queryClient = useQueryClient();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
+  // Determine if we are in the admin dashboard to bypass the draft filter
+  const isAdminView = window.location.pathname.startsWith('/admin');
+
   // Récupérer tous les services spa
   const fetchServices = async (): Promise<SpaService[]> => {
     if (!hotelId && !isSuperAdmin) {
@@ -21,6 +24,10 @@ export const useSpaServices = () => {
 
     if (hotelId) {
       query = query.eq('hotel_id', hotelId);
+    }
+    
+    if (!isAdminView && !isSuperAdmin) {
+      query = query.eq('is_published', true);
     }
 
     const { data, error } = await query.order('name');
@@ -54,6 +61,10 @@ export const useSpaServices = () => {
 
     if (hotelId) {
       query = query.eq('hotel_id', hotelId);
+    }
+    
+    if (!isAdminView && !isSuperAdmin) {
+      query = query.eq('is_published', true);
     }
 
     const { data, error } = await query.order('name');
@@ -126,13 +137,13 @@ export const useSpaServices = () => {
 
   // Services data
   const { data: services = [], isLoading: isLoadingServices, error: servicesError, refetch: refetchServices } = useQuery({
-    queryKey: ['spa-services', hotelId, isSuperAdmin],
+    queryKey: ['spa-services', hotelId, isSuperAdmin, isAdminView],
     queryFn: fetchServices,
   });
 
   // Featured services data
   const { data: featuredServices = [], isLoading: isLoadingFeatured, error: featuredError } = useQuery({
-    queryKey: ['spa-services', 'featured', hotelId, isSuperAdmin],
+    queryKey: ['spa-services', 'featured', hotelId, isSuperAdmin, isAdminView],
     queryFn: fetchFeaturedServices,
   });
 

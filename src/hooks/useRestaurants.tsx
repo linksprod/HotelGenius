@@ -17,11 +17,14 @@ export const useRestaurants = () => {
   const queryClient = useQueryClient();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
+  // Determine if we are in the admin dashboard to bypass the draft filter
+  const isAdminView = window.location.pathname.startsWith('/admin');
+
   // Use React Query for data fetching and caching
   // Don't fire until hotelId is resolved (HotelContext async) or user is super admin
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['restaurants', hotelId, isSuperAdmin],
-    queryFn: () => fetchRestaurants(hotelId, isSuperAdmin),
+    queryKey: ['restaurants', hotelId, isSuperAdmin, isAdminView],
+    queryFn: () => fetchRestaurants(hotelId, isSuperAdmin, isAdminView),
     enabled: isSuperAdmin || hotelId !== null,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,
@@ -31,8 +34,8 @@ export const useRestaurants = () => {
     data: featuredRestaurants,
     isLoading: isFeaturedLoading
   } = useQuery({
-    queryKey: ['featuredRestaurants', hotelId, isSuperAdmin],
-    queryFn: () => fetchFeaturedRestaurants(hotelId, isSuperAdmin),
+    queryKey: ['featuredRestaurants', hotelId, isSuperAdmin, isAdminView],
+    queryFn: () => fetchFeaturedRestaurants(hotelId, isSuperAdmin, isAdminView),
     enabled: isSuperAdmin || hotelId !== null,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: true,

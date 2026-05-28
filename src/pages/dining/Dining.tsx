@@ -106,16 +106,18 @@ const Dining = () => {
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">{restaurant.description}</p>
                 <div className="grid grid-cols-2 gap-2 mb-2">
-                  <Button
-                    onClick={() => handleBookTable(restaurant.id)}
-                    className="w-full flex items-center justify-center gap-1"
-                  >
-                    <Calendar size={16} />
-                    {restaurant.actionText || t('dining.bookTable')}
-                  </Button>
+                  {hotel?.plan !== 'essential' && (
+                    <Button
+                      onClick={() => handleBookTable(restaurant.id)}
+                      className="w-full flex items-center justify-center gap-1"
+                    >
+                      <Calendar size={16} />
+                      {restaurant.actionText || t('dining.bookTable')}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent"
+                    className={hotel?.plan === 'essential' ? "w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent col-span-2" : "w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent"}
                     onClick={() => navigate(resolvePath(`/dining/${restaurant.id}`))}
                   >
                     <BookText size={16} />

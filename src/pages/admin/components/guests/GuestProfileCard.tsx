@@ -14,13 +14,11 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
     return `${guest.first_name?.[0] || ''}${guest.last_name?.[0] || ''}`.toUpperCase();
   };
 
-  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
+  const staysCount = guest.total_stays || 0;
   const guestRole = guest.is_vip ? "VIP Member" : "Standard Guest";
-  const staysCount = isDemo ? (guest.total_stays || 1) : 1;
-  const gender = guest.gender || (guest.first_name === 'Sofia' || guest.first_name === 'Elena' || guest.first_name === 'Sarah' ? 'Female' : 'Male');
-  const nationality = guest.nationality || (isDemo ? "International" : "N/A");
-  const lifetimeValue = isDemo && guest.total_spent ? `$${guest.total_spent.toLocaleString()}` : "$1,240";
-  const aiScore = isDemo ? (9.0 + (Math.random() * 0.9)).toFixed(1) : "8.5";
+  const gender = guest.gender || "Not specified";
+  const nationality = guest.nationality || "Not specified";
+  const lifetimeValue = guest.total_spent ? `$${guest.total_spent.toLocaleString()}` : "$0";
 
   return (
     <Card className="relative overflow-hidden border border-border dark:border-none bg-card dark:bg-zinc-900 shadow-sm dark:shadow-2xl rounded-[2.5rem]">
@@ -93,20 +91,16 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
               <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                 <Cake className="h-3 w-3" /> Birthday
               </span>
-              <div className="text-sm font-bold text-foreground dark:text-white">{guest.birth_date || 'June 12, 1992'}</div>
+              <div className="text-sm font-bold text-foreground dark:text-white">{guest.birth_date || 'Not specified'}</div>
             </div>
           </div>
         </div>
 
-        {/* Loyalty Quick Stats (Demo Only Decorator) */}
-        <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-border dark:border-white/5">
+        {/* Loyalty Quick Stats */}
+        <div className="mt-8 pt-8 border-t border-border dark:border-white/5">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest">Lifetime Value</span>
             <div className="text-2xl font-black text-foreground dark:text-white">{lifetimeValue}</div>
-          </div>
-          <div className="space-y-1 text-right">
-            <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest">AI Preference Score</span>
-            <div className="text-2xl font-black text-rose-500">{aiScore}<span className="text-xs text-muted-foreground dark:text-zinc-500">/10</span></div>
           </div>
         </div>
       </CardContent>

@@ -18,7 +18,7 @@ const PREF_ICONS: Record<string, any> = {
 };
 
 const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) => {
-  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
+
 
   const { data: preferences = [] } = useQuery({
     queryKey: ['admin-guest-preferences', guestId],
@@ -30,19 +30,10 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
       if (error) throw error;
       return data as { id: string; category: string; value: string }[];
     },
-    enabled: !!guestId && !isDemo,
+    enabled: !!guestId,
   });
 
-  const demoPreferences = [
-    { value: 'Room 22°C', color: 'text-rose-400 bg-rose-400/10' },
-    { value: 'Extra Pillows', color: 'text-blue-400 bg-blue-400/10' },
-    { value: 'Oat Milk Latte', color: 'text-amber-400 bg-amber-400/10' },
-    { value: 'Ocean View', color: 'text-cyan-400 bg-cyan-400/10' },
-    { value: 'Vegan Menu', color: 'text-emerald-400 bg-emerald-400/10' },
-    { value: 'Morning Yoga', color: 'text-purple-400 bg-purple-400/10' },
-  ];
-
-  const displayPrefs = isDemo ? demoPreferences : preferences.map(p => ({ value: p.value, color: 'text-primary bg-primary/10' }));
+  const displayPrefs = preferences.map(p => ({ value: p.value, color: 'text-primary bg-primary/10' }));
 
   return (
     <Card className="overflow-hidden border border-border dark:border-none bg-card/50 dark:bg-zinc-900/50 backdrop-blur-xl shadow-sm dark:shadow-2xl rounded-[2rem] cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors">

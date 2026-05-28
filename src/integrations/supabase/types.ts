@@ -353,6 +353,7 @@ export type Database = {
           description: string
           id: string
           image: string
+          is_published: boolean | null
           name: string
           updated_at: string | null
         }
@@ -361,6 +362,7 @@ export type Database = {
           description: string
           id?: string
           image: string
+          is_published?: boolean | null
           name: string
           updated_at?: string | null
         }
@@ -369,6 +371,7 @@ export type Database = {
           description?: string
           id?: string
           image?: string
+          is_published?: boolean | null
           name?: string
           updated_at?: string | null
         }
@@ -890,6 +893,8 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           created_at: string
+          custom_domain: string | null
+          domain_verified: boolean | null
           id: string
           logo_url: string | null
           name: string
@@ -905,6 +910,8 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          custom_domain?: string | null
+          domain_verified?: boolean | null
           id?: string
           logo_url?: string | null
           name: string
@@ -920,6 +927,8 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          custom_domain?: string | null
+          domain_verified?: boolean | null
           id?: string
           logo_url?: string | null
           name?: string
@@ -1142,6 +1151,7 @@ export type Database = {
           id: string
           images: string[]
           is_featured: boolean | null
+          is_published: boolean | null
           location: string
           name: string
           open_hours: string
@@ -1157,6 +1167,7 @@ export type Database = {
           id?: string
           images?: string[]
           is_featured?: boolean | null
+          is_published?: boolean | null
           location: string
           name: string
           open_hours: string
@@ -1197,6 +1208,7 @@ export type Database = {
           hotel_id: string | null
           id: string
           images: string[] | null
+          is_published: boolean | null
           price: number
           room_number: string
           status: string
@@ -1210,6 +1222,7 @@ export type Database = {
           floor: number
           id?: string
           images?: string[] | null
+          is_published?: boolean | null
           price: number
           room_number: string
           status: string
@@ -1223,6 +1236,7 @@ export type Database = {
           floor?: number
           id?: string
           images?: string[] | null
+          is_published?: boolean | null
           price?: number
           room_number?: string
           status?: string
@@ -1510,6 +1524,7 @@ export type Database = {
           hotel_id: string | null
           id: string
           image_url: string | null
+          is_published: boolean | null
           name: string
           updated_at: string | null
         }
@@ -1519,6 +1534,7 @@ export type Database = {
           hotel_id?: string | null
           id?: string
           image_url?: string | null
+          is_published?: boolean | null
           name: string
           updated_at?: string | null
         }

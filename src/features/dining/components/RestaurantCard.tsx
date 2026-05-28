@@ -15,18 +15,63 @@ interface RestaurantCardProps {
 const RestaurantCard = ({ restaurant, onBookTable }: RestaurantCardProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+
+  const images = restaurant.images && restaurant.images.length > 0
+    ? restaurant.images
+    : ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop'];
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
   
   return (
     <Card className="w-full snap-center animate-fade-in bg-card border-border">
-      <div className="aspect-video relative overflow-hidden rounded-t-lg">
+      <div className="aspect-video relative overflow-hidden rounded-t-lg group/img">
         <img 
-          src={restaurant.images[0]} 
+          src={images[currentImageIndex]} 
           alt={restaurant.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-all duration-300"
         />
-        <div className="absolute top-2 right-2">
+        
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-all opacity-0 group-hover/img:opacity-100 font-bold z-10 text-xs"
+            >
+              ‹
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-all opacity-0 group-hover/img:opacity-100 font-bold z-10 text-xs"
+            >
+              ›
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-black/40 px-1.5 py-0.5 rounded-full z-10">
+              {images.map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    i === currentImageIndex ? 'bg-white scale-110' : 'bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="absolute top-2 right-2 z-10">
           <span className={`
-            px-2 py-1 rounded-full text-xs
+            px-2 py-1 rounded-full text-xs font-semibold
             ${restaurant.status === 'open' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}
           `}>
             {t(`common.${restaurant.status}`)}

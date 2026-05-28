@@ -1,65 +1,72 @@
-import React from 'react';
-import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar';
-import { AdminSidebar } from './AdminSidebar';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAdminOnboarding } from '@/hooks/admin/useAdminOnboarding';
 import AdminOnboardingOverlay from './AdminOnboardingOverlay';
-import { useLocation } from 'react-router-dom';
-import { StaffNotificationBell } from './StaffNotificationBell';
+import AdminTopBar from './AdminTopBar';
+import AdminSidebarRail from './AdminSidebarRail';
+import PlatformSupportWidget from './support/PlatformSupportWidget';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-/**
- * Derive which section the user is currently on from the URL path.
- * Returns 'dashboard' for the main admin page, otherwise the section slug.
- */
 function getSectionFromPath(pathname: string): string {
-  // e.g. /demo/admin/guests -> guests, /demo/admin -> dashboard
   const parts = pathname.split('/');
   const adminIdx = parts.indexOf('admin');
   if (adminIdx === -1 || adminIdx >= parts.length - 1) return 'dashboard';
   return parts[adminIdx + 1] || 'dashboard';
 }
 
+function getSectionLabel(sectionId: string): string {
+  const labels: Record<string, string> = {
+    dashboard: 'Dashboard',
+    chat: 'Inbox',
+    guests: 'Guests',
+    feedback: 'Feedback',
+    housekeeping: 'Housekeeping',
+    maintenance: 'Maintenance',
+    security: 'Security',
+    'information-technology': 'IT Support',
+    restaurants: 'Dining',
+    spa: 'Wellness',
+    events: 'Events',
+    shops: 'Shops',
+    agent: 'AI Concierge',
+    settings: 'Settings',
+  };
+  return labels[sectionId] ?? sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
+}
+
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   const sectionId = getSectionFromPath(location.pathname);
+  const sectionLabel = getSectionLabel(sectionId);
 
-  const {
-    isActive,
-    currentStep,
-    currentStepIndex,
-    totalSteps,
-    nextStep,
-    skipTour,
-  } = useAdminOnboarding(sectionId);
+  // Hide the sidebar rail on settings pages — settings has its own sub-nav
+  const isSettingsPage = sectionId === 'settings';
+
+  const { isActive, currentStep, currentStepIndex, totalSteps, nextStep, skipTour } = useAdminOnboarding(sectionId);
 
   return (
-    <SidebarProvider>
-      <AdminSidebar />
-      <SidebarInset className="min-h-svh flex flex-col bg-background overflow-x-hidden w-full max-w-[100vw]">
-        {/* Mobile Header - Elevated z-index to stay above the landing animation if active */}
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:hidden bg-background border-b border-border shadow-sm">
-          <div className="flex items-center gap-2">
-            <SidebarTrigger className="-ml-1 text-foreground hover:bg-muted" />
-            <div className="h-4 w-px bg-border mx-1" />
-            <span className="text-sm font-semibold tracking-tight">
-              {sectionId === 'dashboard' ? 'Dashboard' : sectionId.charAt(0).toUpperCase() + sectionId.slice(1)}
-            </span>
-          </div>
+    <div className="flex h-screen w-full overflow-hidden bg-background">
+      {/* Sidebar Rail — hidden on settings pages */}
+      {!isSettingsPage && <AdminSidebarRail />}
 
-          <div className="flex items-center gap-3">
-            <StaffNotificationBell />
-          </div>
-        </header>
+      {/* Main content area */}
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+        {/* Top bar */}
+        <AdminTopBar sectionLabel={sectionLabel} />
 
-        <main className="flex-1 w-full relative">
+        {/* Page content */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden">
           {children}
         </main>
-      </SidebarInset>
+      </div>
 
-      {/* Onboarding overlay — works for any section except dashboard */}
+      {/* Platform Support Widget (always visible in admin) */}
+      <PlatformSupportWidget />
+
+      {/* Onboarding overlay */}
       {sectionId !== 'dashboard' && (
         <AdminOnboardingOverlay
           isActive={isActive}
@@ -70,7 +77,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           onSkip={skipTour}
         />
       )}
-    </SidebarProvider>
+    </div>
   );
 };
 

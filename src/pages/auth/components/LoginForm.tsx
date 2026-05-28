@@ -71,7 +71,19 @@ const LoginForm: React.FC = () => {
             navigate(from, { replace: true });
           } else if (isStaff) {
             // Priority 3: Hotel staff go to their hotel admin panel
-            navigate(resolvePath('/admin'), { replace: true });
+            // We need to find their hotel slug to redirect correctly
+            const { data: roleData } = await supabase
+              .from('user_roles')
+              .select('hotels(slug)')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+              
+            const slug = roleData?.hotels?.slug;
+            if (slug) {
+              navigate(`/${slug}/admin`, { replace: true });
+            } else {
+              navigate(resolvePath('/admin'), { replace: true });
+            }
           } else {
             navigate(resolvePath('/'), { replace: true });
           }

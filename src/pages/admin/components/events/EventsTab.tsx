@@ -22,12 +22,7 @@ export const EventsTab = () => {
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Enhanced demo events if empty
-  const displayEvents = events.length === 0 ? [
-    { id: 'demo-1', title: 'Rooftop Jazz Night', category: 'event', location: 'Sky Bar', date: new Date().toISOString(), time: '08:00 PM', image: 'https://images.unsplash.com/photo-1514525253361-bee8a187449a?w=400&auto=format&fit=crop&q=60', is_featured: true },
-    { id: 'demo-2', title: 'Sunset Yoga Session', category: 'event', location: 'Zen Garden', date: new Date().toISOString(), time: '06:30 PM', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68733?w=400&auto=format&fit=crop&q=60', is_featured: false },
-    { id: 'demo-3', title: 'Champagne Brunch', category: 'promotion', location: 'Lumina Restaurant', date: new Date().toISOString(), time: '11:00 AM', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=60', is_featured: false },
-  ] : events;
+  const displayEvents = events;
 
   const filteredEvents = (displayEvents as any[]).filter(event => 
     event.title.toLowerCase().includes(searchTerm.toLowerCase()) || 

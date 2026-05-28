@@ -9,6 +9,7 @@ import SpaBookingDetails from '@/pages/spa/SpaBookingDetails';
 import EventDetail from '@/pages/events/EventDetail';
 import MyRoom from '@/pages/my-room/MyRoom';
 import NotificationDetail from '@/pages/notifications/NotificationDetail';
+import DigitalTipping from '@/pages/tipping/DigitalTipping';
 
 const AuthenticatedRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AuthenticatedRoutes = () => {
         <Route path="/events/:id" element={<EventDetail />} />
         <Route path="/my-room" element={<MyRoom />} />
         <Route path="/notifications/:type/:id" element={<NotificationDetail />} />
+        <Route path="/tipping" element={<DigitalTipping />} />
       </Routes>
     </AuthGuard>
   );
