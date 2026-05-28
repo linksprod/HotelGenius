@@ -27,45 +27,59 @@ import './i18n';
 
 import { HotelProvider } from '@/features/hotels/context/HotelContext';
 
+import { isCustomDomain } from '@/utils/domain';
+
+const TenantApp = () => (
+  <HotelProvider>
+    <ThemeCustomizer />
+    <TenantGuard>
+      <Routes>
+        <Route path="profile/*" element={<AuthenticatedRoutes />} />
+        <Route path="dining/reservations/*" element={<AuthenticatedRoutes />} />
+        <Route path="spa/booking/*" element={<AuthenticatedRoutes />} />
+        <Route path="my-room/*" element={<AuthenticatedRoutes />} />
+        <Route path="notifications/*" element={<AuthenticatedRoutes />} />
+        <Route path="admin/*" element={<AdminRoutes />} />
+        <Route path="/*" element={<PublicRoutes />} />
+      </Routes>
+    </TenantGuard>
+  </HotelProvider>
+);
+
 const queryClient = new QueryClient();
 
 function App() {
+  const customDomain = isCustomDomain();
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="hotel-genius-theme" attribute="class" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              {/* Redirect root directly to login */}
-              <Route path="/" element={<Navigate to="/login" replace />} />
-              <Route path="/login" element={
-                <HotelProvider>
-                  <Login />
-                </HotelProvider>
-              } />
-              <Route path="/auth/login" element={
-                <HotelProvider>
-                  <Login />
-                </HotelProvider>
-              } />
+              {customDomain ? (
+                /* Custom Domain Mode: Serve Guest App directly at root */
+                <Route path="/*" element={<TenantApp />} />
+              ) : (
+                /* Standard Platform Mode: Requires /slug/ prefix */
+                <>
+                  {/* Redirect root directly to login */}
+                  <Route path="/" element={<Navigate to="/login" replace />} />
+                  <Route path="/login" element={
+                    <HotelProvider>
+                      <Login />
+                    </HotelProvider>
+                  } />
+                  <Route path="/auth/login" element={
+                    <HotelProvider>
+                      <Login />
+                    </HotelProvider>
+                  } />
 
-              {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
-              <Route path="/:slug/*" element={
-                <HotelProvider>
-                  <ThemeCustomizer />
-                  <TenantGuard>
-                    <Routes>
-                      <Route path="profile/*" element={<AuthenticatedRoutes />} />
-                      <Route path="dining/reservations/*" element={<AuthenticatedRoutes />} />
-                      <Route path="spa/booking/*" element={<AuthenticatedRoutes />} />
-                      <Route path="my-room/*" element={<AuthenticatedRoutes />} />
-                      <Route path="notifications/*" element={<AuthenticatedRoutes />} />
-                      <Route path="admin/*" element={<AdminRoutes />} />
-                      <Route path="/*" element={<PublicRoutes />} />
-                    </Routes>
-                  </TenantGuard>
-                </HotelProvider>
-              } />
+                  {/* HotelProvider is INSIDE this route so useParams() captures :slug correctly */}
+                  <Route path="/:slug/*" element={<TenantApp />} />
+                </>
+              )}
 
               <Route path="/administration/*" element={
                 <HotelProvider>
