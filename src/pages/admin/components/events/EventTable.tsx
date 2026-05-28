@@ -5,8 +5,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { Calendar, Users, Star, ExternalLink } from 'lucide-react';
+import { Calendar, Users, Star, ExternalLink, MapPin } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { cn } from '@/lib/utils';
 
 interface EventTableProps {
   events: Event[];

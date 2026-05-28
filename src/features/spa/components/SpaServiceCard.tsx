@@ -14,14 +14,57 @@ const SpaServiceCard = ({
   service,
   onBook
 }: SpaServiceCardProps) => {
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+
+  // Parse comma-separated images or fallback
+  const images = service.image 
+    ? service.image.split(',').map(s => s.trim()).filter(Boolean) 
+    : ["/lovable-uploads/3c659231-2940-4890-99b3-5080c513de7f.png"];
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
-      <div className="h-40 bg-muted">
+      <div className="h-40 bg-muted relative overflow-hidden group/img">
         <img 
-          src={service.image || "/lovable-uploads/3c659231-2940-4890-99b3-5080c513de7f.png"} 
+          src={images[currentImageIndex]} 
           alt={service.name} 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-all duration-300"
         />
+        
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prevImage}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-all opacity-0 group-hover/img:opacity-100 font-bold z-10 text-xs"
+            >
+              ‹
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-all opacity-0 group-hover/img:opacity-100 font-bold z-10 text-xs"
+            >
+              ›
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 bg-black/40 px-1.5 py-0.5 rounded-full z-10">
+              {images.map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${i === currentImageIndex ? 'bg-white scale-110' : 'bg-white/50'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
       <CardContent className="p-4">
         <div className="flex justify-between items-center mb-2">

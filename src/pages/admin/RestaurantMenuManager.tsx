@@ -15,6 +15,7 @@ import MenuItemForm from './restaurants/menu/MenuItemForm';
 import MenuItemsTable from './restaurants/menu/MenuItemsTable';
 import { MenuItemFormValues } from './restaurants/menu/MenuItemFormSchema';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
 
 const RestaurantMenuManager = () => {
   const { resolvePath } = useHotelPath();
@@ -137,38 +138,45 @@ const RestaurantMenuManager = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setSearchParams({})}>
-            <ArrowLeft className="h-4 w-4 mr-1" /> Changer de restaurant
-          </Button>
-          <h1 className="text-2xl font-bold">{restaurant.name} - Menu</h1>
-        </div>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingItem(null)}>
-              <Plus className="mr-2 h-4 w-4" /> Ajouter un plat
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
-            <DialogHeader>
-              <DialogTitle>{editingItem ? "Modifier le plat" : "Ajouter un plat"}</DialogTitle>
-              <DialogDescription>
-                {editingItem
-                  ? "Modifiez les informations du plat."
-                  : "Remplissez le formulaire pour ajouter un nouveau plat."}
-              </DialogDescription>
-            </DialogHeader>
-            <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
-              <MenuItemForm
-                onSubmit={handleSubmit}
-                editingItem={editingItem}
-              />
-            </ScrollArea>
-          </DialogContent>
-        </Dialog>
+      <div className="mb-6">
+        <AdminPageHeader
+          title={`${restaurant.name} - Menu`}
+          description="Gérez les plats du restaurant."
+          icon={<Store className="h-5 w-5 text-primary" />}
+          actions={
+            <div className="flex items-center gap-2">
+              <Button variant="outline" onClick={() => setSearchParams({})}>
+                <ArrowLeft className="h-4 w-4 mr-1" /> Changer de restaurant
+              </Button>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button onClick={() => setEditingItem(null)}>
+                    <Plus className="mr-2 h-4 w-4" /> Ajouter un plat
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px] max-h-[90vh]">
+                  <DialogHeader>
+                    <DialogTitle>{editingItem ? "Modifier le plat" : "Ajouter un plat"}</DialogTitle>
+                    <DialogDescription>
+                      {editingItem
+                        ? "Modifiez les informations du plat."
+                        : "Remplissez le formulaire pour ajouter un nouveau plat."}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ScrollArea className="max-h-[calc(90vh-180px)] pr-4">
+                    <MenuItemForm
+                      onSubmit={handleSubmit}
+                      editingItem={editingItem}
+                    />
+                  </ScrollArea>
+                </DialogContent>
+              </Dialog>
+            </div>
+          }
+        />
       </div>
+
+
 
       <Card>
         <CardHeader>

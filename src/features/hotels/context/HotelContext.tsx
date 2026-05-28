@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Hotel {
@@ -10,6 +10,10 @@ interface Hotel {
     logo_url?: string;
     primary_color?: string;
     secondary_color?: string;
+    custom_domain?: string;
+    domain_verified?: boolean;
+    plan?: string;
+    active_modules?: string[];
 }
 
 interface HotelContextType {
@@ -30,32 +34,44 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     const [refreshCount, setRefreshCount] = useState(0);
 
     const refreshHotel = () => {
-        lastSlugRef.current = null; // force re-fetch on next effect
+        lastSlugRef.current = null;
         setRefreshCount(c => c + 1);
     };
 
-    // Try to get slug from URL if we are in a /h/:slug route
     const { slug } = useParams<{ slug?: string }>();
     const location = useLocation();
 
     useEffect(() => {
         const resolveHotel = async () => {
-            let currentSlug = slug;
+            const hostname = window.location.hostname;
+            const isCustomDomain =
+                hostname !== 'localhost' &&
+                hostname !== '127.0.0.1' &&
+                !hostname.includes('hotelgenius') &&
+                !hostname.includes('localhost');
 
-            // Fallback: extract slug from pathname for cases where useParams might be empty
-            if (!currentSlug && location.pathname !== '/') {
-                currentSlug = location.pathname.split('/')[1];
+            let currentSlug = slug;
+            let customDomain: string | undefined;
+
+            if (isCustomDomain) {
+                customDomain = hostname;
+                // When on custom domain, slug might be empty — use hostname as key
+                currentSlug = currentSlug || '_custom_domain_';
+            } else {
+                if (!currentSlug && location.pathname !== '/') {
+                    currentSlug = location.pathname.split('/')[1];
+                }
             }
 
-            if (!currentSlug) {
+            if (!currentSlug && !customDomain) {
                 setHotel(null);
                 setIsLoading(false);
                 lastSlugRef.current = null;
                 return;
             }
 
-            // Optimization: avoid re-fetching if slug hasn't changed
-            if (currentSlug === lastSlugRef.current) {
+            const cacheKey = customDomain || currentSlug;
+            if (cacheKey === lastSlugRef.current) {
                 setIsLoading(false);
                 return;
             }
@@ -64,10 +80,11 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             setError(null);
 
             try {
-                // Use RPC (SECURITY DEFINER) to bypass RLS — guarantees guest reads work
-                // Cast needed until migration is applied and types regenerated
                 const { data: rows, error: fetchError } = await (supabase as any)
-                    .rpc('get_hotel_by_slug', { p_slug: currentSlug });
+                    .rpc('get_hotel_by_slug', {
+                        p_slug: currentSlug || '',
+                        p_custom_domain: customDomain || null,
+                    });
 
                 if (fetchError) throw fetchError;
 
@@ -75,11 +92,11 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                 const data = hotelRows && hotelRows.length > 0 ? hotelRows[0] : null;
 
                 if (!data) {
-                    setError(`Hotel with slug "${currentSlug}" not found`);
+                    setError(`Hotel not found`);
                     setHotel(null);
                 } else {
                     setHotel(data);
-                    lastSlugRef.current = currentSlug;
+                    lastSlugRef.current = cacheKey || null;
                 }
             } catch (err: any) {
                 console.error('Error resolving hotel:', err);
@@ -87,14 +104,10 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             } finally {
                 setIsLoading(false);
             }
-
         };
 
         resolveHotel();
-        // `hotel` intentionally excluded from deps — slug, pathname, and refreshCount are sufficient triggers
     }, [slug, location.pathname, refreshCount]);
-
-
 
     return (
         <HotelContext.Provider value={{ hotel, hotelId: hotel?.id || null, isLoading, error, refreshHotel }}>

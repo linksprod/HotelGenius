@@ -17,9 +17,9 @@ const SuperDashboard = React.lazy(() => import('@/pages/admin/super/SuperDashboa
 const AdminLayout = React.lazy(() => import('@/components/admin/AdminLayout'));
 const AdminRoleGuard = React.lazy(() => import('@/components/admin/AdminRoleGuard'));
 const HotelsManager = React.lazy(() => import('@/pages/admin/HotelsManager'));
-const StaffManager = React.lazy(() => import('@/pages/admin/StaffManager'));
+const StaffManager = React.lazy(() => import('@/pages/admin/settings/StaffManager'));
 const SuperAIInfrastructure = React.lazy(() => import('@/pages/admin/super/SuperAIInfrastructure'));
-const NotificationCentre = React.lazy(() => import('@/pages/admin/NotificationCentre'));
+const NotificationCentre = React.lazy(() => import('@/pages/admin/overview/NotificationCentre'));
 import TenantGuard from './components/TenantGuard';
 import ThemeCustomizer from './components/ThemeCustomizer';
 import PWAInstallBanner from './components/PWAInstallBanner';
@@ -36,8 +36,8 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              {/* Redirect root to a default hotel context */}
-              <Route path="/" element={<Navigate to="/demo" replace />} />
+              {/* Redirect root directly to login */}
+              <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="/login" element={
                 <HotelProvider>
                   <Login />

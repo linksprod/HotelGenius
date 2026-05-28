@@ -53,14 +53,18 @@ const Layout = ({
             <div id="main-header-logo" className="flex justify-center items-center flex-1">
               <Link 
                 to={homeLink} 
-                className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center hover:opacity-80 transition-opacity"
+                className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
               >
-                <span className={cn(
-                  "font-qurova font-bold tracking-tight text-foreground transition-colors",
-                  isMobile ? "text-xl" : "text-2xl"
-                )}>
-                  HotelGenius
-                </span>
+                {hotel?.logo_url ? (
+                  <img src={hotel.logo_url} alt={hotel.name} className="h-7 w-auto object-contain max-w-[120px]" />
+                ) : (
+                  <span className={cn(
+                    "font-qurova font-light tracking-wide text-foreground transition-colors",
+                    isMobile ? "text-xl" : "text-2xl"
+                  )}>
+                    HotelGenius
+                  </span>
+                )}
               </Link>
             </div>
 

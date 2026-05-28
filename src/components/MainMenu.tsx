@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BedDouble, UtensilsCrossed, Heart, Compass, Phone, ShoppingBag, Map, Home, Info, Calendar, BellRing } from 'lucide-react';
+import { BedDouble, UtensilsCrossed, Heart, Compass, Phone, ShoppingBag, Map, Home, Info, Calendar, BellRing, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useHotelPath } from '@/hooks/useHotelPath';
 
@@ -45,6 +45,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
     { icon: <ShoppingBag className="h-5 w-5" />, label: t('nav.shops'), path: '/shops' },
     { icon: <Map className="h-5 w-5" />, label: t('nav.hotelMap'), path: '/map' },
     { icon: <BedDouble className="h-5 w-5" />, label: t('nav.myRoom'), path: '/my-room' },
+    { icon: <Coins className="h-5 w-5" />, label: 'Digital Tipping', path: '/tipping' },
   ];
 
   const handleNavigate = (path: string) => {
@@ -74,8 +75,8 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
           <SheetHeader className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-b border-border">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
-                <span className="text-2xl font-qurova font-bold text-sidebar-foreground">
-                  Hotel<span className="text-primary italic">Genius</span>
+                <span className="text-2xl font-qurova font-light tracking-wide text-sidebar-foreground">
+                  HotelGenius
                 </span>
               </div>
               <SheetTitle className="text-2xl text-card-foreground font-semibold">{t('nav.services')}</SheetTitle>

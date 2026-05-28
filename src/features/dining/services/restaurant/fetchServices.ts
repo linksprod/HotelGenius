@@ -5,7 +5,7 @@ import { Restaurant } from '@/features/dining/types';
 /**
  * Fetches all restaurants from the database for a specific hotel
  */
-export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdmin: boolean = false): Promise<Restaurant[]> => {
+export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdmin: boolean = false, isAdminView: boolean = false): Promise<Restaurant[]> => {
   if (!hotelId && !isSuperAdmin) {
     return [];
   }
@@ -16,6 +16,10 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
 
   if (hotelId) {
     query = query.eq('hotel_id', hotelId);
+  }
+  
+  if (!isAdminView && !isSuperAdmin) {
+    query = query.eq('is_published', true);
   }
 
   const { data, error } = await query.order('name');
@@ -36,7 +40,8 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
     location: item.location,
     status: item.status as 'open' | 'closed',
     actionText: item.action_text || "Book a Table",
-    isFeatured: item.is_featured || false
+    isFeatured: item.is_featured || false,
+    is_published: item.is_published || false
   }));
 };
 /**
@@ -70,9 +75,9 @@ export const fetchRestaurantById = async (id: string): Promise<Restaurant> => {
 };
 
 /**
- * Fetches featured restaurants from the database for a specific hotel
+ * Fetches featured restaurants from the database
  */
-export const fetchFeaturedRestaurants = async (hotelId: string | null = null, isSuperAdmin: boolean = false): Promise<Restaurant[]> => {
+export const fetchFeaturedRestaurants = async (hotelId: string | null = null, isSuperAdmin: boolean = false, isAdminView: boolean = false): Promise<Restaurant[]> => {
   if (!hotelId && !isSuperAdmin) {
     return [];
   }
@@ -84,6 +89,10 @@ export const fetchFeaturedRestaurants = async (hotelId: string | null = null, is
 
   if (hotelId) {
     query = query.eq('hotel_id', hotelId);
+  }
+  
+  if (!isAdminView && !isSuperAdmin) {
+    query = query.eq('is_published', true);
   }
 
   const { data, error } = await query.order('name');
@@ -104,6 +113,7 @@ export const fetchFeaturedRestaurants = async (hotelId: string | null = null, is
     location: item.location,
     status: item.status as 'open' | 'closed',
     actionText: item.action_text || "Book a Table",
-    isFeatured: true
+    isFeatured: item.is_featured || false,
+    is_published: item.is_published || false
   }));
 };

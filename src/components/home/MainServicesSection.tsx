@@ -1,16 +1,20 @@
-
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { UtensilsCrossed, Heart, Phone, Info } from 'lucide-react';
 import ServiceCard from './ServiceCard';
 import { useLocation } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const MainServicesSection = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const { resolvePath } = useHotelPath();
   const isAdmin = location.pathname.includes('/admin');
+  const { hotel } = useHotel();
+  
+  const hasRestaurants = hotel?.active_modules?.includes('restaurants') !== false;
+  const hasSpa = hotel?.active_modules?.includes('spa') !== false;
 
   return (
     <section className="px-4 sm:px-6 mb-8 sm:mb-10">
@@ -29,14 +33,16 @@ const MainServicesSection = () => {
           status={t('common.available')}
         />
 
-        <ServiceCard
-          icon={<UtensilsCrossed className="w-full h-full" />}
-          title={t('home.services.gastronomy')}
-          description={t('home.services.gastronomyDescription')}
-          actionText={t('common.reserveTable')}
-          actionLink={resolvePath("/dining")}
-          status={t('common.open')}
-        />
+        {hasRestaurants && (
+          <ServiceCard
+            icon={<UtensilsCrossed className="w-full h-full" />}
+            title={t('home.services.gastronomy')}
+            description={t('home.services.gastronomyDescription')}
+            actionText={t('common.reserveTable')}
+            actionLink={resolvePath("/dining")}
+            status={t('common.open')}
+          />
+        )}
 
         <ServiceCard
           icon={<Phone className="w-full h-full" />}
@@ -47,14 +53,16 @@ const MainServicesSection = () => {
           status={t('common.available')}
         />
 
-        <ServiceCard
-          icon={<Heart className="w-full h-full" />}
-          title={t('home.services.spaWellness')}
-          description={t('home.services.spaWellnessDescription')}
-          actionText={t('common.bookTreatment')}
-          actionLink={resolvePath("/spa")}
-          status={t('common.available')}
-        />
+        {hasSpa && (
+          <ServiceCard
+            icon={<Heart className="w-full h-full" />}
+            title={t('home.services.spaWellness')}
+            description={t('home.services.spaWellnessDescription')}
+            actionText={t('common.bookTreatment')}
+            actionLink={resolvePath("/spa")}
+            status={t('common.available')}
+          />
+        )}
       </div>
     </section>
   );

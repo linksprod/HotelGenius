@@ -9,7 +9,9 @@ import { useSpaServices } from '@/hooks/useSpaServices';
 import BookingDialog from '@/features/spa/components/SpaBookingDialog';
 import SpaSection from '@/features/spa/components/SpaSection';
 import SpaEventsSection from '@/features/spa/components/SpaEventsSection';
+import SpaServiceCard from '@/features/spa/components/SpaServiceCard';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const Spa = () => {
   const { t } = useTranslation();
@@ -18,6 +20,7 @@ const Spa = () => {
     featuredServices,
     isLoading
   } = useSpaServices();
+  const { hotel } = useHotel();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
@@ -42,28 +45,16 @@ const Spa = () => {
 
     <SpaEventsSection />
 
-    <SpaSection onBookService={handleBookTreatment} />
+    <SpaSection onBookService={handleBookTreatment} showBookingButton={hotel?.plan !== 'essential'} />
 
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-      {featuredServices && featuredServices.map(service => <Card key={service.id} className="overflow-hidden animate-fade-in">
-        <img src={service.image || "/lovable-uploads/3cbdcf79-9da5-48bd-90f2-2c1737b76741.png"} alt={service.name} className="w-full h-48 object-cover" />
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-semibold text-foreground">{service.name}</h3>
-            <span className="text-primary font-semibold">${service.price}</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground mb-2">
-            <Clock className="w-4 h-4" />
-            <span>{service.duration}</span>
-          </div>
-          <p className="text-muted-foreground mb-4">
-            {service.description}
-          </p>
-          <Button className="w-full" onClick={() => handleBookTreatment(service.id)}>
-            {t('spa.bookTreatment')}
-          </Button>
-        </div>
-      </Card>)}
+      {featuredServices && featuredServices.map(service => (
+        <SpaServiceCard 
+          key={service.id} 
+          service={service} 
+          onBook={() => handleBookTreatment(service.id)} 
+        />
+      ))}
     </div>
 
     {isBookingOpen && selectedService && <BookingDialog isOpen={isBookingOpen} onOpenChange={setIsBookingOpen} serviceId={selectedService} onSuccess={handleBookingSuccess} />}

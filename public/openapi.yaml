@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info:
+  title: HotelGenius Agent Gateway
+  description: OpenAPI Specification for the HotelGenius Agent Gateway Edge Function.
+  version: 1.0.0
+servers:
+  - url: https://qvhthjtdzeerafabfbfc.supabase.co/functions/v1/agent-gateway
+    description: Supabase Edge Function URL
+paths:
+  /context:
+    get:
+      summary: Get hotel context and guest digital twin
+      description: Retrieves hotel information, available restaurants, spa services, events, and optionally guest context if guest_email is provided.
+      security:
+        - apiKeyAuth: []
+      parameters:
+        - name: guest_email
+          in: query
+          description: Email address of the guest to retrieve their context and digital twin.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response with context data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hotel:
+                    type: object
+                  restaurants:
+                    type: array
+                    items:
+                      type: object
+                  spa_services:
+                    type: array
+                    items:
+                      type: object
+                  events:
+                    type: array
+                    items:
+                      type: object
+                  guest_context:
+                    type: object
+                    nullable: true
+  /book/restaurant:
+    post:
+      summary: Book a restaurant table
+      description: Creates a new table reservation for a guest.
+      security:
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - guest_email
+                - restaurant_id
+                - reservation_time
+                - number_of_guests
+              properties:
+                guest_email:
+                  type: string
+                restaurant_id:
+                  type: string
+                  format: uuid
+                reservation_time:
+                  type: string
+                  format: date-time
+                number_of_guests:
+                  type: integer
+                special_requests:
+                  type: string
+      responses:
+        '200':
+          description: Successfully booked restaurant.
+  /book/spa:
+    post:
+      summary: Book a spa service
+      description: Creates a new spa service booking for a guest.
+      security:
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - guest_email
+                - service_id
+                - start_time
+              properties:
+                guest_email:
+                  type: string
+                service_id:
+                  type: string
+                  format: uuid
+                start_time:
+                  type: string
+                  format: date-time
+                special_requests:
+                  type: string
+      responses:
+        '200':
+          description: Successfully booked spa.
+  /book/event:
+    post:
+      summary: Book an event
+      description: Creates an event reservation for a guest.
+      security:
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - guest_email
+                - event_id
+                - tickets_count
+              properties:
+                guest_email:
+                  type: string
+                event_id:
+                  type: string
+                  format: uuid
+                tickets_count:
+                  type: integer
+      responses:
+        '200':
+          description: Successfully booked event.
+  /request/housekeeping:
+    post:
+      summary: Request housekeeping services
+      description: Creates a guest request for housekeeping or related services.
+      security:
+        - apiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - guest_email
+                - room_number
+                - request_type
+                - description
+              properties:
+                guest_email:
+                  type: string
+                room_number:
+                  type: string
+                request_type:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Successfully submitted request.
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API_KEY

@@ -15,83 +15,7 @@ interface GuestIntelligenceCardProps {
 
 const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) => {
   const queryClient = useQueryClient();
-  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
 
-  const demoInsights: Record<string, any> = {
-    'demo-1': {
-      summary: `"${guest.first_name} is classified as a <span class="text-rose-400 italic">high-value aesthetic enthusiast</span>. She consistently prioritizes wellness and quiet-zone suites. <span class="text-white underline decoration-rose-500 decoration-2 underline-offset-8">Behavioral patterns</span> indicate she prefers automated check-ins and afternoon tea service at 4:15 PM precisely."`,
-      stayDuration: '11 Nights',
-      mainInterest: 'Zen Wellness',
-      alerts: [
-        { id: '1', alert_type: 'Allergy', severity: 'High', description: 'Severe Peanut Allergy' },
-        { id: '2', alert_type: 'Preference', severity: 'Medium', description: 'Requires hypo-allergenic pillows' }
-      ],
-      notes: [
-        { team: 'Concierge Team', date: 'Yesterday', content: "Sofia mentioned she's celebrating her anniversary. We've prepared a special amenity." },
-        { team: 'Housekeeping', date: '2 days ago', content: "Guest requested extra bamboo towels for the duration of the stay." }
-      ]
-    },
-    'demo-2': {
-      summary: `"${guest.first_name} is a <span class="text-blue-400 italic">productivity-focused business traveler</span>. He relies heavily on high-speed connectivity and seamless room service. <span class="text-white underline decoration-blue-500 decoration-2 underline-offset-8">Behavioral patterns</span> suggest early gym sessions and a preference for express checkout."`,
-      stayDuration: '4 Nights',
-      mainInterest: 'Efficiency',
-      alerts: [
-        { id: '1', alert_type: 'Technical', severity: 'Medium', description: 'Requires multiple power adapters' }
-      ],
-      notes: [
-        { team: 'Front Desk', date: 'Today', content: "James requested an early taxi for 6:00 AM tomorrow." },
-        { team: 'Business Center', date: 'Yesterday', content: "Assisted with large-scale printing for his morning presentation." }
-      ]
-    },
-    'demo-3': {
-      summary: `"${guest.first_name} is a <span class="text-emerald-400 italic">luxury leisure seeker</span>. She values exclusive experiences and premium gastronomy. <span class="text-white underline decoration-emerald-500 decoration-2 underline-offset-8">Behavioral patterns</span> show a high engagement with spa services and poolside cabana bookings."`,
-      stayDuration: '8 Nights',
-      mainInterest: 'Fine Dining',
-      alerts: [
-        { id: '1', alert_type: 'Medical', severity: 'Low', description: 'Mild hay fever - avoid lilies in room' }
-      ],
-      notes: [
-        { team: 'F&B Manager', date: 'Last Night', content: "Elena highly praised the vintage selection at the cellar." },
-        { team: 'Spa Team', date: '3 days ago', content: "Enjoys deep-tissue massage. Preferred therapist is Maria." }
-      ]
-    },
-    'demo-4': {
-      summary: `"${guest.first_name} is a <span class="text-amber-400 italic">top-tier VIP executive</span>. He demands extreme privacy and bespoke service. <span class="text-white underline decoration-amber-500 decoration-2 underline-offset-8">Behavioral patterns</span> indicate preference for late-night room service and private transportation."`,
-      stayDuration: '14 Nights',
-      mainInterest: 'UHNW Privacy',
-      alerts: [
-        { id: '1', alert_type: 'Security', severity: 'High', description: 'Restricted floor access - VIP protocol' }
-      ],
-      notes: [
-        { team: 'Security', date: 'Today', content: "Private entrance managed for Marcus. No issues reported." },
-        { team: 'Concierge', date: '2 days ago', content: "Arranged private jet catering for his departure." }
-      ]
-    },
-    'demo-5': {
-      summary: `"${guest.first_name} is an <span class="text-zinc-400 italic">experienced cultural explorer</span>. She values local authenticity and informative assistance. <span class="text-white underline decoration-zinc-500 decoration-2 underline-offset-8">Behavioral patterns</span> show interest in guided tours and historical site recommendations."`,
-      stayDuration: '3 Nights',
-      mainInterest: 'Heritage',
-      alerts: [
-        { id: '1', alert_type: 'Mobility', severity: 'Low', description: 'Prefers lower floors near elevator' }
-      ],
-      notes: [
-        { team: 'Tour Desk', date: 'Yesterday', content: "Sarah loved the old town walking tour. Suggested the museum for today." }
-      ]
-    },
-    'demo-6': {
-      summary: `"${guest.first_name} is a <span class="text-purple-400 italic">wellness-centric new traveler</span>. She is highly responsive to tailored recommendations for relaxation. <span class="text-white underline decoration-purple-500 decoration-2 underline-offset-8">Behavioral patterns</span> suggest interest in early morning meditation and organic dining."`,
-      stayDuration: '3 Nights',
-      mainInterest: 'Mindfulness',
-      alerts: [
-        { id: '1', alert_type: 'Dietary', severity: 'Medium', description: 'Gluten-free and Lactose-free' }
-      ],
-      notes: [
-        { team: 'Wellness Coach', date: 'Today', content: "Sofia joined the sunrise yoga session. Very enthusiastic." }
-      ]
-    }
-  };
-
-  const currentDemo = demoInsights[guest.id] || demoInsights['demo-1'];
 
   const { data: alerts = [] } = useQuery({
     queryKey: ['admin-guest-alerts', guest.id],
@@ -103,10 +27,10 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
       if (error) throw error;
       return data as { id: string; alert_type: string; severity: string; description: string }[];
     },
-    enabled: !!guest.id && !isDemo,
+    enabled: !!guest.id,
   });
 
-  const displayAlerts = isDemo ? currentDemo.alerts : alerts;
+  const displayAlerts = alerts;
 
   return (
     <div className="space-y-8">
@@ -125,18 +49,18 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
 
           <p
             className="text-xl text-foreground dark:text-zinc-200 leading-relaxed font-semibold"
-            dangerouslySetInnerHTML={{ __html: isDemo ? currentDemo.summary : guest.ai_summary || 'No AI insights available yet.' }}
+            dangerouslySetInnerHTML={{ __html: guest.ai_summary || 'No AI insights available yet.' }}
           />
 
           <div className="pt-4 flex items-center gap-6">
             <div className="flex flex-col">
               <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest mb-1">Stay Duration</span>
-              <span className="text-sm font-bold text-foreground dark:text-white">{isDemo ? currentDemo.stayDuration : '-'}</span>
+              <span className="text-sm font-bold text-foreground dark:text-white">-</span>
             </div>
             <div className="h-8 w-px bg-border dark:bg-white/10" />
             <div className="flex flex-col">
               <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest mb-1">Main Interest</span>
-              <span className="text-sm font-bold text-rose-500 dark:text-rose-400">{isDemo ? currentDemo.mainInterest : '-'}</span>
+              <span className="text-sm font-bold text-rose-500 dark:text-rose-400">-</span>
             </div>
           </div>
         </CardContent>
@@ -191,23 +115,9 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
               </Button>
             </div>
 
-            <div className="space-y-4">
-              {isDemo ? currentDemo.notes.map((note: any, idx: number) => (
-                <div key={idx} className={cn("p-4 bg-zinc-50 dark:bg-white/5 rounded-2xl border border-zinc-100 dark:border-white/5 relative group hover:border-blue-500/30 transition-colors", idx > 0 && "opacity-60")}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest leading-none">{note.team}</span>
-                    <span className="text-[10px] font-bold text-muted-foreground/60 dark:text-zinc-600 uppercase tracking-widest leading-none">{note.date}</span>
-                  </div>
-                  <p className="text-sm font-medium text-foreground dark:text-zinc-200 group-hover:text-foreground/80 dark:group-hover:text-white transition-colors">
-                    {note.content}
-                  </p>
-                </div>
-              )) : (
                 <div className="flex flex-col items-center justify-center p-8 text-muted-foreground italic">
                   No notes available
                 </div>
-              )}
-            </div>
           </CardContent>
         </Card>
       </div>

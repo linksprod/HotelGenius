@@ -10,6 +10,7 @@ export interface Restaurant {
   status: 'open' | 'closed';
   actionText?: string;
   isFeatured?: boolean;
+  is_published?: boolean;
   menuPdf?: string;
 }
 

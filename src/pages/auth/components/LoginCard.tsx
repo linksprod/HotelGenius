@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
 import RegistrationForm from './RegistrationForm';
+import SaaS_RegistrationForm from './SaaS_RegistrationForm';
 import LoginForm from './LoginForm';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { Hotel } from 'lucide-react';
@@ -9,6 +10,8 @@ import { Hotel } from 'lucide-react';
 const LoginCard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('login');
   const { hotel } = useHotel();
+  
+  const isSaaSMode = !hotel || hotel?.slug === 'demo';
 
   return (
     <motion.div
@@ -21,7 +24,7 @@ const LoginCard: React.FC = () => {
       <div className="text-center mb-8">
 
         <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          {(!hotel || hotel?.slug === 'demo') ? (
+          {isSaaSMode ? (
             <span className="font-qurova">
               HotelGenius
             </span>
@@ -32,7 +35,7 @@ const LoginCard: React.FC = () => {
         <p className="text-muted-foreground text-sm mt-1.5">
           {activeTab === 'login'
             ? 'Welcome back — sign in to your account'
-            : 'Create your account to get started'}
+            : isSaaSMode ? 'Create your hotel platform' : 'Create your account to get started'}
         </p>
       </div>
 
@@ -54,7 +57,7 @@ const LoginCard: React.FC = () => {
                 value="register"
                 className="rounded-lg text-sm font-medium transition-all data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground"
               >
-                Create Account
+                {isSaaSMode ? 'Get Started' : 'Create Account'}
               </TabsTrigger>
             </TabsList>
 
@@ -70,7 +73,7 @@ const LoginCard: React.FC = () => {
                   <LoginForm />
                 </TabsContent>
                 <TabsContent value="register" forceMount className={activeTab !== 'register' ? 'hidden' : ''}>
-                  <RegistrationForm />
+                  {isSaaSMode ? <SaaS_RegistrationForm /> : <RegistrationForm />}
                 </TabsContent>
               </motion.div>
             </AnimatePresence>

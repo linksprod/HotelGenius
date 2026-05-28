@@ -152,36 +152,10 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
 export const useAdminDashboardStats = () => {
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
-  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
 
   return useQuery({
     queryKey: ['admin-dashboard-stats', hotelId, isSuperAdmin],
-    queryFn: async () => {
-      const stats = await fetchDashboardStats(hotelId);
-      
-      if (isDemo) {
-        return {
-          ...stats,
-          totalReservations: 48,
-          currentGuests: 124,
-          serviceRequests: {
-            total: 20,
-            pending: 0,
-            completed: 20
-          },
-          guestSatisfaction: 9.2, // We'll handle the /10 in the UI
-          feedbackCount: 45,
-          conversationsCount: 15,
-          todayActivity: {
-            newReservations: 48,
-            newMessages: 12,
-            unansweredMessages: 0
-          }
-        };
-      }
-      
-      return stats;
-    },
+    queryFn: () => fetchDashboardStats(hotelId),
     refetchInterval: 30000,
     staleTime: 10000,
     enabled: true,

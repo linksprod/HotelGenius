@@ -17,12 +17,7 @@ export const StoriesTab = () => {
   const [editingStory, setEditingStory] = useState<Story | null>(null);
   const [isStoryDialogOpen, setIsStoryDialogOpen] = useState(false);
 
-  // Enhanced demo stories if empty
-  const displayStories = stories.length === 0 ? [
-    { id: 's-1', title: 'Night Life at Sky Bar', category: 'event', image: 'https://images.unsplash.com/photo-1514525253361-bee8a187449a?w=400&auto=format&fit=crop&q=60', is_active: true, created_at: new Date().toISOString() },
-    { id: 's-2', title: 'Morning Zen Walk', category: 'event', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68733?w=400&auto=format&fit=crop&q=60', is_active: true, created_at: new Date().toISOString() },
-    { id: 's-3', title: 'Weekend Special Mix', category: 'promotion', image: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&auto=format&fit=crop&q=60', is_active: false, created_at: new Date().toISOString() },
-  ] : stories;
+  const displayStories = stories;
   
   return (
     <div className="space-y-6">

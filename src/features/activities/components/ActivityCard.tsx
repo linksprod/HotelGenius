@@ -8,9 +8,10 @@ import { Activity } from '../types';
 interface ActivityCardProps {
   activity: Activity;
   onBook: (activityId: string) => void;
+  showBookingButton?: boolean;
 }
 
-const ActivityCard = ({ activity, onBook }: ActivityCardProps) => {
+const ActivityCard = ({ activity, onBook, showBookingButton = true }: ActivityCardProps) => {
   const statusColors = {
     'upcoming': 'bg-blue-100 text-blue-800',
     'in-progress': 'bg-green-100 text-green-800',
@@ -56,13 +57,15 @@ const ActivityCard = ({ activity, onBook }: ActivityCardProps) => {
           </div>
         </div>
         <p className="text-sm text-muted-foreground mb-4">{activity.description}</p>
-        <Button 
-          onClick={() => onBook(activity.id)}
-          className="w-full bg-primary hover:bg-primary/90 transition-colors"
-          disabled={activity.status === 'full' || activity.status === 'cancelled'}
-        >
-          Book Activity
-        </Button>
+        {showBookingButton && (
+          <Button 
+            onClick={() => onBook(activity.id)}
+            className="w-full bg-primary hover:bg-primary/90 transition-colors"
+            disabled={activity.status === 'full' || activity.status === 'cancelled'}
+          >
+            Book Activity
+          </Button>
+        )}
       </div>
     </Card>
   );

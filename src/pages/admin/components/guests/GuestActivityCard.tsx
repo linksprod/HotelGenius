@@ -7,36 +7,7 @@ interface GuestActivityCardProps {
 }
 
 const GuestActivityCard: React.FC<GuestActivityCardProps> = () => {
-  const isDemo = typeof window !== 'undefined' && window.location.pathname.includes('/demo/');
-
-  const demoActivity = [
-    {
-      id: 1,
-      title: "Booked Spa — Deep Tissue Massage",
-      time: "2h ago",
-      icon: Star,
-      iconColor: "text-amber-500",
-      bgColor: "bg-amber-500/10"
-    },
-    {
-      id: 2,
-      title: "Room upgraded to Ocean Suite",
-      time: "1d ago",
-      icon: ArrowUpCircle,
-      iconColor: "text-blue-500",
-      bgColor: "bg-blue-500/10"
-    },
-    {
-      id: 3,
-      title: "Requested late checkout (14:00)",
-      time: "1d ago",
-      icon: Clock,
-      iconColor: "text-zinc-400",
-      bgColor: "bg-zinc-400/10"
-    }
-  ];
-
-  if (!isDemo) return null; // Fallback or handle real data if needed
+  const activities: any[] = [];
 
   return (
     <Card className="overflow-hidden border border-border dark:border-none bg-card/50 dark:bg-zinc-900/50 backdrop-blur-xl shadow-sm dark:shadow-2xl rounded-[2rem] cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors">
@@ -49,7 +20,7 @@ const GuestActivityCard: React.FC<GuestActivityCardProps> = () => {
         </div>
 
         <div className="space-y-4">
-          {demoActivity.map((item) => (
+          {activities.length > 0 ? activities.map((item) => (
             <div
               key={item.id}
               className="group flex items-center justify-between p-4 bg-zinc-50 dark:bg-white/5 rounded-2xl border border-zinc-100 dark:border-white/5 transition-all hover:bg-zinc-100 dark:hover:bg-white/10"
@@ -68,7 +39,9 @@ const GuestActivityCard: React.FC<GuestActivityCardProps> = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="text-sm text-muted-foreground italic px-2">No recent activity</div>
+          )}
         </div>
 
         {/* AI Suggestion Decorator */}

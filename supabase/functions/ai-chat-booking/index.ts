@@ -63,11 +63,68 @@ serve(async (req) => {
   }
 });
 
+// ─── Guest Digital Twin: structured preference snapshot injected into AI ───
+interface GuestTwin {
+  guest_id?: string;
+  name?: string;
+  language?: string;
+  nationality?: string;
+  room_preference?: string;
+  dietary?: string;
+  previous_stays?: number;
+  loyalty_tier?: string;
+  avg_upsell?: string[];
+  last_interaction?: string;
+  special_requests?: string;
+  communication?: string;
+}
+
+async function fetchGuestTwin(guestId: string, hotelId: string): Promise<GuestTwin> {
+  try {
+    const url = `${supabaseUrl}/functions/v1/get-guest-twin?guest_id=${guestId}&hotel_id=${hotelId}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${supabaseServiceKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!res.ok) return {};
+    const data = await res.json();
+    return (data.snapshot || {}) as GuestTwin;
+  } catch (e) {
+    console.warn('[AI] Could not fetch guest twin:', e);
+    return {};
+  }
+}
+
+function formatTwinForPrompt(twin: GuestTwin): string {
+  if (!twin || Object.keys(twin).length === 0) {
+    return 'No guest profile data available yet — treat this as a first-time guest.';
+  }
+  const lines = [];
+  if (twin.name)            lines.push(`Name: ${twin.name}`);
+  if (twin.language)        lines.push(`Preferred language: ${twin.language}`);
+  if (twin.nationality)     lines.push(`Nationality: ${twin.nationality}`);
+  if (twin.loyalty_tier)    lines.push(`Loyalty tier: ${twin.loyalty_tier} (${twin.previous_stays ?? 0} previous stays)`);
+  if (twin.room_preference) lines.push(`Room preference: ${twin.room_preference}`);
+  if (twin.dietary)         lines.push(`Dietary requirements: ${twin.dietary}`);
+  if (twin.avg_upsell?.length) lines.push(`Usually books: ${twin.avg_upsell.join(', ')}`);
+  if (twin.special_requests) lines.push(`Special requests history: ${twin.special_requests}`);
+  if (twin.communication)   lines.push(`Communication style: ${twin.communication}`);
+  if (twin.last_interaction) lines.push(`Last interaction: ${twin.last_interaction}`);
+  return lines.join('\n');
+}
+
 async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, hotelId: string, conversationId?: string) {
   // Determine the effective hotel ID (fallback to demo hotel if missing)
   const effectiveHotelId = hotelId || '00000000-0000-0000-0000-000000000000';
   
   console.log(`[AI] Processing request for hotel: ${effectiveHotelId}`);
+
+  // ── Phase 4: Fetch Guest Digital Twin ──────────────────────────────────────
+  const guestTwin = await fetchGuestTwin(userId, effectiveHotelId);
+  const guestTwinContext = formatTwinForPrompt(guestTwin);
+  console.log('[AI] Guest twin loaded:', guestTwin.loyalty_tier ?? 'no tier');
 
   // 1. Get Hotel Knowledge (RAG) - Only if OpenAI key is available
   let knowledgeContext = '';
@@ -123,9 +180,14 @@ async function sendChatMessage(message: string, userId: string, userName: string
   const spaList = (spaServices.data || []).map(s => ({ ...s, description: truncate(s.description) }));
   const eventsList = (events.data || []).map(e => ({ ...e, description: truncate(e.description) }));
 
-  const systemPrompt = `CORE_VERSION: 3.1.0 (Neural Command Integrated).
-You are a helpful hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
+  const systemPrompt = `CORE_VERSION: 3.2.0 (Digital Twin Integrated).
+You are a highly personalised hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
 You answer ANY questions from the guest, from hotel policies to booking requests.
+
+══ GUEST DIGITAL TWIN (read before every response) ══
+${guestTwinContext}
+IMPORTANT: Use this profile to proactively personalise your responses. Never ask the guest for information already in their profile. If they are a returning guest, acknowledge it warmly. Recommend based on their history.
+════════════════════════════════════════════════════
 
 EXCLUSIVE HOTEL KNOWLEDGE (RAG):
 ${knowledgeContext || 'No specific deep knowledge available for this hotel yet.'}

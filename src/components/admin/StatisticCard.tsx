@@ -1,8 +1,8 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CountUp from './CountUp';
+import { motion } from 'framer-motion';
 
 interface StatisticCardProps {
   id?: string;
@@ -12,29 +12,32 @@ interface StatisticCardProps {
   subtitle?: string;
   subtitleColor?: 'default' | 'success' | 'warning' | 'danger' | 'info';
   suffix?: string;
-  iconColor?: 'amber' | 'emerald' | 'pink' | 'yellow' | 'blue' | 'purple' | 'green';
+  iconColor?: 'amber' | 'emerald' | 'pink' | 'yellow' | 'blue' | 'purple' | 'green' | 'orange' | 'indigo';
   loading?: boolean;
   className?: string;
   decimals?: number;
   delay?: number;
+  size?: 'default' | 'large';
 }
 
-const iconColorClasses = {
-  amber: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
-  emerald: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
-  pink: 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400',
-  yellow: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400',
-  blue: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
-  purple: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
-  green: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400',
+const iconGlowMap = {
+  amber:   'icon-glow-amber',
+  emerald: 'icon-glow-emerald',
+  pink:    'icon-glow-pink',
+  yellow:  'icon-glow-amber',
+  blue:    'icon-glow-blue',
+  purple:  'icon-glow-purple',
+  green:   'icon-glow-green',
+  orange:  'icon-glow-orange',
+  indigo:  'icon-glow-indigo',
 };
 
 const subtitleColorClasses = {
   default: 'text-muted-foreground',
-  success: 'text-green-600 dark:text-green-400',
-  warning: 'text-orange-600 dark:text-orange-400',
-  danger: 'text-red-600 dark:text-red-400',
-  info: 'text-blue-600 dark:text-blue-400',
+  success: 'text-emerald-600 dark:text-emerald-400',
+  warning: 'text-orange-500 dark:text-orange-400',
+  danger:  'text-red-500 dark:text-red-400',
+  info:    'text-blue-500 dark:text-blue-400',
 };
 
 const StatisticCard: React.FC<StatisticCardProps> = ({
@@ -50,57 +53,69 @@ const StatisticCard: React.FC<StatisticCardProps> = ({
   className,
   decimals = 0,
   delay = 0,
+  size = 'default',
 }) => {
   if (loading) {
     return (
-      <Card className="h-full bg-card border shadow-sm">
-        <CardContent className="p-3 sm:p-5">
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <div className="h-3 sm:h-4 w-20 sm:w-24 bg-muted animate-pulse rounded" />
-              <div className="h-6 sm:h-8 w-12 sm:w-16 bg-muted animate-pulse rounded" />
-              <div className="h-3 w-16 sm:w-20 bg-muted animate-pulse rounded" />
-            </div>
-            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-muted animate-pulse" />
+      <div className={cn('bento-card p-5 h-full', className)}>
+        <div className="flex items-start justify-between gap-3">
+          <div className="space-y-3 flex-1">
+            <div className="h-3 w-20 bg-muted rounded-full animate-pulse" />
+            <div className="h-7 w-16 bg-muted rounded-full animate-pulse" />
+            <div className="h-2.5 w-14 bg-muted rounded-full animate-pulse" />
           </div>
-        </CardContent>
-      </Card>
+          <div className="w-10 h-10 rounded-xl bg-muted animate-pulse shrink-0" />
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card id={id} className={cn("h-full bg-card/60 dark:bg-zinc-900/60 backdrop-blur-md border-border dark:border-white/5 shadow-sm hover:shadow-md transition-all duration-300", className)}>
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{title}</p>
-            <div className="flex items-baseline gap-1">
-              <h3 className="text-lg sm:text-2xl font-bold text-card-foreground">
-                {typeof value === 'number' ? (
-                  <CountUp
-                    to={value}
-                    decimals={decimals}
-                    delay={delay}
-                    duration={1.5}
-                  />
-                ) : (
-                  value
-                )}
-              </h3>
-              {suffix && <span className="text-xs sm:text-sm text-muted-foreground">{suffix}</span>}
-            </div>
-            {subtitle && (
-              <p className={cn('text-[10px] sm:text-xs', subtitleColorClasses[subtitleColor])}>
-                {subtitle}
-              </p>
+    <motion.div
+      id={id}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+      className={cn('bento-card p-5 h-full group cursor-default', className)}
+    >
+      <div className="flex items-start justify-between gap-3">
+        {/* Text */}
+        <div className="space-y-1 flex-1 min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/70 truncate">
+            {title}
+          </p>
+          <div className="flex items-baseline gap-1">
+            <span className={cn(
+              'font-bold text-foreground admin-num',
+              size === 'large' ? 'text-4xl' : 'text-2xl'
+            )}>
+              {typeof value === 'number' ? (
+                <CountUp to={value} decimals={decimals} delay={delay} duration={1.4} />
+              ) : (
+                value
+              )}
+            </span>
+            {suffix && (
+              <span className="text-sm text-muted-foreground font-medium">{suffix}</span>
             )}
           </div>
-          <div className={cn('flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full ml-2', iconColorClasses[iconColor])}>
-            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-          </div>
+          {subtitle && (
+            <p className={cn('text-xs font-medium', subtitleColorClasses[subtitleColor])}>
+              {subtitle}
+            </p>
+          )}
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Icon with glow */}
+        <div className={cn(
+          'flex items-center justify-center rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110',
+          size === 'large' ? 'w-12 h-12' : 'w-10 h-10',
+          iconGlowMap[iconColor]
+        )}>
+          <Icon className={cn(size === 'large' ? 'w-6 h-6' : 'w-5 h-5')} />
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
