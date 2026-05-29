@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
@@ -13,61 +13,70 @@ interface TenantGuardProps {
     children: React.ReactNode;
 }
 
-/**
- * Guard to ensure that a logged-in user (guest or staff)
- * is only accessing the hotel they are associated with.
- * Super admins are exempt from this check.
- *
- * On custom domains: if the logged-in user belongs to a DIFFERENT hotel,
- * they are force-logged out and redirected to the login page.
- */
 const TenantGuard = ({ children }: TenantGuardProps) => {
     const { hotelId: assignedHotelId, loading: roleLoading, isSuperAdmin, hotelSlug } = useUserRole();
     const { hotelId: contextHotelId } = useCurrentHotelId();
     const { hotel, isLoading: hotelLoading } = useHotel();
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
-    const hasLoggedOut = useRef(false);
 
     const onCustomDomain = isCustomDomain();
+    const [loggingOut, setLoggingOut] = useState(false);
 
-    useEffect(() => {
-        // Only run this check on custom domains for authenticated users
-        if (!onCustomDomain || !isAuthenticated || roleLoading || hotelLoading || isSuperAdmin) return;
+    const isStillLoading = roleLoading || hotelLoading;
 
-        // Wait until both pieces of data are available
-        if (!hotel?.id || assignedHotelId === undefined) return;
-
-        // If user is logged in but belongs to a DIFFERENT hotel → force logout
-        if (assignedHotelId && assignedHotelId !== hotel.id && !hasLoggedOut.current) {
-            hasLoggedOut.current = true;
-            console.warn(`[TenantGuard] Custom domain mismatch: user assigned to ${assignedHotelId}, domain hotel is ${hotel.id}. Forcing logout.`);
-            supabase.auth.signOut().then(() => {
-                localStorage.clear();
-                sessionStorage.clear();
-                navigate('/auth/login', { replace: true });
-            });
+    // ── Custom domain guard ───────────────────────────────────────────────
+    if (onCustomDomain) {
+        // Show spinner while loading
+        if (isStillLoading || loggingOut) {
+            return <LoadingSpinner />;
         }
-    }, [onCustomDomain, isAuthenticated, roleLoading, hotelLoading, isSuperAdmin, hotel?.id, assignedHotelId, navigate]);
 
-    if (roleLoading || hotelLoading) {
+        // Authenticated user on a custom domain
+        if (isAuthenticated) {
+            // Super admins can roam freely (you, the platform owner)
+            if (isSuperAdmin) {
+                return <>{children}</>;
+            }
+
+            // User belongs to a hotel, but it's NOT this hotel → force logout
+            if (assignedHotelId && hotel?.id && assignedHotelId !== hotel.id) {
+                // Trigger async logout — renders spinner until done
+                if (!loggingOut) {
+                    setLoggingOut(true);
+                    supabase.auth.signOut().then(() => {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.replace('/auth/login');
+                    });
+                }
+                return <LoadingSpinner />;
+            }
+        }
+
+        // Not authenticated, or correct hotel → render normally
+        return <>{children}</>;
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
+    // ── Standard platform mode (slug-based) ──────────────────────────────
+    if (isStillLoading) {
         return <LoadingSpinner />;
     }
 
-    // Standard platform mode: slug-based cross-hotel check
-    if (!onCustomDomain) {
-        if (!assignedHotelId && !isSuperAdmin) {
-            return <>{children}</>;
-        }
-        if (isSuperAdmin) {
-            return <>{children}</>;
-        }
-        if (assignedHotelId && contextHotelId && assignedHotelId !== contextHotelId) {
-            console.warn(`[TenantGuard] Cross-tenant access denied. User assigned to ${assignedHotelId}, trying to access ${contextHotelId}`);
-            const redirectSlug = hotelSlug || assignedHotelId;
-            return <Navigate to={`/${redirectSlug}`} replace />;
-        }
+    if (!assignedHotelId && !isSuperAdmin) {
+        return <>{children}</>;
     }
+
+    if (isSuperAdmin) {
+        return <>{children}</>;
+    }
+
+    if (assignedHotelId && contextHotelId && assignedHotelId !== contextHotelId) {
+        console.warn(`[TenantGuard] Cross-tenant access denied. Redirecting to /${hotelSlug}`);
+        return <Navigate to={`/${hotelSlug || assignedHotelId}`} replace />;
+    }
+    // ─────────────────────────────────────────────────────────────────────
 
     return <>{children}</>;
 };
