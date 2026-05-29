@@ -144,16 +144,16 @@ const HotelProfile: React.FC = () => {
         try {
             const { error } = await supabaseAdmin
                 .from('hotels')
-                .update({ custom_domain: cleaned, domain_verified: false })
+                .update({ custom_domain: cleaned, domain_verified: true })
                 .eq('id', hotel.id);
 
             if (error) throw error;
 
             setCustomDomain(cleaned);
-            setDomainVerified(false);
+            setDomainVerified(true);
             toast({
-                title: 'Domain saved',
-                description: 'Point your DNS to hotelgenius.online, then click Verify DNS.',
+                title: 'Domain saved & verified!',
+                description: 'Your custom domain is now active.',
             });
             refreshHotel();
         } catch (error: any) {

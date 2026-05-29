@@ -14,17 +14,18 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <Layout>
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">404</h1>
-          <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-          <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-            Return to Home
-          </a>
-        </div>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
+      <div className="text-center p-8 bg-card rounded-lg shadow-sm border border-border">
+        <h1 className="text-6xl font-bold mb-4 text-foreground">404</h1>
+        <p className="text-xl text-muted-foreground mb-8">Oops! Page not found</p>
+        <button 
+          onClick={() => window.location.href = '/'} 
+          className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
+        >
+          Return to Home
+        </button>
       </div>
-    </Layout>
+    </div>
   );
 };
 
