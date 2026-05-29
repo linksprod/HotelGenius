@@ -88,6 +88,7 @@ const LoginForm: React.FC = () => {
           // Regular guest → go to home
           toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
           navigate(resolvePath('/'), { replace: true });
+        }
 
       } else {
         console.error('Login failed:', result.error);
