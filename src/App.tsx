@@ -29,7 +29,7 @@ import { HotelProvider } from '@/features/hotels/context/HotelContext';
 
 import { isCustomDomain } from '@/utils/domain';
 
-const TenantApp = () => (
+const TenantApp = ({ hideAdmin = false }: { hideAdmin?: boolean }) => (
   <HotelProvider>
     <ThemeCustomizer />
     <TenantGuard>
@@ -39,7 +39,7 @@ const TenantApp = () => (
         <Route path="spa/booking/*" element={<AuthenticatedRoutes />} />
         <Route path="my-room/*" element={<AuthenticatedRoutes />} />
         <Route path="notifications/*" element={<AuthenticatedRoutes />} />
-        <Route path="admin/*" element={<AdminRoutes />} />
+        {!hideAdmin && <Route path="admin/*" element={<AdminRoutes />} />}
         <Route path="/*" element={<PublicRoutes />} />
       </Routes>
     </TenantGuard>
@@ -58,8 +58,8 @@ function App() {
           <AuthProvider>
             <Routes>
               {customDomain ? (
-                /* Custom Domain Mode: Serve Guest App directly at root */
-                <Route path="/*" element={<TenantApp />} />
+                /* Custom Domain Mode: Serve Guest App directly at root, block Admin panel */
+                <Route path="/*" element={<TenantApp hideAdmin={true} />} />
               ) : (
                 /* Standard Platform Mode: Requires /slug/ prefix */
                 <>
