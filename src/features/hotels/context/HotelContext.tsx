@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { isCustomDomain } from '@/utils/domain';
 
 interface Hotel {
     id: string;
@@ -44,16 +45,12 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     useEffect(() => {
         const resolveHotel = async () => {
             const hostname = window.location.hostname;
-            const isCustomDomain =
-                hostname !== 'localhost' &&
-                hostname !== '127.0.0.1' &&
-                !hostname.includes('hotelgenius') &&
-                !hostname.includes('localhost');
+            const customDomainFlag = isCustomDomain();
 
             let currentSlug = slug;
             let customDomain: string | undefined;
 
-            if (isCustomDomain) {
+            if (customDomainFlag) {
                 customDomain = hostname;
                 // When on custom domain, slug might be empty — use hostname as key
                 currentSlug = currentSlug || '_custom_domain_';

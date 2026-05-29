@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { isCustomDomain } from '@/utils/domain';
 
 /**
  * Hook to resolve internal paths dynamically based on the current hotel context.
- * If a hotel is present, it prefixes the path with /h/:slug.
+ * If a hotel is present, it prefixes the path with /h/:slug, unless on a custom domain.
  */
 export const useHotelPath = () => {
     const { hotel } = useHotel();
@@ -25,8 +26,8 @@ export const useHotelPath = () => {
             }
         }
 
-        // If we have a slug, prefix the path
-        if (slug) {
+        // If we have a slug and we are NOT on a custom domain, prefix the path
+        if (slug && !isCustomDomain()) {
             // Avoid double prefixing
             if (path.startsWith(`/${slug}`)) return path;
 
@@ -35,7 +36,7 @@ export const useHotelPath = () => {
             return `/${slug}${cleanPath}`;
         }
 
-        // Default to absolute path
+        // Default to absolute path (this naturally handles Custom Domains too!)
         return path;
     }, [hotel?.slug, location.pathname]);
 

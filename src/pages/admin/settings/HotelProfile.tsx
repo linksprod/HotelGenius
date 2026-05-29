@@ -134,7 +134,7 @@ const HotelProfile: React.FC = () => {
 
     const handleSaveDomain = async () => {
         if (!hotel?.id) return;
-        const cleaned = customDomain.trim().toLowerCase().replace(/^https?:\/\//, '');
+        const cleaned = customDomain.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
         if (!cleaned) {
             toast({ title: 'Error', description: 'Please enter a valid domain name', variant: 'destructive' });
             return;
@@ -475,8 +475,8 @@ const HotelProfile: React.FC = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td className="py-2 pr-6">CNAME</td>
+                                        <tr className="border-b">
+                                            <td className="py-2 pr-6">A Record</td>
                                             <td className="py-2 pr-6">
                                                 <span className="inline-flex items-center gap-1">
                                                     @
@@ -490,9 +490,34 @@ const HotelProfile: React.FC = () => {
                                             </td>
                                             <td className="py-2">
                                                 <span className="inline-flex items-center gap-1">
-                                                    hotelgenius.online
+                                                    76.76.21.21
                                                     <button
-                                                        onClick={() => handleCopyDns('hotelgenius.online')}
+                                                        onClick={() => handleCopyDns('76.76.21.21')}
+                                                        className="text-muted-foreground hover:text-foreground transition-colors"
+                                                    >
+                                                        <Copy className="h-3 w-3" />
+                                                    </button>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="py-2 pr-6">CNAME</td>
+                                            <td className="py-2 pr-6">
+                                                <span className="inline-flex items-center gap-1">
+                                                    www
+                                                    <button
+                                                        onClick={() => handleCopyDns('www')}
+                                                        className="text-muted-foreground hover:text-foreground transition-colors"
+                                                    >
+                                                        <Copy className="h-3 w-3" />
+                                                    </button>
+                                                </span>
+                                            </td>
+                                            <td className="py-2">
+                                                <span className="inline-flex items-center gap-1">
+                                                    cname.vercel-dns.com
+                                                    <button
+                                                        onClick={() => handleCopyDns('cname.vercel-dns.com')}
                                                         className="text-muted-foreground hover:text-foreground transition-colors"
                                                     >
                                                         <Copy className="h-3 w-3" />
