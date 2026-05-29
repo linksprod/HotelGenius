@@ -4,10 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import LoginCard from './components/LoginCard';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import { motion } from 'framer-motion';
+import { isCustomDomain } from '@/utils/domain';
+import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
+  const { hotel } = useHotel();
+  const onCustomDomain = isCustomDomain();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -32,6 +36,23 @@ const Login = () => {
     };
     checkSession();
   }, [navigate, resolvePath]);
+
+  // On custom domains: show a clean centered login page with hotel branding only
+  if (onCustomDomain) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-5 py-10 bg-background relative">
+        <div
+          className="absolute inset-0 -z-10 opacity-30"
+          style={{
+            backgroundImage: 'radial-gradient(circle, hsl(var(--primary)/0.15) 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none" />
+        <LoginCard />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex overflow-hidden relative bg-background">
