@@ -43,8 +43,8 @@ const LoginForm: React.FC = () => {
     try {
       console.log('Login attempt with:', values.email);
 
-      // On custom domains, pass hotelId to enforce hotel-scoped access
-      const result = await loginUser(values.email, values.password, onCustomDomain ? hotel?.id : null);
+      // Always pass hotel?.id — loginService will block any admin/staff not listed for this hotel
+      const result = await loginUser(values.email, values.password, hotel?.id || null);
 
       if (result.success) {
         const { data: { session } } = await supabase.auth.getSession();

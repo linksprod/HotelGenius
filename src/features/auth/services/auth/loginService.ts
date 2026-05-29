@@ -27,20 +27,28 @@ export const loginUser = async (
       return { success: false, error: 'Aucun utilisateur trouvé' };
     }
 
-    // ── Custom domain: hotel-scoped access check ──────────────────────────
+    // ── Hotel-scoped access check ──────────────────────────────────────────
+    // Fetch all roles for this user across all hotels
     if (hotelId) {
-      const { data: roleRows, error: roleError } = await supabase
+      const { data: allRoles, error: roleError } = await supabase
         .from('user_roles')
-        .select('hotel_id')
-        .eq('user_id', authData.user.id)
-        .eq('hotel_id', hotelId)
-        .limit(1);
+        .select('hotel_id, role')
+        .eq('user_id', authData.user.id);
 
-      if (roleError || !roleRows || roleRows.length === 0) {
-        console.warn(`[loginService] User ${email} does not belong to hotel ${hotelId}. Blocking login.`);
-        await supabase.auth.signOut();
-        return { success: false, error: 'You do not have access to this hotel.' };
+      if (!roleError && allRoles && allRoles.length > 0) {
+        // This is a staff/admin account — check if they belong to THIS hotel
+        const hasAccessToThisHotel = allRoles.some(r => r.hotel_id === hotelId);
+
+        if (!hasAccessToThisHotel) {
+          console.warn(`[loginService] Admin/staff ${email} is not listed for hotel ${hotelId}. Blocking.`);
+          await supabase.auth.signOut();
+          return {
+            success: false,
+            error: 'Your account does not have access to this hotel. Please use the correct hotel portal or a separate guest account.',
+          };
+        }
       }
+      // If allRoles is empty → regular guest account, allow through
     }
     // ─────────────────────────────────────────────────────────────────────
 
