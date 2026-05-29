@@ -51,7 +51,8 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             let customDomain: string | undefined;
 
             if (customDomainFlag) {
-                customDomain = hostname;
+                // Normalize: strip www. prefix so both www.domain.com and domain.com match the same hotel
+                customDomain = hostname.replace(/^www\./, '');
                 // When on custom domain, slug might be empty — use hostname as key
                 currentSlug = currentSlug || '_custom_domain_';
             } else {

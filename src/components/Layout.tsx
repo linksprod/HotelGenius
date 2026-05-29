@@ -62,7 +62,7 @@ const Layout = ({
                     "font-qurova font-light tracking-wide text-foreground transition-colors",
                     isMobile ? "text-xl" : "text-2xl"
                   )}>
-                    HotelGenius
+                    {hotel?.name ?? "HotelGenius"}
                   </span>
                 )}
               </Link>
