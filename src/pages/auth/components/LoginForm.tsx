@@ -12,6 +12,8 @@ import { loginUser } from '@/features/auth/services/authService';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useHotel } from '@/features/hotels/context/HotelContext';
+import { isCustomDomain } from '@/utils/domain';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -24,6 +26,8 @@ const LoginForm: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
+  const { hotel } = useHotel();
+  const onCustomDomain = isCustomDomain();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginFormValues>({
@@ -39,7 +43,8 @@ const LoginForm: React.FC = () => {
     try {
       console.log('Login attempt with:', values.email);
 
-      const result = await loginUser(values.email, values.password);
+      // On custom domains, pass hotelId to enforce hotel-scoped access
+      const result = await loginUser(values.email, values.password, onCustomDomain ? hotel?.id : null);
 
       if (result.success) {
         toast({
@@ -47,37 +52,34 @@ const LoginForm: React.FC = () => {
           description: 'Welcome to Stay Genius',
         });
 
-        // Check if user is admin and redirect accordingly
+        // On custom domains → always redirect to the hotel guest home page
+        if (onCustomDomain) {
+          navigate('/', { replace: true });
+          return;
+        }
+
+        // Standard platform: check role and redirect accordingly
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user?.id) {
-          const { data: isStaff } = await supabase.rpc('is_staff_member', {
-            _user_id: session.user.id
-          });
-          const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', {
-            user_id: session.user.id
-          });
+          const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
+          const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
 
-          // Priority 1: Always send super admin to their dashboard
           if (isSuperAdmin || values.email === 'projects@hotelgenius.app') {
             navigate('/administration/super/dashboard', { replace: true });
             return;
           }
 
-          // Priority 2: Use the 'from' path if it exists (e.g. from AuthGuard)
           const state = window.history.state?.usr;
           const from = state?.from;
 
           if (from) {
             navigate(from, { replace: true });
           } else if (isStaff) {
-            // Priority 3: Hotel staff go to their hotel admin panel
-            // We need to find their hotel slug to redirect correctly
             const { data: roleData } = await supabase
               .from('user_roles')
               .select('hotels(slug)')
               .eq('user_id', session.user.id)
               .maybeSingle();
-              
             const slug = roleData?.hotels?.slug;
             if (slug) {
               navigate(`/${slug}/admin`, { replace: true });

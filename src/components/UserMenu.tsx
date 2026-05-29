@@ -13,6 +13,7 @@ import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import { useUserRole } from '@/hooks/useUserRole';
+import { isCustomDomain } from '@/utils/domain';
 
 
 const UserMenu = () => {
@@ -23,6 +24,7 @@ const UserMenu = () => {
   const { t, i18n } = useTranslation();
   const isMobile = useIsMobile();
   const { resolvePath } = useHotelPath();
+  const onCustomDomain = isCustomDomain();
 
 
   const changeLanguage = async (lng: string) => {
@@ -172,7 +174,7 @@ const UserMenu = () => {
             <span>{t('nav.profile')}</span>
           </DropdownMenuItem>
         </Link>
-        {isAdmin && (
+        {isAdmin && !onCustomDomain && (
           <>
             <DropdownMenuSeparator />
             <Link to={resolvePath("/admin")}>
