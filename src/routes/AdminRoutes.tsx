@@ -4,11 +4,9 @@ import AuthGuard from '@/components/AuthGuard';
 import AdminRoleGuard from '@/components/admin/AdminRoleGuard';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { adminRoutes, SuperDashboard } from '@/config/admin/routes';
-import { useHotel } from '@/features/hotels/context/HotelContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 const AdminRoutes = () => {
-  const { hotel } = useHotel();
 
   return (
     <ErrorBoundary>

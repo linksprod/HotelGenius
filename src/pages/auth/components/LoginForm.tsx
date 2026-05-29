@@ -47,18 +47,34 @@ const LoginForm: React.FC = () => {
       const result = await loginUser(values.email, values.password, onCustomDomain ? hotel?.id : null);
 
       if (result.success) {
-        toast({
-          title: 'Login successful',
-          description: 'Welcome to Stay Genius',
-        });
-
-        // On custom domains → always redirect to the hotel guest home page
+        // ── On custom domains: block admin/staff accounts ─────────────────
         if (onCustomDomain) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user?.id) {
+            const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
+            const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
+
+            if (isStaff || isSuperAdmin) {
+              await supabase.auth.signOut();
+              localStorage.clear();
+              toast({
+                variant: 'destructive',
+                title: 'Access denied',
+                description: 'Admin accounts must log in via the main platform.',
+              });
+              setLoading(false);
+              return;
+            }
+          }
+          toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
           navigate('/', { replace: true });
           return;
         }
+        // ─────────────────────────────────────────────────────────────────
 
-        // Standard platform: check role and redirect accordingly
+        toast({ title: 'Login successful', description: 'Welcome back!' });
+
+        // Standard platform: admins always go to admin panel, never the guest app
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user?.id) {
           const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
@@ -69,26 +85,18 @@ const LoginForm: React.FC = () => {
             return;
           }
 
-          const state = window.history.state?.usr;
-          const from = state?.from;
-
-          if (from) {
-            navigate(from, { replace: true });
-          } else if (isStaff) {
+          if (isStaff) {
             const { data: roleData } = await supabase
               .from('user_roles')
               .select('hotels(slug)')
               .eq('user_id', session.user.id)
               .maybeSingle();
             const slug = roleData?.hotels?.slug;
-            if (slug) {
-              navigate(`/${slug}/admin`, { replace: true });
-            } else {
-              navigate(resolvePath('/admin'), { replace: true });
-            }
-          } else {
-            navigate(resolvePath('/'), { replace: true });
+            navigate(slug ? `/${slug}/admin` : resolvePath('/admin'), { replace: true });
+            return;
           }
+
+          navigate(resolvePath('/'), { replace: true });
         } else {
           navigate(resolvePath('/'), { replace: true });
         }
