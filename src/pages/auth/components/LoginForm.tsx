@@ -47,39 +47,27 @@ const LoginForm: React.FC = () => {
       const result = await loginUser(values.email, values.password, onCustomDomain ? hotel?.id : null);
 
       if (result.success) {
-        // ── On custom domains: block admin/staff accounts ─────────────────
-        if (onCustomDomain) {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user?.id) {
-            const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
-            const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
-
-            if (isStaff || isSuperAdmin) {
-              await supabase.auth.signOut();
-              localStorage.clear();
-              toast({
-                variant: 'destructive',
-                title: 'Access denied',
-                description: 'Admin accounts must log in via the main platform.',
-              });
-              setLoading(false);
-              return;
-            }
-          }
-          toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
-          navigate('/', { replace: true });
-          return;
-        }
-        // ─────────────────────────────────────────────────────────────────
-
-        toast({ title: 'Login successful', description: 'Welcome back!' });
-
-        // Standard platform: admins always go to admin panel, never the guest app
         const { data: { session } } = await supabase.auth.getSession();
+
         if (session?.user?.id) {
           const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
           const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
 
+          // ── GLOBAL RULE: admin/staff email → never the guest app ────────────
+          // On custom domains: block entirely, force sign out
+          if (onCustomDomain && (isStaff || isSuperAdmin)) {
+            await supabase.auth.signOut();
+            localStorage.clear();
+            toast({
+              variant: 'destructive',
+              title: 'Access denied',
+              description: 'Admin accounts must log in via the main platform. Guests need a separate account.',
+            });
+            setLoading(false);
+            return;
+          }
+
+          // On standard platform: redirect to admin panel immediately
           if (isSuperAdmin || values.email === 'projects@hotelgenius.app') {
             navigate('/administration/super/dashboard', { replace: true });
             return;
@@ -95,11 +83,12 @@ const LoginForm: React.FC = () => {
             navigate(slug ? `/${slug}/admin` : resolvePath('/admin'), { replace: true });
             return;
           }
+          // ────────────────────────────────────────────────────────────────────
 
+          // Regular guest → go to home
+          toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
           navigate(resolvePath('/'), { replace: true });
-        } else {
-          navigate(resolvePath('/'), { replace: true });
-        }
+
       } else {
         console.error('Login failed:', result.error);
         toast({
