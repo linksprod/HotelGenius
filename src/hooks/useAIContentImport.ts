@@ -124,10 +124,11 @@ async function commitRestaurants(draft: AIExtractedContent, hotelId: string) {
     const { error } = await supabase.from('restaurants').insert({
       hotel_id: hotelId,
       name: r.name,
-      cuisine: r.cuisine || 'International',
+      // Only use values actually found in the document — never generic defaults
+      cuisine: r.cuisine || '',
       description: r.description || '',
-      open_hours: r.hours || '07:00 AM - 11:00 PM',
-      location: 'Main Building',
+      open_hours: r.hours || '',
+      location: '',
       status: 'open',
       images: [],
       is_published: false,
@@ -172,10 +173,14 @@ async function commitRooms(draft: AIExtractedContent, hotelId: string) {
 
   for (let i = 0; i < items.length; i++) {
     const r = items[i];
-    const parsedPrice = parseFloat(r.priceEstimate?.replace(/[^0-9.]/g, '') || '150') || 150;
-    const capacity = r.maxGuests || 2;
+    // Only parse a price if it was explicitly provided — no invented default
+    const rawPrice = r.priceEstimate?.replace(/[^0-9.]/g, '');
+    const parsedPrice = rawPrice ? (parseFloat(rawPrice) || null) : null;
+    // Only use capacity if explicitly stated
+    const capacity = r.maxGuests ?? null;
     const roomNumber = (i + 101).toString();
-    const roomType = r.type || 'deluxe';
+    // Only use room type if explicitly stated
+    const roomType = r.type || '';
 
     await supabase.from('rooms').insert({
       hotel_id: hotelId,
@@ -185,7 +190,7 @@ async function commitRooms(draft: AIExtractedContent, hotelId: string) {
       price: parsedPrice,
       status: 'available',
       amenities: r.amenities || [],
-      floor: 1,
+      floor: null,
       images: [],
       is_published: false,
     });
@@ -210,12 +215,13 @@ async function commitSpa(draft: AIExtractedContent, hotelId: string) {
     // Clear existing treatments for this facility to avoid duplicates
     await supabase.from('spa_services').delete().eq('facility_id', facilityId);
   } else {
+    // Use the real description from the document — no invented name fallback
     const { data: newFacility, error: facErr } = await supabase
       .from('spa_facilities')
       .insert({
         hotel_id: hotelId,
-        name: 'Luxury Spa & Wellness',
-        description: spa.description || 'Spa and Wellness Center',
+        name: spa.description ? spa.description.split('.')[0].slice(0, 80) : 'Spa & Wellness',
+        description: spa.description || '',
         is_published: false,
       })
       .select('id')
@@ -224,11 +230,13 @@ async function commitSpa(draft: AIExtractedContent, hotelId: string) {
     facilityId = newFacility.id;
   }
 
-  // 2. Insert treatments
+  // 2. Insert treatments — only use values explicitly found in the document
   for (const t of spa.treatments) {
-    const durationMin = parseInt(t.duration?.replace(/[^0-9]/g, '') || '60') || 60;
-    const priceNum = parseFloat(t.price?.replace(/[^0-9.]/g, '') || '100') || 100;
-    
+    const rawDuration = t.duration?.replace(/[^0-9]/g, '');
+    const durationMin = rawDuration ? (parseInt(rawDuration) || null) : null;
+    const rawPrice = t.price?.replace(/[^0-9.]/g, '');
+    const priceNum = rawPrice ? (parseFloat(rawPrice) || null) : null;
+
     await supabase.from('spa_services').insert({
       hotel_id: hotelId,
       facility_id: facilityId,

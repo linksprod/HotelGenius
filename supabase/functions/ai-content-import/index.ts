@@ -35,7 +35,7 @@ Return ONLY a raw JSON object (no markdown, no code blocks) with this exact stru
     "items": [
       {
         "name": "string",
-        "type": "string (e.g. Deluxe, Suite, Standard)",
+        "type": "string or null",
         "description": "string or null",
         "amenities": ["array of strings"],
         "maxGuests": "number or null",
@@ -100,12 +100,15 @@ Return ONLY a raw JSON object (no markdown, no code blocks) with this exact stru
   }
 }
 
-Rules:
-- confidence is a float from 0.0 to 1.0 indicating how much data you found for that section
-- If a section has no relevant data, set confidence to 0 and return empty arrays/null values
-- Extract ALL rooms, restaurants, treatments, and activities you find
-- Preserve exact pricing when available
-- Do NOT invent information not present in the text`;
+STRICT RULES — violation of any rule is unacceptable:
+1. confidence is a float from 0.0 to 1.0 — how much real data you found for that section.
+2. If a section has no relevant data, set confidence to 0 and return empty arrays/null values.
+3. Extract ALL rooms, restaurants, treatments, and activities you find — only those explicitly mentioned.
+4. Preserve exact pricing, hours, descriptions WORD-FOR-WORD from the source text.
+5. NEVER invent, guess, or fabricate ANY value. If a field is not explicitly stated in the text, set it to null — not a placeholder, not a generic value, not a typical example.
+6. NEVER use generic placeholders such as: "International", "Main Building", "07:00 AM - 11:00 PM", "From $150/night", "Deluxe", "Luxury Spa & Wellness", or similar invented defaults.
+7. Only include items (rooms, restaurants, treatments) that are explicitly named in the text. Do not infer or assume items exist.
+8. If you are unsure about a value, set it to null. A null is always correct; an invented value is always wrong.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
