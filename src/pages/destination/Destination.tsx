@@ -492,6 +492,7 @@ const Destination = () => {
 };
 
 // Helper function to get icons based on category name
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCategoryIcon = (name: string, t: any) => {
   const iconMap: Record<string, React.ReactNode> = {
     [t('destinationPage.categories.nearby')]: <Navigation className="h-6 w-6 mb-1" />,

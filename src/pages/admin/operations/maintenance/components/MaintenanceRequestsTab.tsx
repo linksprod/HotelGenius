@@ -156,6 +156,7 @@ const MaintenanceRequestsTab = ({ categoryIds }: MaintenanceRequestsTabProps) =>
                           <AssignToDropdown
                             requestId={request.id}
                             serviceType="maintenance"
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             assignedToName={(request as any).assigned_to_name}
                             onAssigned={handleRefresh}
                           />

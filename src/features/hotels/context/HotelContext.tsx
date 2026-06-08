@@ -78,6 +78,7 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             setError(null);
 
             try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const { data: rows, error: fetchError } = await (supabase as any)
                     .rpc('get_hotel_by_slug', {
                         p_slug: currentSlug || '',
@@ -96,6 +97,7 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     setHotel(data);
                     lastSlugRef.current = cacheKey || null;
                 }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 console.error('Error resolving hotel:', err);
                 setError(err.message);

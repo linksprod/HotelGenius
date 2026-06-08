@@ -17,12 +17,14 @@ export const syncGuestData = async (userId: string, userData: UserData): Promise
     }
 
     // Data sanitization: convert empty strings to null for database compatibility
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sanitize = (val: any) => {
       if (val === undefined || val === null) return null;
       if (typeof val === 'string' && val.trim() === '') return null;
       return val;
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const guestData: any = {
       user_id: userId,
       first_name: sanitize(userData.first_name) || 'Utilisateur',
@@ -47,7 +49,9 @@ export const syncGuestData = async (userId: string, userData: UserData): Promise
     }
 
     // If we have an internal record ID, use it for the upsert to be safe
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((userData as any).internal_id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       guestData.id = (userData as any).internal_id;
     }
 

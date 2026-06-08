@@ -20,6 +20,7 @@ export const useAllTableReservations = (options?: UseAllTableReservationsOptions
   const { data: reservations, isLoading, error, refetch } = useQuery({
     queryKey: ['allTableReservations', hotelId, restaurantId, status],
     queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
         .select('*');

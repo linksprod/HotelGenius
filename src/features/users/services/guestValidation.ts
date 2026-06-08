@@ -22,6 +22,7 @@ export const validateGuestId = (userId: string | null | undefined): boolean => {
 /**
  * Enregistre une opération sur un invité dans les logs
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const logGuestOperation = (operation: string, userId: string, success: boolean, details?: any): void => {
   const logMessage = success 
     ? `${operation} successful for user ID: ${userId}` 

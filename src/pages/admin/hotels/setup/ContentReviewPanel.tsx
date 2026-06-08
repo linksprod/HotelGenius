@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Zap, ChevronRight, Upload } from 'lucide-react';
+import { CheckCircle2, Zap, ChevronRight, Upload, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SectionReviewCard from './SectionReviewCard';
 import type { AIExtractedContent, SectionKey } from '@/types/aiSetup';
@@ -25,9 +25,22 @@ const ContentReviewPanel: React.FC<ContentReviewPanelProps> = ({
   isLoading,
 }) => {
   const [skippedSections, setSkippedSections] = useState<SectionKey[]>([]);
+  const [isFinishing, setIsFinishing] = useState(false);
 
   const skipSection = (key: SectionKey) => {
     setSkippedSections((prev) => [...prev, key]);
+  };
+
+  const handleFinish = async () => {
+    setIsFinishing(true);
+    try {
+      await onCommitAll();
+    } catch (err) {
+      console.error('[ContentReviewPanel] Error saving on finish:', err);
+    } finally {
+      setIsFinishing(false);
+      onFinish();
+    }
   };
 
   // Overall stats
@@ -220,13 +233,22 @@ const ContentReviewPanel: React.FC<ContentReviewPanelProps> = ({
 
       {/* Footer buttons */}
       <div className="flex justify-between pt-2">
-        <Button variant="outline" onClick={onUploadMore} className="gap-2 text-muted-foreground">
+        <Button variant="outline" onClick={onUploadMore} disabled={isLoading || isFinishing} className="gap-2 text-muted-foreground">
           <Upload className="h-4 w-4" />
           Upload More Documents
         </Button>
-        <Button onClick={onFinish} className="gap-2">
-          Finish Setup
-          <ChevronRight className="h-4 w-4" />
+        <Button onClick={handleFinish} disabled={isLoading || isFinishing} className="gap-2 min-w-[140px]">
+          {isFinishing ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving…
+            </>
+          ) : (
+            <>
+              {committedSections.length > 0 ? 'Done' : 'Save & Finish'}
+              <ChevronRight className="h-4 w-4" />
+            </>
+          )}
         </Button>
       </div>
     </div>

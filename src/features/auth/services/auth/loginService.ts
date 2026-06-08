@@ -98,6 +98,7 @@ export const loginUser = async (
 
     console.log('User logged in successfully');
     return { success: true, userData };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error during login:', error);
     return { success: false, error: error.message || 'Une erreur est survenue lors de la connexion' };

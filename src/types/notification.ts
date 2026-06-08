@@ -19,6 +19,7 @@ export interface NotificationItem {
     service_id?: string;
     event_id?: string;
     special_requests?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }

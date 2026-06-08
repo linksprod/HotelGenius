@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
 
 // Mock Data removed for production
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MOCK_TIPS: any[] = [];
 
 const DEPARTMENTS = {

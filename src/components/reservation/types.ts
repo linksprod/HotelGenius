@@ -15,5 +15,6 @@ export interface ReservationFormProps {
   restaurantId: string;
   onSuccess?: () => void;
   buttonText?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   existingReservation?: any; // Support for the TableReservation type
 }

@@ -7,7 +7,8 @@ export const fetchShopCategories = async (hotelId: string | null = null, isSuper
     return [];
   }
 
-  let query: any = supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const query: any = supabase
     .from('shop_categories')
     .select('*');
 

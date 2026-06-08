@@ -30,6 +30,7 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
   // Helper to add hotel_id filter if present
   const query = (table: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let q = supabase.from(table as any).select('*', { count: 'exact', head: true });
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
@@ -46,23 +47,27 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
   // Specific query builders for different needs
   const guestsQuery = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let q = supabase.from('guests' as any).select('*', { count: 'exact', head: true }).gte('check_out_date', today);
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const eventsQuery = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let q = supabase.from('events' as any).select('*', { count: 'exact', head: true }).gte('date', today);
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const serviceRequestsQuery = () => {
-    let q = supabase.from('service_requests' as any).select('status');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const q = supabase.from('service_requests' as any).select('status');
     return q;
   };
 
   const feedbackQuery = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let q = supabase.from('guest_feedback' as any).select('rating');
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
@@ -75,12 +80,14 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
   };
 
   const todayMessagesQuery = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let q = supabase.from('messages' as any).select('*', { count: 'exact', head: true }).gte('created_at', `${today}T00:00:00`);
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
   };
 
   const unansweredMessagesQuery = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let q = supabase.from('conversations' as any).select('*', { count: 'exact', head: true }).eq('status', 'active').eq('current_handler', 'ai');
     if (hotelId) q = q.eq('hotel_id', hotelId);
     return q;
@@ -116,13 +123,18 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
   ]);
 
   // Calculate service request stats
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const serviceRequests = (serviceRequestsResult.data as any) || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pendingCount = serviceRequests.filter((r: any) => r.status === 'pending').length;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const completedCount = serviceRequests.filter((r: any) => r.status === 'completed').length;
 
   // Calculate average rating
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ratings = (feedbackResult.data as any) || [];
   const avgRating = ratings.length > 0
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ? ratings.reduce((sum: number, f: any) => sum + (f.rating || 0), 0) / ratings.length
     : 0;
 

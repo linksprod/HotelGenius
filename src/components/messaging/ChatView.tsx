@@ -13,6 +13,7 @@ interface ChatViewProps {
   onGoBack: () => void;
   messagesEndRef: React.RefObject<HTMLDivElement>;
   inputRef: React.RefObject<HTMLTextAreaElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onQuickAction?: (action: string, data?: any) => void;
 }
 

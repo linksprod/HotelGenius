@@ -8,6 +8,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { SpaFacility } from '@/features/spa/types';
 
 interface ServiceDetailsFieldsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
   facilities: SpaFacility[];
 }

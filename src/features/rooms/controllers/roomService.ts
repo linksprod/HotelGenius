@@ -100,6 +100,7 @@ export const createServiceRequest = async (requestData: {
 
     // Trigger notification for staff
     await NotificationService.createNotification({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       hotel_id: (data as any).hotel_id,
       type: 'service_ticket_created',
       recipient_type: 'staff',
@@ -174,6 +175,7 @@ export const requestService = async (
           if (!existingGuest.hotel_id || existingGuest.hotel_id === '00000000-0000-0000-0000-000000000000') {
             await supabase
               .from('guests')
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               .update({ hotel_id: hotelId } as any)
               .eq('id', existingGuest.id);
             console.log('Updated existing guest with hotelId:', hotelId);
@@ -188,6 +190,7 @@ export const requestService = async (
               room_number: room_number || null,
               first_name: guest_name.split(' ')[0] || 'Guest',
               last_name: guest_name.split(' ').slice(1).join(' ') || '',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
           console.log('Created new guest record for hotelId:', hotelId);
         }
@@ -350,6 +353,7 @@ export const updateRequestStatus = async (
     // Notify guest if completed
     if (status === 'completed' && request.guest_id) {
       await NotificationService.createNotification({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         hotel_id: (request as any).hotel_id,
         type: 'service_ticket_completed',
         recipient_type: 'guest',

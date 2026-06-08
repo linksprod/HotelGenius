@@ -31,6 +31,7 @@ export const logoutUser = async (): Promise<{ success: boolean; error?: string }
     
     console.log('User logged out successfully in authService');
     return { success: true };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error during logout in authService:', error);
     return { 

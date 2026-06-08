@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 // We'll create the schema dynamically to use translations
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createReservationSchema = (t: any) => z.object({
   guestName: z.string().min(1, {
     message: t('forms.validation.nameRequired')
@@ -168,6 +169,7 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
         onSuccess();
       }
       form.reset();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error submitting reservation:', error);
       toast({

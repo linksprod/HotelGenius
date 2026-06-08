@@ -51,6 +51,7 @@ export const createEventReservation = async (reservation: CreateEventReservation
     const result = data as unknown as EventReservationRow;
     
     return mapRowToEventReservation(result);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error creating event reservation:', error);
     throw error;

@@ -21,6 +21,7 @@ export class NotificationService {
             const idempotencyKey = params.idempotency_key || this.generateIdempotencyKey(params);
 
             const { data, error } = await supabase
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .from('notifications' as any)
                 .insert({
                     hotel_id: params.hotel_id,
@@ -39,6 +40,7 @@ export class NotificationService {
                     created_by: params.created_by || 'system',
                     idempotency_key: idempotencyKey,
                     status: 'pending'
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } as any)
                 .select()
                 .single();
@@ -111,6 +113,7 @@ export class NotificationService {
      * Updates the status of a notification
      */
     static async updateStatus(notificationId: string, status: NotificationStatus, errorMessage?: string): Promise<boolean> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updateData: any = { status, updated_at: new Date().toISOString() };
 
         if (status === 'sent') updateData.sent_at = new Date().toISOString();
@@ -119,6 +122,7 @@ export class NotificationService {
         if (errorMessage) updateData.error_message = errorMessage;
 
         const { error } = await supabase
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .from('notifications' as any)
             .update(updateData)
             .eq('notification_id', notificationId);

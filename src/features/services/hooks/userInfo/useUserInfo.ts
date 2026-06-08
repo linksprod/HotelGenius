@@ -7,6 +7,7 @@ import { getUserInfoFromDatabase, syncAuthUserToGuest } from './databaseUtils';
 import { getLocalUserInfo, saveUserInfo, ensureValidUserInfo } from './localStorageUtils';
 import { cleanupDuplicateGuestRecords } from '@/features/users/services/guestCleanupService';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useUserInfo(room: any = null) {
   const { userData } = useAuth();
   const [userInfo, setUserInfo] = useState<UserInfo>({ 

@@ -20,6 +20,7 @@ type Props = {
   setSearchTerm: (term: string) => void;
   openAddItemDialog: () => void;
   openEditDialog: (item: RequestItem) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createSecurityCategory: () => Promise<any>;
 };
 

@@ -41,6 +41,7 @@ export default function ModuleSettings() {
       
       toast.success('Modules updated successfully');
       refreshHotel();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast.error('Failed to update modules: ' + err.message);
       setModules(modules);

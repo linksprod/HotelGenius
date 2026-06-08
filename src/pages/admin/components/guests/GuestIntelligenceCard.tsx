@@ -83,6 +83,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
             </div>
 
             <div className="space-y-3">
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               {displayAlerts.map((alert: any) => (
                 <div key={alert.id} className="p-4 bg-zinc-50 dark:bg-white/5 rounded-2xl border border-zinc-100 dark:border-white/5 group hover:border-rose-500/30 transition-colors">
                   <div className="flex items-center gap-2 mb-2">

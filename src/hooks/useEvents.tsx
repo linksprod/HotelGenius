@@ -21,6 +21,7 @@ export const useEvents = (filterBySpaFacility = false) => {
 
       console.log('Fetching events from Supabase...', filterBySpaFacility ? 'Filtering by spa facility' : 'All events', 'Hotel ID:', hotelId, 'isSuperAdmin:', isSuperAdmin);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('events')
         .select('*');

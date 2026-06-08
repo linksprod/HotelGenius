@@ -53,6 +53,7 @@ export const getGuestData = async (userId: string): Promise<UserData | null> => 
 
     // Store the record's ID in a hidden property if needed or just use for updates
     if (data.id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (userData as any).internal_id = data.id;
     }
 

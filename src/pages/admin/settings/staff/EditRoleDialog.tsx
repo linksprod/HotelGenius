@@ -81,6 +81,7 @@ const EditRoleDialog: React.FC<EditRoleDialogProps> = ({
       });
       onOpenChange(false);
       onSuccess();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast({
         title: 'Error',

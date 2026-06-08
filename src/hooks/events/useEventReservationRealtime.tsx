@@ -15,7 +15,7 @@ export const useEventReservationRealtime = (
 ) => {
   useEffect(() => {
     // Set up the subscription to listen for changes
-    let subscription = supabase
+    const subscription = supabase
       .channel('event_reservations_changes')
       .on(
         'postgres_changes',

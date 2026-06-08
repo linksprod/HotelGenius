@@ -16,6 +16,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import GuestInfoFields from '@/components/reservation/GuestInfoFields';
 import { useTranslation } from 'react-i18next';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createSpaBookingSchema = (t: any) => z.object({
   guestName: z.string().min(1, { message: t('forms.validation.nameRequired') }),
   guestEmail: z.string().email({ message: t('forms.validation.emailInvalid') }).optional().or(z.literal('')),
@@ -31,6 +32,7 @@ type SpaBookingFormValues = z.infer<ReturnType<typeof createSpaBookingSchema>>;
 interface SpaBookingFormProps {
   service: SpaService;
   onSuccess?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   existingBooking?: any;
   isChatMode?: boolean;
 }
@@ -89,6 +91,7 @@ export default function SpaBookingForm({
         service_name: service.name
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await createBooking(bookingData as any);
 
       if (isChatMode) {

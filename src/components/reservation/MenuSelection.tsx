@@ -22,6 +22,7 @@ interface MenuCategory {
 }
 
 interface MenuSelectionProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
   menuCategories: MenuCategory[];
   isLoadingMenuItems: boolean;

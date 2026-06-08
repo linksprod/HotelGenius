@@ -17,6 +17,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import GuestInfoFields from '@/components/reservation/GuestInfoFields';
 import { useTranslation } from 'react-i18next';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createBookingSchema = (t: any) => z.object({
   guestName: z.string().min(1, { message: t('forms.validation.nameRequired') }),
   guestEmail: z.string().email({ message: t('forms.validation.emailInvalid') }).optional().or(z.literal('')),
@@ -33,6 +34,7 @@ type BookingFormValues = z.infer<ReturnType<typeof createBookingSchema>>;
 interface RestaurantBookingFormProps {
   restaurant: Restaurant;
   onSuccess?: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   existingBooking?: any;
   isChatMode?: boolean;
 }
@@ -114,6 +116,7 @@ export default function RestaurantBookingForm({
       if (!existingBooking) {
         form.reset();
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error creating restaurant booking:", error);
       toast({

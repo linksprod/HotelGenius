@@ -78,12 +78,16 @@ const fetchSuperStats = async (): Promise<SuperDashboardStats> => {
     ]);
 
     const serviceRequests = serviceResult?.data || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const pendingCount = serviceRequests.filter((r: any) => r.status === 'pending').length;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const completedCount = serviceRequests.filter((r: any) => r.status === 'completed').length;
 
     // Combine and sort recent activity
     const hotels = allHotelsResult.data || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const recentActivity: any[] = [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(recentAuthGuests.data || []).map((g: any) => ({
         id: g.id,
         type: 'registration',
@@ -92,6 +96,7 @@ const fetchSuperStats = async (): Promise<SuperDashboardStats> => {
         description: `New registration: ${g.first_name || 'Guest'} ${g.last_name || ''}`,
         timestamp: g.created_at
       })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(recentMessages.data || []).map((m: any) => ({
         id: m.id,
         type: 'message',
@@ -147,6 +152,7 @@ const fetchSuperStats = async (): Promise<SuperDashboardStats> => {
       },
       growthData,
       recentActivity,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       hotelsDetails: await Promise.all(hotels.map(async (h: any) => {
         try {
           const [gCount, mCount] = await Promise.all([

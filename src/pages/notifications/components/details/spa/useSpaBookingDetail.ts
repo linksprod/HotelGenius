@@ -9,7 +9,9 @@ import { SpaBooking } from '@/features/spa/types';
 
 export interface BookingDetailState {
   booking: SpaBooking | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   service: any | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   facility: any | null;
   isLoading: boolean;
   error: string | null;

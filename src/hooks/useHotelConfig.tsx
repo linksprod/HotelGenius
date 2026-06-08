@@ -25,6 +25,7 @@ export function useHotelConfig() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['hotelConfig', hotelId],
     queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('hotel_config')
         .select('*');

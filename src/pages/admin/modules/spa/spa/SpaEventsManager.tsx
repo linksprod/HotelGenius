@@ -15,6 +15,7 @@ const SpaEventsManager = () => {
   const { facilities } = useSpaFacilities();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedFacility, setSelectedFacility] = useState<any>(null);
   const [selectedEventId, setSelectedEventId] = useState<string | undefined>(undefined);
   const { reservations, isLoading: reservationsLoading, updateReservationStatus } = useEventReservations(selectedEventId);

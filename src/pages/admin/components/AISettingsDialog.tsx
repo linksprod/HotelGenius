@@ -97,6 +97,7 @@ export const AISettingsDialog: React.FC<AISettingsDialogProps> = ({
           </div>
         </DialogHeader>
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="flex-1 flex flex-col">
           <TabsList className="bg-white/5 border border-white/10 w-full justify-start p-1 mb-6">
             <TabsTrigger value="general" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black uppercase text-[10px] tracking-widest px-6">

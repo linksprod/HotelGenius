@@ -57,6 +57,7 @@ export const FeedbackManager = () => {
     setIsLoadingFeedback(true);
     try {
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase.from('guest_feedback').select('*');
       if (hotelId) query = query.eq('hotel_id', hotelId);
       const { data, error } = await query.order('created_at', { ascending: false });

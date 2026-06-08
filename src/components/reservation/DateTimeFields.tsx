@@ -13,6 +13,7 @@ import { CalendarIcon } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 
 interface DateTimeFieldsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
 }
 

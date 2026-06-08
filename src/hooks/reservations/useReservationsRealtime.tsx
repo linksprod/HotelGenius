@@ -77,6 +77,7 @@ export const useReservationsRealtime = (
       }
     }
       
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleReservationUpdate = (payload: any) => {
       // Silently refetch - toasts are handled by the direct action handlers
       queryClient.invalidateQueries({ queryKey: ['tableReservations', userId, userEmail, restaurantId] });

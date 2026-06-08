@@ -160,7 +160,9 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
     if (userId) {
       const guestNotifParams = {
         hotel_id: typedData.hotel_id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         type: 'table_reservation' as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recipient_type: 'guest' as any,
         recipient_id: userId,
         template_data: {
@@ -197,6 +199,7 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
       createdAt: typedData.created_at,
       hotelId: typedData.hotel_id
     };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Failed to create reservation:', error);
     throw new Error(error.message || 'Erreur lors de la création de la réservation. Veuillez vérifier vos informations et réessayer.');
@@ -229,7 +232,9 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
       const guestId = reservation.user_id || reservation.id; // Use reservation ID as fallback recipient if no user_id
       const confirmParams = {
         hotel_id: reservation.hotel_id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         type: 'booking_confirmed' as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recipient_type: 'guest' as any,
         recipient_id: guestId,
         template_data: {
@@ -249,10 +254,13 @@ export const updateReservationStatus = async ({ id, status }: UpdateReservationS
 
     } else if (status === 'cancelled') {
       const guestId = reservation.user_id || reservation.id;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const restaurantName = (reservation as any).restaurants?.name || 'the restaurant';
       const cancelParams = {
         hotel_id: reservation.hotel_id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         type: 'booking_cancelled' as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recipient_type: 'guest' as any,
         recipient_id: guestId,
         template_data: {

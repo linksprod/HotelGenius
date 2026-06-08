@@ -8,6 +8,7 @@ interface GuestPreferencesCardProps {
   guestId: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PREF_ICONS: Record<string, any> = {
   'Room 22°C': Thermometer,
   'Extra Pillows': Moon,

@@ -128,6 +128,7 @@ export const useProfileData = () => {
 
       console.log('[useProfileData] Syncing guest data with payload:', {
         userId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         internalId: (userData as any)?.internal_id,
         hotelId: updatedUserData.hotel_id,
         hasImage: !!finalImageUrl

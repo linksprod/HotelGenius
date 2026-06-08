@@ -18,6 +18,7 @@ export const useSpaFacilities = () => {
       return [];
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query: any = supabase
       .from('spa_facilities')
       .select('*');

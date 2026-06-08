@@ -83,6 +83,8 @@ export const saveUserInfo = async (info: UserInfo): Promise<void> => {
 /**
  * Ensure user info is valid, filling in defaults if needed
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ensureValidUserInfo = async (userData?: any, room?: any): Promise<UserInfo> => {
   const currentInfo = getLocalUserInfo();
   

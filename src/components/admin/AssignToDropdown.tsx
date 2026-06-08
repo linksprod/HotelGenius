@@ -33,6 +33,7 @@ const AssignToDropdown = ({ requestId, serviceType, assignedToName, onAssigned }
 
     const { error } = await supabase
       .from("service_requests")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .update({ assigned_to: userId, assigned_to_name: name } as any)
       .eq("id", requestId);
 
@@ -54,6 +55,7 @@ const AssignToDropdown = ({ requestId, serviceType, assignedToName, onAssigned }
       message: notifMessage,
       reference_id: requestId,
       reference_type: "service_request",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 
     toast({ title: "Assigned", description: `Request assigned to ${name}` });
@@ -63,6 +65,7 @@ const AssignToDropdown = ({ requestId, serviceType, assignedToName, onAssigned }
   const handleUnassign = async () => {
     const { error } = await supabase
       .from("service_requests")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .update({ assigned_to: null, assigned_to_name: null } as any)
       .eq("id", requestId);
 

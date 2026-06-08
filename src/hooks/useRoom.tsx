@@ -23,7 +23,7 @@ export const useRoom = (roomNumber?: string) => {
     queryFn: async () => {
       if (!roomNumber) throw new Error("Room number is required");
 
-      let query = supabase
+      const query = supabase
         .from('rooms')
         .select('*')
         .eq('room_number', roomNumber);

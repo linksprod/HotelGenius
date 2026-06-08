@@ -8,6 +8,7 @@ export interface AIIntelligenceLog {
   type: 'dining' | 'maintenance' | 'concierge' | 'spa' | 'system';
   message: string;
   time: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon?: any;
 }
 
@@ -40,7 +41,7 @@ export const useAIConciergeData = () => {
       const { count: activeCount } = await activeAIQuery;
 
       // 2. Fetch Total AI Messages (as a proxy for automated requests)
-      let aiMessagesQuery = client
+      const aiMessagesQuery = client
         .from('messages')
         .select('*', { count: 'exact', head: true })
         .eq('sender_type', 'ai');
@@ -80,6 +81,7 @@ export const useAIConciergeData = () => {
         else if (content.includes('connecting') || content.includes('staff')) type = 'system';
 
         const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const guestName = (msg.conversations as any)?.guest_name || 'Guest';
 
         return {

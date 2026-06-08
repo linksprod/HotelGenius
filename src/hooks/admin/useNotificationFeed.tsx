@@ -23,6 +23,7 @@ export interface NotificationItem {
   description: string;
   time: string;
   type: 'ai' | 'f&b' | 'guest' | 'ops' | 'service';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   color: string;
   bgColor: string;
@@ -148,7 +149,9 @@ export const useNotificationFeed = () => {
         if (serviceData) {
           feed.push(...serviceData.map(s => ({
             id: s.id,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             category: (s as any).request_categories?.name || 'Service',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             title: `New ${ (s as any).request_categories?.name || 'Service' } Request`,
             description: `A new ${s.status} request has been logged.`,
             time: new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -165,6 +168,7 @@ export const useNotificationFeed = () => {
             id: r.id,
             category: 'F&B Insight',
             title: 'New Reservation',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             description: `${r.guest_name} reserved a table at ${(r as any).restaurants?.name || 'the restaurant'}.`,
             time: new Date(r.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             type: 'f&b' as const,

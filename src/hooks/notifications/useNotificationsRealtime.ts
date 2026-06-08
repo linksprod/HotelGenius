@@ -88,6 +88,7 @@ export const useNotificationsRealtime = (
         let unifiedUpdates = 0;
         if (userId) {
           const { count } = await supabase
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .from('notifications' as any)
             .select('*', { count: 'exact', head: true })
             .eq('recipient_id', userId)
@@ -233,7 +234,9 @@ const setupReservationListenerById = (
     }, (payload) => {
       console.log('[NOTIFICATION REALTIME] Reservation update by ID:', {
         eventType: payload.eventType,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         oldStatus: (payload.old as any)?.status,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         newStatus: (payload.new as any)?.status
       });
       setHasNewNotifications(true);
@@ -424,7 +427,11 @@ const setupUnifiedNotificationListener = (
 
 // No-op handlers - toasts removed to prevent duplicates. 
 // Direct action handlers (forms/buttons) show the toast instead.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleReservationStatusChange = (_payload: any) => { };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleServiceStatusChange = (_payload: any) => { };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleSpaBookingStatusChange = (_payload: any) => { };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleEventReservationStatusChange = (_payload: any) => { };

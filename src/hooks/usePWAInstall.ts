@@ -20,6 +20,7 @@ function detectPlatform(): PWAPlatform {
 function isStandalone(): boolean {
     if (window.matchMedia('(display-mode: standalone)').matches) return true;
     if (window.matchMedia('(display-mode: fullscreen)').matches) return true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if ((window.navigator as any).standalone === true) return true;
     if (document.referrer.includes('android-app://')) return true;
     return false;

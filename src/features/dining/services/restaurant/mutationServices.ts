@@ -28,6 +28,7 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Prom
         status: restaurant.status,
         action_text: restaurant.actionText,
         is_featured: restaurant.isFeatured,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         hotel_id: (restaurant as any).hotel_id
       })
       .select();

@@ -21,6 +21,7 @@ const ReservationManager = () => {
   const { fetchRestaurantById } = useRestaurants();
   const { reservations, isLoading, error, updateReservationStatus } = useTableReservations(id);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [restaurant, setRestaurant] = useState<any>(null);
   const [selectedReservation, setSelectedReservation] = useState<TableReservation | null>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);

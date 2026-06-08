@@ -40,6 +40,7 @@ export const useEventReservationMutations = (userId?: string | null, userEmail?:
       queryClient.invalidateQueries({ queryKey: ['eventReservations', userId, userEmail, eventId] });
       // Toast handled by the calling form
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       console.error('Error creating event reservation:', error);
       toast.error(error.message || "Erreur lors de la création de la réservation");
@@ -53,6 +54,7 @@ export const useEventReservationMutations = (userId?: string | null, userEmail?:
       queryClient.invalidateQueries({ queryKey: ['eventReservations', userId, userEmail, eventId] });
       toast.success('Statut de la réservation mis à jour');
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       console.error('Error updating event reservation status:', error);
       toast.error("Erreur lors de la mise à jour du statut: " + (error.message || "Erreur inconnue"));

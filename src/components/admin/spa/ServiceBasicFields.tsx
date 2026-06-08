@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from 'react-hook-form';
 
 interface ServiceBasicFieldsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
 }
 

@@ -21,6 +21,7 @@ export interface Message {
   sender_name: string;
   content: string;
   message_type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metadata?: any;
   created_at: string;
 }

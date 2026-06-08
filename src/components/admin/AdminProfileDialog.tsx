@@ -97,6 +97,7 @@ const AdminProfileDialog: React.FC<AdminProfileDialogProps> = ({ open, onOpenCha
       } else {
         throw new Error("Failed to update profile");
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast({
         variant: "destructive",

@@ -8,6 +8,7 @@ import AIMessageRenderer from './AIMessageRenderer';
 interface MessagesListProps {
   messages: Message[];
   messagesEndRef: React.RefObject<HTMLDivElement>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onQuickAction?: (action: string, data?: any) => void;
 }
 

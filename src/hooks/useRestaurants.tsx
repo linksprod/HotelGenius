@@ -43,12 +43,14 @@ export const useRestaurants = () => {
 
   const createMutation = useMutation({
     mutationFn: (newRestaurant: Omit<Restaurant, 'id'>) =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       createRestaurantService(newRestaurant as any), // hotel_id set by DB trigger
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['restaurants'] });
       queryClient.invalidateQueries({ queryKey: ['featuredRestaurants'] });
       toast.success('Restaurant créé avec succès');
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       console.error('Error creating restaurant:', error);
       const message = error.message || 'Erreur lors de la création du restaurant';

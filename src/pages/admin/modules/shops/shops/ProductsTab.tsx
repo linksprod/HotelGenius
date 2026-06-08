@@ -54,6 +54,7 @@ const ProductsTab = () => {
                   <SelectValue placeholder="Select hotel shop" />
                 </SelectTrigger>
                 <SelectContent>
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   <SelectItem value={undefined as any}>All hotel shops</SelectItem>
                   {hotelShops.map(shop => (
                     <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem>

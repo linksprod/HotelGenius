@@ -81,6 +81,7 @@ const HotelProfile: React.FC = () => {
             setLogoPreview(publicUrl);
 
             toast({ title: 'Uploaded', description: 'Logo uploaded. Click Save to apply.' });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Upload error:', error);
             // Fallback: convert to data URL and save directly to database
@@ -118,6 +119,7 @@ const HotelProfile: React.FC = () => {
 
             toast({ title: 'Success!', description: 'Hotel profile saved successfully.' });
             refreshHotel();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Save error:', error);
             toast({ title: 'Error', description: error.message || 'Failed to save logo', variant: 'destructive' });
@@ -156,6 +158,7 @@ const HotelProfile: React.FC = () => {
                 description: 'Your custom domain is now active.',
             });
             refreshHotel();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Save domain error:', error);
             toast({ title: 'Error', description: error.message || 'Failed to save domain', variant: 'destructive' });
@@ -184,6 +187,7 @@ const HotelProfile: React.FC = () => {
                 description: `${customDomain} is now active and pointing to your hotel.`,
             });
             refreshHotel();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error('Verify DNS error:', error);
             toast({

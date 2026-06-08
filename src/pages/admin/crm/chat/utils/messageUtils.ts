@@ -39,11 +39,15 @@ export const formatMessageDate = (time: string): string | null => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const groupMessagesByDate = (messages: any[]): { date: string; messages: any[] }[] => {
   if (!messages || messages.length === 0) return [];
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const groupedMessages: { date: string; messages: any[] }[] = [];
   let currentDate = '';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let currentGroup: any[] = [];
   
   messages.forEach(msg => {

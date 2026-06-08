@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 interface RestaurantEventsDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   restaurant: any;
   event?: Event;
 }

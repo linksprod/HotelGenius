@@ -46,6 +46,7 @@ const DeleteStaffDialog: React.FC<DeleteStaffDialogProps> = ({
       toast({ title: 'Deleted', description: `${member.first_name} ${member.last_name} has been removed.` });
       onOpenChange(false);
       onSuccess();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       toast({ title: 'Error', description: err.message || 'Failed to delete account', variant: 'destructive' });
     } finally {

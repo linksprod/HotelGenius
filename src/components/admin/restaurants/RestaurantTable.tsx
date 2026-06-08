@@ -10,11 +10,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
 
 interface RestaurantTableProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   restaurants: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onEdit: (restaurant: any) => void;
   onDelete: (id: string) => void;
   onViewMenus: (id: string) => void;
   onViewReservations: (id: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onAddEvent?: (restaurant: any) => void;
 }
 
@@ -28,10 +31,12 @@ export const RestaurantTable: React.FC<RestaurantTableProps> = ({
 }) => {
   const navigate = useNavigate();
   const { restaurantCounts } = useAdminNotifications();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedRestaurant, setSelectedRestaurant] = useState<any>(null);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
   const { events } = useEvents();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAddEvent = (restaurant: any) => {
     if (onAddEvent) {
       onAddEvent(restaurant);

@@ -61,6 +61,7 @@ const StaffManager: React.FC = () => {
 
       // Fetch moderator service types
       const { data: modServices } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .from('moderator_services' as any)
         .select('user_id, service_type')
         .in('user_id', userIds);
@@ -70,6 +71,8 @@ const StaffManager: React.FC = () => {
       );
 
       const serviceMap = new Map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ((modServices as any[]) || []).map((s: any) => [s.user_id, s.service_type])
       );
 
@@ -87,6 +90,7 @@ const StaffManager: React.FC = () => {
       });
 
       setStaff(staffList);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast({
         title: 'Error',

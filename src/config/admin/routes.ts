@@ -3,6 +3,8 @@ import { Role } from './navigation';
 
 export interface AdminRouteConfig {
   path: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: React.LazyExoticComponent<any> | React.FC<any>;
   requiredRoles?: Role[];
   requiredModules?: string[];

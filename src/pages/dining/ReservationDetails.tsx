@@ -24,6 +24,7 @@ const ReservationDetails = () => {
   const { fetchRestaurantById } = useRestaurants();
 
   const [reservation, setReservation] = useState<TableReservation | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [restaurant, setRestaurant] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);

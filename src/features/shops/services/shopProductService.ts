@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ShopProduct, ShopProductFormData } from '@/types/shop';
 
 export const fetchShopProducts = async (shopId?: string, hotelId?: string | null): Promise<ShopProduct[]> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let query: any = supabase
     .from('shop_products')
     .select('*');

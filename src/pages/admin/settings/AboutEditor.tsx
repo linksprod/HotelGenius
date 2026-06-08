@@ -89,6 +89,7 @@ const AboutEditor = () => {
 
     try {
       await createInitialAboutData(defaultAboutData);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error creating about data:', error);
       setCreateError(error?.message || 'Unknown error occurred');

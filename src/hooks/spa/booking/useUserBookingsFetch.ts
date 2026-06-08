@@ -8,6 +8,7 @@ import { SpaBooking } from '@/features/spa/types';
 export const fetchUserBookings = async (userId: string, hotelId?: string | null): Promise<SpaBooking[]> => {
   try {
     console.log('Fetching bookings for user ID:', userId, hotelId ? `for hotel ${hotelId}` : '');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query: any = supabase
       .from('spa_bookings')
       .select(`

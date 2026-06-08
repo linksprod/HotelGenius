@@ -21,9 +21,11 @@ const RestaurantEventsManager = () => {
   const { resolvePath } = useHotelPath();
   const { fetchRestaurantById } = useRestaurants();
   const { events, loading: eventsLoading, refetch, deleteEvent } = useEvents();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [restaurant, setRestaurant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
   useEffect(() => {
@@ -48,11 +50,13 @@ const RestaurantEventsManager = () => {
     toast.success('Events refreshed');
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditEvent = (event: any) => {
     setSelectedEvent(event);
     setIsAddEventOpen(true);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDeleteEvent = async (event: any) => {
     try {
       await deleteEvent(event.id);

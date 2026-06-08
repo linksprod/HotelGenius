@@ -6,6 +6,7 @@ import { Restaurant } from '@/features/dining/types';
  * @param dbRestaurant The restaurant data from the database
  * @returns Restaurant object with camelCase properties
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mapDbRestaurantToRestaurant = (dbRestaurant: any): Restaurant => {
   return {
     id: dbRestaurant.id,
@@ -26,6 +27,7 @@ export const mapDbRestaurantToRestaurant = (dbRestaurant: any): Restaurant => {
  * @param dbRestaurants The restaurant data from the database
  * @returns Array of Restaurant objects with camelCase properties
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mapDbRestaurantsToRestaurants = (dbRestaurants: any[]): Restaurant[] => {
   return dbRestaurants.map(mapDbRestaurantToRestaurant);
 };

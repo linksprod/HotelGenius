@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { UseFormReturn } from 'react-hook-form';
 
 interface RestaurantDetailsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
 }
 

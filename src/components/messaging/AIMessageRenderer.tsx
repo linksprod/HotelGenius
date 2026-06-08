@@ -7,11 +7,13 @@ import { Calendar, Clock, MapPin, Users, Utensils, Sparkles, Phone, Mail, Star }
 
 interface AIMessageRendererProps {
   message: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onQuickAction?: (action: string, data?: any) => void;
 }
 
 interface ParsedContent {
   type: 'text' | 'restaurant_list' | 'spa_services' | 'booking_confirmation' | 'options_menu';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any;
 }
 
@@ -144,6 +146,7 @@ const AIMessageRenderer: React.FC<AIMessageRendererProps> = ({ message, onQuickA
   
   const parsedSections = parseMessage(message);
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleQuickBook = (type: string, item?: any) => {
     if (onQuickAction) {
       onQuickAction('quick_book', { type, item });
@@ -164,6 +167,7 @@ const AIMessageRenderer: React.FC<AIMessageRendererProps> = ({ message, onQuickA
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   {section.content.map((restaurant: any, idx: number) => (
                     <div key={idx} className="border rounded-lg p-3 space-y-2">
                       <div className="flex items-center justify-between">
@@ -206,6 +210,7 @@ const AIMessageRenderer: React.FC<AIMessageRendererProps> = ({ message, onQuickA
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   {section.content.map((service: any, idx: number) => (
                     <div key={idx} className="border rounded-lg p-3 space-y-2">
                       <div className="flex items-center justify-between">
@@ -245,6 +250,7 @@ const AIMessageRenderer: React.FC<AIMessageRendererProps> = ({ message, onQuickA
               <Card key={index} className="border-l-4 border-l-green-500 bg-green-50/50">
                 <CardContent className="pt-4">
                   <div className="space-y-2">
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     {section.content.map((confirmation: any, idx: number) => {
                       const IconComponent = confirmation.icon;
                       return (

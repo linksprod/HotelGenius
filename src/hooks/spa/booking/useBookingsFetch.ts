@@ -12,6 +12,7 @@ export const useBookingsFetch = () => {
   // Fetch all spa bookings
   const fetchBookings = async (): Promise<SpaBooking[]> => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('spa_bookings')
         .select(`

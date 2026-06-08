@@ -36,6 +36,7 @@ export const AdminChatDashboard: React.FC = () => {
         fetchConversations();
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const msg = payload.new as any;
         if (msg.sender_type === 'guest' && msg.conversation_id) {
           const convId = msg.conversation_id;

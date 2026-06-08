@@ -42,6 +42,7 @@ export const setupReservationListenerByEmail = (userEmail: string, refetchReserv
 /**
  * Handle reservation update events
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleReservationUpdate = (payload: any, refetchReservations: () => void) => {
   // Silently refetch - toasts handled by direct action handlers
   refetchReservations();

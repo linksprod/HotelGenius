@@ -15,6 +15,7 @@ type AddItemDialogProps = {
     category_id: string;
     is_active: boolean;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setNewItem: (i: any) => void;
   onAdd: () => void;
 };

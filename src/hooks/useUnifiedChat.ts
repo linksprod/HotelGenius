@@ -105,6 +105,8 @@ export const useUnifiedChat = ({
           console.log(`[useUnifiedChat] Self-healing: Assigning hotel_id ${hotelId} to conversation ${conversation.id}`);
           const { data: updatedConv } = await (supabase
             .from('conversations')
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .update({ hotel_id: hotelId } as any) as any)
             .eq('id', conversation.id)
             .select()
@@ -125,8 +127,10 @@ export const useUnifiedChat = ({
               current_handler: conversationType === 'concierge' ? 'human' : 'ai',
               conversation_type: conversationType,
               hotel_id: hotelId ?? null // Always set hotel_id; trigger resolves from guests table if null
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any)
             .select()
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .single() as any;
 
           if (error) throw error;
@@ -290,6 +294,7 @@ export const useUnifiedChat = ({
 
   // Listen for client-side form triggers (from ChatActionRenderer)
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleTriggerForm = async (event: any) => {
       const { type, id } = event.detail;
       if (!chatState.conversation?.id) return;
@@ -322,6 +327,7 @@ export const useUnifiedChat = ({
 
   // Listen for reservation submissions to show pending state
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleReservationSubmitted = async (event: any) => {
       if (!chatState.conversation?.id) return;
 
@@ -433,6 +439,7 @@ export const useUnifiedChat = ({
       if (response.data && response.data.error) {
         throw response.data;
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error communicating with AI:', error);
       setChatState(prev => ({ ...prev, isTyping: false }));

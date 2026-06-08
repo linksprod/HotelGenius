@@ -18,6 +18,7 @@ export const useEventReservationCancellation = () => {
       queryClient.invalidateQueries({ queryKey: ['eventReservations'] });
       toast.success('Réservation annulée avec succès');
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
       console.error('Error cancelling event reservation:', error);
       toast.error(error.message || "Erreur lors de l'annulation de la réservation");

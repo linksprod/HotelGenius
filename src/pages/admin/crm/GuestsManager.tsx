@@ -114,6 +114,7 @@ const GuestsManager: React.FC = () => {
   const { data: guests = [], isLoading, refetch } = useQuery({
     queryKey: ['guests', hotelId, isSuperAdmin],
     queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let staffRolesQuery: any = supabase
         .from('user_roles')
         .select('user_id')
@@ -126,6 +127,7 @@ const GuestsManager: React.FC = () => {
       const { data: staffRoles } = await staffRolesQuery;
       const staffUserIds = new Set((staffRoles || []).map((r) => r.user_id));
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase.from('guests').select('*');
       if (hotelId) query = query.eq('hotel_id', hotelId);
 

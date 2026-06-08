@@ -12,6 +12,7 @@ export const useSpaBookingMutations = () => {
 
   // Créer une nouvelle réservation
   const createBookingMutation = useMutation({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: async (bookingWithExtras: any) => {
       // Destructure service_name and hotel_id (if passed) to avoid inserting them into spa_bookings table
       // which might not have these columns or might fail on extra fields
@@ -106,6 +107,7 @@ export const useSpaBookingMutations = () => {
       // Notify guest on priority changes
       if (booking && (status === 'confirmed' || status === 'cancelled')) {
         await NotificationService.createNotification({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           hotel_id: (booking as any).hotel_id,
           type: status === 'confirmed' ? 'booking_confirmed' : 'booking_cancelled',
           recipient_type: 'guest',
@@ -157,6 +159,7 @@ export const useSpaBookingMutations = () => {
 
       // Notify guest
       await NotificationService.createNotification({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         hotel_id: (booking as any).hotel_id,
         type: 'booking_cancelled',
         recipient_type: 'guest',

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { MenuItem } from '@/features/dining/types';
 
 export const fetchMenuItems = async (restaurantId?: string, hotelId?: string | null): Promise<MenuItem[]> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let query: any = supabase
     .from('restaurant_menus')
     .select('*');
@@ -80,6 +81,7 @@ export const createMenuItem = async (item: Omit<MenuItem, 'id'>): Promise<MenuIt
     .from('restaurant_menus')
     .insert({
       restaurant_id: item.restaurantId,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       hotel_id: (item as any).hotel_id,
       name: item.name,
       description: item.description,
@@ -127,6 +129,7 @@ export const updateMenuItem = async (item: MenuItem): Promise<MenuItem> => {
     .from('restaurant_menus')
     .update({
       restaurant_id: item.restaurantId,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       hotel_id: (item as any).hotel_id,
       name: item.name,
       description: item.description,

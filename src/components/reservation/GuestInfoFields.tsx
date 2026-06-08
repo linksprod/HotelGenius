@@ -8,6 +8,7 @@ import { AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface GuestInfoFieldsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
   hideNameEmail?: boolean;
   hidePhoneRoom?: boolean;

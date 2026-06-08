@@ -80,6 +80,7 @@ const FeedbackForm = () => {
       setEmail('');
       setComment('');
       setRating(0);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error submitting feedback:', error);
       toast({

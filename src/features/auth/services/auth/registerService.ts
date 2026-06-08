@@ -68,6 +68,7 @@ export const registerUser = async (
       success: true,
       userId: authData.user.id
     };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error('Error during registration:', error);
     return { 

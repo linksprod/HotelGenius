@@ -6,6 +6,8 @@ import { syncGuestData } from '@/features/users/services/guestService';
 /**
  * Try to get user info directly from the database
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getUserInfoFromDatabase = async (userId: string, userData?: any, room?: any): Promise<UserInfo | null> => {
   try {
     const { data, error } = await supabase

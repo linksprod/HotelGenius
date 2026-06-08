@@ -3,6 +3,7 @@ import { TableReservation } from '@/features/dining/types';
 
 export const reservationTransformers = {
   // Helper function to transform reservation data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transformReservations: (data: any[]): TableReservation[] => {
     return (data || []).map(item => ({
       id: item.id,

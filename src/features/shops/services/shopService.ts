@@ -7,7 +7,7 @@ export const fetchShops = async (hotelId: string | null = null, isSuperAdmin: bo
     return [];
   }
 
-  let query = supabase
+  const query = supabase
     .from('shops')
     .select('*, shop_categories(name)');
 

@@ -41,6 +41,7 @@ export const setupServiceRequestListenerByRoom = (roomNumber: string, refetchReq
 /**
  * Handle service request update events
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleServiceRequestUpdate = (payload: any, refetchRequests: () => void) => {
   // Silently refetch - toasts handled by direct action handlers
   refetchRequests();

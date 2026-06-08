@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 
 interface RestaurantBasicInfoProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
 }
 

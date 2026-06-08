@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { UseFormReturn } from 'react-hook-form';
 
 interface ServiceImageUploaderProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
   isLoading: boolean;
 }

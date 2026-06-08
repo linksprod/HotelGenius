@@ -28,6 +28,7 @@ const RestaurantReservationsManager = () => {
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const { fetchRestaurantById } = useRestaurants();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [restaurant, setRestaurant] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);

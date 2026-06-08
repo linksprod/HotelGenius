@@ -56,6 +56,7 @@ const CompanionsList: React.FC<CompanionsListProps> = ({ companions, setCompanio
     setCompanions(companions.filter((_, i) => i !== index));
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateCompanion = (index: number, field: keyof CompanionType, value: any) => {
     const newCompanions = [...companions];
     newCompanions[index] = { ...newCompanions[index], [field]: value };

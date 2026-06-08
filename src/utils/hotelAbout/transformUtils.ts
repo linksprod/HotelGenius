@@ -8,6 +8,7 @@ import {
 } from './defaultValues';
 import { parseJsonArray } from './parseUtils';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformAboutData = (aboutData: any): HotelAbout => {
   return {
     id: aboutData.id,
@@ -30,6 +31,7 @@ export const transformAboutData = (aboutData: any): HotelAbout => {
 };
 
 export const prepareDataForUpdate = (data: Partial<HotelAbout>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateData: Record<string, any> = {};
   
   if (data.id) updateData.id = data.id;

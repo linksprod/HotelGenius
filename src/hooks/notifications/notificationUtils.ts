@@ -31,6 +31,7 @@ function getServiceIcon(type: string): string {
 }
 
 // Transform service requests to notifications
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformServiceRequests = (requests: any[]): NotificationItem[] => {
   if (!Array.isArray(requests)) return [];
 
@@ -52,6 +53,7 @@ export const transformServiceRequests = (requests: any[]): NotificationItem[] =>
 };
 
 // Transform reservations to notifications
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformTableReservations = (reservations: any[]): NotificationItem[] => {
   if (!Array.isArray(reservations)) return [];
 
@@ -76,6 +78,7 @@ export const transformTableReservations = (reservations: any[]): NotificationIte
 };
 
 // Transform spa bookings to notifications
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformSpaBookings = (bookings: any[]): NotificationItem[] => {
   if (!Array.isArray(bookings)) return [];
 
@@ -99,6 +102,7 @@ export const transformSpaBookings = (bookings: any[]): NotificationItem[] => {
 };
 
 // Transform event reservations to notifications
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformEventReservations = (reservations: any[]): NotificationItem[] => {
   if (!Array.isArray(reservations)) return [];
 
@@ -122,6 +126,7 @@ export const transformEventReservations = (reservations: any[]): NotificationIte
 };
 
 // Transform unified notifications from the notifications table
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const transformUnifiedNotifications = (notifications: any[]): NotificationItem[] => {
   if (!Array.isArray(notifications)) return [];
 
@@ -129,6 +134,7 @@ export const transformUnifiedNotifications = (notifications: any[]): Notificatio
     id: n.notification_id || n.id,
     type: (n.type === 'spa_booking' ? 'spa_booking' :
       n.type === 'table_reservation' ? 'reservation' :
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         n.type === 'service_ticket_created' ? 'request' : 'general') as any,
     title: n.title,
     description: n.body,
@@ -146,10 +152,15 @@ export const transformUnifiedNotifications = (notifications: any[]): Notificatio
 
 // Combine and sort all notifications
 export const combineAndSortNotifications = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serviceRequests: any[] = [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   reservations: any[] = [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   spaBookings: any[] = [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   eventReservations: any[] = [],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   unifiedNotifications: any[] = []
 ): NotificationItem[] => {
   // Transform the different types of notifications

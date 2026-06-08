@@ -22,6 +22,7 @@ type MaintenanceItemsTabProps = {
   openEditDialog: (item: RequestItem) => void;
   categoryIds: string[];
   getCategoryName: (categoryId: string) => string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createMaintenanceCategories: () => Promise<any>;
 };
 

@@ -35,6 +35,7 @@ const EventReservationsTab: React.FC<EventReservationsTabProps> = ({ restaurantI
     }
   ) || [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleViewDetails = (reservation: any) => {
     // Implement view details functionality if needed
     console.log('View details:', reservation);

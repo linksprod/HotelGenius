@@ -47,6 +47,7 @@ export default function SpaManager() {
   const { markSectionSeen } = useAdminNotifications();
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isAddSpaOpen, setIsAddSpaOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editingSpa, setEditingSpa] = useState<any>(null);
 
   React.useEffect(() => {

@@ -133,6 +133,7 @@ const ReservationForm = ({ restaurantId, onSuccess, buttonText, existingReservat
         toast.success(t('forms.messages.reservationSentSuccess'));
         if (onSuccess) onSuccess();
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onError: (error: any) => {
         console.error('Error creating reservation:', error);
         const errorMessage = error.message || t('forms.messages.reservationCreationError');

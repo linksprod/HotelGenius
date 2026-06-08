@@ -10,6 +10,7 @@ import { compressAndConvertToWebP } from '@/lib/imageUtils';
 import { cn } from '@/lib/utils';
 
 interface ImageUploaderProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<any>;
 }
 

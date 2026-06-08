@@ -24,7 +24,7 @@ export const compressAndConvertToWebP = async (
       img.onload = () => {
         const canvas = document.createElement("canvas");
         // Calculate dimensions while maintaining aspect ratio
-        let { width, height } = calculateDimensions(img, maxSizeKB);
+        const { width, height } = calculateDimensions(img, maxSizeKB);
         
         canvas.width = width;
         canvas.height = height;

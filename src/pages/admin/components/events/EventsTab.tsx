@@ -24,6 +24,7 @@ export const EventsTab = () => {
 
   const displayEvents = events;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const filteredEvents = (displayEvents as any[]).filter(event => 
     event.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
     event.category.toLowerCase().includes(searchTerm.toLowerCase()) || 

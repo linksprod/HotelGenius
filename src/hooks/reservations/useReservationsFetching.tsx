@@ -23,6 +23,7 @@ export const useReservationsFetching = (
     if (userId) {
       console.log('Fetching reservations for user ID:', userId, hotelId ? `for hotel ${hotelId}` : '');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
         .select('*')
@@ -32,7 +33,7 @@ export const useReservationsFetching = (
         query = query.eq('hotel_id', hotelId);
       }
 
-      let { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching reservations by user_id:', error);
@@ -46,6 +47,7 @@ export const useReservationsFetching = (
     if (userEmail) {
       console.log('Fetching reservations for user email:', userEmail, hotelId ? `for hotel ${hotelId}` : '');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
         .select('*')
@@ -84,6 +86,7 @@ export const useReservationsFetching = (
     console.log(`Fetching reservations for restaurant ID: ${restaurantId}`);
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
         .select('*')

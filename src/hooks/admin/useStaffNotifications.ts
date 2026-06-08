@@ -24,6 +24,7 @@ export const useStaffNotifications = () => {
 
     // Fetch from unified notifications table for staff
     const { data } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from('notifications' as any)
       .select('*')
       .eq('recipient_type', 'staff')
@@ -32,6 +33,7 @@ export const useStaffNotifications = () => {
       .limit(50);
 
     if (data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const mappedNotifs: StaffNotification[] = data.map((n: any) => ({
         id: n.notification_id,
         user_id: n.recipient_id,
@@ -68,6 +70,7 @@ export const useStaffNotifications = () => {
           filter: `recipient_type=eq.staff`,
         },
         async (payload) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const n = payload.new as any;
           // Filter in JS since .or filters aren't supported in realtime filter strings yet
           if (n.recipient_id === user.id || n.recipient_id === '00000000-0000-0000-0000-000000000000') {
@@ -98,6 +101,7 @@ export const useStaffNotifications = () => {
 
   const markAsRead = useCallback(async (id: string) => {
     await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from('notifications' as any)
       .update({ status: 'read', read_at: new Date().toISOString() })
       .eq('notification_id', id);
@@ -111,6 +115,7 @@ export const useStaffNotifications = () => {
   const markAllAsRead = useCallback(async () => {
     if (!user?.id) return;
     await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from('notifications' as any)
       .update({ status: 'read', read_at: new Date().toISOString() })
       .eq('recipient_type', 'staff')

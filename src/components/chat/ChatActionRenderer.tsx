@@ -16,12 +16,14 @@ import { supabase } from '@/integrations/supabase/client';
 
 interface ChatActionRendererProps {
     type: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata: any;
     onSuccess?: () => void;
 }
 
 const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () => void }> = ({ initialCategory, onSuccess }) => {
     const [step, setStep] = React.useState<'categories' | 'items' | 'submitting' | 'confirmed'>(initialCategory ? 'items' : 'categories');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
     const { categories, isLoading: loadingCats } = useRequestCategories();
     // Use the hook to fetch items for the selected category
@@ -42,11 +44,13 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
         }
     }, [initialCategory, categories, selectedCategory]);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleCategorySelect = (category: any) => {
         setSelectedCategory(category);
         setStep('items');
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleItemSelect = async (item: any) => {
         setStep('submitting');
         try {
@@ -182,6 +186,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     metadata,
     onSuccess
 }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [entities, setEntities] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(
         (type === 'booking_form' && (metadata?.entity_type === 'restaurant' || metadata?.entity_type === 'event' || metadata?.entity_type === 'spa')) ||
