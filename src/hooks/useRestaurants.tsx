@@ -18,7 +18,8 @@ export const useRestaurants = () => {
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Determine if we are in the admin dashboard to bypass the draft filter
-  const isAdminView = window.location.pathname.startsWith('/admin');
+  // Handles both /admin/* (super admin) and /h/:slug/admin/* (hotel admin) routes
+  const isAdminView = window.location.pathname.startsWith('/admin') || window.location.pathname.includes('/admin');
 
   // Use React Query for data fetching and caching
   // Don't fire until hotelId is resolved (HotelContext async) or user is super admin
@@ -44,7 +45,7 @@ export const useRestaurants = () => {
   const createMutation = useMutation({
     mutationFn: (newRestaurant: Omit<Restaurant, 'id'>) =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createRestaurantService(newRestaurant as any), // hotel_id set by DB trigger
+      createRestaurantService({ ...(newRestaurant as any), hotel_id: hotelId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['restaurants'] });
       queryClient.invalidateQueries({ queryKey: ['featuredRestaurants'] });

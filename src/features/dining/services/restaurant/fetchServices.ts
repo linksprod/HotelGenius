@@ -40,8 +40,7 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
     location: item.location,
     status: item.status as 'open' | 'closed',
     actionText: item.action_text || "Book a Table",
-    isFeatured: item.is_featured || false,
-    is_published: item.is_published || false
+    isFeatured: item.is_featured || false
   }));
 };
 /**
@@ -113,7 +112,6 @@ export const fetchFeaturedRestaurants = async (hotelId: string | null = null, is
     location: item.location,
     status: item.status as 'open' | 'closed',
     actionText: item.action_text || "Book a Table",
-    isFeatured: item.is_featured || false,
-    is_published: item.is_published || false
+    isFeatured: item.is_featured || false
   }));
 };

@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Waves, Plus, Search, Calendar, Info, RefreshCw, Sparkles, LayoutGrid, List } from "lucide-react";
 import { motion } from 'framer-motion';
 import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
+import SpaServiceDialog from './spa/SpaServiceDialog';
+import { useSpaFacilities } from '@/hooks/useSpaFacilities';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -46,6 +48,7 @@ export default function SpaManager() {
   const [selectedSpaService, setSelectedSpaService] = useState<string | null>(null);
   const { markSectionSeen } = useAdminNotifications();
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const { facilities } = useSpaFacilities();
   const [isAddSpaOpen, setIsAddSpaOpen] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [editingSpa, setEditingSpa] = useState<any>(null);
@@ -119,6 +122,18 @@ export default function SpaManager() {
           </Tabs>
         </motion.div>
       </motion.div>
+
+      <SpaServiceDialog
+        open={isAddSpaOpen}
+        onOpenChange={setIsAddSpaOpen}
+        service={editingSpa}
+        facilities={facilities}
+        onClose={(success) => {
+          setIsAddSpaOpen(false);
+          setEditingSpa(null);
+          if (success) refreshSpaData();
+        }}
+      />
     </div>
   );
 }

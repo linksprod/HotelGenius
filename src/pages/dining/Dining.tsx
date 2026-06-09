@@ -20,7 +20,7 @@ const Dining = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { requireAuth } = useRequireAuth();
-  const { isLoading: isHotelLoading } = useHotel();
+  const { hotel, isLoading: isHotelLoading } = useHotel();
   const { resolvePath } = useHotelPath();
   const { restaurants, isLoading: isRestaurantsLoading } = useRestaurants();
   const { upcomingEvents } = useEvents();

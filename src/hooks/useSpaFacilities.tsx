@@ -10,7 +10,8 @@ export const useSpaFacilities = () => {
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Determine if we are in the admin dashboard to bypass the draft filter
-  const isAdminView = window.location.pathname.startsWith('/admin');
+  // Handles both /admin/* (super admin) and /h/:slug/admin/* (hotel admin) routes
+  const isAdminView = window.location.pathname.startsWith('/admin') || window.location.pathname.includes('/admin');
 
   // Récupérer toutes les installations spa
   const fetchFacilities = async (): Promise<SpaFacility[]> => {
@@ -28,7 +29,7 @@ export const useSpaFacilities = () => {
     }
     
     if (!isAdminView && !isSuperAdmin) {
-      query = query.eq('is_published', true);
+      // Note: is_published filter removed - column does not exist in spa_facilities
     }
 
     const { data, error } = await query.order('name');
@@ -62,7 +63,7 @@ export const useSpaFacilities = () => {
     mutationFn: async (facility: Omit<SpaFacility, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
         .from('spa_facilities')
-        .insert(facility)   // hotel_id is set automatically by DB trigger
+        .insert({ ...facility, hotel_id: (facility as any).hotel_id || hotelId })
         .select('id')
         .single();
 

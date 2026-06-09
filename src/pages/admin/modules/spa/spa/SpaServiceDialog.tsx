@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import ServiceBasicFields from '@/components/admin/spa/ServiceBasicFields';
 import ServiceDetailsFields from '@/components/admin/spa/ServiceDetailsFields';
 import ServiceImageUploader from '@/components/admin/spa/ServiceImageUploader';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export interface SpaServiceDialogProps {
   open: boolean;
@@ -29,6 +29,7 @@ export default function SpaServiceDialog({
   facilities,
   onClose 
 }: SpaServiceDialogProps) {
+  const { hotelId } = useCurrentHotelId();
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
@@ -110,6 +111,7 @@ export default function SpaServiceDialog({
             is_featured: values.is_featured,
             image: values.image,
             status: values.status,
+            hotel_id: hotelId,
           });
           
         if (error) throw error;

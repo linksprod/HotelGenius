@@ -73,7 +73,7 @@ const RestaurantCard = ({ restaurant, onEdit, onDelete, onViewReservations, onVi
   
   return (
     <Card className={`overflow-hidden bg-card dark:bg-zinc-900 border ${restaurant.is_published ? 'border-border dark:border-white/5' : 'border-amber-500/50 opacity-80'} group hover:border-amber-500/50 transition-all shadow-sm dark:shadow-2xl relative`}>
-      <div className="aspect-video relative overflow-hidden group/img">
+      <div className="aspect-[16/8] relative overflow-hidden group/img">
         <img 
           src={images[currentImageIndex]} 
           alt={restaurant.name}
@@ -170,23 +170,23 @@ const RestaurantCard = ({ restaurant, onEdit, onDelete, onViewReservations, onVi
           </div>
         )}
       </div>
-      <CardContent className="p-5">
-        <div className="mb-4">
-          <h3 className="text-lg font-bold text-foreground mb-1">{restaurant.name}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-2">{restaurant.description || 'Premium dining experience with curated seasonal ingredients.'}</p>
+      <CardContent className="p-4">
+        <div className="mb-3">
+          <h3 className="text-base font-bold text-foreground mb-1 truncate">{restaurant.name}</h3>
+          <p className="text-xs text-muted-foreground line-clamp-1">{restaurant.description || 'Premium dining experience with curated seasonal ingredients.'}</p>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {allowsBooking ? (
-            <Button variant="outline" size="sm" onClick={() => onViewReservations(restaurant.id)} className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground text-[10px] font-bold h-9">Bookings</Button>
+            <Button variant="outline" size="sm" onClick={() => onViewReservations(restaurant.id)} className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground text-[10px] font-bold h-8">Bookings</Button>
           ) : (
-            <Button variant="outline" size="sm" disabled className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 opacity-50 text-foreground text-[10px] font-bold h-9">No Bookings</Button>
+            <Button variant="outline" size="sm" disabled className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 opacity-50 text-foreground text-[10px] font-bold h-8">No Bookings</Button>
           )}
-          <Button variant="outline" size="sm" onClick={() => onViewMenus(restaurant.id)} className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground text-[10px] font-bold h-9">Menus</Button>
-          <Button variant="outline" size="sm" onClick={() => onEdit(restaurant)} className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground text-[10px] font-bold h-9">Settings</Button>
+          <Button variant="outline" size="sm" onClick={() => onViewMenus(restaurant.id)} className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground text-[10px] font-bold h-8">Menus</Button>
+          <Button variant="outline" size="sm" onClick={() => onEdit(restaurant)} className="bg-card dark:bg-zinc-800 border-border dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-700 text-foreground text-[10px] font-bold h-8">Settings</Button>
           {allowsBooking ? (
-            <Button variant="outline" size="sm" onClick={() => onAddEvent(restaurant)} className="bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20 text-[10px] font-bold h-9">Add Event</Button>
+            <Button variant="outline" size="sm" onClick={() => onAddEvent(restaurant)} className="bg-amber-500/10 text-amber-500 border-amber-500/20 hover:bg-amber-500/20 text-[10px] font-bold h-8">Add Event</Button>
           ) : (
-            <Button variant="outline" size="sm" disabled className="bg-amber-500/5 text-amber-500/40 border-amber-500/10 opacity-50 text-[10px] font-bold h-9">Events Locked</Button>
+            <Button variant="outline" size="sm" disabled className="bg-amber-500/5 text-amber-500/40 border-amber-500/10 opacity-50 text-[10px] font-bold h-8">Events Locked</Button>
           )}
         </div>
       </CardContent>
@@ -404,7 +404,7 @@ const RestaurantManager = () => {
                       />
                     </Card>
                   ) : viewMode === 'grid' ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                       {(restaurants || []).map(r => (
                         <motion.div key={r.id} variants={itemVariants}>
                           <RestaurantCard 
@@ -420,12 +420,12 @@ const RestaurantManager = () => {
                         </motion.div>
                       ))}
                       <Card 
-                        className="border-dashed border-2 border-border dark:border-white/5 bg-transparent hover:border-amber-500/50 transition-all cursor-pointer flex items-center justify-center p-12 group rounded-[2rem]"
+                        className="border-dashed border-2 border-border dark:border-white/5 bg-transparent hover:border-amber-500/50 transition-all cursor-pointer flex items-center justify-center p-8 group rounded-[1.5rem]"
                         onClick={() => setIsDialogOpen(true)}
                       >
-                        <div className="text-center space-y-2">
-                          <Plus className="h-6 w-6 text-muted-foreground group-hover:text-amber-500 mx-auto" />
-                          <p className="text-sm font-bold text-muted-foreground">Add New Venue</p>
+                        <div className="text-center space-y-1.5">
+                          <Plus className="h-5 w-5 text-muted-foreground group-hover:text-amber-500 mx-auto" />
+                          <p className="text-xs font-bold text-muted-foreground">Add New Venue</p>
                         </div>
                       </Card>
                     </div>

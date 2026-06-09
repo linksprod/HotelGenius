@@ -10,7 +10,8 @@ export const useSpaServices = () => {
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   // Determine if we are in the admin dashboard to bypass the draft filter
-  const isAdminView = window.location.pathname.startsWith('/admin');
+  // Handles both /admin/* (super admin) and /h/:slug/admin/* (hotel admin) routes
+  const isAdminView = window.location.pathname.startsWith('/admin') || window.location.pathname.includes('/admin');
 
   // Récupérer tous les services spa
   const fetchServices = async (): Promise<SpaService[]> => {
@@ -28,7 +29,7 @@ export const useSpaServices = () => {
     }
     
     if (!isAdminView && !isSuperAdmin) {
-      query = query.eq('is_published', true);
+      // Note: is_published filter removed - column does not exist in spa_services
     }
 
     const { data, error } = await query.order('name');
@@ -66,7 +67,7 @@ export const useSpaServices = () => {
     }
     
     if (!isAdminView && !isSuperAdmin) {
-      query = query.eq('is_published', true);
+      // Note: is_published filter removed - column does not exist in spa_services
     }
 
     const { data, error } = await query.order('name');
