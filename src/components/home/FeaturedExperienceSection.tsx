@@ -7,9 +7,13 @@ import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carouse
 import SwipeIndicator from '@/components/ui/swipe-indicator';
 import { motion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
+import { useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const FeaturedExperienceSection = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
@@ -83,7 +87,7 @@ const FeaturedExperienceSection = () => {
                     <p className="text-muted-foreground mb-4">{experience.description}</p>
                     <Button
                       className="w-full"
-                      onClick={() => window.location.href = experience.path}
+                      onClick={() => navigate(resolvePath(experience.path))}
                     >
                       {t('common.exploreNow')}
                     </Button>
