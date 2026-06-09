@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useTheme } from 'next-themes';
-import menuIconWhite from '@/assets/menu-icon-dark.png';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BedDouble, UtensilsCrossed, Heart, Compass, Phone, ShoppingBag, Map, Home, Info, Calendar, BellRing, Coins } from 'lucide-react';
+import { BedDouble, UtensilsCrossed, Heart, Compass, Phone, ShoppingBag, Map, Home, Info, Calendar, BellRing, Coins, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useHotelPath } from '@/hooks/useHotelPath';
 
@@ -28,8 +27,6 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
   const [open, setOpen] = React.useState(false);
   const { resolvePath } = useHotelPath();
   const { theme } = useTheme();
-
-  const menuIconSrc = menuIconWhite;
 
   console.log('Current path in MainMenu:', location.pathname);
 
@@ -64,9 +61,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
           size="sm"
           className={cn("relative flex items-center justify-center p-2 rounded-full hover:bg-accent/20 h-10 w-10 group", buttonClassName)}
         >
-          {menuIconSrc && (
-            <img src={menuIconSrc} alt="Menu" className="w-6 h-6 object-contain" />
-          )}
+          <Menu className="w-6 h-6 text-primary transition-transform group-hover:scale-105" />
           <span className="absolute top-1 right-1 h-2 w-2 bg-primary rounded-full border-2 border-card shadow-sm" />
         </Button>
       </SheetTrigger>
