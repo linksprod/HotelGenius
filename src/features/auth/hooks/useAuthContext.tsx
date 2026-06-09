@@ -36,9 +36,23 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(() => {
+    const cached = localStorage.getItem('user_data');
+    if (cached) {
+      try {
+        return JSON.parse(cached) as UserData;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    return !localStorage.getItem('user_id');
+  });
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(() => {
+    return !!localStorage.getItem('user_id');
+  });
   const { toast } = useToast();
 
   const fetchUserData = async (userId: string) => {

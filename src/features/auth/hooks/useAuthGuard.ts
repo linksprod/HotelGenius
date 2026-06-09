@@ -17,8 +17,25 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
   const location = useLocation();
   const { toast } = useToast();
   const { resolvePath } = useHotelPath();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [authorized, setAuthorized] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(() => {
+    return !localStorage.getItem('user_id');
+  });
+  const [authorized, setAuthorized] = useState<boolean>(() => {
+    if (!adminRequired) {
+      return !!localStorage.getItem('user_id');
+    }
+    const cached = localStorage.getItem('user_data');
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        const role = data.role || data.guest_type;
+        return role === 'admin' || role === 'hotel_admin' || role === 'super_admin' || role === 'staff';
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  });
   const loginUrl = adminRequired ? resolvePath('/auth/login') : resolvePath('/guests/auth/login');
 
   // Track if initial auth check has completed
