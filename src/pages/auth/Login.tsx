@@ -29,10 +29,6 @@ const Login = () => {
           navigate(resolvePath('/'), { replace: true });
         }
       }
-      const userData = localStorage.getItem('user_data');
-      if (userData && !session) {
-        navigate(resolvePath('/'));
-      }
     };
     checkSession();
   }, [navigate, resolvePath]);
