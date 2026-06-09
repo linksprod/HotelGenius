@@ -45,6 +45,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.log('Récupération des données utilisateur depuis Supabase pour:', userId);
 
+      // 1. Instantly check localStorage and set state to make UI responsive immediately
+      const userDataString = localStorage.getItem('user_data');
+      let localUserData: UserData | null = null;
+      if (userDataString) {
+        try {
+          localUserData = JSON.parse(userDataString) as UserData;
+          setUserData(localUserData);
+          console.log('Données chargées depuis localStorage (affichage instantané) :', localUserData);
+
+          if (localUserData.room_number) {
+            localStorage.setItem('user_room_number', localUserData.room_number);
+          }
+        } catch (e) {
+          console.error('Error parsing cached user data:', e);
+        }
+      }
+
+      // 2. Fetch fresh data from DB in the background
       const guestData = await getGuestData(userId);
 
       if (guestData) {
@@ -70,26 +88,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.warn(`[AuthContext] No guest data found in DB for ${userId}`);
       }
 
-      // Check for data in localStorage
-      const userDataString = localStorage.getItem('user_data');
-      if (userDataString) {
-        try {
-          const localUserData = JSON.parse(userDataString) as UserData;
-          setUserData(localUserData);
-          console.log('Données récupérées depuis localStorage:', localUserData);
-
-          // Stocker le numéro de chambre uniquement s'il existe
-          if (localUserData.room_number) {
-            console.log('Stockage du numéro de chambre depuis localStorage:', localUserData.room_number);
-            localStorage.setItem('user_room_number', localUserData.room_number);
-          }
-
-          await syncGuestData(userId, localUserData);
-
-          return localUserData;
-        } catch (error) {
-          console.error('Error parsing user data from localStorage:', error);
-        }
+      // 3. Fallback to local data if guestData is not in DB but we had local data
+      if (localUserData) {
+        await syncGuestData(userId, localUserData);
+        return localUserData;
       }
 
       return null;
