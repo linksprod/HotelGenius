@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { syncGuestData } from '@/features/users/services/guestService';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useAuth } from '@/features/auth/hooks/useAuthContext';
 
 // Calculate the date 18 years ago for minimum age validation
 const eighteenYearsAgo = new Date();
@@ -70,6 +71,7 @@ export const useRegistrationForm = () => {
   const { hotelId } = useHotel();
   const { resolvePath } = useHotelPath();
   const [companions, setCompanions] = useState<CompanionType[]>([]);
+  const { setUserData } = useAuth();
 
   // Formulaire d'inscription
   const registerForm = useForm<RegistrationFormValues>({
@@ -132,11 +134,13 @@ export const useRegistrationForm = () => {
       }
 
       if (result.userId) {
-        await syncUserData({
+        const fullUserData = {
           ...userData,
           email: values.email,
           id: result.userId
-        });
+        };
+        await syncUserData(fullUserData);
+        setUserData(fullUserData);
       }
 
       toast({

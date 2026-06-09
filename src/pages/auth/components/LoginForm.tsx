@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { isCustomDomain } from '@/utils/domain';
+import { useAuth } from '@/features/auth/hooks/useAuthContext';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -29,6 +30,7 @@ const LoginForm: React.FC = () => {
   const { hotel } = useHotel();
   const onCustomDomain = isCustomDomain();
   const [loading, setLoading] = useState(false);
+  const { setUserData } = useAuth();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -47,6 +49,9 @@ const LoginForm: React.FC = () => {
       const result = await loginUser(values.email, values.password, hotel?.id || null);
 
       if (result.success) {
+        if (result.userData) {
+          setUserData(result.userData);
+        }
         const { data: { session } } = await supabase.auth.getSession();
 
         if (session?.user?.id) {
