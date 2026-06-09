@@ -70,7 +70,7 @@ const AuthGuard = ({
       });
 
       // Rediriger vers la page de connexion
-      const loginTarget = adminRequired ? '/login' : resolvePath('/auth/login');
+      const loginTarget = adminRequired ? resolvePath('/auth/login') : resolvePath('/guests/auth/login');
       navigate(loginTarget, { state: { from: location.pathname } });
     }
   }, [authorized, isAuthPage, loading, navigate, toast, location, PUBLIC_ROUTES, publicAccess]);

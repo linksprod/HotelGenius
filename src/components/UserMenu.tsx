@@ -81,7 +81,7 @@ const UserMenu = () => {
       console.log("Redirection vers la page de connexion avec refresh complet");
       setTimeout(() => {
         // Le délai permet à la toast de s'afficher avant le rechargement
-        window.location.href = resolvePath('/auth/login');
+        window.location.href = resolvePath('/guests/auth/login');
       }, 300);
     } catch (error) {
       console.error("=== ERREUR CRITIQUE DE DÉCONNEXION ===", error);
@@ -103,12 +103,12 @@ const UserMenu = () => {
         // Dernier recours - redirection forcée avec reload
         console.log("Redirection d'urgence");
         setTimeout(() => {
-          window.location.href = resolvePath('/auth/login') + '?emergency=true';
+          window.location.href = resolvePath('/guests/auth/login') + '?emergency=true';
         }, 300);
       } catch (e) {
         console.error("Échec critique du nettoyage d'urgence:", e);
         alert("Problème de déconnexion. Veuillez fermer votre navigateur et réessayer.");
-        navigate(resolvePath('/auth/login'));
+        navigate(resolvePath('/guests/auth/login'));
       }
     }
   };
@@ -131,7 +131,7 @@ const UserMenu = () => {
       <Button
         id="onboarding-profile"
         variant="ghost"
-        onClick={() => navigate(resolvePath('/auth/login'))}
+        onClick={() => navigate(resolvePath('/guests/auth/login'))}
         className="rounded-full p-2 h-9 w-9"
         size="icon"
       >

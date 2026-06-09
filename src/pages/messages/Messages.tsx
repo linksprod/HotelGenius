@@ -53,7 +53,7 @@ const Messages = () => {
           console.warn('[Messages] No active session found, redirecting to login');
           if (isMounted) {
             const currentSlug = location.pathname.split('/')[1];
-            navigate(`/${currentSlug}/auth/login?redirect=${encodeURIComponent(location.pathname)}`);
+            navigate(`/${currentSlug}/guests/auth/login?redirect=${encodeURIComponent(location.pathname)}`);
           }
           return;
         }
@@ -137,7 +137,7 @@ const Messages = () => {
           <p className="text-muted-foreground mb-8 max-w-md">
             Please log in to your account to access your personal messaging dashboard and stay in touch with our team.
           </p>
-          <Button onClick={() => navigate(`/${location.pathname.split('/')[1]}/auth/login`)}>
+          <Button onClick={() => navigate(`/${location.pathname.split('/')[1]}/guests/auth/login`)}>
             Go to Login
           </Button>
         </div>

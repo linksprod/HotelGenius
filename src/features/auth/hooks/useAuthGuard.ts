@@ -19,6 +19,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
   const { resolvePath } = useHotelPath();
   const [loading, setLoading] = useState<boolean>(true);
   const [authorized, setAuthorized] = useState<boolean>(false);
+  const loginUrl = adminRequired ? resolvePath('/auth/login') : resolvePath('/guests/auth/login');
 
   // Track if initial auth check has completed
   const initialAuthDone = useRef(false);
@@ -43,7 +44,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
       console.error("Erreur de nettoyage:", e);
     }
 
-    navigate(resolvePath('/auth/login'), { replace: true });
+    navigate(loginUrl, { replace: true });
     setAuthorized(false);
   };
 
@@ -86,7 +87,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
 
         if (!session && !auth) {
           console.log('Utilisateur non authentifié, redirection vers login');
-          navigate(resolvePath('/auth/login'), { replace: true });
+          navigate(loginUrl, { replace: true });
           setAuthorized(false);
           setLoading(false);
           return;
@@ -155,7 +156,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
             title: "Données de session incomplètes",
             description: "Veuillez vous reconnecter"
           });
-          navigate(resolvePath('/auth/login'), { replace: true });
+          navigate(loginUrl, { replace: true });
           setAuthorized(false);
           setLoading(false);
           return;
@@ -190,7 +191,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
             title: "Erreur de données",
             description: "Format de données incorrect, reconnexion nécessaire"
           });
-          navigate(resolvePath('/auth/login'), { replace: true });
+          navigate(loginUrl, { replace: true });
           setAuthorized(false);
         }
       } catch (error) {
@@ -212,8 +213,8 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
         if (!isAuthPage()) {
           // If we are on /administration or logged in as projects@, go to global login
           const isSuperPath = window.location.pathname.startsWith('/administration');
-          const loginUrl = isSuperPath ? '/login' : resolvePath('/auth/login');
-          navigate(loginUrl, { replace: true });
+          const redirectUrl = isSuperPath ? '/login' : loginUrl;
+          navigate(redirectUrl, { replace: true });
         }
       } else if (event === 'SIGNED_IN' && session) {
         console.log("Événement de connexion détecté");

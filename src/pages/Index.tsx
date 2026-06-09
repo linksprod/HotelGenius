@@ -106,7 +106,7 @@ const Index = () => {
                 <Button
                   variant="default"
                   size="lg"
-                  onClick={() => navigate(resolvePath('/auth/login'))}
+                  onClick={() => navigate(resolvePath('/guests/auth/login'))}
                   className="mx-auto"
                 >
                   {t('home.hero.loginButton')}

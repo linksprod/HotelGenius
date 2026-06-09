@@ -3,6 +3,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Index from '@/pages/Index';
 import Login from '@/pages/auth/Login';
+import GuestLogin from '@/pages/auth/GuestLogin';
 import Rooms from '@/pages/rooms/Rooms';
 import RoomDetails from '@/pages/rooms/RoomDetails';
 import Dining from '@/pages/dining/Dining';
@@ -31,6 +32,7 @@ const PublicRoutes = () => {
     <Routes>
       <Route index element={<Index />} />
       <Route path="auth/login" element={<Login />} />
+      <Route path="guests/auth/login" element={<GuestLogin />} />
       <Route path="rooms" element={<Rooms />} />
       <Route path="rooms/:id" element={<RoomDetails />} />
       <Route path="dining" element={<Dining />} />
