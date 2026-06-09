@@ -40,7 +40,7 @@ const Login = () => {
   // On custom domains: show a clean centered login page with hotel branding only
   if (onCustomDomain) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-5 py-10 bg-background relative">
+      <div className="min-h-screen flex items-center justify-center px-5 py-10 bg-background relative z-0">
         <div
           className="absolute inset-0 -z-10 opacity-30"
           style={{
@@ -128,7 +128,7 @@ const Login = () => {
       </div>
 
       {/* ── Right panel: Login form ── */}
-      <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-10 relative">
+      <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-10 relative z-0">
         {/* Subtle dot grid background */}
         <div
           className="absolute inset-0 -z-10 opacity-30"

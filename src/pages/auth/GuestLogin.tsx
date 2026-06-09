@@ -109,7 +109,7 @@ const GuestLogin = () => {
       </div>
 
       {/* ── Right panel: Guest login form ── */}
-      <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-10 relative">
+      <div className="flex-1 flex items-center justify-center px-5 py-10 sm:px-10 relative z-0">
         {/* Subtle dot grid background */}
         <div
           className="absolute inset-0 -z-10 opacity-30"

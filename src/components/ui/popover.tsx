@@ -22,6 +22,34 @@ const PopoverContent = React.forwardRef<
         className
       )}
       {...props}
+      onPointerDownOutside={(e) => {
+        const target = e.target as HTMLElement;
+        if (
+          target && 
+          (target.closest('[data-radix-select-viewport]') || 
+           target.closest('[role="listbox"]') || 
+           target.closest('[data-radix-popper-content-wrapper]'))
+        ) {
+          e.preventDefault();
+        }
+        if (props.onPointerDownOutside) {
+          props.onPointerDownOutside(e);
+        }
+      }}
+      onInteractOutside={(e) => {
+        const target = e.target as HTMLElement;
+        if (
+          target && 
+          (target.closest('[data-radix-select-viewport]') || 
+           target.closest('[role="listbox"]') || 
+           target.closest('[data-radix-popper-content-wrapper]'))
+        ) {
+          e.preventDefault();
+        }
+        if (props.onInteractOutside) {
+          props.onInteractOutside(e);
+        }
+      }}
     />
   </PopoverPrimitive.Portal>
 ))
