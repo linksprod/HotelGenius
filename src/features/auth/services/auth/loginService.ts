@@ -84,14 +84,16 @@ export const loginUser = async (
       check_out_date: guestData.check_out_date || undefined,
       nationality: guestData.nationality,
       profile_image: guestData.profile_image,
-      guest_type: guestData.guest_type || 'Standard Guest'
+      guest_type: guestData.guest_type || 'Standard Guest',
+      hotel_id: guestData.hotel_id || hotelId || null
     } : {
       id: authData.user.id,
       email: email,
       first_name: authData.user.user_metadata?.first_name || 'Utilisateur',
       last_name: authData.user.user_metadata?.last_name || '',
       room_number: '',
-      guest_type: 'Standard Guest'
+      guest_type: 'Standard Guest',
+      hotel_id: hotelId || null
     };
 
     localStorage.setItem('user_data', JSON.stringify(userData));

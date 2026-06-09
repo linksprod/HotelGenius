@@ -26,7 +26,26 @@ const Login = () => {
         } else if (isStaff) {
           navigate(resolvePath('/admin'), { replace: true });
         } else {
-          navigate(resolvePath('/'), { replace: true });
+          const { data: guestData } = await supabase
+            .from('guests')
+            .select('hotel_id, hotels(slug)')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+
+          // @ts-ignore
+          const hotelSlug = guestData?.hotels?.slug;
+          if (hotelSlug) {
+            navigate(`/${hotelSlug}`, { replace: true });
+          } else {
+            const targetPath = resolvePath('/');
+            if (targetPath !== '/') {
+              navigate(targetPath, { replace: true });
+            } else {
+              console.warn("Guest user has no associated hotel. Signing out to prevent loop.");
+              await supabase.auth.signOut();
+              localStorage.clear();
+            }
+          }
         }
       }
     };

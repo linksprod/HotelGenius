@@ -85,9 +85,34 @@ const LoginForm: React.FC = () => {
           }
           // ────────────────────────────────────────────────────────────────────
 
-          // Regular guest → go to home
-          toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
-          navigate(resolvePath('/'), { replace: true });
+          // Regular guest → find their hotel slug to redirect correctly
+          const { data: guestData } = await supabase
+            .from('guests')
+            .select('hotel_id, hotels(slug)')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+
+          // @ts-ignore
+          const hotelSlug = guestData?.hotels?.slug;
+          if (hotelSlug) {
+            toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
+            navigate(`/${hotelSlug}`, { replace: true });
+          } else {
+            const targetPath = resolvePath('/');
+            if (targetPath !== '/') {
+              toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
+              navigate(targetPath, { replace: true });
+            } else {
+              // Show error: Guests must log in through their hotel's guest portal
+              await supabase.auth.signOut();
+              localStorage.clear();
+              toast({
+                variant: 'destructive',
+                title: 'Login restricted',
+                description: "Guests must log in using their hotel's guest link.",
+              });
+            }
+          }
         }
 
       } else {
