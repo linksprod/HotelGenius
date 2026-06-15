@@ -17,9 +17,14 @@ const SpaServiceCard = ({
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   // Parse comma-separated images or fallback
+  const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80";
   const images = service.image 
     ? service.image.split(',').map(s => s.trim()).filter(Boolean) 
-    : ["/lovable-uploads/3c659231-2940-4890-99b3-5080c513de7f.png"];
+    : [FALLBACK_IMAGE];
+
+  const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = FALLBACK_IMAGE;
+  };
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -39,6 +44,7 @@ const SpaServiceCard = ({
           src={images[currentImageIndex]} 
           alt={service.name} 
           className="w-full h-full object-cover transition-all duration-300"
+          onError={handleImgError}
         />
         
         {images.length > 1 && (
