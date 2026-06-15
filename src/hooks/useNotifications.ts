@@ -107,18 +107,19 @@ export const useNotifications = () => {
     // Otherwise count notifications updated after lastSeenAt
     const lastSeenDate = new Date(lastSeenAt);
 
-    // Count legacy unreads
+    // Count legacy unreads (reservations, bookings, service requests)
+    // Only count those newer than lastSeenAt with active statuses
     const legacyUnreadCount = notifications.filter(n => {
       const notificationDate = n.time instanceof Date ? n.time : new Date(n.time);
       return notificationDate > lastSeenDate &&
         (n.status === 'pending' || n.status === 'in_progress' || n.status === 'confirmed');
     }).length;
 
-    // Count unified unreads (status !== 'read')
-    const unifiedUnreadCount = unifiedNotifications.filter(n => n.status !== 'read').length;
-
-    return legacyUnreadCount + unifiedUnreadCount;
-  }, [notifications, unifiedNotifications, lastSeenAt, newNotificationCount]);
+    // NOTE: unifiedUnreadCount is intentionally NOT added here to avoid
+    // double-counting reservations that appear in both sources.
+    // The legacy count already covers all bookings and requests.
+    return legacyUnreadCount;
+  }, [notifications, lastSeenAt, newNotificationCount]);
 
   const isAuthenticated = Boolean(userId);
 

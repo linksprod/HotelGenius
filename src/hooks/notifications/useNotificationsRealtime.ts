@@ -164,13 +164,12 @@ export const useNotificationsRealtime = (
 
     const channels = [];
 
-    // Listen for reservation updates by user ID or email
+    // Listen for reservation updates by user ID or email (not both, to avoid double counting)
     if (userId) {
       const reservationChannel = setupReservationListenerById(userId, refetchReservations, setHasNewNotifications);
       channels.push(reservationChannel);
-    }
-
-    if (userEmail) {
+    } else if (userEmail) {
+      // Only use email listener when no userId (anonymous/guest users)
       const emailChannel = setupReservationListenerByEmail(userEmail, refetchReservations, setHasNewNotifications);
       channels.push(emailChannel);
     }
@@ -181,24 +180,22 @@ export const useNotificationsRealtime = (
       channels.push(serviceChannel);
     }
 
-    // Listen for spa booking updates by user ID or room number
+    // Listen for spa booking updates by user ID or room number (prefer userId)
     if (userId) {
       const spaUserChannel = setupSpaBookingListenerById(userId, refetchSpaBookings, setHasNewNotifications);
       channels.push(spaUserChannel);
-    }
-
-    if (userRoomNumber) {
+    } else if (userRoomNumber) {
+      // Only use room-based listener when no userId
       const spaRoomChannel = setupSpaBookingListenerByRoom(userRoomNumber, refetchSpaBookings, setHasNewNotifications);
       channels.push(spaRoomChannel);
     }
 
-    // Listen for event reservation updates by user ID or email
+    // Listen for event reservation updates by user ID or email (not both)
     if (userId) {
       const eventUserChannel = setupEventReservationListenerById(userId, refetchEventReservations, setHasNewNotifications);
       channels.push(eventUserChannel);
-    }
-
-    if (userEmail) {
+    } else if (userEmail) {
+      // Only use email listener when no userId
       const eventEmailChannel = setupEventReservationListenerByEmail(userEmail, refetchEventReservations, setHasNewNotifications);
       channels.push(eventEmailChannel);
     }
@@ -227,21 +224,21 @@ const setupReservationListenerById = (
   return supabase
     .channel('notification_reservation_updates')
     .on('postgres_changes', {
-      event: '*',
+      event: 'UPDATE', // Only UPDATE — not INSERT (user created it themselves)
       schema: 'public',
       table: 'table_reservations',
       filter: `user_id=eq.${userId}`,
     }, (payload) => {
-      console.log('[NOTIFICATION REALTIME] Reservation update by ID:', {
-        eventType: payload.eventType,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        oldStatus: (payload.old as any)?.status,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        newStatus: (payload.new as any)?.status
-      });
-      setHasNewNotifications(true);
-      refetchReservations();
-      handleReservationStatusChange(payload);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const oldStatus = (payload.old as any)?.status;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newStatus = (payload.new as any)?.status;
+      // Only notify when status actually changed from pending
+      if (oldStatus === 'pending' && newStatus !== 'pending') {
+        console.log('[NOTIFICATION REALTIME] Reservation status changed:', { oldStatus, newStatus });
+        setHasNewNotifications(true);
+        refetchReservations();
+      }
     })
     .subscribe();
 };
@@ -257,17 +254,20 @@ const setupReservationListenerByEmail = (
   return supabase
     .channel('notification_reservation_email_updates')
     .on('postgres_changes', {
-      event: '*',
+      event: 'UPDATE', // Only UPDATE — not INSERT
       schema: 'public',
       table: 'table_reservations',
       filter: `guest_email=eq.${userEmail}`,
     }, (payload) => {
-      console.log('Notification reservation email update received:', payload);
-      setHasNewNotifications(true);
-      refetchReservations();
-
-      // Show toast for status updates
-      handleReservationStatusChange(payload);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const oldStatus = (payload.old as any)?.status;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newStatus = (payload.new as any)?.status;
+      if (oldStatus === 'pending' && newStatus !== 'pending') {
+        console.log('Notification reservation email status changed:', { oldStatus, newStatus });
+        setHasNewNotifications(true);
+        refetchReservations();
+      }
     })
     .subscribe();
 };
