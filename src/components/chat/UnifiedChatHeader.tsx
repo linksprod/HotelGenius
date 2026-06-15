@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Bot, User, Phone, ArrowLeft } from 'lucide-react';
+import { Bot, User, Phone, ArrowLeft, Sparkles } from 'lucide-react';
 import type { Conversation } from '@/types/chat';
 
 interface UnifiedChatHeaderProps {
