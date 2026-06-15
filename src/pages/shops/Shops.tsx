@@ -40,8 +40,8 @@ const Shops = () => {
           ) : (
             hotelShops.map((shop) => (
               <Card key={shop.id} className="p-4 rounded-xl">
-                <div className="flex items-start gap-3">
-                  <div className="relative min-w-[100px] h-24 rounded-lg overflow-hidden">
+                <div className="flex items-stretch gap-3">
+                  <div className="relative w-[160px] min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
                     <img 
                       src={shop.image || "https://images.unsplash.com/photo-1612423284934-2850a4ea6b0f"}
                       alt={shop.name} 
@@ -49,14 +49,14 @@ const Shops = () => {
                       loading="lazy"
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 flex flex-col">
                     <h3 className="font-semibold mb-1">{shop.name}</h3>
                     <div className="flex items-center text-sm text-muted-foreground mb-1">
                       <MapPin className="h-3 w-3 mr-1" />
                       <span>{shop.location || t('shopsPage.hotelShops.insideHotel')}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-2">{shop.description}</p>
-                    <div className="flex gap-2">
+                    <p className="text-sm text-muted-foreground mb-3 flex-grow">{shop.description}</p>
+                    <div className="flex gap-2 mt-auto">
                       {shop.hours && (
                         <div className="text-xs text-muted-foreground">
                           {t('shopsPage.hotelShops.hours')}: {shop.hours}
@@ -89,8 +89,8 @@ const Shops = () => {
             <div className="space-y-4">
               {nearbyShops.map((shop) => (
                 <Card key={shop.id} className="p-4 rounded-xl">
-                  <div className="flex items-start gap-3">
-                    <div className="relative min-w-[100px] h-24 rounded-lg overflow-hidden">
+                  <div className="flex items-stretch gap-3">
+                    <div className="relative w-[160px] min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
                       <img 
                         src={shop.image || "https://images.unsplash.com/photo-1568254183919-78a4f43a2877"}
                         alt={shop.name} 
@@ -98,14 +98,14 @@ const Shops = () => {
                         loading="lazy"
                       />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 flex flex-col">
                       <h3 className="font-semibold mb-1">{shop.name}</h3>
                       <div className="flex items-center text-sm text-muted-foreground mb-1">
                         <MapPin className="h-3 w-3 mr-1" />
                         <span>{shop.location}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-2">{shop.description}</p>
-                      <div className="flex gap-2">
+                      <p className="text-sm text-muted-foreground mb-3 flex-grow">{shop.description}</p>
+                      <div className="flex gap-2 mt-auto">
                         {shop.location && (
                           <Button size="sm" variant="outline" className="text-xs" asChild>
                             <a href={`https://maps.google.com/?q=${encodeURIComponent(shop.location)}`} target="_blank" rel="noopener noreferrer">
