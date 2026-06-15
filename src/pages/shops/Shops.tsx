@@ -36,9 +36,9 @@ const Shops = () => {
 
             <div className="space-y-4 mb-16">
               {hotelShops.map((shop) => (
-                <Card key={shop.id} className="p-4 rounded-xl">
+                <Card key={shop.id} className="p-3 md:p-4 rounded-xl">
                   <div className="flex items-stretch gap-3">
-                    <div className="relative w-[160px] min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-[150px] min-w-[150px] md:w-[160px] md:min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
                       <img 
                         src={shop.image || "https://images.unsplash.com/photo-1612423284934-2850a4ea6b0f"}
                         alt={shop.name} 
@@ -47,12 +47,12 @@ const Shops = () => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <h3 className="font-semibold mb-1">{shop.name}</h3>
-                      <div className="flex items-center text-sm text-muted-foreground mb-1">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        <span>{shop.location || t('shopsPage.hotelShops.insideHotel')}</span>
+                      <h3 className="font-semibold text-sm md:text-base mb-1">{shop.name}</h3>
+                      <div className="flex items-center text-xs md:text-sm text-muted-foreground mb-1">
+                        <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <span className="truncate">{shop.location || t('shopsPage.hotelShops.insideHotel')}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3 flex-grow">{shop.description}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mb-2 flex-grow line-clamp-2 md:line-clamp-none">{shop.description}</p>
                       <div className="flex gap-2 mt-auto">
                         {shop.hours && (
                           <div className="text-xs text-muted-foreground">
@@ -86,9 +86,9 @@ const Shops = () => {
 
             <div className="space-y-4">
               {nearbyShops.map((shop) => (
-                <Card key={shop.id} className="p-4 rounded-xl">
+                <Card key={shop.id} className="p-3 md:p-4 rounded-xl">
                   <div className="flex items-stretch gap-3">
-                    <div className="relative w-[160px] min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-[150px] min-w-[150px] md:w-[160px] md:min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
                       <img 
                         src={shop.image || "https://images.unsplash.com/photo-1568254183919-78a4f43a2877"}
                         alt={shop.name} 
@@ -97,12 +97,12 @@ const Shops = () => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <h3 className="font-semibold mb-1">{shop.name}</h3>
-                      <div className="flex items-center text-sm text-muted-foreground mb-1">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        <span>{shop.location}</span>
+                      <h3 className="font-semibold text-sm md:text-base mb-1">{shop.name}</h3>
+                      <div className="flex items-center text-xs md:text-sm text-muted-foreground mb-1">
+                        <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                        <span className="truncate">{shop.location}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3 flex-grow">{shop.description}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mb-2 flex-grow line-clamp-2 md:line-clamp-none">{shop.description}</p>
                       <div className="flex gap-2 mt-auto">
                         {shop.location && (
                           <Button size="sm" variant="outline" className="text-xs" asChild>
