@@ -14,6 +14,9 @@ const ShopsTab = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
 
+  // Filter only hotel shops
+  const hotelShops = shops.filter(shop => shop.is_hotel_shop);
+
   const handleCreateShop = () => {
     setSelectedShop(null);
     setIsDialogOpen(true);
@@ -48,7 +51,7 @@ const ShopsTab = () => {
           </Button>
         </div>
 
-        {shops.length === 0 ? (
+        {hotelShops.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             Aucune boutique disponible. Créez votre première boutique !
           </div>
@@ -66,7 +69,7 @@ const ShopsTab = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {shops.map((shop) => (
+                {hotelShops.map((shop) => (
                   <TableRow key={shop.id}>
                     <TableCell className="font-medium">{shop.name}</TableCell>
                     <TableCell className="max-w-xs truncate">{shop.short_description || shop.description}</TableCell>
