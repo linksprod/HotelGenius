@@ -182,10 +182,9 @@ export default function UnifiedSettingsLayout() {
         </AnimatePresence>
       </div>
 
-      {/* ── DESKTOP: content area ── */}
       <main className="hidden lg:flex flex-1 flex-col min-w-0 overflow-y-auto">
         <div className="flex-1 p-6 xl:p-8">
-          <div className={cn("w-full mx-auto", location.pathname.includes('billing') ? "max-w-[1600px]" : "max-w-3xl")}>
+          <div className="w-full">
             <Outlet />
           </div>
         </div>

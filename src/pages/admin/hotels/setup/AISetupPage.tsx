@@ -12,7 +12,7 @@ export default function AISetupPage() {
   if (!hotel?.id) return null;
 
   return (
-    <div className="w-full max-w-4xl mx-auto h-[80vh] flex flex-col rounded-2xl border bg-card shadow-sm overflow-hidden">
+    <div className="w-full h-[80vh] flex flex-col rounded-2xl border bg-card shadow-sm overflow-hidden">
       <AISetupStep
         hotelId={hotel.id}
         onFinish={() => navigate(resolvePath('/admin'))}

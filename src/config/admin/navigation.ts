@@ -39,13 +39,19 @@ export const adminNavigation: NavSectionConfig[] = [
     ],
   },
   {
+    label: 'Services',
+    defaultOpen: true,
+    items: [
+      { title: 'Housekeeping', url: '/admin/housekeeping', icon: Trash2, notificationKey: 'housekeeping' },
+      { title: 'Maintenance', url: '/admin/maintenance', icon: Wrench, notificationKey: 'maintenance' },
+      { title: 'IT Support', url: '/admin/information-technology', icon: Wifi, notificationKey: 'information-technology' },
+      { title: 'Security', url: '/admin/security', icon: Shield, notificationKey: 'security' },
+    ],
+  },
+  {
     label: 'Operations',
     defaultOpen: false,
     items: [
-      { title: 'Housekeeping', url: '/admin/housekeeping', icon: Trash2, notificationKey: 'housekeeping', requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'moderator'], requiredPlan: 'elite' },
-      { title: 'Maintenance', url: '/admin/maintenance', icon: Wrench, notificationKey: 'maintenance', requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'moderator'], requiredPlan: 'elite' },
-      { title: 'Security', url: '/admin/security', icon: Shield, notificationKey: 'security', requiredRoles: ['super_admin'] },
-      { title: 'IT Support', url: '/admin/information-technology', icon: Wifi, notificationKey: 'information-technology', requiredRoles: ['super_admin'] },
       { title: 'Digital Tipping', url: '/admin/tipping', icon: Coins, requiredRoles: ['super_admin', 'hotel_admin', 'admin'], requiredPlan: 'essential' },
       { title: 'Task Routing', url: '/admin/routing', icon: Bot, requiredPlan: 'experience' },
       { title: 'Auto Escalations', url: '/admin/escalations', icon: Bell, requiredPlan: 'elite' },

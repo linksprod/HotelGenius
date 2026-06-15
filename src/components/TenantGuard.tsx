@@ -94,9 +94,14 @@ const TenantGuard = ({ children }: TenantGuardProps) => {
         return <>{children}</>;
     }
 
-    if (assignedHotelId && contextHotelId && assignedHotelId !== contextHotelId) {
-        console.warn(`[TenantGuard] Cross-tenant access denied. Redirecting to /${hotelSlug}`);
-        return <Navigate to={`/${hotelSlug || assignedHotelId}`} replace />;
+    if (assignedHotelId && assignedHotelId !== contextHotelId) {
+        console.warn(`[TenantGuard] Cross-tenant access denied or invalid hotel. Redirecting to /${hotelSlug}`);
+        const isStaffOrAdmin = role === 'admin' || role === 'hotel_admin' || role === 'staff' || role === 'moderator';
+        const targetPath = isStaffOrAdmin 
+            ? `/${hotelSlug || assignedHotelId}/admin` 
+            : `/${hotelSlug || assignedHotelId}`;
+            
+        return <Navigate to={targetPath} replace />;
     }
     // ─────────────────────────────────────────────────────────────────────────
 

@@ -9,7 +9,7 @@ export default function LiveApp() {
   const appUrl = `${window.location.origin}/${hotel?.slug}`;
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="p-6 space-y-6 w-full">
       <AdminPageHeader
         title="Live App"
         description="View and manage your hotel's public application."

@@ -107,7 +107,7 @@ const BillingManager: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto space-y-12 animate-in fade-in duration-500 pb-16 px-4 md:px-8">
+    <div className="w-full space-y-12 animate-in fade-in duration-500 pb-16 px-4 md:px-8">
       
       {/* ─── Header ─── */}
       <AdminPageHeader

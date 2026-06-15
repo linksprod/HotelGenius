@@ -143,7 +143,7 @@ const AdminDashboard = () => {
   const hasAlerts = pendingServices > 0 || unanswered > 0;
 
   return (
-    <div className="w-full min-h-full p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+    <div className="w-full min-h-full p-4 md:p-6 lg:p-8 space-y-6">
 
       {/* ── Page header ── */}
       <motion.div {...fadeUp(0)} className="mb-6">
