@@ -53,7 +53,7 @@ const ShopFormDialog = ({ open, onClose, shop, isHotelShop = true }: ShopFormDia
       <DialogContent className="sm:max-w-[600px] h-[90vh]">
         <DialogHeader>
           <DialogTitle>
-            {shop ? 'Edit' : 'Add'} {isHotelShop ? 'Hotel Shop' : 'Shopping Center'}
+            {shop ? 'Edit' : 'Add'} {isHotelShop ? 'Hotel Shop' : 'Nearby Place'}
           </DialogTitle>
         </DialogHeader>
 

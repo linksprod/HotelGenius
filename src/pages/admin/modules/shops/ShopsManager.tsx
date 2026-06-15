@@ -25,7 +25,7 @@ const ShopsManager = () => {
       <Tabs defaultValue="shops" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-4 mb-6">
           <TabsTrigger value="shops">Hotel Shops</TabsTrigger>
-          <TabsTrigger value="nearby">Nearby Centers</TabsTrigger>
+          <TabsTrigger value="nearby">Nearby Places</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
         </TabsList>
