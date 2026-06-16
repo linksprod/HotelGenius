@@ -10,7 +10,7 @@ interface UserInfo {
 export const useUserInfo = (room: Room | null) => {
   const [userInfo, setUserInfo] = useState<UserInfo>({ 
     name: 'Guest', 
-    roomNumber: room?.room_number || '401' 
+    roomNumber: room?.room_number || '406' 
   });
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export const useUserInfo = (room: Room | null) => {
         const parsed = JSON.parse(userInfoStr);
         return {
           name: parsed.name || 'Guest',
-          roomNumber: parsed.roomNumber || (room?.room_number || '401')
+          roomNumber: parsed.roomNumber || (room?.room_number || '406')
         };
       } catch (error) {
         console.error("Error parsing user info:", error);
@@ -40,7 +40,7 @@ export const useUserInfo = (room: Room | null) => {
         const userData = JSON.parse(userDataStr);
         return {
           name: `${userData.first_name || ''} ${userData.last_name || ''}`.trim() || 'Guest',
-          roomNumber: userData.room_number || (room?.room_number || '401')
+          roomNumber: userData.room_number || (room?.room_number || '406')
         };
       } catch (error) {
         console.error("Error parsing user data:", error);
@@ -50,7 +50,7 @@ export const useUserInfo = (room: Room | null) => {
     // Default values
     return {
       name: 'Guest',
-      roomNumber: room?.room_number || '401'
+      roomNumber: room?.room_number || '406'
     };
   };
 

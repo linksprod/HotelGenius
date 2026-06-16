@@ -42,7 +42,8 @@ export const useCommandSearchOptions = () => {
   const { services: spaServices = [] } = useSpaServices();
   const { restaurants = [] } = useRestaurants();
   const { shops = [] } = useShops();
-  const { categories = [], allItems = [] } = useRequestCategories();
+  const { categories = [], allItems = [], isLoading, isError, error } = useRequestCategories();
+  console.log("Search categories:", categories.length, "items:", allItems.length, "isLoading:", isLoading, "isError:", isError, "error:", error);
 
   const spaServiceOptions: SearchOption[] = spaServices.map((service) => ({
     label: service.name,

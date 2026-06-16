@@ -87,31 +87,9 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
     try {
       const roomInfo = room || { id: '' };
       let roomId = roomInfo.id;
-      let roomNumber = room?.room_number || userData?.room_number || localStorage.getItem('user_room_number') || '';
+      let roomNumber = room?.room_number || userData?.room_number || localStorage.getItem('user_room_number') || '406';
 
-      if (!roomId && !roomNumber) {
-        const userDataStr = localStorage.getItem('user_data');
-        if (userDataStr) {
-          try {
-            const userData = JSON.parse(userDataStr);
-            if (userData.room_number) {
-              roomNumber = userData.room_number;
-              localStorage.setItem('user_room_number', roomNumber);
-            }
-          } catch (error) {
-            console.error("Error parsing user data:", error);
-          }
-        }
-        if (!roomNumber) {
-          toast({
-            title: t('myRoom.request.roomInfoNeeded', 'Room Information Needed'),
-            description: t('myRoom.request.roomInfoNeededDesc', "We couldn't find your room. Please complete your profile settings."),
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
-          setConfirmDialogOpen(false);
-          return;
-        }
+      if (!roomId) {
         roomId = roomNumber;
       }
       if (roomNumber && !localStorage.getItem('user_room_number')) {
