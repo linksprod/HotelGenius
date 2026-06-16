@@ -127,8 +127,8 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Important Numbers', 'Important Numbers')}
             items={importantNumbers.map(item => ({
-              label: t(`about.directory.label.${item.label}`, item.label),
-              value: t(`about.directory.value.${item.value}`, item.value)
+              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
+              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
             }))}
           />
         )}
@@ -137,8 +137,8 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Facilities & Amenities', 'Facilities & Amenities')}
             items={facilities.map(item => ({
-              label: t(`about.directory.label.${item.label}`, item.label),
-              value: t(`about.directory.value.${item.value}`, item.value)
+              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
+              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
             }))}
           />
         )}
@@ -147,8 +147,8 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Hotel Policies', 'Hotel Policies')}
             items={hotelPolicies.map(item => ({
-              label: t(`about.directory.label.${item.label}`, item.label),
-              value: t(`about.directory.value.${item.value}`, item.value)
+              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
+              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
             }))}
           />
         )}
@@ -157,8 +157,8 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Additional Information', 'Additional Information')}
             items={additionalInfo.map(item => ({
-              label: t(`about.directory.label.${item.label}`, item.label),
-              value: t(`about.directory.value.${item.value}`, item.value)
+              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
+              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
             }))}
           />
         )}
