@@ -38,10 +38,8 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
     { icon: <Heart className="h-5 w-5" />, label: t('nav.spa'), path: '/spa' },
     { icon: <Phone className="h-5 w-5" />, label: t('nav.concierge'), path: '/services' },
     { icon: <Calendar className="h-5 w-5" />, label: t('nav.eventsPromos'), path: '/events' },
-    { icon: <Compass className="h-5 w-5" />, label: t('nav.destination'), path: '/destination' },
     { icon: <ShoppingBag className="h-5 w-5" />, label: t('nav.shops'), path: '/shops' },
     { icon: <Map className="h-5 w-5" />, label: t('nav.hotelMap'), path: '/map' },
-    { icon: <BedDouble className="h-5 w-5" />, label: t('nav.myRoom'), path: '/my-room' },
     { icon: <Coins className="h-5 w-5" />, label: t('nav.digitalTipping', 'Digital Tipping'), path: '/tipping' },
   ];
 
