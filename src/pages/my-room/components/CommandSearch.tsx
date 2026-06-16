@@ -1,6 +1,7 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { requestService } from '@/features/rooms/controllers/roomService';
 import { useToast } from '@/hooks/use-toast';
@@ -25,6 +26,7 @@ type ItemToRequest = {
 
 const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
   const { t } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemToRequest | null>(null);
@@ -33,6 +35,21 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
   const { toast } = useToast();
   const { categories, allItems, isLoading } = useRequestCategories();
   const { userData } = useAuth();
+
+  // Listen to search query parameter to prefill search
+  useEffect(() => {
+    const query = searchParams.get('search');
+    if (query) {
+      const decodedQuery = decodeURIComponent(query);
+      setSearchTerm(decodedQuery);
+      setOpen(true);
+      
+      // Remove query parameter so it doesn't reopen if the user navigates back
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('search');
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Group items by category
   const itemsByCategory = useMemo(() => {

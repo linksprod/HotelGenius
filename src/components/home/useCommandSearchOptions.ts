@@ -2,7 +2,8 @@
 import { useSpaServices } from '@/hooks/useSpaServices';
 import { useRestaurants } from '@/hooks/useRestaurants';
 import { useShops } from '@/hooks/useShops';
-import { Leaf, UtensilsCrossed, Store } from 'lucide-react';
+import { useRequestCategories } from '@/hooks/useRequestCategories';
+import { Leaf, UtensilsCrossed, Store, Wrench } from 'lucide-react';
 import React from 'react';
 
 // Define the SearchOption interface at the top
@@ -41,6 +42,7 @@ export const useCommandSearchOptions = () => {
   const { services: spaServices = [] } = useSpaServices();
   const { restaurants = [] } = useRestaurants();
   const { shops = [] } = useShops();
+  const { categories = [], allItems = [] } = useRequestCategories();
 
   const spaServiceOptions: SearchOption[] = spaServices.map((service) => ({
     label: service.name,
@@ -72,11 +74,34 @@ export const useCommandSearchOptions = () => {
     category: shop.is_hotel_shop ? "Hotel Shops" : "Nearby Shops"
   }));
 
+  const serviceCategoryOptions: SearchOption[] = categories.map((cat) => ({
+    label: cat.name,
+    route: `/services?search=${encodeURIComponent(cat.name)}`,
+    keywords: `${cat.name} housekeeping housekeeping maintenance IT support technology concierge support request service`,
+    type: 'service-category',
+    icon: Wrench,
+    category: "Services",
+  }));
+
+  const serviceItemOptions: SearchOption[] = allItems.map((item) => {
+    const category = categories.find(c => c.id === item.category_id);
+    return {
+      label: item.name,
+      route: `/services?search=${encodeURIComponent(item.name)}`,
+      keywords: `${item.name} ${item.description ?? ''} ${category?.name ?? ''} housekeeping maintenance IT support technology concierge support request service`,
+      type: 'service-item',
+      icon: Wrench,
+      category: category?.name ?? "Services",
+    };
+  });
+
   const allSearchOptions = [
     ...SEARCHABLE_PAGES,
     ...spaServiceOptions,
     ...restaurantOptions,
     ...shopOptions,
+    ...serviceCategoryOptions,
+    ...serviceItemOptions,
   ];
 
   const getFilteredResults = (query: string) => {

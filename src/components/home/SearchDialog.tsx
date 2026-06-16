@@ -47,6 +47,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
   const spaResults = filteredResults.filter(item => item.type === 'spa-service');
   const restaurantResults = filteredResults.filter(item => item.type === 'restaurant');
   const shopResults = filteredResults.filter(item => item.type === 'shop');
+  const serviceResults = filteredResults.filter(item => item.type === 'service-category' || item.type === 'service-item');
 
   const handleSelect = (route: string) => {
     navigate(`/${slug}${route}`);
@@ -179,6 +180,34 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
                     <div className="flex items-center">
                       <div className="h-8 w-8 rounded-md bg-yellow-100 flex items-center justify-center mr-3">
                         {Icon && <Icon className="h-4 w-4 text-yellow-700" />}
+                      </div>
+                      <div>
+                        <p className="font-medium">{item.label}</p>
+                        {item.category && <p className="text-xs text-muted-foreground">{item.category}</p>}
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
+          </>
+        )}
+        {serviceResults.length > 0 && (
+          <>
+            {(pageResults.length > 0 || spaResults.length > 0 || restaurantResults.length > 0 || shopResults.length > 0) && <CommandSeparator className="my-2" />}
+            <CommandGroup heading={t('search.services', 'Services')} className="px-2">
+              {serviceResults.map(item => {
+                const Icon = item.icon || Search;
+                return (
+                  <CommandItem
+                    key={`${item.type}-${item.label}`}
+                    onSelect={() => handleSelect(item.route)}
+                    className="px-4 py-3 rounded-lg cursor-pointer flex justify-between items-center group hover:bg-primary/5"
+                  >
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 rounded-md bg-blue-100 flex items-center justify-center mr-3">
+                        <Icon className="h-4 w-4 text-blue-600" />
                       </div>
                       <div>
                         <p className="font-medium">{item.label}</p>
