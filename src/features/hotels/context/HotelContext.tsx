@@ -95,6 +95,7 @@ export const HotelProvider: React.FC<{ children: ReactNode }> = ({ children }) =
                     setHotel(null);
                 } else {
                     setHotel(data);
+                    localStorage.setItem('current_hotel_id', data.id);
                     lastSlugRef.current = cacheKey || null;
                 }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -134,6 +134,7 @@ export const requestService = async (
   try {
     // Récupérer l'ID utilisateur et les données utilisateur du localStorage
     const userId = localStorage.getItem('user_id') || '00000000-0000-0000-0000-000000000000';
+    const resolvedHotelId = hotelId || localStorage.getItem('current_hotel_id');
 
     // Privilégier le room_number stocké directement dans localStorage
     let room_number = localStorage.getItem('user_room_number') || '';
@@ -163,7 +164,7 @@ export const requestService = async (
 
     // Ensure the guest record exists and is associated with the correct hotel
     // This is crucial for the double-fetch logic used in the admin section
-    if (userId && hotelId) {
+    if (userId && resolvedHotelId) {
       try {
         const { data: existingGuest } = await supabase
           .from('guests')
@@ -176,9 +177,9 @@ export const requestService = async (
             await supabase
               .from('guests')
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              .update({ hotel_id: hotelId } as any)
+              .update({ hotel_id: resolvedHotelId } as any)
               .eq('id', existingGuest.id);
-            console.log('Updated existing guest with hotelId:', hotelId);
+            console.log('Updated existing guest with hotelId:', resolvedHotelId);
           }
         } else {
           // Create a guest record if it doesn't exist
@@ -186,13 +187,13 @@ export const requestService = async (
             .from('guests')
             .insert({
               user_id: userId,
-              hotel_id: hotelId,
+              hotel_id: resolvedHotelId,
               room_number: room_number || null,
               first_name: guest_name.split(' ')[0] || 'Guest',
               last_name: guest_name.split(' ').slice(1).join(' ') || '',
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any);
-          console.log('Created new guest record for hotelId:', hotelId);
+          console.log('Created new guest record for hotelId:', resolvedHotelId);
         }
       } catch (err) {
         console.error('Error ensuring guest-hotel association:', err);
@@ -292,6 +293,7 @@ export const requestService = async (
         request_item_id,
         category_id: finalCategoryId,
         status: 'pending',
+        hotel_id: resolvedHotelId,
         created_at: new Date().toISOString()
       })
       .select();
@@ -304,7 +306,7 @@ export const requestService = async (
     // Trigger notification for staff
     if (data && data.length > 0) {
       await NotificationService.createNotification({
-        hotel_id: hotelId || undefined,
+        hotel_id: resolvedHotelId || undefined,
         type: 'service_ticket_created',
         recipient_type: 'staff',
         recipient_id: '00000000-0000-0000-0000-000000000000',

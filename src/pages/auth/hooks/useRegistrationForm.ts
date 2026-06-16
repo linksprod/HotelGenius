@@ -125,6 +125,7 @@ export const useRegistrationForm = () => {
         check_in_date: values.checkInDate,
         check_out_date: values.checkOutDate,
         companions: mapCompanionsToCompanionData(companions),
+        hotel_id: hotelId || null,
       };
 
       const result = await registerUser(values.email, values.password, userData);
