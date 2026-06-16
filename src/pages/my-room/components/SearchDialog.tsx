@@ -1,5 +1,6 @@
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Command,
   CommandDialog,
@@ -41,6 +42,7 @@ const SearchDialog: React.FC<Props> = ({
   securityCategory,
   onSelect
 }) => {
+  const { t } = useTranslation();
   const handleClearSearch = () => {
     onSearchTermChange('');
   };
@@ -55,7 +57,7 @@ const SearchDialog: React.FC<Props> = ({
         <div className="relative flex items-center border-b px-3 py-2">
           <Search className="mr-2 h-5 w-5 shrink-0 text-primary" />
           <CommandInput
-            placeholder="Search hotel services..."
+            placeholder={t('myRoom.request.searchPlaceholder', 'Search hotel services...')}
             value={searchTerm}
             onValueChange={onSearchTermChange}
             disabled={isSubmitting || isLoading}
@@ -65,7 +67,7 @@ const SearchDialog: React.FC<Props> = ({
             <button
               onClick={handleClearSearch}
               className="ml-2 rounded-full p-1 hover:bg-gray-100"
-              aria-label="Clear search"
+              aria-label={t('myRoom.request.clearSearch', 'Clear search')}
             >
               <X className="h-4 w-4 text-muted-foreground" />
             </button>
@@ -76,14 +78,14 @@ const SearchDialog: React.FC<Props> = ({
             <CommandEmpty>
               <div className="py-6 text-center flex flex-col items-center">
                 <Search className="h-10 w-10 text-muted-foreground/50 mb-2" />
-                <p className="text-muted-foreground">No results found for "{searchTerm}"</p>
+                <p className="text-muted-foreground">{t('myRoom.request.noResults', 'No results found for "{{term}}"', { term: searchTerm })}</p>
               </div>
             </CommandEmpty>
           )}
           {isLoading ? (
             <div className="p-6 text-center">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
-              <p className="mt-2 text-sm text-muted-foreground">Loading services...</p>
+              <p className="mt-2 text-sm text-muted-foreground">{t('myRoom.request.loading', 'Loading services...')}</p>
             </div>
           ) : (
             <>

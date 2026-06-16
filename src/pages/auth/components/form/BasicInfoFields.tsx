@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { UseFormReturn } from "react-hook-form";
 import { Input } from '@/components/ui/input';
 import {
@@ -16,6 +17,7 @@ interface BasicInfoFieldsProps {
 }
 
 const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form }) => {
+  const { t } = useTranslation();
   return (
     <div className="grid grid-cols-2 gap-4">
       <FormField
@@ -23,9 +25,9 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form }) => {
         name="firstName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>First Name</FormLabel>
+            <FormLabel>{t('auth.firstName', 'First Name')}</FormLabel>
             <FormControl>
-              <Input placeholder="First Name" {...field} />
+              <Input placeholder={t('auth.firstName', 'First Name')} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -37,9 +39,9 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form }) => {
         name="lastName"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Last Name</FormLabel>
+            <FormLabel>{t('auth.lastName', 'Last Name')}</FormLabel>
             <FormControl>
-              <Input placeholder="Last Name" {...field} />
+              <Input placeholder={t('auth.lastName', 'Last Name')} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

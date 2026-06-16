@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
@@ -15,6 +16,7 @@ export const SpaBookingNotFound: React.FC<SpaBookingNotFoundProps> = ({
   errorMessage,
   onViewDetails
 }) => {
+  const { t } = useTranslation();
   return (
     <Card className="shadow-sm">
       <CardContent className="pt-6 flex flex-col items-center justify-center text-center p-8">
@@ -22,18 +24,18 @@ export const SpaBookingNotFound: React.FC<SpaBookingNotFoundProps> = ({
           <AlertTriangle className="h-6 w-6 text-yellow-600" />
         </div>
         
-        <h2 className="text-xl font-semibold mb-2">Réservation introuvable</h2>
+        <h2 className="text-xl font-semibold mb-2">{t('notifications.spaBooking.bookingNotFound')}</h2>
         
         <p className="text-muted-foreground mb-2">
-          {errorMessage || `Nous n'avons pas pu trouver la réservation avec l'identifiant ${bookingId}.`}
+          {errorMessage || t('notifications.spaBooking.bookingNotFoundWithId', { bookingId })}
         </p>
         
         <p className="text-sm text-gray-500 mb-6">
-          La réservation peut avoir été annulée ou l'identifiant est incorrect.
+          {t('notifications.spaBooking.bookingNotFoundDesc')}
         </p>
         
         <Button onClick={onViewDetails}>
-          Retour aux notifications
+          {t('notifications.spaBooking.backToNotifications')}
         </Button>
       </CardContent>
     </Card>

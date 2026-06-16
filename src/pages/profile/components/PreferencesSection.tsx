@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +24,7 @@ const severityColors: Record<string, string> = {
 };
 
 const PreferencesSection: React.FC = () => {
+  const { t } = useTranslation();
   const { preferences, alerts, isLoading, addPreference, deletePreference, addAlert, deleteAlert } = useGuestPreferences();
   const [prefDialogOpen, setPrefDialogOpen] = useState(false);
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
@@ -31,6 +33,17 @@ const PreferencesSection: React.FC = () => {
     (acc[p.category] = acc[p.category] || []).push(p);
     return acc;
   }, {});
+
+  const getAlertTypeKey = (type: string) => {
+    if (type.toLowerCase() === 'medical alert') return 'medicalAlert';
+    if (type.toLowerCase() === 'allergy') return 'allergy';
+    return type;
+  };
+
+  const translatePreferenceValue = (val: string) => {
+    const key = val.toLowerCase().replace(/ /g, '_');
+    return t(`profilePage.preferences.suggestions.${key}`, val);
+  };
 
   if (isLoading) return null;
 
@@ -41,16 +54,16 @@ const PreferencesSection: React.FC = () => {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-lg font-semibold flex items-center gap-2">
               <Sparkles className="h-5 w-5 shrink-0" />
-              Preferences &amp; Medical Info
+              {t('profilePage.preferences.title')}
             </CardTitle>
             <div className="flex gap-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={() => setAlertDialogOpen(true)}>
                 <ShieldAlert className="h-4 w-4 mr-1" />
-                Medical Alert
+                {t('profilePage.preferences.medicalAlert')}
               </Button>
               <Button variant="outline" size="sm" onClick={() => setPrefDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-1" />
-                Preference
+                {t('profilePage.preferences.preference')}
               </Button>
             </div>
           </div>
@@ -61,7 +74,7 @@ const PreferencesSection: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                Medical Alerts
+                {t('profilePage.preferences.medicalAlerts')}
               </div>
               <div className="space-y-2">
                 {alerts.map((alert) => (
@@ -71,8 +84,12 @@ const PreferencesSection: React.FC = () => {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">{alert.alert_type}</Badge>
-                        <Badge variant="outline" className="text-xs font-bold">{alert.severity}</Badge>
+                        <Badge variant="outline" className="text-xs">
+                          {t('profilePage.preferences.dialogs.types.' + getAlertTypeKey(alert.alert_type), alert.alert_type)}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs font-bold">
+                          {t('profilePage.preferences.dialogs.severity.' + alert.severity.toLowerCase(), alert.severity)}
+                        </Badge>
                       </div>
                       <p className="text-sm">{alert.description}</p>
                     </div>
@@ -102,12 +119,12 @@ const PreferencesSection: React.FC = () => {
               <div key={cat} className="space-y-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   <Icon className="h-3.5 w-3.5" />
-                  {config.label}
+                  {t('profilePage.preferences.categories.' + cat, config.label)}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {items.map((p) => (
                     <Badge key={p.id} variant="outline" className="gap-1 pr-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">
-                      {p.value}
+                      {translatePreferenceValue(p.value)}
                       <button
                         className="ml-1 rounded-full hover:bg-muted p-0.5"
                         onClick={() => deletePreference.mutate(p.id)}
@@ -123,7 +140,7 @@ const PreferencesSection: React.FC = () => {
 
           {alerts.length === 0 && preferences.length === 0 && (
             <p className="text-sm text-muted-foreground italic text-center py-4">
-              No preferences or medical alerts yet. Add your first one above.
+              {t('profilePage.preferences.noPrefsOrAlerts')}
             </p>
           )}
         </CardContent>

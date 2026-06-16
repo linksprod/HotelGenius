@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import SpaServiceCard from './SpaServiceCard';
 import { useSpaServices } from '@/hooks/useSpaServices';
@@ -14,6 +15,7 @@ interface SpaSectionProps {
 const SpaSection = ({
   onBookService
 }: SpaSectionProps) => {
+  const { t } = useTranslation();
   const { services, isLoading } = useSpaServices();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -28,7 +30,7 @@ const SpaSection = ({
   }, [emblaApi]);
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading services...</div>;
+    return <div className="text-center py-8">{t('spa.loading_services', 'Loading services...')}</div>;
   }
 
   const displayServices = services?.slice(0, 6) || [];
@@ -36,9 +38,9 @@ const SpaSection = ({
   return (
     <div className="mb-12">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-foreground mb-2">Spa Services</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-2">{t('spa.services_title', 'Spa Services')}</h2>
         <p className="text-muted-foreground">
-          Discover our range of relaxing and rejuvenating treatments
+          {t('spa.services_subtitle', 'Discover our range of relaxing and rejuvenating treatments')}
         </p>
       </div>
 

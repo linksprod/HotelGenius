@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { UseFormReturn } from "react-hook-form";
 import { Button } from '@/components/ui/button';
 import { CalendarIcon } from "lucide-react";
@@ -26,6 +27,7 @@ interface DateFieldsProps {
 }
 
 const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
+  const { t } = useTranslation();
   // Get today's date for validation
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -38,7 +40,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
           name="birthDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date of Birth</FormLabel>
+              <FormLabel>{t('auth.dateOfBirth', 'Date of Birth')}</FormLabel>
               <FormControl>
                 <BirthDatePicker
                   selected={field.value}
@@ -58,7 +60,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
             name="checkInDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Check-in Date</FormLabel>
+                <FormLabel>{t('auth.checkInDate', 'Check-in Date')}</FormLabel>
                 <Popover modal={false}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -76,7 +78,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
                             year: 'numeric'
                           })
                         ) : (
-                          <span>Select</span>
+                          <span>{t('common.select', 'Select')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -114,7 +116,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
             name="checkOutDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Check-out Date</FormLabel>
+                <FormLabel>{t('auth.checkOutDate', 'Check-out Date')}</FormLabel>
                 <Popover modal={false}>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -132,7 +134,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
                             year: 'numeric'
                           })
                         ) : (
-                          <span>Select</span>
+                          <span>{t('common.select', 'Select')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>

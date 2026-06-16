@@ -4,12 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import RegistrationForm from './RegistrationForm';
 import SaaS_RegistrationForm from './SaaS_RegistrationForm';
 import LoginForm from './LoginForm';
+import { useTranslation } from 'react-i18next';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { Hotel } from 'lucide-react';
 
 const LoginCard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('login');
   const { hotel } = useHotel();
+  const { t } = useTranslation();
   
   const isSaaSMode = !hotel || hotel?.slug === 'demo';
 
@@ -34,8 +36,8 @@ const LoginCard: React.FC = () => {
         </h1>
         <p className="text-muted-foreground text-sm mt-1.5">
           {activeTab === 'login'
-            ? 'Welcome back — sign in to your account'
-            : isSaaSMode ? 'Create your hotel platform' : 'Create your account to get started'}
+            ? t('auth.adminLoginDesc', 'Welcome back — sign in to your account')
+            : isSaaSMode ? t('auth.saasRegisterDesc', 'Create your hotel platform') : t('auth.adminRegisterDesc', 'Create your account to get started')}
         </p>
       </div>
 
@@ -51,13 +53,13 @@ const LoginCard: React.FC = () => {
                 value="login"
                 className="rounded-lg text-sm font-medium transition-all data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground"
               >
-                Sign In
+                {t('auth.signIn', 'Sign In')}
               </TabsTrigger>
               <TabsTrigger
                 value="register"
                 className="rounded-lg text-sm font-medium transition-all data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground"
               >
-                {isSaaSMode ? 'Get Started' : 'Create Account'}
+                {isSaaSMode ? t('auth.getStarted', 'Get Started') : t('auth.createAccount', 'Create Account')}
               </TabsTrigger>
             </TabsList>
 
@@ -83,14 +85,14 @@ const LoginCard: React.FC = () => {
         {/* Footer */}
         <div className="px-7 pb-5 pt-0 text-center">
           <p className="text-xs text-muted-foreground/60">
-            Secured by Hotel Genius · {new Date().getFullYear()}
+            {t('auth.securedBy', 'Secured by Hotel Genius')} · {new Date().getFullYear()}
           </p>
         </div>
       </div>
 
       {/* Mobile brand note */}
       <p className="text-center text-xs text-muted-foreground/50 mt-5 lg:hidden">
-        Hotel Genius — Smart Hotel Management Platform
+        {t('auth.smartPlatform', 'Hotel Genius — Smart Hotel Management Platform')}
       </p>
     </motion.div>
   );

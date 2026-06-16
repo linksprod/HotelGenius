@@ -1,8 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { enUS, fr } from 'date-fns/locale';
 import { ShowerHead, Calendar, Utensils, FileText, Clock, Bell, CheckCircle, XCircle, Pause } from 'lucide-react';
+
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface NotificationItemProps {
   id: string;
@@ -28,9 +31,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   link,
   data
 }) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+  const { resolvePath } = useHotelPath();
+
   // Get direct link - all notifications redirect to /requests
   function getDirectLink() {
-    return '/requests';
+    return resolvePath('/requests');
   }
 
   // Get color based on notification status
@@ -45,7 +52,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     }
   }
 
-  function getStatusText(status: string) {
+  function getStatusDefaultText(status: string) {
     switch (status) {
       case 'pending': return 'Pending';
       case 'in_progress': return 'In progress';
@@ -55,6 +62,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       case 'on_hold': return 'On hold';
       default: return 'Unknown';
     }
+  }
+
+  function getStatusText(status: string) {
+    const defaultText = getStatusDefaultText(status);
+    return t('notifications.status.' + status, defaultText);
   }
 
   function getStatusIcon(status: string) {
@@ -84,22 +96,36 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
   function getSafeTimeAgo(date: Date) {
     try {
-      return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
+      const dateLocale = currentLang === 'fr' ? fr : enUS;
+      return formatDistanceToNow(date, { addSuffix: true, locale: dateLocale });
     } catch (error) {
       console.error('Error formatting date:', error);
-      return 'recently';
+      return t('notifications.timeAgo.recently', 'recently');
     }
   }
 
   function getSummary() {
     if (type === 'spa_booking') {
-      return `Booking for ${data?.date || ''} at ${data?.time || ''}`;
+      return t('notifications.summaries.spa_booking', {
+        date: data?.date || '',
+        time: data?.time || '',
+        defaultValue: `Booking for ${data?.date || ''} at ${data?.time || ''}`
+      });
     } else if (type === 'reservation') {
-      return `Reservation for ${data?.guests || ''} person(s) on ${data?.date || ''} at ${data?.time || ''}`;
+      return t('notifications.summaries.restaurant_booking', {
+        guests: data?.guests || '',
+        date: data?.date || '',
+        time: data?.time || '',
+        defaultValue: `Reservation for ${data?.guests || ''} person(s) on ${data?.date || ''} at ${data?.time || ''}`
+      });
     } else if (type === 'request') {
-      return description || 'Service request';
+      return description || t('notifications.summaries.service_request', 'Service request');
     } else if (type === 'event_reservation') {
-      return `Reservation for ${data?.guests || ''} person(s) on ${data?.date || ''}`;
+      return t('notifications.summaries.event_booking', {
+        guests: data?.guests || '',
+        date: data?.date || '',
+        defaultValue: `Reservation for ${data?.guests || ''} person(s) on ${data?.date || ''}`
+      });
     }
     return description;
   }
@@ -112,10 +138,15 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     
     return (
       <div className="mt-1 text-xs">
-        {canCancel && <span className="text-red-600 mr-2">Cancel</span>}
-        {canEdit && <span className="text-blue-600">Edit</span>}
+        {canCancel && <span className="text-red-600 mr-2">{t('notifications.action.cancel', 'Cancel')}</span>}
+        {canEdit && <span className="text-blue-600">{t('notifications.action.edit', 'Edit')}</span>}
       </div>
     );
+  }
+
+  function getTranslatedTitle(rawTitle: string) {
+    const key = rawTitle.toLowerCase().replace(/ /g, '_');
+    return t('notifications.types.' + key, rawTitle);
   }
 
   return (
@@ -128,7 +159,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         </div>
         <div className="flex-1 space-y-1">
           <div className="flex justify-between items-center">
-            <p className="text-sm font-medium">{title}</p>
+            <p className="text-sm font-medium">{getTranslatedTitle(title)}</p>
             <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusColor(status)}`}>
               {getStatusText(status)}
             </span>

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { 
   AlertDialog,
@@ -25,6 +26,7 @@ const BookingActionButtons: React.FC<BookingActionButtonsProps> = ({
   onEdit, 
   onCancel 
 }) => {
+  const { t } = useTranslation();
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   
   if (!canEdit && !canCancel) return null;
@@ -34,7 +36,7 @@ const BookingActionButtons: React.FC<BookingActionButtonsProps> = ({
       <div className="flex justify-end gap-4 pt-4">
         {canEdit && (
           <Button variant="outline" onClick={onEdit}>
-            Edit
+            {t('spa.bookingDetails.actions.edit', 'Edit')}
           </Button>
         )}
         
@@ -43,7 +45,7 @@ const BookingActionButtons: React.FC<BookingActionButtonsProps> = ({
             variant="destructive"
             onClick={() => setIsCancelDialogOpen(true)}
           >
-            Cancel
+            {t('spa.bookingDetails.actions.cancel', 'Cancel')}
           </Button>
         )}
       </div>
@@ -51,13 +53,13 @@ const BookingActionButtons: React.FC<BookingActionButtonsProps> = ({
       <AlertDialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+            <AlertDialogTitle>{t('spa.bookingDetails.actions.cancelBooking', 'Cancel Booking')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to cancel this booking? This action cannot be undone.
+              {t('spa.bookingDetails.actions.cancelConfirmDescription', 'Are you sure you want to cancel this booking? This action cannot be undone.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('spa.bookingDetails.actions.cancel', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 onCancel();
@@ -65,7 +67,7 @@ const BookingActionButtons: React.FC<BookingActionButtonsProps> = ({
               }}
               className="bg-red-600 hover:bg-red-700"
             >
-              Confirm Cancellation
+              {t('spa.bookingDetails.actions.confirmCancellation', 'Confirm Cancellation')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -4,6 +4,7 @@ import { Bot, User, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import type { Message } from '@/types/chat';
 import { ChatActionRenderer } from './ChatActionRenderer';
+import { useTranslation } from 'react-i18next';
 
 interface UnifiedMessagesListProps {
   messages: Message[];
@@ -24,6 +25,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
   currentUser,
   isAdmin = false
 }) => {
+  const { t } = useTranslation();
   const formatTime = (dateString: string) => {
     return format(new Date(dateString), 'HH:mm');
   };
@@ -61,9 +63,9 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
   };
 
   const getSenderName = (message: Message) => {
-    if (message.sender_type === 'ai') return 'AI Assistant';
-    if (message.sender_type === 'staff') return 'Staff';
-    return message.sender_name || 'Guest';
+    if (message.sender_type === 'ai') return t('chat.messagesList.aiAssistant');
+    if (message.sender_type === 'staff') return t('chat.messagesList.staff');
+    return message.sender_name || t('chat.messagesList.guest');
   };
 
   return (
@@ -71,7 +73,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
       {messages.length === 0 ? (
         <div className="text-center text-muted-foreground py-8">
           <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Start a conversation with our AI assistant!</p>
+          <p>{t('chat.messagesList.startConversation')}</p>
         </div>
       ) : (
         messages.map((message) => (
@@ -91,11 +93,11 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                   {message.message_type === 'system' && (
                     <div className="text-[10px] opacity-75 mb-1 flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      System Message
+                      {t('chat.messagesList.systemMessage')}
                     </div>
                   )}
                   <p className="text-[14px] leading-relaxed tracking-[0.01em] whitespace-pre-wrap">
-                    {message.content.replace(/<[^>]*?DSML[\s\S]*?\/[^>]*?DSML[^>]*?>/gi, '').trim() || (message.sender_type === 'ai' ? 'Action performed...' : '')}
+                    {message.content.replace(/<[^>]*?DSML[\s\S]*?\/[^>]*?DSML[^>]*?>/gi, '').trim() || (message.sender_type === 'ai' ? t('chat.messagesList.actionPerformed') : '')}
                   </p>
                 </div>
 
@@ -136,7 +138,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
-              <div className="text-xs text-muted-foreground mt-1">AI Assistant is typing...</div>
+              <div className="text-xs text-muted-foreground mt-1">{t('chat.messagesList.aiTyping')}</div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,8 +21,10 @@ import { useRestaurantMenus } from '@/hooks/useRestaurantMenus';
 import RestaurantBookingDialog from '@/features/dining/components/RestaurantBookingDialog';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { translateOpenHours } from '@/utils/restaurantTranslation';
 
 const RestaurantDetail = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const restaurantId = id as string;
   const navigate = useNavigate();
@@ -58,8 +60,8 @@ const RestaurantDetail = () => {
   const handleBookingSuccess = () => {
     setIsBookingOpen(false);
     toast({
-      title: "Success",
-      description: "Restaurant booking request sent successfully!",
+      title: t('common.success', "Success"),
+      description: t('forms.messages.reservationSentSuccess', "Restaurant booking request sent successfully!"),
     });
   };
 
@@ -72,11 +74,11 @@ const RestaurantDetail = () => {
       <div className="container mx-auto px-4 py-8">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-pulse text-muted-foreground">Loading restaurant details...</div>
+            <div className="animate-pulse text-muted-foreground">{t('dining.loadingDetails', "Loading restaurant details...")}</div>
           </div>
         ) : !restaurant ? (
           <div className="flex items-center justify-center py-8">
-            <div className="text-muted-foreground">Restaurant not found.</div>
+            <div className="text-muted-foreground">{t('dining.notFound', "Restaurant not found.")}</div>
           </div>
         ) : (
           <>
@@ -106,23 +108,23 @@ const RestaurantDetail = () => {
                     </Carousel>
                   </div>
                   <div className="p-6 md:w-1/2">
-                    <h1 className="text-3xl font-semibold text-foreground mb-4">{restaurant.name}</h1>
+                    <h1 className="text-3xl font-semibold text-foreground mb-4">{t(`restaurants.name.${restaurant.id}`, restaurant.name)}</h1>
                     <div className="flex items-center gap-2 text-muted-foreground mb-2">
                       <UtensilsCrossed className="w-4 h-4" />
-                      <span>{restaurant.cuisine}</span>
+                      <span>{t(`restaurants.cuisine.${restaurant.cuisine?.trim()}`, restaurant.cuisine)}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground mb-2">
                       <Clock className="w-4 h-4" />
-                      <span>{restaurant.openHours}</span>
+                      <span>{translateOpenHours(t(`restaurants.openHours.${restaurant.id}`, restaurant.openHours), i18n.language)}</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground mb-4">
                       <MapPin className="w-4 h-4" />
-                      <span>{restaurant.location}</span>
+                      <span>{t(`restaurants.location.${restaurant.location?.trim()}`, restaurant.location)}</span>
                     </div>
-                    <p className="text-muted-foreground mb-6">{restaurant.description}</p>
+                    <p className="text-muted-foreground mb-6">{t(`restaurants.description.${restaurant.id}`, restaurant.description)}</p>
                     {hotel?.plan !== 'essential' && (
                       <Button onClick={handleBookTable}>
-                        {restaurant.actionText || "Book a Table"}
+                        {restaurant.actionText ? t(`restaurants.action.${restaurant.actionText}`, restaurant.actionText) : t('dining.bookTable')}
                       </Button>
                     )}
                   </div>
@@ -138,8 +140,8 @@ const RestaurantDetail = () => {
                   className="w-full"
                 >
                   <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="info">Information</TabsTrigger>
-                    <TabsTrigger value="menu">Menu</TabsTrigger>
+                    <TabsTrigger value="info">{t('dining.tabs.info', "Information")}</TabsTrigger>
+                    <TabsTrigger value="menu">{t('dining.tabs.menu', "Menu")}</TabsTrigger>
                   </TabsList>
                   <TabsContent value="info" className="p-4">
                     <RestaurantInfo
@@ -162,15 +164,15 @@ const RestaurantDetail = () => {
             {/* Add Events Section */}
             <section className="mb-10">
               <h2 className="text-2xl font-bold text-foreground mb-6">
-                Upcoming Events
+                {t('dining.upcomingEvents', "Upcoming Events")}
               </h2>
               <EventsSection events={restaurantEvents} />
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-foreground mb-6">Reviews</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-6">{t('dining.reviews', "Reviews")}</h2>
               <Card className="p-6">
-                <p className="text-muted-foreground">No reviews yet.</p>
+                <p className="text-muted-foreground">{t('dining.noReviews', "No reviews yet.")}</p>
               </Card>
             </section>
           </>

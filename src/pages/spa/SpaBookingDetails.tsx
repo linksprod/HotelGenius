@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Layout from '@/components/Layout';
@@ -19,6 +20,7 @@ import BookingDialog from '@/features/spa/components/SpaBookingDialog';
 const SpaBookingDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const {
     booking,
@@ -63,7 +65,7 @@ const SpaBookingDetails = () => {
           <BookingDetailsHeader />
           <BookingNotFound 
             bookingId={id} 
-            errorMessage="Les détails du service pour cette réservation sont introuvables" 
+            errorMessage={t('spa.bookingDetails.serviceNotFound', 'Service details for this reservation could not be found')} 
           />
         </div>
       </Layout>
@@ -78,7 +80,7 @@ const SpaBookingDetails = () => {
         <Card className="mb-6">
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Détails de votre réservation</CardTitle>
+              <CardTitle>{t('spa.bookingDetails.title', 'Reservation Details')}</CardTitle>
               <BookingStatusBadge status={booking.status} />
             </div>
           </CardHeader>

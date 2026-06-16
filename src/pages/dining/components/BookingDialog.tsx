@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ReservationForm from '@/components/ReservationForm';
@@ -24,6 +24,7 @@ const BookingDialog = ({
   buttonText,
   existingReservation
 }: BookingDialogProps) => {
+  const { t } = useTranslation();
   const isEditing = !!existingReservation;
   
   return (
@@ -31,12 +32,12 @@ const BookingDialog = ({
       <DialogContent className="sm:max-w-[500px] p-0">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>
-            {isEditing ? `Edit your reservation - ${restaurantName}` : `Book a Table - ${restaurantName}`}
+            {isEditing ? t('dining.booking.editTitle', 'Edit your reservation - {{name}}', { name: restaurantName }) : t('dining.booking.bookTitle', 'Book a Table - {{name}}', { name: restaurantName })}
           </DialogTitle>
           <DialogDescription>
             {isEditing 
-              ? "Edit the details of your reservation below."
-              : "Fill out the form below to book a table."}
+              ? t('dining.booking.editDesc', "Edit the details of your reservation below.")
+              : t('dining.booking.bookDesc', "Fill out the form below to book a table.")}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
@@ -45,7 +46,7 @@ const BookingDialog = ({
               <ReservationForm 
                 restaurantId={restaurantId} 
                 onSuccess={onSuccess}
-                buttonText={buttonText || (isEditing ? "Update Reservation" : "Book a Table")}
+                buttonText={buttonText || (isEditing ? t('dining.booking.updateBtn', "Update Reservation") : t('dining.booking.bookBtn', "Book a Table"))}
                 existingReservation={existingReservation}
               />
             )}

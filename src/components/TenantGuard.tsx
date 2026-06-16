@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUserRole } from '@/hooks/useUserRole';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
@@ -8,6 +8,27 @@ import { isCustomDomain } from '@/utils/domain';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
 import LoadingSpinner from './auth/LoadingSpinner';
+
+function getLevenshteinDistance(a: string, b: string): number {
+    const tmp = [];
+    let i, j;
+    for (i = 0; i <= a.length; i++) {
+        tmp.push([i]);
+    }
+    for (j = 1; j <= b.length; j++) {
+        tmp[0].push(j);
+    }
+    for (i = 1; i <= a.length; i++) {
+        for (j = 1; j <= b.length; j++) {
+            tmp[i][j] = Math.min(
+                tmp[i - 1][j] + 1,
+                tmp[i][j - 1] + 1,
+                tmp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+            );
+        }
+    }
+    return tmp[a.length][b.length];
+}
 
 interface TenantGuardProps {
     children: React.ReactNode;
@@ -29,6 +50,36 @@ const TenantGuard = ({ children }: TenantGuardProps) => {
 
     const onCustomDomain = isCustomDomain();
     const [loggingOut, setLoggingOut] = useState(false);
+    const [suggestion, setSuggestion] = useState<{ name: string; slug: string } | null>(null);
+
+    useEffect(() => {
+        if (!hotel && !hotelLoading) {
+            const currentSlug = location.pathname.split('/')[1];
+            if (currentSlug && !['login', 'auth', 'administration', 'demo'].includes(currentSlug)) {
+                supabase
+                    .from('hotels')
+                    .select('name, slug')
+                    .then(({ data }) => {
+                        if (data && data.length > 0) {
+                            let bestMatch = null;
+                            let minDistance = Infinity;
+
+                            for (const h of data) {
+                                const dist = getLevenshteinDistance(currentSlug.toLowerCase(), h.slug.toLowerCase());
+                                const isSubstring = h.slug.toLowerCase().includes(currentSlug.toLowerCase()) || 
+                                                    currentSlug.toLowerCase().includes(h.slug.toLowerCase());
+                                
+                                if (dist < minDistance && (dist <= 4 || isSubstring)) {
+                                    minDistance = dist;
+                                    bestMatch = h;
+                                }
+                            }
+                            setSuggestion(bestMatch);
+                        }
+                    });
+            }
+        }
+    }, [hotel, hotelLoading, location.pathname]);
 
     const isStillLoading = roleLoading || hotelLoading;
     const isOnAdminRoute = location.pathname.includes('/admin');
@@ -67,6 +118,40 @@ const TenantGuard = ({ children }: TenantGuardProps) => {
     // Show spinner while data loads
     if (isStillLoading || loggingOut) {
         return <LoadingSpinner />;
+    }
+
+    // Check if the hotel exists
+    if (!hotel) {
+        return (
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+                <div className="text-center p-8 bg-card rounded-lg shadow-sm border border-border max-w-md w-full">
+                    <h1 className="text-3xl font-bold mb-2 text-foreground">Hôtel Non Trouvé</h1>
+                    <h2 className="text-lg font-medium mb-4 text-muted-foreground">Hotel Not Found</h2>
+                    <p className="text-muted-foreground mb-6 text-sm">
+                        L'hôtel auquel vous tentez d'accéder n'existe pas ou a été désactivé. Veuillez vérifier l'adresse saisie.
+                        <br /><br />
+                        The hotel you are trying to access does not exist or has been disabled. Please check the entered address.
+                    </p>
+                    {suggestion && (
+                        <div className="mt-2 mb-6 p-4 bg-primary/10 border border-primary/25 rounded-md text-left">
+                            <p className="text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">💡 Vouliez-vous dire / Did you mean :</p>
+                            <button
+                                onClick={() => window.location.href = `/${suggestion.slug}/guests/auth/login`}
+                                className="text-primary hover:underline font-bold text-base block text-left"
+                            >
+                                {suggestion.name}
+                            </button>
+                        </div>
+                    )}
+                    <button 
+                        onClick={() => window.location.href = '/login'} 
+                        className="w-full px-6 py-2.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity font-medium text-sm"
+                    >
+                        Retour à la page de connexion / Go to Login
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     // ── Custom domain guard ───────────────────────────────────────────────────

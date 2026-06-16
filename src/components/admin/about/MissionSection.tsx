@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,6 +20,7 @@ const MissionSection = ({
   onSave
 }: MissionSectionProps) => {
   const [editableMission, setEditableMission] = React.useState(mission);
+  const { t } = useTranslation();
 
   // Only used in editing mode if handleTextChange is not provided
   const handleLocalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,7 +64,7 @@ const MissionSection = ({
 
   return (
     <Card className="p-6 mb-6">
-      <h2 className="text-xl font-semibold mb-4">Our Mission</h2>
+      <h2 className="text-xl font-semibold mb-4">{t('about.mission', 'Our Mission')}</h2>
       <blockquote className="border-l-4 border-primary pl-4 italic text-gray-700">
         "{mission}"
       </blockquote>

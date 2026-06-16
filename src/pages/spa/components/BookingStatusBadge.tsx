@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 
 interface BookingStatusBadgeProps {
@@ -7,6 +8,8 @@ interface BookingStatusBadgeProps {
 }
 
 const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({ status }) => {
+  const { t } = useTranslation();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
@@ -19,11 +22,11 @@ const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({ status }) => {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'Confirmed';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      case 'in_progress': return 'In Progress';
-      default: return 'Pending';
+      case 'confirmed': return t('spa.bookingDetails.status.confirmed', 'Confirmed');
+      case 'completed': return t('spa.bookingDetails.status.completed', 'Completed');
+      case 'cancelled': return t('spa.bookingDetails.status.cancelled', 'Cancelled');
+      case 'in_progress': return t('spa.bookingDetails.status.inProgress', 'In Progress');
+      default: return t('spa.bookingDetails.status.pending', 'Pending');
     }
   };
   

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -17,28 +18,32 @@ interface BillDialogProps {
 }
 
 const BillDialog = ({ open, onOpenChange, firstName, lastName, stayDuration }: BillDialogProps) => {
+  const { t } = useTranslation();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Receipt className="h-5 w-5" />
-            Bill
+            {t('profilePage.billDialog.title')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="border-b pb-4">
-            <h3 className="font-semibold mb-2">Customer Information</h3>
+            <h3 className="font-semibold mb-2">{t('profilePage.billDialog.customerInfo')}</h3>
             <p className="text-sm text-muted-foreground">
               {firstName} {lastName}
             </p>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-2">Stay Details</h3>
+            <h3 className="font-semibold mb-2">{t('profilePage.billDialog.stayDetails')}</h3>
             <p className="text-sm text-muted-foreground">
-              Duration: {stayDuration} {stayDuration === 1 ? 'night' : 'nights'}
+              {t('profilePage.billDialog.duration', {
+                nights: t(stayDuration === 1 ? 'profilePage.currentStay.night' : 'profilePage.currentStay.nights', { count: stayDuration })
+              })}
             </p>
           </div>
         </div>

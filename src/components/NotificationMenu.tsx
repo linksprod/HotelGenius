@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,7 @@ const NotificationMenu = () => {
     refetchEventReservations,
   } = useNotifications();
   const { resolvePath } = useHotelPath();
+  const { t } = useTranslation();
 
   // Reset the badge to 0 when the menu is opened
   // and refresh notifications data to ensure we have the latest data
@@ -60,7 +62,7 @@ const NotificationMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80 bg-card/95 backdrop-blur-sm">
-        <DropdownMenuLabel>Notifications ({notifications.length})</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('nav.notificationsCount', { count: notifications.length, defaultValue: `Notifications (${notifications.length})` })}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -70,7 +72,7 @@ const NotificationMenu = () => {
         <DropdownMenuSeparator />
         <Link to={resolvePath("/requests")}>
           <DropdownMenuItem className="text-center cursor-pointer hover:bg-muted">
-            <span className="w-full text-center text-primary font-medium">View all Notifications</span>
+            <span className="w-full text-center text-primary font-medium">{t('nav.viewAllNotifications', 'View all Notifications')}</span>
           </DropdownMenuItem>
         </Link>
       </DropdownMenuContent>

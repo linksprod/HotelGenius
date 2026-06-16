@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/command';
 import { Search, X, ChevronRight, MapPin } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCommandSearchOptions } from './useCommandSearchOptions';
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const { slug } = useParams<{ slug: string }>();
   const { getFilteredResults } = useCommandSearchOptions();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -58,7 +60,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
         <div className="flex items-center border-b pb-2">
           <Search className="mr-2 h-4 w-4 shrink-0 text-primary" />
           <CommandInput
-            placeholder="What are you looking for?"
+            placeholder={t('search.placeholder', 'What are you looking for?')}
             value={query}
             onValueChange={setQuery}
             className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
@@ -80,12 +82,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
         <CommandEmpty>
           <div className="py-6 text-center flex flex-col items-center">
             <Search className="h-10 w-10 text-muted-foreground/50 mb-2" />
-            <p className="text-muted-foreground">No results found for "{query}"</p>
+            <p className="text-muted-foreground">{t('search.noResults', { query, defaultValue: `No results found for "${query}"` })}</p>
           </div>
         </CommandEmpty>
 
         {pageResults.length > 0 && (
-          <CommandGroup heading="Pages principales" className="px-2">
+          <CommandGroup heading={t('search.mainPages', 'Pages principales')} className="px-2">
             {pageResults.map(item => (
               <CommandItem
                 key={item.route}
@@ -107,7 +109,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
         {spaResults.length > 0 && (
           <>
             {pageResults.length > 0 && <CommandSeparator className="my-2" />}
-            <CommandGroup heading="Spa & Bien-être" className="px-2">
+            <CommandGroup heading={t('search.spaWellness', 'Spa & Bien-être')} className="px-2">
               {spaResults.map(item => {
                 const Icon = item.icon;
                 return (
@@ -136,7 +138,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
         {restaurantResults.length > 0 && (
           <>
             {(pageResults.length > 0 || spaResults.length > 0) && <CommandSeparator className="my-2" />}
-            <CommandGroup heading="Restaurants" className="px-2">
+            <CommandGroup heading={t('search.restaurants', 'Restaurants')} className="px-2">
               {restaurantResults.map(item => {
                 const Icon = item.icon;
                 return (
@@ -165,7 +167,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, setOpen }) => {
         {shopResults.length > 0 && (
           <>
             {(pageResults.length > 0 || spaResults.length > 0 || restaurantResults.length > 0) && <CommandSeparator className="my-2" />}
-            <CommandGroup heading="Shops" className="px-2">
+            <CommandGroup heading={t('search.shops', 'Shops')} className="px-2">
               {shopResults.map(item => {
                 const Icon = item.icon;
                 return (

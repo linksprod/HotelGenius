@@ -19,9 +19,90 @@
     "gastronomy": "Gastronomie",
     "concierge": "Conciergerie",
     "eventsPromos": "Événements & Promotions",
-    "hotelMap": "Plan de l'Hôtel"
+    "hotelMap": "Plan de l'Hôtel",
+    "digitalTipping": "Pourboire Numérique",
+    "notificationsCount": "Notifications ({{count}})",
+    "viewAllNotifications": "Voir toutes les Notifications"
+  },
+  "restaurants": {
+    "cuisine": {
+      "Italienne": "Italienne",
+      "Italian": "Italienne",
+      "Cigar Bar": "Bar à Cigares",
+      "International": "International",
+      "Buffet / international": "Buffet / International",
+      "Cocktails bar": "Bar à Cocktails",
+      "Non veg": "Non Végétarien",
+      "Restaurant gastronomique et traditionnel": "Restaurant Gastronomique et Traditionnel",
+      "Gastronomique": "Gastronomique",
+      "Maison de Thé": "Maison de Thé",
+      "Maison de the": "Maison de Thé",
+      "Brasserie": "Brasserie",
+      "Bar": "Bar",
+      "Café": "Café",
+      "Pizzeria": "Pizzeria",
+      "Fusion": "Fusion",
+      "Méditerranéen": "Méditerranéen",
+      "Méditerranéenne": "Méditerranéenne",
+      "Tunisien": "Tunisien",
+      "Tunisienne": "Tunisienne",
+      "Français": "Français",
+      "Française": "Française",
+      "Japonais": "Japonais",
+      "Asiatique": "Asiatique",
+      "Steakhouse": "Steakhouse",
+      "Buffet": "Buffet",
+      "Petit-déjeuner": "Petit-déjeuner",
+      "Brunch": "Brunch",
+      "Douceurs du Palais Bayram": "Douceurs du Palais Bayram"
+    },
+    "location": {
+      "2nd Floor": "2ème Étage",
+      "Main Lobby": "Hall Principal",
+      "Room": "Chambre",
+      "Outdoor": "Extérieur",
+      "Poolside": "Bord de Piscine",
+      "Près de la réception": "Près de la réception",
+      "Près de la piscine": "Près de la piscine",
+      "Situé à proximité de la réception": "Situé à proximité de la réception",
+      "Rez-de-chaussée": "Rez-de-chaussée",
+      "1er étage": "1er étage",
+      "2ème étage": "2ème étage",
+      "Terrasse": "Terrasse",
+      "Rooftop": "Rooftop",
+      "Jardin": "Jardin",
+      "Piscine": "Piscine",
+      "Lobby": "Hall",
+      "Hall principal": "Hall principal",
+      "Salle principale": "Salle principale"
+    },
+    "description": {
+      "default": "Vivez une expérience culinaire exceptionnelle avec des plats soigneusement préparés et un service irréprochable.",
+      "9514e017-a4b3-4af4-b742-254855257748": "Le MAKHZEN des palais de Tunis (ancêtre de nos « magasins ») abritait autrefois les provisions. Son architecture voûtée spectaculaire, soulignée par des pinceaux de lumière, l’apparente aux « salles des chevaliers » du Haut Moyen-Age. Elle le destinait naturellement à recevoir le restaurant principal de l’hôtel. Celui-ci offre à notre clientèle raffinée les spécialités de la gastronomie tunisienne et les créations originales de notre Chef-cuisinier, réalisées avec des produits du terroir de grande qualité et -à chaque fois que cela est possible- d’origine agrobiologique certifiée.",
+      "b75d528b-2ef7-4d23-aabb-44ae5de32099": "Inspirée de l'une des grandes Maisons de Paris, la MAISON DE THÉ « SURYA » propose les après-midi et en soirée, sur réservation, une gamme de thés d'origine — Chine, Inde, Japon ou Ceylan — accompagnés des pâtisseries de nos chefs. En surplomb d'un discret jardin intérieur, c'est le lieu idéal pour une « TEA-PARTY » à l'anglaise ou, simplement, pour arrêter le temps qui passe en savourant une tasse de thé noble au parfum immémorial, dans un lieu d'exception. Tout est prévu pour que les desiderata des amateurs de café soient également satisfaits. L'Hôtel est non-fumeur mais, pendant la saison estivale, une terrasse est aménagée pour le plaisir de la pipe à eau traditionnelle (Narguilé, Chicha, Qelian…) avec toutes les nuances de tabac macéré, accompagnés de thé tunisien à la menthe et aux pignons ou de café turc à la fleur d'oranger."
+    },
+    "action": {
+      "Book a Table": "Réserver une table",
+      "Order": "Commander",
+      "Buffet": "Buffet",
+      "Learn More": "En savoir plus",
+      "Explore": "Explorer",
+      "book_a_table": "Réserver une table",
+      "order": "Commander",
+      "buffet": "Buffet",
+      "learn_more": "En savoir plus",
+      "explore": "Explorer"
+    },
+    "name": {
+      "9514e017-a4b3-4af4-b742-254855257748": "El Makhzen",
+      "b75d528b-2ef7-4d23-aabb-44ae5de32099": "Maison de Thé « Surya »"
+    }
   },
   "common": {
+    "select": "Sélectionner",
+    "cancelling": "Annulation...",
+    "yesCancel": "Oui, annuler",
+    "backToNotifications": "Retour aux notifications",
     "login": "Connexion",
     "logout": "Déconnexion",
     "language": "Langue",
@@ -140,14 +221,56 @@
     "registerSubtitle": "Rejoignez notre expérience hôtelière",
     "email": "E-mail",
     "password": "Mot de passe",
-    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPassword": "Confirmer le Mot de passe",
     "firstName": "Prénom",
     "lastName": "Nom",
     "phone": "Numéro de téléphone",
     "forgotPassword": "Mot de passe oublié ?",
     "rememberMe": "Se souvenir de moi",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "dontHaveAccount": "Vous n'avez pas de compte ?"
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "guestHeroTitle": "Vivez Pleinement Votre Séjour.",
+    "guestHeroDesc": "Découvrez des expériences uniques, demandez des services et restez connecté avec notre équipe pendant votre visite.",
+    "guestFeature1": "Communication directe avec le concierge",
+    "guestFeature2": "Réservez des tables de restaurant et des soins au spa",
+    "guestFeature3": "Vérifiez les détails et les demandes pour votre chambre",
+    "poweredBy": "Propulsé par Hotel Genius",
+    "adminHeroTitle": "Gérez votre hôtel plus intelligemment.",
+    "adminHeroDesc": "Une plateforme unique pour chaque expérience client — des réservations au service en chambre, propulsée par l'IA.",
+    "adminFeature1": "Gestion en temps réel des demandes des clients",
+    "adminFeature2": "Chat et assistant propulsés par l'IA",
+    "adminFeature3": "Contrôle total des réservations et des restaurants",
+    "trustedBy": "Reconnu par les hôtels du monde entier",
+    "guestPortal": "Portail Client",
+    "guestLoginDesc": "Connectez-vous pour accéder à votre tableau de bord client",
+    "guestRegisterDesc": "Créez un compte pour commencer votre séjour",
+    "signIn": "Se Connecter",
+    "createAccount": "Créer un Compte",
+    "securedBy": "Sécurisé par Hotel Genius",
+    "adminLoginDesc": "Bon retour — connectez-vous à votre compte",
+    "saasRegisterDesc": "Créez votre plateforme hôtelière",
+    "adminRegisterDesc": "Créez votre compte pour commencer",
+    "getStarted": "Commencer",
+    "smartPlatform": "Hotel Genius — Plateforme Intelligente de Gestion Hôtelière",
+    "emailPlaceholder": "votre@email.com",
+    "passwordPlaceholder": "••••••••",
+    "signInBtn": "Se Connecter",
+    "signingIn": "Connexion en cours...",
+    "saasAdminTitle": "Admin",
+    "saasAdminDesc": "Informations personnelles",
+    "saasHotelTitle": "Hôtel",
+    "saasHotelDesc": "Nom de l'établissement",
+    "fillAllFields": "Veuillez remplir tous les champs",
+    "enterHotelName": "Veuillez saisir un nom d'hôtel",
+    "registrationError": "Une erreur s'est produite lors de l'inscription",
+    "hotelName": "Nom de l'hôtel",
+    "hotelNameDesc": "Ceci sera utilisé pour créer votre URL d'espace de travail unique.",
+    "continueToHotel": "Continuer vers l'hôtel",
+    "creating": "Création...",
+    "createHotel": "Créer l'hôtel",
+    "dateOfBirth": "Date de Naissance",
+    "checkInDate": "Date d'arrivée",
+    "checkOutDate": "Date de départ"
   },
   "user": {
     "guestStatus": "Invité",
@@ -186,6 +309,23 @@
       "submit": "Soumettre la Demande",
       "placeholder": "Veuillez décrire ce dont vous avez besoin..."
     },
+    "request": {
+      "searchPlaceholder": "Rechercher des services hôteliers...",
+      "clearSearch": "Effacer la recherche",
+      "noResults": "Aucun résultat trouvé pour « {{term}} »",
+      "loading": "Chargement des services...",
+      "confirmTitle": "Confirmer la Demande de Service",
+      "confirmDesc": "Êtes-vous sûr de vouloir demander le service suivant ?",
+      "confirmButton": "Confirmer la Demande",
+      "submitting": "Envoi en cours...",
+      "roomInfoNeeded": "Informations de Chambre Requises",
+      "roomInfoNeededDesc": "Nous n'avons pas pu trouver votre chambre. Veuillez compléter vos paramètres de profil.",
+      "requestSent": "Demande Envoyée",
+      "requestSentDesc": "Votre demande pour « {{name}} » a été envoyée avec succès.",
+      "requestError": "Erreur",
+      "requestErrorDesc": "Impossible d'envoyer la demande. Veuillez réessayer.",
+      "openSearch": "Ouvrir la recherche de services"
+    },
     "requestHistory": {
       "title": "Historique des Demandes",
       "noRequests": "Aucune demande pour le moment",
@@ -204,8 +344,8 @@
     "cuisine": "Cuisine",
     "priceRange": "Gamme de prix",
     "capacity": "Capacité",
-    "bookTable": "Réserver une Table",
-    "viewMenu": "Voir le Menu",
+    "bookTable": "Réserver une table",
+    "viewMenu": "Voir le menu",
     "makeReservation": "Faire une Réservation",
     "guests": "Invités",
     "date": "Date",
@@ -217,14 +357,86 @@
     "phone": "Téléphone",
     "loadingRestaurants": "Chargement des restaurants...",
     "noRestaurants": "Aucun restaurant disponible pour le moment.",
-    "upcomingEvents": "Événements à Venir",
+    "upcomingEvents": "Événements à venir",
     "featuredRestaurants": "Chargement des restaurants vedettes...",
-    "noFeaturedRestaurants": "Aucun restaurant vedette disponible pour le moment."
+    "noFeaturedRestaurants": "Aucun restaurant vedette disponible pour le moment.",
+    "details": {
+      "missingId": "Identifiant de réservation manquant",
+      "errorLoadingRestaurant": "Impossible de charger les détails du restaurant",
+      "notFound": "Réservation non trouvée",
+      "cancelledSuccess": "Votre réservation a été annulée",
+      "editedSuccess": "Votre réservation a été modifiée",
+      "cannotFind": "Impossible de trouver les détails de cette réservation.",
+      "pageTitle": "Détails de votre réservation",
+      "guestsPlural": "personnes",
+      "guestsSingular": "personne",
+      "restaurantLabel": "Restaurant :",
+      "specialRequests": "Demandes spéciales :",
+      "pendingTitle": "Réservation en attente",
+      "pendingDesc": "Votre réservation est en cours de traitement. Vous recevrez une confirmation prochainement.",
+      "confirmedTitle": "Réservation confirmée",
+      "confirmedDesc": "Votre table est réservée. Nous vous attendons le {{date}} à {{time}}.",
+      "cancelledTitle": "Réservation annulée",
+      "cancelledDesc": "Cette réservation a été annulée.",
+      "viewRestaurant": "Voir le restaurant",
+      "viewAllRequests": "Voir toutes les demandes",
+      "editReservationBtn": "Modifier ma réservation",
+      "cancelTitle": "Annuler votre réservation",
+      "cancelConfirm": "Êtes-vous sûr de vouloir annuler votre réservation au restaurant {{name}} pour le {{date}} à {{time}} ?",
+      "keepReservationBtn": "Non, garder ma réservation"
+    },
+    "status": {
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée",
+      "pending": "En attente"
+    },
+    "loadingDetails": "Chargement des détails du restaurant...",
+    "notFound": "Restaurant introuvable.",
+    "tabs": {
+      "info": "Informations",
+      "menu": "Menu"
+    },
+    "reviews": "Avis",
+    "noReviews": "Aucun avis pour le moment.",
+    "about": {
+      "title": "À propos de {{name}}",
+      "hours": "Heures d'ouverture",
+      "location": "Emplacement"
+    },
+    "booking": {
+      "editTitle": "Modifier votre réservation - {{name}}",
+      "bookTitle": "Réserver une table - {{name}}",
+      "editDesc": "Modifiez les détails de votre réservation ci-dessous.",
+      "bookDesc": "Remplissez le formulaire ci-dessous pour réserver une table.",
+      "updateBtn": "Mettre à jour la réservation",
+      "bookBtn": "Réserver une table"
+    },
+    "menu": {
+      "loading": "Chargement du menu...",
+      "notAvailable": "Menu non disponible",
+      "recommended": "Recommandé",
+      "viewPdf": "Voir le menu",
+      "pdfTitle": "Menu PDF"
+    }
   },
   "spa": {
     "title": "Spa & Bien-être",
     "subtitle": "Détendez-vous et ressourcez-vous avec nos soins luxueux",
     "services": "Services",
+    "services_title": "Soins du Spa",
+    "services_subtitle": "Découvrez notre gamme de soins relaxants et régénérants",
+    "book_now": "Réserver",
+    "loading_services": "Chargement des soins...",
+    "booking_date": "Date de Réservation",
+    "time": "Heure",
+    "select_time": "Sélectionner une heure",
+    "special_requests_label": "Demandes Particulières",
+    "special_requests_placeholder": "Des précisions pour votre soin ?",
+    "update_booking": "Modifier la Réservation",
+    "submit_booking": "Envoyer la Demande de Réservation",
+    "booking_sent_title": "Demande de réservation de spa envoyée",
+    "booking_sent_desc": "Nous avons reçu votre demande et la confirmerons sous peu.",
+    "booking_failed": "Échec de l'envoi de la demande de réservation.",
     "facilities": "Installations",
     "treatments": "Soins",
     "bookTreatment": "Réserver un Soin",
@@ -235,7 +447,78 @@
     "therapist": "Thérapeute",
     "roomType": "Type de Salle",
     "benefits": "Bénéfices",
-    "includes": "Inclus"
+    "includes": "Inclus",
+    "bookingDetails": {
+      "title": "Détails de votre réservation",
+      "serviceNotFound": "Les détails du service pour cette réservation sont introuvables",
+      "header": {
+        "back": "Retour"
+      },
+      "contact": {
+        "title": "Informations de contact",
+        "name": "Nom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "room": "Chambre",
+        "specialRequests": "Demandes spéciales"
+      },
+      "date": {
+        "title": "Détails de réservation",
+        "dateTime": "Date et heure",
+        "at": "à",
+        "dateUnavailable": "Date non disponible"
+      },
+      "facility": {
+        "title": "Détails de l'installation",
+        "notAvailable": "Informations sur l'installation non disponibles",
+        "openingHours": "Heures d'ouverture"
+      },
+      "notFound": {
+        "title": "Réservation introuvable",
+        "description": "La réservation que vous recherchez n'existe pas ou a été supprimée.",
+        "backToProfile": "Retour au profil"
+      },
+      "status": {
+        "confirmed": "Confirmée",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "inProgress": "En cours",
+        "pending": "En attente"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "cancel": "Annuler",
+        "cancelBooking": "Annuler la réservation",
+        "cancelConfirmDescription": "Êtes-vous sûr de vouloir annuler cette réservation ? Cette action ne peut pas être annulée.",
+        "confirmCancellation": "Confirmer l'annulation"
+      }
+    }
+  },
+  "shops": {
+    "name": {
+      "1b827e3c-bdf8-477f-9043-8ae8572136eb": "Souk El Attarine : Parfums & Artisanat Local",
+      "3dddc826-9507-4aa4-842d-200985129331": "Souk El Berka : Or & Bijouterie Fine",
+      "6ac82cb4-9eb7-46dc-88c6-9246dce8a19f": "Avenue Habib Bourguiba : Boutiques & Cafés"
+    },
+    "description": {
+      "1b827e3c-bdf8-477f-9043-8ae8572136eb": "À quelques pas de la mosquée Zitouna. C'est l'endroit idéal pour trouver des huiles essentielles authentiques, des parfums traditionnels et des eaux de fleur d'oranger ou de rose tunisiennes de qualité supérieure.",
+      "3dddc826-9507-4aa4-842d-200985129331": "Le marché historique de l'or. Il présente une architecture magnifique et constitue le lieu incontournable pour les bijoux fins en or et en argent.",
+      "6ac82cb4-9eb7-46dc-88c6-9246dce8a19f": "Situé au centre-ville de Tunis (à 15 minutes à pied ou 5 minutes en voiture). Il abrite des boutiques de grandes marques, des cafés et de petites galeries commerciales comme Le Claridge."
+    },
+    "title": "Boutiques",
+    "subtitle": "Shopping de luxe à portée de main",
+    "categories": "Catégories",
+    "products": "Produits",
+    "nearbyShops": "Boutiques à Proximité",
+    "inHotelShops": "Boutiques de l'Hôtel",
+    "viewProduct": "Voir le Produit",
+    "addToCart": "Ajouter au Panier",
+    "outOfStock": "Rupture de Stock",
+    "inStock": "En Stock",
+    "brand": "Marque",
+    "size": "Taille",
+    "color": "Couleur",
+    "material": "Matériau"
   },
   "events": {
     "title": "Événements & Promotions",
@@ -252,24 +535,42 @@
     "registerEvent": "S'inscrire à l'Événement",
     "viewDetails": "Voir les Détails",
     "soldOut": "Complet",
-    "freeEvent": "Événement Gratuit"
+    "freeEvent": "Événement Gratuit",
+    "reservation": {
+      "cancelSuccess": "La réservation a été annulée avec succès",
+      "cancelError": "Une erreur s'est produite lors de l'annulation de la réservation",
+      "errorTitle": "Erreur",
+      "errorMessage": "La réservation n'a pas pu être trouvée ou une erreur s'est produite.",
+      "back": "Retour",
+      "status": {
+        "confirmed": "Confirmée",
+        "cancelled": "Annulée",
+        "pending": "En attente"
+      },
+      "title": "Détails de la réservation",
+      "eventLabel": "Événement:",
+      "eventFallback": "Événement",
+      "eventDetails": "Détails de l'événement",
+      "location": "Lieu:",
+      "info": "Informations de réservation",
+      "date": "Date:",
+      "time": "Heure:",
+      "guests": "Nombre de personnes:",
+      "room": "Chambre:",
+      "contact": "Informations de contact",
+      "name": "Nom:",
+      "email": "Email:",
+      "phone": "Téléphone:",
+      "specialRequests": "Demandes spéciales",
+      "cancelling": "Annulation en cours...",
+      "cancelAction": "Annuler la réservation",
+      "cancelConfirmTitle": "Êtes-vous sûr de vouloir annuler cette réservation?",
+      "cancelConfirmDesc": "Cette action ne peut pas être annulée. La réservation sera définitivement annulée.",
+      "cancel": "Annuler",
+      "cancelConfirmYes": "Oui, annuler la réservation"
+    }
   },
-  "shops": {
-    "title": "Boutiques",
-    "subtitle": "Shopping de luxe à portée de main",
-    "categories": "Catégories",
-    "products": "Produits",
-    "nearbyShops": "Boutiques à Proximité",
-    "inHotelShops": "Boutiques de l'Hôtel",
-    "viewProduct": "Voir le Produit",
-    "addToCart": "Ajouter au Panier",
-    "outOfStock": "Rupture de Stock",
-    "inStock": "En Stock",
-    "brand": "Marque",
-    "size": "Taille",
-    "color": "Couleur",
-    "material": "Matériau"
-  },
+
   "destination": {
     "title": "Guide de Destination",
     "subtitle": "Explorez le meilleur de notre région",
@@ -321,7 +622,103 @@
     "team": "Notre Équipe",
     "contact": "Informations de Contact",
     "address": "Adresse",
-    "facilities": "Installations & Commodités"
+    "facilities": "Installations & Commodités",
+    "content": {
+      "heroTitle": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Palais Bayram"
+      },
+      "heroSubtitle": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Un petit hôtel de luxe dans un joyau de l'architecture du 18ème siècle"
+      },
+      "welcomeTitle": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Description"
+      },
+      "welcomeDescription": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Jadis résidence du grand Mufti de la Régence de Tunis au 18ème siècle, cet exceptionnel palais est idéalement situé au cœur de la partie la plus ancienne de la médina historique. Méticuleusement restauré dans sa splendeur d'origine, le domaine préserve ses boiseries, marbres et faïences d'époque authentiques sans aucun ajout moderne."
+      },
+      "welcomeDescriptionExtended": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Fait des plus remarquables, le palais abrite une collection de carreaux de faïence d'Iznik d'une rareté mondiale, constituant l'un des trésors artistiques les plus magnifiques du patrimoine culturel de Tunis."
+      },
+      "mission": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Faire revivre la grandeur historique de la Médina à travers une expérience d'hospitalité d'exception, alliant gastronomie raffinée, bien-être traditionnel et accueil soigné."
+      },
+      "directoryTitle": {
+        "f68672da-d6e4-46fd-95a5-753594a39a74": "Répertoire & Informations de l'Hôtel"
+      },
+      "features": {
+        "History": {
+          "title": "Notre Histoire",
+          "description": "Établi en 2015 avec un riche héritage"
+        },
+        "Building2": {
+          "title": "Notre Établissement",
+          "description": "17 suites et équipements haut de gamme"
+        },
+        "Users": {
+          "title": "Notre Équipe",
+          "description": "Un personnel dévoué et engagé vers l'excellence"
+        },
+        "Award": {
+          "title": "Nos Distinctions",
+          "description": "Reconnu pour son service exceptionnel"
+        }
+      }
+    },
+    "directory": {
+      "title": "Répertoire & Informations de l'Hôtel",
+      "section": {
+        "Important Numbers": "Numéros Importants",
+        "Hotel Policies": "Règlements de l'Hôtel",
+        "Additional Information": "Informations Complémentaires",
+        "Facilities & Amenities": "Installations & Commodités"
+      },
+      "label": {
+        "Swimming Pool": "Piscine",
+        "Check-in": "Arrivée",
+        "Check-out": "Départ",
+        "Breakfast": "Petit Déjeuner",
+        "Reception": "Réception",
+        "Room Service": "Service d'Étage",
+        "Concierge": "Conciergerie",
+        "Housekeeping": "Ménage",
+        "Emergency": "Urgences",
+        "Transfert": "Transfert",
+        "Réception & Conciergerie": "Réception & Conciergerie",
+        "Fitness Center": "Centre de Fitness",
+        "Spa & Wellness": "Spa & Bien-être",
+        "Restaurants": "Restaurants",
+        "Maison de Thé": "Maison de Thé",
+        "Meeting room": "Salle de Réunion",
+        "Wi-Fi": "Wi-Fi",
+        "Parking": "Parking",
+        "Airport Transfer": "Transfert Aéroport",
+        "Currency Exchange": "Bureau de Change",
+        "Medical Services": "Services Médicaux"
+      },
+      "value": {
+        "Level 5": "Niveau 5",
+        "Level 3": "Niveau 3",
+        "Level 4": "Niveau 4",
+        "3:00 PM": "15:00",
+        "12:00 PM": "12:00",
+        "6:30 AM - 10:30 AM": "6h30 - 10h30",
+        "Network \"HotelGenius\" - Password provided at check-in": "Réseau \"HotelGenius\" - Mot de passe fourni à l'arrivée",
+        "Dial 0": "Composer le 0",
+        "Dial 1": "Composer le 1",
+        "Dial 2": "Composer le 2",
+        "Dial 3": "Composer le 3",
+        "Dial 9": "Composer le 9",
+        "aéroport/hôtel/aéroport": "aéroport/hôtel/aéroport",
+        "24/24": "24h/24",
+        "El Makhzen": "El Makhzen",
+        "Surya": "Surya",
+        "Network \"Palais Bayram\" - Free Password": "Réseau \"Palais Bayram\" - Mot de passe gratuit",
+        "Valet service available": "Service de voiturier disponible",
+        "Contact concierge": "Contacter le concierge",
+        "Available at reception": "Disponible à la réception",
+        "Contact reception for assistance": "Contacter la réception pour assistance"
+      }
+    }
   },
   "contact": {
     "title": "Contactez-Nous",
@@ -341,7 +738,7 @@
       "primaryEmail": "info@staygenius.com",
       "supportEmail": "support@staygenius.com",
       "address": "Adresse",
-      "fullAddress": "123 Luxury Avenue\nParadise City, PC 12345\nÉtats-Unis"
+      "fullAddress": "123 Luxury Avenue\\nParadise City, PC 12345\\nÉtats-Unis"
     },
     "subtitle": "Entrez en contact avec notre équipe",
     "generalInquiries": "Demandes Générales",
@@ -356,13 +753,115 @@
     "subtitle": "Restez informé de vos réservations et demandes",
     "markAllRead": "Marquer Tout comme Lu",
     "noNotifications": "Aucune notification",
+    "signInToView": "Connectez-vous pour voir vos notifications",
+    "back": "Retour",
+    "myNotifications": "Mes Notifications",
+    "searchPlaceholder": "Rechercher des demandes...",
+    "filterByType": "Filtrer par type",
+    "filterByStatus": "Filtrer par statut",
+    "showingCount": "Affichage de {{filtered}} sur {{total}} demandes",
+    "noRequests": "Aucune demande pour le moment",
+    "noMatchingRequests": "Aucune demande correspondante",
+    "noRequestsDesc": "Vous n'avez pas encore fait de demande de service.",
+    "noMatchingRequestsDesc": "Essayez d'ajuster vos critères de recherche ou de filtrage.",
+    "goToMyRoom": "Aller à Ma Chambre",
+    "cancelDialog": {
+      "title": "Annuler la demande",
+      "description": "Êtes-vous sûr de vouloir annuler cette demande ? Cette action ne peut pas être annulée.",
+      "keep": "Conserver la demande",
+      "confirm": "Oui, annuler",
+      "cancelling": "Annulation en cours..."
+    },
     "new": "Nouveau",
     "read": "Lu",
     "unread": "Non lu",
     "today": "Aujourd'hui",
     "yesterday": "Hier",
     "thisWeek": "Cette Semaine",
-    "older": "Plus Ancien"
+    "older": "Plus Ancien",
+    "status": {
+      "pending": "En attente",
+      "inProgress": "En cours",
+      "in_progress": "En cours",
+      "completed": "Complété",
+      "cancelled": "Annulé",
+      "confirmed": "Confirmé",
+      "on_hold": "En attente"
+    },
+    "timeAgo": {
+      "recently": "récemment"
+    },
+    "types": {
+      "spa_reservation": "Réservation de Spa",
+      "restaurant_reservation": "Réservation de Restaurant",
+      "service_request": "Demande de Service",
+      "event_reservation": "Réservation d'Événement"
+    },
+    "summaries": {
+      "spa_booking": "Réservation pour le {{date}} à {{time}}",
+      "restaurant_booking": "Réservation pour {{guests}} personne(s) le {{date}} à {{time}}",
+      "service_request": "Demande de service",
+      "event_booking": "Réservation pour {{guests}} personne(s) le {{date}}"
+    },
+    "type": {
+      "request": "Demande",
+      "restaurant": "Restaurant",
+      "spa": "Spa",
+      "event": "Événements",
+      "notification": "Notification"
+    },
+    "toast": {
+      "markedAsRead": "Marqué comme lu",
+      "failedToUpdate": "Échec de la mise à jour de la notification"
+    },
+    "action": {
+      "markAsRead": "Marquer comme lu",
+      "edit": "Modifier",
+      "cancel": "Annuler",
+      "viewDetails": "Voir les détails"
+    },
+    "summary": {
+      "title": "Résumé",
+      "date": "Date",
+      "time": "Heure",
+      "room": "Chambre",
+      "specialRequests": "Demandes spéciales",
+      "people": "Personnes",
+      "type": "Type",
+      "service": "Service",
+      "description": "Description"
+    },
+    "requestStatus": {
+      "pendingTitle": "Demande en attente",
+      "pendingDesc": "Votre demande est en cours de traitement. Notre équipe s'en occupera dans les plus brefs délais.",
+      "onHoldTitle": "Demande en pause",
+      "onHoldDesc": "Votre demande est temporairement en attente. Notre équipe la traitera dès que possible.",
+      "inProgressTitle": "Demande en cours",
+      "inProgressDesc": "Notre équipe est en train de traiter votre demande.",
+      "completedTitle": "Demande complétée",
+      "completedDesc": "Votre demande a été traitée avec succès.",
+      "cancelledTitle": "Demande annulée",
+      "cancelledDesc": "Cette demande a été annulée."
+    },
+    "spaBooking": {
+      "contactInfo": "Informations de contact",
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "room": "Chambre",
+      "specialRequests": "Demandes spéciales",
+      "dateNotAvailable": "Date non disponible",
+      "bookingDetails": "Détails de la réservation",
+      "date": "Date",
+      "time": "Heure",
+      "facilityDetails": "Détails de l'établissement",
+      "facilityNotAvailable": "Informations sur l'établissement non disponibles",
+      "openingHours": "Heures d'ouverture",
+      "backToNotifications": "Retour aux notifications",
+      "bookingNotFound": "Réservation introuvable",
+      "bookingNotFoundWithId": "Nous n'avons pas pu trouver la réservation avec l'identifiant {{bookingId}}.",
+      "bookingNotFoundDesc": "La réservation peut avoir été annulée ou l'identifiant est incorrect."
+    }
   },
   "messages": {
     "title": "Messages",
@@ -403,7 +902,7 @@
     "iosAddLabel": "＋ Sur l'écran d'accueil",
     "iosConfirmLabel": "Ajouter",
     "iosPointingLabel": "Le bouton de partage est ici ↓",
-    "inAppWarning": "Appuyez sur ... ou sur l'icône Boussole et sélectionnez \"Ouvrir dans Safari\"."
+    "inAppWarning": "Appuyez sur ... ou sur l'icône Boussole et sélectionnez \\\"Ouvrir dans Safari\\\"."
   },
   "profile": {
     "title": "Mon Profil",
@@ -558,6 +1057,7 @@
   "forms": {
     "validation": {
       "dateRequired": "Veuillez sélectionner une date",
+      "timeRequired": "Veuillez sélectionner une heure",
       "roomNumberRequired": "Le numéro de chambre est requis",
       "nameRequired": "Le nom est requis",
       "emailInvalid": "Email invalide",
@@ -594,6 +1094,27 @@
       "reservationCreationError": "Erreur lors de la création de la réservation"
     }
   },
+  "servicesPage": {
+    "title": "Services de l'Hôtel",
+    "subtitle": "Support conciergerie dédié 24h/24 et 7j/7",
+    "quickSearch": "Recherche Rapide de Services",
+    "searchPlaceholder": "Rechercher un service (serviettes, ménage, wifi...)",
+    "requestSentTitle": "Demande Envoyée",
+    "requestSentDesc": "Votre demande de service a été envoyée avec succès.",
+    "guest": "Client",
+    "liveChat": {
+      "title": "Chat en Direct",
+      "description": "Messagerie instantanée avec notre équipe de conciergerie",
+      "action": "Démarrer le Chat"
+    },
+    "whatsApp": {
+      "title": "Service WhatsApp",
+      "description": "Messagerie directe via WhatsApp",
+      "action": "Nous Contacter",
+      "toastTitle": "Service WhatsApp",
+      "toastDesc": "Ouverture de WhatsApp pour vous connecter avec notre conciergerie."
+    }
+  },
   "onboarding": {
     "skip": "Passer",
     "next": "Suivant",
@@ -623,6 +1144,258 @@
     "welcome": {
       "title": "Bon Retour",
       "message": "Ravi de vous revoir, {{name}}"
+    }
+  },
+  "chat": {
+    "actionRenderer": {
+      "back": "Retour",
+      "noItems": "Aucun article disponible dans cette catégorie.",
+      "submitting": "Envoi de votre demande...",
+      "requestConfirmed": "Demande confirmée",
+      "requestConfirmedDesc": "Nous avons bien reçu votre demande et notre équipe s'en occupe !",
+      "submitFailed": "Échec de l'envoi de la demande. Veuillez réessayer.",
+      "preparing": "Préparation...",
+      "bookTable": "Réservez une table chez {{name}}",
+      "bookSpot": "Réservez votre place pour {{title}}",
+      "bookTreatment": "Réservez votre soin {{name}}",
+      "bookingFormComingSoon": "Formulaire de réservation {{type}} bientôt disponible.",
+      "reservationPending": "Réservation en attente",
+      "processing": "En cours de traitement",
+      "requestSent": "Votre demande a été envoyée à l'équipe de l'hôtel.",
+      "dateAndTime": "Date & Heure",
+      "guests": "Invités",
+      "persons": "{{guests}} Personne(s)",
+      "featuredDining": "Notre sélection de restaurants",
+      "viewMenuBook": "Voir le menu / Réserver",
+      "requestCompleted": "Demande terminée",
+      "requestProcessedSuccess": "Votre demande a été traitée avec succès."
+    },
+    "listScreen": {
+      "messages": "Messages",
+      "connectSubtitle": "Connectez-vous avec notre équipe ou notre assistant hôtelier intelligent",
+      "hotelTeam": "Équipe de l'hôtel",
+      "hotelTeamDesc": "Connectez-vous directement avec notre personnel",
+      "smartAssistant": "Assistant hôtelier intelligent",
+      "smartAssistantDesc": "Aide de l'IA instantanée, possibilité de transférer au personnel"
+    },
+    "selectionScreen": {
+      "messageCenter": "Centre de messages",
+      "welcome": "Bienvenue, {{name}}",
+      "room": "Chambre {{roomNumber}}",
+      "guestServices": "Services aux clients",
+      "hotelAssistance": "Assistance hôtelière 24/7",
+      "available247": "Disponible 24/7",
+      "aiAndHumanSupport": "Support IA + Humain",
+      "generalServices": "Services hôteliers généraux, réservations, demandes de chambre et plus",
+      "safetyAssistant": "Assistant de sécurité",
+      "emergencySafetySupport": "Support d'urgence et de sécurité",
+      "immediateResponse": "Réponse immédiate",
+      "aiSafetyProtocols": "Protocoles de sécurité IA",
+      "emergencyProcedures": "Procédures d'urgence, informations de sécurité et assistance urgente"
+    },
+    "container": {
+      "loadingChat": "Chargement du chat..."
+    },
+    "header": {
+      "smartAssistant": "Assistant hôtelier intelligent",
+      "humanAgent": "Agent humain",
+      "available247": "Disponible 24/7",
+      "liveSupport": "Assistance en direct",
+      "talkToHuman": "Parler à un humain",
+      "takeOver": "Prendre le relais"
+    },
+    "input": {
+      "typeMessage": "Tapez votre message pour le concierge..."
+    },
+    "messagesList": {
+      "startConversation": "Commencez une conversation avec notre assistant IA !",
+      "systemMessage": "Message système",
+      "actionPerformed": "Action effectuée...",
+      "aiAssistant": "Assistant IA",
+      "staff": "Personnel",
+      "guest": "Invité",
+      "aiTyping": "L'assistant IA est en train de taper..."
+    },
+    "messagesPage": {
+      "initializingChat": "Initialisation du chat sécurisé...",
+      "sessionRequired": "Session requise",
+      "loginPrompt": "Veuillez vous connecter à votre compte pour accéder à votre tableau de bord de messagerie personnel et rester en contact avec notre équipe.",
+      "goToLogin": "Aller à la connexion"
+    }
+  },
+  "search": {
+    "placeholder": "Que recherchez-vous ?",
+    "noResults": "Aucun résultat trouvé pour \\\"{{query}}\\\"",
+    "mainPages": "Pages principales",
+    "spaWellness": "Spa & Bien-être",
+    "restaurants": "Restaurants",
+    "shops": "Boutiques",
+    "placeholderLong": "Recherchez des services, des activités ou des équipements..."
+  },
+  "mapPage": {
+    "title": "Plan de l'Hôtel",
+    "searchPlaceholder": "Rechercher des lieux, des chambres ou des équipements...",
+    "interactiveMap": {
+      "title": "Plan Interactif",
+      "subtitle": "Explorez les installations de notre hôtel et naviguez en toute simplicité",
+      "viewFullScreen": "Plein Écran"
+    },
+    "floors": {
+      "ground": "Rez-de-chaussée",
+      "floor1": "1er Étage",
+      "floor2": "2ème Étage",
+      "floor3": "3ème Étage",
+      "floor4": "4ème Étage",
+      "floor5": "5ème Étage"
+    },
+    "keyFacilities": {
+      "title": "Équipements Principaux",
+      "restaurants": "Restaurants",
+      "restaurantsLocation": "Niveau 1 & Toit-terrasse",
+      "cafe": "Café",
+      "cafeLocation": "Hall & Niveau 2",
+      "pool": "Piscine",
+      "poolLocation": "Niveau 3",
+      "fitnessCenter": "Centre de Fitness",
+      "fitnessCenterLocation": "Sous-sol"
+    },
+    "emergency": {
+      "title": "Informations d'Urgence",
+      "exits": "Sorties de Secours",
+      "exitsDescription": "Les sorties de secours sont situées à l'extrémité de chaque couloir à tous les étages. Suivez les panneaux lumineux en cas d'évacuation.",
+      "contact": "Contact d'Urgence",
+      "contactDescription": "Composez le 9 depuis le téléphone de votre chambre",
+      "viewMap": "Voir le Plan d'Urgence"
+    }
+  },
+  "profilePage": {
+    "header": {
+      "guest": "Client",
+      "premiumGuest": "Client Premium"
+    },
+    "personalInfo": {
+      "title": "Informations Personnelles",
+      "email": "E-mail",
+      "birthDate": "Date de naissance",
+      "nationality": "Nationalité"
+    },
+    "currentStay": {
+      "title": "Séjour Actuel",
+      "room": "Chambre",
+      "mobileKey": "Clé Mobile",
+      "viewBill": "Voir la Facture",
+      "stayDates": "Dates de séjour",
+      "notDefined": "Non définie",
+      "fromTo": "Du {{from}} au {{to}}",
+      "night": "{{count}} nuit",
+      "nights": "{{count}} nuits"
+    },
+    "billDialog": {
+      "title": "Facture",
+      "customerInfo": "Informations Client",
+      "stayDetails": "Détails du Séjour",
+      "duration": "Durée : {{nights}}"
+    },
+    "preferences": {
+      "title": "Préférences & Infos Médicales",
+      "medicalAlert": "Alerte Médicale",
+      "preference": "Préférence",
+      "medicalAlerts": "Alertes Médicales",
+      "noPrefsOrAlerts": "Aucune préférence ni alerte médicale pour le moment. Ajoutez votre première ci-dessus.",
+      "categories": {
+        "room": "Préférence de chambre",
+        "dining": "Préférence de restauration",
+        "service": "Préférence de service"
+      },
+      "suggestions": {
+        "high_floor": "Étage élevé",
+        "sea_view": "Vue sur mer",
+        "quiet_room": "Chambre calme",
+        "non-smoking": "Non-fumeur",
+        "king_size_bed": "Lit King Size",
+        "vegetarian": "Végétarien",
+        "vegan": "Végétalien",
+        "halal": "Halal",
+        "gluten-free": "Sans gluten",
+        "no_seafood": "Sans fruits de mer",
+        "early_check-in": "Arrivée anticipée",
+        "late_check-out": "Départ tardif",
+        "extra_towels": "Serviettes supplémentaires",
+        "hypoallergenic_pillows": "Oreillers hypoallergéniques"
+      },
+      "dialogs": {
+        "addPref": "Ajouter une Préférence",
+        "prefType": "Type de préférence",
+        "pref": "Préférence",
+        "prefPlaceholder": "Ex : Vue sur mer, Végétarien...",
+        "quickSuggestions": "Suggestions rapides",
+        "cancel": "Annuler",
+        "add": "Ajouter",
+        "addMedical": "Ajouter une Alerte Médicale",
+        "alertType": "Type d'alerte",
+        "severityLevel": "Niveau de gravité",
+        "description": "Description",
+        "medicalDescPlaceholder": "Décrivez votre problème de santé ou allergie...",
+        "severity": {
+          "low": "Faible",
+          "medium": "Moyenne",
+          "high": "Élevée",
+          "critical": "Critique"
+        },
+        "types": {
+          "medicalAlert": "Alerte médicale",
+          "allergy": "Allergie"
+        }
+      }
+    },
+    "companions": {
+      "title": "Accompagnateurs",
+      "noCompanions": "Aucun accompagnateur ajouté",
+      "addCompanion": "Ajouter un accompagnateur",
+      "addCompanionTitle": "Ajouter un Accompagnateur",
+      "firstName": "Prénom",
+      "lastName": "Nom de famille",
+      "relation": "Relation",
+      "selectRelation": "Sélectionner",
+      "cancel": "Annuler",
+      "add": "Ajouter",
+      "relations": {
+        "spouse": "Conjoint(e)",
+        "child": "Enfant",
+        "parent": "Parent",
+        "friend": "Ami(e)",
+        "other": "Autre"
+      },
+      "toasts": {
+        "missingInfoTitle": "Informations manquantes",
+        "missingInfoDesc": "Veuillez remplir tous les champs obligatoires.",
+        "successAddTitle": "Accompagnateur ajouté",
+        "successAddDesc": "L'accompagnateur a été ajouté avec succès.",
+        "errorAddTitle": "Erreur",
+        "errorAddDesc": "Impossible d'ajouter l'accompagnateur. Veuillez réessayer.",
+        "authErrorTitle": "Erreur d'authentification",
+        "authErrorDesc": "Vous devez être connecté pour ajouter un accompagnateur.",
+        "errorDeleteTitle": "Erreur",
+        "errorDeleteDesc": "Impossible de supprimer cet accompagnateur.",
+        "successDeleteTitle": "Accompagnateur supprimé",
+        "successDeleteDesc": "L'accompagnateur a été supprimé avec succès.",
+        "errorDeleteActionTitle": "Erreur",
+        "errorDeleteActionDesc": "Impossible de supprimer l'accompagnateur. Veuillez réessayer."
+      }
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "dining": "Restauration",
+      "spa": "Spa",
+      "events": "Événements",
+      "notifications": "Notifications"
+    },
+    "notificationsList": {
+      "toastDismissedTitle": "Notification masquée",
+      "toastDismissedDesc": "La notification a été supprimée de votre liste.",
+      "title": "Notifications",
+      "noNotifications": "Aucune notification",
+      "noNotificationsDesc": "Vous n'avez aucune notification pour le moment."
     }
   }
 }

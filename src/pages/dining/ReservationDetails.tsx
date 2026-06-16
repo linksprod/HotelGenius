@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '@/components/Layout';
 import { useTableReservations } from '@/hooks/useTableReservations';
 import { useRestaurants } from '@/hooks/useRestaurants';
@@ -20,6 +21,7 @@ const ReservationDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
+  const { t, i18n } = useTranslation();
   const { reservations = [], updateReservationStatus, isUpdating } = useTableReservations();
   const { fetchRestaurantById } = useRestaurants();
 
@@ -32,7 +34,7 @@ const ReservationDetails = () => {
 
   useEffect(() => {
     if (!id) {
-      toast.error("Identifiant de réservation manquant");
+      toast.error(t('dining.details.missingId', "Identifiant de réservation manquant"));
       navigate('/notifications');
       return;
     }
@@ -53,13 +55,13 @@ const ReservationDetails = () => {
         })
         .catch(err => {
           console.error("Erreur lors du chargement du restaurant:", err);
-          toast.error("Impossible de charger les détails du restaurant");
+          toast.error(t('dining.details.errorLoadingRestaurant', "Impossible de charger les détails du restaurant"));
           setIsLoading(false);
         });
     } else {
       if (reservations.length > 0) {
         // If we have reservations but can't find this one
-        toast.error("Réservation non trouvée");
+        toast.error(t('dining.details.notFound', "Réservation non trouvée"));
         navigate('/notifications');
       } else {
         // Wait for reservations to load
@@ -76,7 +78,7 @@ const ReservationDetails = () => {
       status: 'cancelled'
     });
 
-    toast.success("Votre réservation a été annulée");
+    toast.success(t('dining.details.cancelledSuccess', "Votre réservation a été annulée"));
     setIsCancelDialogOpen(false);
 
     // Mettre à jour l'état local
@@ -90,7 +92,7 @@ const ReservationDetails = () => {
 
   const handleEditSuccess = () => {
     setIsEditDialogOpen(false);
-    toast.success("Votre réservation a été modifiée");
+    toast.success(t('dining.details.editedSuccess', "Votre réservation a été modifiée"));
 
     // Recharger les données
     const updatedReservation = reservations.find(r => r.id === id);
@@ -116,9 +118,9 @@ const ReservationDetails = () => {
     if (!reservation) return "";
 
     switch (reservation.status) {
-      case 'confirmed': return "Confirmée";
-      case 'cancelled': return "Annulée";
-      default: return "En attente";
+      case 'confirmed': return t('dining.status.confirmed', "Confirmée");
+      case 'cancelled': return t('dining.status.cancelled', "Annulée");
+      default: return t('dining.status.pending', "En attente");
     }
   };
 
@@ -148,11 +150,11 @@ const ReservationDetails = () => {
         <div className="container py-8">
           <Card>
             <CardContent className="pt-6">
-              <p className="text-center text-gray-500">Impossible de trouver les détails de cette réservation.</p>
+              <p className="text-center text-gray-500">{t('dining.details.cannotFind', "Impossible de trouver les détails de cette réservation.")}</p>
             </CardContent>
             <CardFooter className="flex justify-center">
               <Button onClick={() => navigate(resolvePath('/notifications'))}>
-                Back to notifications
+                {t('common.backToNotifications', "Back to notifications")}
               </Button>
             </CardFooter>
           </Card>
@@ -162,7 +164,9 @@ const ReservationDetails = () => {
   }
 
   const reservationDate = new Date(reservation.date);
-  const formattedDate = format(reservationDate, 'EEEE d MMMM yyyy', { locale: fr });
+  const isFrench = i18n.language.startsWith('fr');
+  const formattedDate = format(reservationDate, 'EEEE d MMMM yyyy', isFrench ? { locale: fr } : undefined);
+  const shortDate = format(reservationDate, 'd MMMM', isFrench ? { locale: fr } : undefined);
   const isPending = reservation.status === 'pending';
   const isConfirmed = reservation.status === 'confirmed';
   const isCancelled = reservation.status === 'cancelled';
@@ -170,7 +174,7 @@ const ReservationDetails = () => {
   return (
     <Layout>
       <div className="container py-8">
-        <h1 className="text-2xl font-bold mb-6">Détails de votre réservation</h1>
+        <h1 className="text-2xl font-bold mb-6">{t('dining.details.pageTitle', "Détails de votre réservation")}</h1>
 
         <Card className="mb-6">
           <CardHeader className="pb-2">
@@ -188,19 +192,19 @@ const ReservationDetails = () => {
 
             <div className="flex items-center gap-2 text-gray-700">
               <Users className="h-5 w-5 text-gray-500" />
-              <span>{reservation.guests} {reservation.guests > 1 ? 'personnes' : 'personne'}</span>
+              <span>{reservation.guests} {reservation.guests > 1 ? t('dining.details.guestsPlural', 'personnes') : t('dining.details.guestsSingular', 'personne')}</span>
             </div>
 
             <div className="flex items-center gap-2 text-gray-700">
               <Utensils className="h-5 w-5 text-gray-500" />
-              <span>Restaurant: {restaurant.cuisine}</span>
+              <span>{t('dining.details.restaurantLabel', 'Restaurant:')} {t(`restaurants.cuisine.${restaurant.cuisine}`, restaurant.cuisine)}</span>
             </div>
 
             {reservation.specialRequests && (
               <div className="flex items-start gap-2 text-gray-700">
                 <FileText className="h-5 w-5 text-gray-500 mt-0.5" />
                 <div>
-                  <p className="font-medium">Demandes spéciales:</p>
+                  <p className="font-medium">{t('dining.details.specialRequests', 'Demandes spéciales:')}</p>
                   <p className="text-gray-600">{reservation.specialRequests}</p>
                 </div>
               </div>
@@ -214,9 +218,9 @@ const ReservationDetails = () => {
                       <Clock className="h-5 w-5 text-yellow-400" />
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-yellow-800">Réservation en attente</h3>
+                      <h3 className="text-sm font-medium text-yellow-800">{t('dining.details.pendingTitle', 'Réservation en attente')}</h3>
                       <div className="mt-2 text-sm text-yellow-700">
-                        <p>Votre réservation est en cours de traitement. Vous recevrez une confirmation prochainement.</p>
+                        <p>{t('dining.details.pendingDesc', 'Votre réservation est en cours de traitement. Vous recevrez une confirmation prochainement.')}</p>
                       </div>
                     </div>
                   </div>
@@ -230,9 +234,9 @@ const ReservationDetails = () => {
                       <CheckCircle2 className="h-5 w-5 text-green-400" />
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-green-800">Réservation confirmée</h3>
+                      <h3 className="text-sm font-medium text-green-800">{t('dining.details.confirmedTitle', 'Réservation confirmée')}</h3>
                       <div className="mt-2 text-sm text-green-700">
-                        <p>Votre table est réservée. Nous vous attendons le {format(reservationDate, 'd MMMM', { locale: fr })} à {reservation.time}.</p>
+                        <p>{t('dining.details.confirmedDesc', 'Votre table est réservée. Nous vous attendons le {{date}} à {{time}}.', { date: shortDate, time: reservation.time })}</p>
                       </div>
                     </div>
                   </div>
@@ -246,9 +250,9 @@ const ReservationDetails = () => {
                       <XCircle className="h-5 w-5 text-red-400" />
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-sm font-medium text-red-800">Réservation annulée</h3>
+                      <h3 className="text-sm font-medium text-red-800">{t('dining.details.cancelledTitle', 'Réservation annulée')}</h3>
                       <div className="mt-2 text-sm text-red-700">
-                        <p>Cette réservation a été annulée.</p>
+                        <p>{t('dining.details.cancelledDesc', 'Cette réservation a été annulée.')}</p>
                       </div>
                     </div>
                   </div>
@@ -259,10 +263,10 @@ const ReservationDetails = () => {
 
           <CardFooter className="pt-2 flex gap-3 flex-wrap">
             <Button variant="outline" onClick={() => navigate(resolvePath('/dining'))}>
-              Voir le restaurant
+              {t('dining.details.viewRestaurant', 'Voir le restaurant')}
             </Button>
             <Button variant="outline" onClick={() => navigate(resolvePath('/requests'))}>
-              View All Requests
+              {t('dining.details.viewAllRequests', 'View All Requests')}
             </Button>
 
             {isPending && (
@@ -273,7 +277,7 @@ const ReservationDetails = () => {
                   onClick={() => setIsEditDialogOpen(true)}
                 >
                   <Edit className="h-4 w-4" />
-                  Modifier
+                  {t('common.edit', 'Modifier')}
                 </Button>
 
                 <Button
@@ -282,7 +286,7 @@ const ReservationDetails = () => {
                   onClick={() => setIsCancelDialogOpen(true)}
                 >
                   <Ban className="h-4 w-4" />
-                  Annuler
+                  {t('common.cancel', 'Annuler')}
                 </Button>
               </>
             )}
@@ -294,7 +298,7 @@ const ReservationDetails = () => {
                 onClick={() => setIsCancelDialogOpen(true)}
               >
                 <Ban className="h-4 w-4" />
-                Annuler
+                {t('common.cancel', 'Annuler')}
               </Button>
             )}
           </CardFooter>
@@ -308,7 +312,7 @@ const ReservationDetails = () => {
         restaurantId={restaurant.id}
         restaurantName={restaurant.name}
         onSuccess={handleEditSuccess}
-        buttonText="Modifier ma réservation"
+        buttonText={t('dining.details.editReservationBtn', 'Modifier ma réservation')}
         existingReservation={reservation}
       />
 
@@ -316,17 +320,17 @@ const ReservationDetails = () => {
       <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Annuler votre réservation</DialogTitle>
+            <DialogTitle>{t('dining.details.cancelTitle', 'Annuler votre réservation')}</DialogTitle>
             <DialogDescription>
-              Êtes-vous sûr de vouloir annuler votre réservation au restaurant {restaurant.name} pour le {format(reservationDate, 'd MMMM', { locale: fr })} à {reservation.time} ?
+              {t('dining.details.cancelConfirm', 'Êtes-vous sûr de vouloir annuler votre réservation au restaurant {{name}} pour le {{date}} à {{time}} ?', { name: restaurant.name, date: shortDate, time: reservation.time })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-2 sm:justify-end">
             <Button variant="outline" onClick={() => setIsCancelDialogOpen(false)}>
-              Non, garder ma réservation
+              {t('dining.details.keepReservationBtn', 'Non, garder ma réservation')}
             </Button>
             <Button variant="destructive" onClick={handleCancelReservation} disabled={isUpdating}>
-              {isUpdating ? 'Annulation...' : 'Oui, annuler'}
+              {isUpdating ? t('common.cancelling', 'Annulation...') : t('common.yesCancel', 'Oui, annuler')}
             </Button>
           </DialogFooter>
         </DialogContent>

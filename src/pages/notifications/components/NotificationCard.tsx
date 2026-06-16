@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -9,12 +10,15 @@ import { Bell, Calendar, CheckCircle, XCircle, Clock, ShowerHead, Utensils, File
 import { NotificationService } from '@/services/NotificationService';
 import { toast } from 'sonner';
 
+import { useHotelPath } from '@/hooks/useHotelPath';
+
 interface NotificationCardProps {
   notification: NotificationItem;
   onRefresh?: () => void;
 }
 
 export const NotificationCard: React.FC<NotificationCardProps> = ({ notification, onRefresh }) => {
+  const { resolvePath } = useHotelPath();
   // Get icon based on notification type
   function getNotificationIcon(type: string) {
     switch (type) {
@@ -36,14 +40,16 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
     }
   }
 
+  const { t } = useTranslation();
+
   function getStatusText(status: string) {
     switch (status) {
-      case 'pending': return 'Pending';
-      case 'in_progress': return 'In progress';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      case 'confirmed': return 'Confirmed';
-      default: return 'Pending';
+      case 'pending': return t('notifications.status.pending');
+      case 'in_progress': return t('notifications.status.inProgress');
+      case 'completed': return t('notifications.status.completed');
+      case 'cancelled': return t('notifications.status.cancelled');
+      case 'confirmed': return t('notifications.status.confirmed');
+      default: return t('notifications.status.pending');
     }
   }
 
@@ -59,14 +65,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
   // Format time safely - handle invalid dates
   function formatTimeAgo(date: Date | null) {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      return 'recently';
+      return t('notifications.timeAgo.recently');
     }
 
     try {
       return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
     } catch (error) {
       console.error('Error formatting date:', error, date);
-      return 'recently';
+      return t('notifications.timeAgo.recently');
     }
   }
 
@@ -84,10 +90,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
   // Get type label based on notification type
   function getTypeLabel(type: string) {
     switch (type) {
-      case 'request': return 'Request';
-      case 'reservation': return 'Restaurant';
-      case 'spa_booking': return 'Spa';
-      default: return 'Notification';
+      case 'request': return t('notifications.type.request');
+      case 'reservation': return t('notifications.type.restaurant');
+      case 'spa_booking': return t('notifications.type.spa');
+      default: return t('notifications.type.notification');
     }
   }
 
@@ -104,10 +110,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
 
       const success = await NotificationService.markAsRead(notification.data.notification_id);
       if (success) {
-        toast.success('Marked as read');
+        toast.success(t('notifications.toast.markedAsRead'));
         onRefresh?.();
       } else {
-        toast.error('Failed to update notification');
+        toast.error(t('notifications.toast.failedToUpdate'));
       }
     };
 
@@ -121,19 +127,19 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
             className="p-1.5 rounded bg-green-100 text-green-700 text-xs flex items-center hover:bg-green-200 transition-colors"
           >
             <Check className="h-3.5 w-3.5 mr-1" />
-            Mark as read
+            {t('notifications.action.markAsRead')}
           </button>
         )}
         {canEdit && (
           <Link to={`${notification.link}/edit`} className="p-1.5 rounded bg-blue-100 text-blue-600 text-xs flex items-center">
             <Edit className="h-3 w-3 mr-1" />
-            Edit
+            {t('notifications.action.edit')}
           </Link>
         )}
         {canCancel && (
           <Link to={notification.link} className="p-1.5 rounded bg-red-100 text-red-600 text-xs flex items-center">
             <Trash2 className="h-3 w-3 mr-1" />
-            Cancel
+            {t('notifications.action.cancel')}
           </Link>
         )}
       </div>
@@ -147,36 +153,36 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
     if (notification.type === 'spa_booking') {
       return (
         <div className="mt-1.5">
-          <p className="text-sm text-gray-800">Summary:</p>
+          <p className="text-sm text-gray-800">{t('notifications.summary.title')}:</p>
           <ul className="text-xs text-gray-600 list-disc pl-5 mt-1 space-y-1">
-            <li>Date: {notification.data?.date}</li>
-            <li>Time: {notification.data?.time}</li>
-            {notification.data?.room_number && <li>Room: {notification.data.room_number}</li>}
-            {notification.data?.special_requests && <li>Special requests: {notification.data.special_requests}</li>}
+            <li>{t('notifications.summary.date')}: {notification.data?.date}</li>
+            <li>{t('notifications.summary.time')}: {notification.data?.time}</li>
+            {notification.data?.room_number && <li>{t('notifications.summary.room')}: {notification.data.room_number}</li>}
+            {notification.data?.special_requests && <li>{t('notifications.summary.specialRequests')}: {notification.data.special_requests}</li>}
           </ul>
         </div>
       );
     } else if (notification.type === 'reservation') {
       return (
         <div className="mt-1.5">
-          <p className="text-sm text-gray-800">Summary:</p>
+          <p className="text-sm text-gray-800">{t('notifications.summary.title')}:</p>
           <ul className="text-xs text-gray-600 list-disc pl-5 mt-1 space-y-1">
-            <li>Date: {notification.data?.date}</li>
-            <li>Time: {notification.data?.time}</li>
-            <li>People: {notification.data?.guests}</li>
-            {notification.data?.room_number && <li>Room: {notification.data.room_number}</li>}
-            {notification.data?.special_requests && <li>Special requests: {notification.data.special_requests}</li>}
+            <li>{t('notifications.summary.date')}: {notification.data?.date}</li>
+            <li>{t('notifications.summary.time')}: {notification.data?.time}</li>
+            <li>{t('notifications.summary.people')}: {notification.data?.guests}</li>
+            {notification.data?.room_number && <li>{t('notifications.summary.room')}: {notification.data.room_number}</li>}
+            {notification.data?.special_requests && <li>{t('notifications.summary.specialRequests')}: {notification.data.special_requests}</li>}
           </ul>
         </div>
       );
     } else if (notification.type === 'request') {
       return (
         <div className="mt-1.5">
-          <p className="text-sm text-gray-800">Summary:</p>
+          <p className="text-sm text-gray-800">{t('notifications.summary.title')}:</p>
           <ul className="text-xs text-gray-600 list-disc pl-5 mt-1 space-y-1">
-            <li>Type: {notification.data?.service_type || 'Service'}</li>
-            {notification.data?.description && <li>Description: {notification.data.description}</li>}
-            {notification.data?.room_number && <li>Room: {notification.data.room_number}</li>}
+            <li>{t('notifications.summary.type')}: {notification.data?.service_type || t('notifications.summary.service')}</li>
+            {notification.data?.description && <li>{t('notifications.summary.description')}: {notification.data.description}</li>}
+            {notification.data?.room_number && <li>{t('notifications.summary.room')}: {notification.data.room_number}</li>}
           </ul>
         </div>
       );
@@ -188,7 +194,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
   // Modified to generate correct notification detail URL
   const getNotificationDetailUrl = () => {
     // Use consistent URL format for notification details
-    return `/notifications/${notification.type}/${notification.id}`;
+    return resolvePath(`/notifications/${notification.type}/${notification.id}`);
   };
 
   return (
@@ -221,7 +227,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
 
                 {notification.data?.room_number && !getSummary() && (
                   <div className="mt-1.5 text-xs bg-gray-100 text-gray-700 inline-block px-2 py-0.5 rounded-full">
-                    Room: {notification.data.room_number}
+                    {t('notifications.summary.room')}: {notification.data.room_number}
                   </div>
                 )}
 

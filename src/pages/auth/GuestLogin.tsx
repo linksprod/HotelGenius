@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import GuestLoginCard from './components/GuestLoginCard';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
@@ -10,6 +11,7 @@ const GuestLogin = () => {
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const { hotel } = useHotel();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -67,10 +69,10 @@ const GuestLogin = () => {
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             <h1 className="text-5xl font-bold text-white leading-tight tracking-tight">
-              Live Your Stay<br />to the Fullest.
+              {t('auth.guestHeroTitle', 'Live Your Stay to the Fullest.')}
             </h1>
             <p className="text-white/75 text-lg mt-4 leading-relaxed max-w-sm">
-              Discover unique experiences, request services, and stay connected with our team during your visit.
+              {t('auth.guestHeroDesc', 'Discover unique experiences, request services, and stay connected with our team during your visit.')}
             </p>
           </motion.div>
 
@@ -82,9 +84,9 @@ const GuestLogin = () => {
             className="flex flex-col gap-3"
           >
             {[
-              'Direct communication with the concierge',
-              'Reserve restaurant tables and spa treatments',
-              'Check details and requests for your room',
+              t('auth.guestFeature1', 'Direct communication with the concierge'),
+              t('auth.guestFeature2', 'Reserve restaurant tables and spa treatments'),
+              t('auth.guestFeature3', 'Check details and requests for your room'),
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="h-5 w-5 rounded-full bg-white/25 flex items-center justify-center shrink-0">
@@ -100,7 +102,7 @@ const GuestLogin = () => {
 
         {/* Bottom tagline */}
         <div className="relative z-10 text-white/40 text-xs">
-          © {new Date().getFullYear()} {hotel?.name || 'HotelGenius'} · Powered by Hotel Genius
+          © {new Date().getFullYear()} {hotel?.name || 'HotelGenius'} · {t('auth.poweredBy', 'Powered by Hotel Genius')}
         </div>
       </div>
 

@@ -7,6 +7,7 @@ import { ChevronRight, ChevronLeft, Check, Hotel, User, Mail, Lock } from 'lucid
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const SaaS_RegistrationForm: React.FC = () => {
@@ -24,16 +25,17 @@ const SaaS_RegistrationForm: React.FC = () => {
 
   const navigate = useNavigate();
   const { resolvePath } = useHotel();
+  const { t } = useTranslation();
 
   const steps = [
-    { title: 'Admin', description: 'Personal Info' },
-    { title: 'Hotel', description: 'Property Name' }
+    { title: t('auth.saasAdminTitle', 'Admin'), description: t('auth.saasAdminDesc', 'Personal Info') },
+    { title: t('auth.saasHotelTitle', 'Hotel'), description: t('auth.saasHotelDesc', 'Property Name') }
   ];
 
   const handleNext = () => {
     if (currentStep === 1) {
       if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-        setError('Please fill in all fields');
+        setError(t('auth.fillAllFields', 'Please fill in all fields'));
         return;
       }
       setError(null);
@@ -49,7 +51,7 @@ const SaaS_RegistrationForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.hotelName) {
-      setError('Please enter a hotel name');
+      setError(t('auth.enterHotelName', 'Please enter a hotel name'));
       return;
     }
     setError(null);
@@ -79,7 +81,7 @@ const SaaS_RegistrationForm: React.FC = () => {
       }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || 'An error occurred during registration');
+      setError(err.message || t('auth.registrationError', 'An error occurred during registration'));
     } finally {
       setLoading(false);
     }
@@ -137,7 +139,7 @@ const SaaS_RegistrationForm: React.FC = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">{t('auth.firstName', 'First Name')}</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -151,7 +153,7 @@ const SaaS_RegistrationForm: React.FC = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">{t('auth.lastName', 'Last Name')}</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -167,7 +169,7 @@ const SaaS_RegistrationForm: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('auth.email', 'Email')}</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -183,7 +185,7 @@ const SaaS_RegistrationForm: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('auth.password', 'Password')}</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -203,7 +205,7 @@ const SaaS_RegistrationForm: React.FC = () => {
             {currentStep === 2 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="hotelName">Hotel Name</Label>
+                  <Label htmlFor="hotelName">{t('auth.hotelName', 'Hotel Name')}</Label>
                   <div className="relative">
                     <Hotel className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -217,7 +219,7 @@ const SaaS_RegistrationForm: React.FC = () => {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground pt-1">
-                    This will be used to create your unique workspace URL.
+                    {t('auth.hotelNameDesc', 'This will be used to create your unique workspace URL.')}
                   </p>
                 </div>
               </div>
@@ -233,7 +235,7 @@ const SaaS_RegistrationForm: React.FC = () => {
               onClick={handleBack} 
               className="flex-1 h-12 rounded-xl font-bold uppercase tracking-widest text-[10px]"
             >
-              <ChevronLeft className="mr-2 h-4 w-4" /> Back
+              <ChevronLeft className="mr-2 h-4 w-4" /> {t('common.back', 'Back')}
             </Button>
           )}
           
@@ -243,7 +245,7 @@ const SaaS_RegistrationForm: React.FC = () => {
               onClick={handleNext} 
               className="w-full h-12 rounded-xl font-black uppercase tracking-widest text-[10px]"
             >
-              Continue to Hotel <ChevronRight className="ml-2 h-4 w-4" />
+              {t('auth.continueToHotel', 'Continue to Hotel')} <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
             <Button 
@@ -251,7 +253,7 @@ const SaaS_RegistrationForm: React.FC = () => {
               className="flex-1 h-12 rounded-xl font-black uppercase tracking-widest text-[10px] bg-primary shadow-lg shadow-primary/20" 
               disabled={loading}
             >
-              {loading ? 'Creating...' : 'Create Hotel'}
+              {loading ? t('auth.creating', 'Creating...') : t('auth.createHotel', 'Create Hotel')}
               {!loading && <Check className="ml-2 h-4 w-4" />}
             </Button>
           )}

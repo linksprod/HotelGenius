@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Bot, User, MessageSquare, Paperclip } from 'lucide-react';
 import { VoiceMessageInput } from '@/components/voice/VoiceMessageInput';
 import UserQuickTemplates from '@/components/messaging/UserQuickTemplates';
+import { useTranslation } from 'react-i18next';
 
 interface UnifiedChatInputProps {
   inputMessage: string;
@@ -34,6 +35,7 @@ const ConciergeMessageInput = ({
   inputRef,
   isTyping
 }: ConciergeMessageInputProps) => {
+  const { t } = useTranslation();
   const [showTemplates, setShowTemplates] = useState(false);
 
   const handleTemplateSelect = (message: string) => {
@@ -81,7 +83,7 @@ const ConciergeMessageInput = ({
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="Type your message to concierge..."
+          placeholder={t('chat.input.typeMessage')}
           className="resize-none min-h-[40px] max-h-32 py-2.5 px-4 rounded-2xl border border-border/50 focus-visible:ring-1 bg-muted/40 text-[15px] leading-tight flex-1"
           disabled={isTyping}
         />

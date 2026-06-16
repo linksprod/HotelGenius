@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Bot, User, Phone, ArrowLeft, Sparkles } from 'lucide-react';
 import type { Conversation } from '@/types/chat';
+import { useTranslation } from 'react-i18next';
 
 interface UnifiedChatHeaderProps {
   conversation: Conversation | null;
@@ -21,6 +22,7 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
   onTakeOver,
   onGoBack
 }) => {
+  const { t } = useTranslation();
   const isAIHandling = currentHandler === 'ai';
   const canEscalate = !isAdmin && isAIHandling && onEscalateToHuman;
   const canTakeOver = isAdmin && isAIHandling && conversation && onTakeOver;
@@ -50,17 +52,17 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
             {conversation?.status === 'active' && conversation.current_handler === 'ai' ? (
               <>
                 <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
-                Aura AI
+                {t('chat.header.smartAssistant')}
               </>
             ) : (
               <>
                 <div className="h-2 w-2 rounded-full bg-blue-500" />
-                Human Agent
+                {t('chat.header.humanAgent')}
               </>
             )}
           </h3>
           <p className="text-[12px] text-muted-foreground font-medium">
-            {isAIHandling ? '24/7 Available' : 'Live Support'}
+            {isAIHandling ? t('chat.header.available247') : t('chat.header.liveSupport')}
           </p>
         </div>
       </div>
@@ -74,7 +76,7 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
             className="gap-2"
           >
             <Phone className="h-4 w-4" />
-            <span className="hidden sm:inline">Talk to Human</span>
+            <span className="hidden sm:inline">{t('chat.header.talkToHuman')}</span>
           </Button>
         )}
 
@@ -86,13 +88,13 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
             className="gap-2"
           >
             <User className="h-4 w-4" />
-            <span className="hidden sm:inline">Take Over</span>
+            <span className="hidden sm:inline">{t('chat.header.takeOver')}</span>
           </Button>
         )}
 
         {!isAdmin && (
           <div className="text-xs text-muted-foreground">
-            {conversation?.room_number && `Room ${conversation.room_number}`}
+            {conversation?.room_number && t('chat.selectionScreen.room', { roomNumber: conversation.room_number })}
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,6 +13,7 @@ interface AddMedicalAlertDialogProps {
 }
 
 const AddMedicalAlertDialog: React.FC<AddMedicalAlertDialogProps> = ({ open, onOpenChange, onAdd }) => {
+  const { t } = useTranslation();
   const [alertType, setAlertType] = useState('Allergy');
   const [severity, setSeverity] = useState('Medium');
   const [description, setDescription] = useState('');
@@ -31,43 +33,43 @@ const AddMedicalAlertDialog: React.FC<AddMedicalAlertDialogProps> = ({ open, onO
       <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
         <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add Medical Alert</DialogTitle>
+          <DialogTitle>{t('profilePage.preferences.dialogs.addMedical')}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Alert type</label>
+            <label className="text-sm font-medium">{t('profilePage.preferences.dialogs.alertType')}</label>
             <Select value={alertType} onValueChange={setAlertType}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Medical alert">Medical alert</SelectItem>
-                <SelectItem value="Allergy">Allergy</SelectItem>
+                <SelectItem value="Medical alert">{t('profilePage.preferences.dialogs.types.medicalAlert')}</SelectItem>
+                <SelectItem value="Allergy">{t('profilePage.preferences.dialogs.types.allergy')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Severity level</label>
+            <label className="text-sm font-medium">{t('profilePage.preferences.dialogs.severityLevel')}</label>
             <Select value={severity} onValueChange={setSeverity}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="Low">Low</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="High">High</SelectItem>
-                <SelectItem value="Critical">Critical</SelectItem>
+                <SelectItem value="Low">{t('profilePage.preferences.dialogs.severity.low')}</SelectItem>
+                <SelectItem value="Medium">{t('profilePage.preferences.dialogs.severity.medium')}</SelectItem>
+                <SelectItem value="High">{t('profilePage.preferences.dialogs.severity.high')}</SelectItem>
+                <SelectItem value="Critical">{t('profilePage.preferences.dialogs.severity.critical')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Description</label>
+            <label className="text-sm font-medium">{t('profilePage.preferences.dialogs.description')}</label>
             <Textarea
-              placeholder="Describe your condition or allergy..."
+              placeholder={t('profilePage.preferences.dialogs.medicalDescPlaceholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleAdd} disabled={!description.trim()}>Add</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{t('profilePage.preferences.dialogs.cancel')}</Button>
+          <Button onClick={handleAdd} disabled={!description.trim()}>{t('profilePage.preferences.dialogs.add')}</Button>
         </DialogFooter>
       </DialogContent>
       </Dialog>

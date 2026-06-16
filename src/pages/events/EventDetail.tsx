@@ -29,8 +29,10 @@ import Layout from '@/components/Layout';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useEventReservationDetail } from '@/hooks/useEventReservationDetail';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const EventDetail = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isCancelling, setIsCancelling] = useState(false);
@@ -44,10 +46,10 @@ const EventDetail = () => {
       console.log("Starting cancellation for reservation ID:", id);
       await cancelReservation();
       console.log("Cancellation completed successfully");
-      toast.success("La réservation a été annulée avec succès");
+      toast.success(t('events.reservation.cancelSuccess', "Reservation successfully cancelled"));
     } catch (error) {
       console.error("Error during reservation cancellation:", error);
-      toast.error("Une erreur s'est produite lors de l'annulation de la réservation");
+      toast.error(t('events.reservation.cancelError', "An error occurred while cancelling the reservation"));
     } finally {
       setIsCancelling(false);
     }
@@ -63,13 +65,13 @@ const EventDetail = () => {
         <div className="container py-8">
           <Card className="max-w-2xl mx-auto">
             <CardHeader>
-              <CardTitle className="text-red-500">Erreur</CardTitle>
+              <CardTitle className="text-red-500">{t('events.reservation.errorTitle', 'Error')}</CardTitle>
               <CardDescription>
-                La réservation n'a pas pu être trouvée ou une erreur s'est produite.
+                {t('events.reservation.errorMessage', "The reservation could not be found or an error occurred.")}
               </CardDescription>
             </CardHeader>
             <CardFooter>
-              <Button onClick={() => navigate(-1)}>Retour</Button>
+              <Button onClick={() => navigate(-1)}>{t('events.reservation.back', 'Back')}</Button>
             </CardFooter>
           </Card>
         </div>
@@ -99,11 +101,11 @@ const EventDetail = () => {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'Confirmée';
+        return t('events.reservation.status.confirmed', 'Confirmed');
       case 'cancelled':
-        return 'Annulée';
+        return t('events.reservation.status.cancelled', 'Cancelled');
       default:
-        return 'En attente';
+        return t('events.reservation.status.pending', 'Pending');
     }
   };
 
@@ -112,16 +114,16 @@ const EventDetail = () => {
       <div className="container py-8">
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            ← Retour
+            ← {t('events.reservation.back', 'Back')}
           </Button>
           
           <Card>
             <CardHeader>
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
-                  <CardTitle>Détails de la réservation</CardTitle>
+                  <CardTitle>{t('events.reservation.title', 'Reservation Details')}</CardTitle>
                   <CardDescription>
-                    Événement: {reservation.event?.title || 'Événement'}
+                    {t('events.reservation.eventLabel', 'Event:')} {reservation.event?.title || t('events.reservation.eventFallback', 'Event')}
                   </CardDescription>
                 </div>
                 <Badge className={`${getStatusColor(reservation.status)}`}>
@@ -134,13 +136,13 @@ const EventDetail = () => {
               {/* Event Details */}
               {reservation.event && (
                 <div>
-                  <h3 className="text-lg font-medium">Détails de l'événement</h3>
+                  <h3 className="text-lg font-medium">{t('events.reservation.eventDetails', 'Event Details')}</h3>
                   <Separator className="my-2" />
                   <div className="space-y-2">
                     <p className="text-sm">{reservation.event.description}</p>
                     {reservation.event.location && (
                       <p className="text-sm text-muted-foreground">
-                        Lieu: {reservation.event.location}
+                        {t('events.reservation.location', 'Location:')} {reservation.event.location}
                       </p>
                     )}
                   </div>
@@ -149,27 +151,27 @@ const EventDetail = () => {
 
               {/* Reservation Info */}
               <div>
-                <h3 className="text-lg font-medium">Informations de réservation</h3>
+                <h3 className="text-lg font-medium">{t('events.reservation.info', 'Reservation Information')}</h3>
                 <Separator className="my-2" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Date: {formatDate(reservation.date)}</span>
+                    <span className="text-sm">{t('events.reservation.date', 'Date:')} {formatDate(reservation.date)}</span>
                   </div>
                   {reservation.event?.time && (
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Heure: {reservation.event.time}</span>
+                      <span className="text-sm">{t('events.reservation.time', 'Time:')} {reservation.event.time}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Nombre de personnes: {reservation.guests}</span>
+                    <span className="text-sm">{t('events.reservation.guests', 'Number of guests:')} {reservation.guests}</span>
                   </div>
                   {reservation.roomNumber && (
                     <div className="flex items-center gap-2">
                       <Hash className="h-4 w-4 text-primary" />
-                      <span className="text-sm">Chambre: {reservation.roomNumber}</span>
+                      <span className="text-sm">{t('events.reservation.room', 'Room:')} {reservation.roomNumber}</span>
                     </div>
                   )}
                 </div>
@@ -177,15 +179,15 @@ const EventDetail = () => {
 
               {/* Contact Info */}
               <div>
-                <h3 className="text-lg font-medium">Informations de contact</h3>
+                <h3 className="text-lg font-medium">{t('events.reservation.contact', 'Contact Information')}</h3>
                 <Separator className="my-2" />
                 <div className="space-y-2">
-                  <p className="text-sm">Nom: {reservation.guestName}</p>
+                  <p className="text-sm">{t('events.reservation.name', 'Name:')} {reservation.guestName}</p>
                   {reservation.guestEmail && (
-                    <p className="text-sm">Email: {reservation.guestEmail}</p>
+                    <p className="text-sm">{t('events.reservation.email', 'Email:')} {reservation.guestEmail}</p>
                   )}
                   {reservation.guestPhone && (
-                    <p className="text-sm">Téléphone: {reservation.guestPhone}</p>
+                    <p className="text-sm">{t('events.reservation.phone', 'Phone:')} {reservation.guestPhone}</p>
                   )}
                 </div>
               </div>
@@ -193,7 +195,7 @@ const EventDetail = () => {
               {/* Special Requests */}
               {reservation.specialRequests && (
                 <div>
-                  <h3 className="text-lg font-medium">Demandes spéciales</h3>
+                  <h3 className="text-lg font-medium">{t('events.reservation.specialRequests', 'Special Requests')}</h3>
                   <Separator className="my-2" />
                   <div className="p-3 bg-gray-50 rounded-md">
                     <div className="flex gap-2">
@@ -215,23 +217,22 @@ const EventDetail = () => {
                       disabled={isCancelling}
                     >
                       <CalendarX className="mr-2 h-4 w-4" />
-                      {isCancelling ? "Annulation en cours..." : "Annuler la réservation"}
+                      {isCancelling ? t('events.reservation.cancelling', "Cancelling...") : t('events.reservation.cancelAction', "Cancel reservation")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        Êtes-vous sûr de vouloir annuler cette réservation?
+                        {t('events.reservation.cancelConfirmTitle', "Are you sure you want to cancel this reservation?")}
                       </AlertDialogTitle>
                       <AlertDialogDescription>
-                        Cette action ne peut pas être annulée. La réservation sera définitivement
-                        annulée.
+                        {t('events.reservation.cancelConfirmDesc', "This action cannot be undone. The reservation will be permanently cancelled.")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                      <AlertDialogCancel>{t('events.reservation.cancel', "Cancel")}</AlertDialogCancel>
                       <AlertDialogAction onClick={handleCancelReservation}>
-                        Oui, annuler la réservation
+                        {t('events.reservation.cancelConfirmYes', "Yes, cancel reservation")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

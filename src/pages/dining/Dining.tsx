@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
@@ -14,9 +13,11 @@ import { Restaurant } from '@/features/dining/types';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { useHotelPath } from '@/hooks/useHotelPath';
+import { translateOpenHours } from '@/utils/restaurantTranslation';
 
 const Dining = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
   const navigate = useNavigate();
   const { toast } = useToast();
   const { requireAuth } = useRequireAuth();
@@ -44,8 +45,8 @@ const Dining = () => {
     setIsBookingOpen(false);
     setSelectedRestaurant(null);
     toast({
-      title: "Success",
-      description: "Restaurant booking request sent successfully!",
+      title: t('common.success'),
+      description: t('forms.messages.reservationSentSuccess'),
     });
   };
 
@@ -91,27 +92,27 @@ const Dining = () => {
                 </div>
               </div>
               <div className="p-4">
-                <h3 className="text-xl font-semibold text-foreground mb-2">{restaurant.name}</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{t(`restaurants.name.${restaurant.id}`, restaurant.name)}</h3>
                 <div className="flex items-center gap-2 text-muted-foreground mb-2">
                   <UtensilsCrossed className="w-4 h-4" />
-                  <span>{restaurant.cuisine}</span>
+                  <span>{t(`restaurants.cuisine.${restaurant.cuisine?.trim()}`, restaurant.cuisine)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground mb-2">
                   <Clock className="w-4 h-4" />
-                  <span>{restaurant.openHours}</span>
+                  <span>{translateOpenHours(t(`restaurants.openHours.${restaurant.id}`, restaurant.openHours), language)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground mb-4">
                   <MapPin className="w-4 h-4" />
-                  <span>{restaurant.location}</span>
+                  <span>{t(`restaurants.location.${restaurant.location?.trim()}`, restaurant.location)}</span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{restaurant.description}</p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{t(`restaurants.description.${restaurant.id}`, restaurant.description)}</p>
                 <div className="grid grid-cols-2 gap-2 mb-2">
                   <Button
                     onClick={() => handleBookTable(restaurant.id)}
                     className="w-full flex items-center justify-center gap-1"
                   >
                     <Calendar size={16} />
-                    {restaurant.actionText || t('dining.bookTable')}
+                    {restaurant.actionText ? t(`restaurants.action.${restaurant.actionText}`, restaurant.actionText) : t('dining.bookTable')}
                   </Button>
                   <Button
                     variant="outline"

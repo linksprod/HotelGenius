@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
@@ -8,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
 
 export const SpaBookingLoader: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
 
@@ -21,7 +23,7 @@ export const SpaBookingLoader: React.FC = () => {
           className="mb-2 -ml-2"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Retour aux notifications
+          {t('notifications.spaBooking.backToNotifications')}
         </Button>
 
         <Skeleton className="h-8 w-56 mb-2" />

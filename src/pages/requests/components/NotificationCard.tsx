@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import { enUS, fr } from 'date-fns/locale';
 import { 
   CheckCircle2, 
   XCircle, 
@@ -15,7 +17,7 @@ import {
   UtensilsCrossed,
   Calendar
 } from 'lucide-react';
-import { NotificationItem } from '@/types/notification';
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 interface NotificationCardProps {
   notification: NotificationItem;
@@ -29,6 +31,9 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   canCancel
 }) => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+  const { resolvePath } = useHotelPath();
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -58,7 +63,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     }
   };
 
-  const getStatusText = (status: string) => {
+  const getStatusDefaultText = (status: string) => {
     switch (status) {
       case 'completed': return "Completed";
       case 'in_progress': return "In Progress";
@@ -66,6 +71,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       case 'confirmed': return "Confirmed";
       default: return "Pending";
     }
+  };
+
+  const getStatusText = (status: string) => {
+    const defaultText = getStatusDefaultText(status);
+    return t('notifications.status.' + status, defaultText);
   };
 
   const getStatusClass = (status: string) => {
@@ -79,7 +89,38 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   };
 
   const getDetailLink = () => {
-    return notification.link || '/requests';
+    return resolvePath(notification.link || '/requests');
+  };
+
+  const getTranslatedTitle = (rawTitle: string) => {
+    const key = rawTitle.toLowerCase().replace(/ /g, '_');
+    return t('notifications.types.' + key, rawTitle);
+  };
+
+  const getTranslatedDescription = (desc: string, type: string, data: any) => {
+    if (type === 'spa_booking') {
+      return t('notifications.summaries.spa_booking', {
+        date: data?.date || '',
+        time: data?.time || '',
+        defaultValue: desc
+      });
+    } else if (type === 'reservation') {
+      return t('notifications.summaries.restaurant_booking', {
+        guests: data?.guests || '',
+        date: data?.date || '',
+        time: data?.time || '',
+        defaultValue: desc
+      });
+    } else if (type === 'request') {
+      return desc || t('notifications.summaries.service_request', 'Service request');
+    } else if (type === 'event_reservation') {
+      return t('notifications.summaries.event_booking', {
+        guests: data?.guests || '',
+        date: data?.date || '',
+        defaultValue: desc
+      });
+    }
+    return desc;
   };
 
   return (
@@ -91,9 +132,12 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               {getTypeIcon(notification.type)}
             </div>
             <div>
-              <CardTitle className="text-lg">{notification.title}</CardTitle>
+              <CardTitle className="text-lg">{getTranslatedTitle(notification.title)}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(notification.time), { addSuffix: true })}
+                {formatDistanceToNow(new Date(notification.time), {
+                  addSuffix: true,
+                  locale: currentLang === 'fr' ? fr : enUS
+                })}
               </p>
             </div>
           </div>
@@ -106,7 +150,9 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       <CardContent className="pt-0">
         {notification.description && (
           <div className="mb-4">
-            <p className="text-foreground/80">{notification.description}</p>
+            <p className="text-foreground/80">
+              {getTranslatedDescription(notification.description, notification.type, notification.data)}
+            </p>
           </div>
         )}
         
@@ -122,7 +168,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               size="sm"
               onClick={() => navigate(getDetailLink())}
             >
-              View Details
+              {t('notifications.action.viewDetails', 'View Details')}
             </Button>
             
             {canCancel && (
@@ -132,7 +178,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
                 onClick={() => onCancel(notification)}
               >
                 <Ban className="h-4 w-4 mr-1" />
-                Cancel
+                {t('notifications.action.cancel', 'Cancel')}
               </Button>
             )}
           </div>

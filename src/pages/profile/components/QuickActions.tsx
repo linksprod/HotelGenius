@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
 import { BellRing, CalendarDays, Utensils, ShowerHead } from "lucide-react";
 import { Link } from 'react-router-dom';
@@ -8,20 +9,21 @@ import { useHotelPath } from '@/hooks/useHotelPath';
 import NotificationsList from './NotificationsList';
 
 const QuickActions = () => {
+  const { t } = useTranslation();
   const { notifications } = useNotifications();
   const { resolvePath } = useHotelPath();
   const recentNotifications = notifications.slice(0, 3); // Get only the first 3 notifications
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+      <h2 className="text-xl font-semibold mb-4">{t('profilePage.quickActions.title')}</h2>
 
       <div className="grid grid-cols-2 gap-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardContent className="p-4">
             <Link to={resolvePath("/dining")} className="flex flex-col items-center justify-center">
               <Utensils className="h-8 w-8 text-primary mb-2" />
-              <span className="text-sm font-medium">Dining</span>
+              <span className="text-sm font-medium">{t('profilePage.quickActions.dining')}</span>
             </Link>
           </CardContent>
         </Card>
@@ -30,7 +32,7 @@ const QuickActions = () => {
           <CardContent className="p-4">
             <Link to={resolvePath("/spa")} className="flex flex-col items-center justify-center">
               <ShowerHead className="h-8 w-8 text-primary mb-2" />
-              <span className="text-sm font-medium">Spa</span>
+              <span className="text-sm font-medium">{t('profilePage.quickActions.spa')}</span>
             </Link>
           </CardContent>
         </Card>
@@ -39,7 +41,7 @@ const QuickActions = () => {
           <CardContent className="p-4">
             <Link to={resolvePath("/events")} className="flex flex-col items-center justify-center">
               <CalendarDays className="h-8 w-8 text-primary mb-2" />
-              <span className="text-sm font-medium">Events</span>
+              <span className="text-sm font-medium">{t('profilePage.quickActions.events')}</span>
             </Link>
           </CardContent>
         </Card>
@@ -48,7 +50,7 @@ const QuickActions = () => {
           <CardContent className="p-4">
             <Link to={resolvePath("/notifications")} className="flex flex-col items-center justify-center">
               <BellRing className="h-8 w-8 text-primary mb-2" />
-              <span className="text-sm font-medium">Notifications</span>
+              <span className="text-sm font-medium">{t('profilePage.quickActions.notifications')}</span>
             </Link>
           </CardContent>
         </Card>

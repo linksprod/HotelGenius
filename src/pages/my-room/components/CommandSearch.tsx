@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import { requestService } from '@/features/rooms/controllers/roomService';
 import { useToast } from '@/hooks/use-toast';
@@ -23,6 +24,7 @@ type ItemToRequest = {
 };
 
 const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemToRequest | null>(null);
@@ -85,8 +87,8 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
         }
         if (!roomNumber) {
           toast({
-            title: "Room Information Needed",
-            description: "We couldn't find your room. Please complete your profile settings.",
+            title: t('myRoom.request.roomInfoNeeded', 'Room Information Needed'),
+            description: t('myRoom.request.roomInfoNeededDesc', "We couldn't find your room. Please complete your profile settings."),
             variant: "destructive",
           });
           setIsSubmitting(false);
@@ -109,8 +111,8 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
         selectedItem.category
       );
       toast({
-        title: "Request Sent",
-        description: `Your request for "${selectedItem.name}" was sent successfully.`,
+        title: t('myRoom.request.requestSent', 'Request Sent'),
+        description: t('myRoom.request.requestSentDesc', 'Your request for "{{name}}" was sent successfully.', { name: selectedItem.name }),
       });
       onRequestSuccess();
       setOpen(false);
@@ -118,8 +120,8 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
     } catch (error) {
       console.error("Error sending request:", error);
       toast({
-        title: "Error",
-        description: "Could not send the request. Please try again.",
+        title: t('myRoom.request.requestError', 'Error'),
+        description: t('myRoom.request.requestErrorDesc', 'Could not send the request. Please try again.'),
         variant: "destructive",
       });
     } finally {
@@ -134,7 +136,7 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
         className="absolute inset-0 cursor-pointer"
         onClick={() => setOpen(true)}
       >
-        <span className="sr-only">Open service search</span>
+        <span className="sr-only">{t('myRoom.request.openSearch', 'Open service search')}</span>
       </div>
       <SearchDialog
         open={open}

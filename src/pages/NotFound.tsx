@@ -1,10 +1,11 @@
 
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import Layout from '@/components/Layout';
+import { useHotelPath } from "@/hooks/useHotelPath";
 
 const NotFound = () => {
   const location = useLocation();
+  const { resolvePath } = useHotelPath();
 
   useEffect(() => {
     console.error(
@@ -19,7 +20,7 @@ const NotFound = () => {
         <h1 className="text-6xl font-bold mb-4 text-foreground">404</h1>
         <p className="text-xl text-muted-foreground mb-8">Oops! Page not found</p>
         <button 
-          onClick={() => window.location.href = '/'} 
+          onClick={() => window.location.href = resolvePath('/')} 
           className="px-6 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
         >
           Return to Home

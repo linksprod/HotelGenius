@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Plus, X } from "lucide-react";
@@ -25,6 +26,7 @@ const relationOptions = [
 ];
 
 const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => {
+  const { t } = useTranslation();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newCompanion, setNewCompanion] = useState<Partial<CompanionData>>({
     first_name: '',
@@ -38,8 +40,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
     if (!newCompanion.first_name || !newCompanion.last_name || !newCompanion.relation) {
       toast({
         variant: "destructive",
-        title: "Missing Information",
-        description: "Please fill in all required fields."
+        title: t('profilePage.companions.toasts.missingInfoTitle'),
+        description: t('profilePage.companions.toasts.missingInfoDesc')
       });
       return;
     }
@@ -67,8 +69,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
         await syncCompanions(user.id, updatedCompanions);
 
         toast({
-          title: "Companion added",
-          description: "The companion has been successfully added."
+          title: t('profilePage.companions.toasts.successAddTitle'),
+          description: t('profilePage.companions.toasts.successAddDesc')
         });
 
         setIsDialogOpen(false);
@@ -80,15 +82,15 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
         console.error("Erreur lors de l'ajout de l'accompagnateur:", error);
         toast({
           variant: "destructive",
-          title: "Error",
-          description: "Unable to add companion. Please try again."
+          title: t('profilePage.companions.toasts.errorAddTitle'),
+          description: t('profilePage.companions.toasts.errorAddDesc')
         });
       }
     } else {
       toast({
         variant: "destructive",
-        title: "Authentication Error",
-        description: "You must be logged in to add a companion."
+        title: t('profilePage.companions.toasts.authErrorTitle'),
+        description: t('profilePage.companions.toasts.authErrorDesc')
       });
     }
   };
@@ -97,8 +99,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
     if (!companionId) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Unable to delete this companion."
+        title: t('profilePage.companions.toasts.errorDeleteTitle'),
+        description: t('profilePage.companions.toasts.errorDeleteDesc')
       });
       return;
     }
@@ -108,8 +110,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
 
       if (success) {
         toast({
-          title: "Companion deleted",
-          description: "The companion has been successfully deleted."
+          title: t('profilePage.companions.toasts.successDeleteTitle'),
+          description: t('profilePage.companions.toasts.successDeleteDesc')
         });
 
         // Force reload the page to refresh the companions list
@@ -121,8 +123,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
       console.error("Erreur lors de la suppression de l'accompagnateur:", error);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Unable to delete companion. Please try again."
+        title: t('profilePage.companions.toasts.errorDeleteActionTitle'),
+        description: t('profilePage.companions.toasts.errorDeleteActionDesc')
       });
     }
   };
@@ -141,7 +143,7 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
         <div className="p-4 border-b">
           <div className="flex items-center gap-2 text-primary mb-1">
             <Users className="h-5 w-5" />
-            <h2 className="text-lg font-semibold">Companions</h2>
+            <h2 className="text-lg font-semibold">{t('profilePage.companions.title')}</h2>
           </div>
         </div>
         {companions.length > 0 ? (
@@ -150,7 +152,9 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
               <div key={companion.id || index} className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">{companion.first_name || companion.firstName} {companion.last_name || companion.lastName}</p>
-                  <p className="text-sm text-muted-foreground">{companion.relation}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('profilePage.companions.relations.' + companion.relation.toLowerCase(), companion.relation)}
+                  </p>
                 </div>
                 <Button
                   variant="ghost"
@@ -165,13 +169,13 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
           </div>
         ) : (
           <div className="p-4 text-center text-muted-foreground">
-            No companions added
+            {t('profilePage.companions.noCompanions')}
           </div>
         )}
         <div className="p-4 border-t">
           <Button variant="outline" className="w-full" onClick={() => setIsDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Add a companion
+            {t('profilePage.companions.addCompanion')}
           </Button>
         </div>
       </CardContent>
@@ -180,40 +184,40 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} modal={false}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add a Companion</DialogTitle>
+            <DialogTitle>{t('profilePage.companions.addCompanionTitle')}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">First Name</label>
+                <label className="text-sm font-medium mb-1 block">{t('profilePage.companions.firstName')}</label>
                 <Input
                   value={newCompanion.first_name || ''}
                   onChange={(e) => setNewCompanion({ ...newCompanion, first_name: e.target.value })}
-                  placeholder="First Name"
+                  placeholder={t('profilePage.companions.firstName')}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Last Name</label>
+                <label className="text-sm font-medium mb-1 block">{t('profilePage.companions.lastName')}</label>
                 <Input
                   value={newCompanion.last_name || ''}
                   onChange={(e) => setNewCompanion({ ...newCompanion, last_name: e.target.value })}
-                  placeholder="Last Name"
+                  placeholder={t('profilePage.companions.lastName')}
                 />
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1 block">Relation</label>
+              <label className="text-sm font-medium mb-1 block">{t('profilePage.companions.relation')}</label>
               <Select
                 value={newCompanion.relation || ''}
                 onValueChange={(value) => setNewCompanion({ ...newCompanion, relation: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder={t('profilePage.companions.selectRelation')} />
                 </SelectTrigger>
                 <SelectContent>
                   {relationOptions.map(option => (
                     <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                      {t('profilePage.companions.relations.' + option.value, option.label)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -221,8 +225,8 @@ const CompanionsList = ({ companions, onAddCompanion }: CompanionsListProps) => 
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddCompanion}>Add</Button>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>{t('profilePage.companions.cancel')}</Button>
+            <Button onClick={handleAddCompanion}>{t('profilePage.companions.add')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

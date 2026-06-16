@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RestaurantGalleryProps {
   images: string[];
@@ -9,6 +9,7 @@ interface RestaurantGalleryProps {
 
 const RestaurantGallery = ({ images, name, status }: RestaurantGalleryProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-4">
@@ -23,7 +24,7 @@ const RestaurantGallery = ({ images, name, status }: RestaurantGalleryProps) => 
             px-2 py-1 rounded-full text-xs font-medium
             ${status === 'open' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
           `}>
-            {status}
+            {t(`common.${status}`, status)}
           </span>
         </div>
       </div>

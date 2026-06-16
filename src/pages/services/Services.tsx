@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '@/components/Layout';
 import { MessageCircle, Headphones as HeadphonesIcon, Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -17,8 +18,9 @@ interface UserInfo {
 
 const Services = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [userInfo, setUserInfo] = useState<UserInfo>({
-    name: 'Guest',
+    name: t('servicesPage.guest', 'Guest'),
     roomNumber: ''
   });
   const { toast } = useToast();
@@ -32,7 +34,7 @@ const Services = () => {
       const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
       if (fullName || userData.room_number) {
         setUserInfo({
-          name: fullName || 'Guest',
+          name: fullName || t('servicesPage.guest', 'Guest'),
           roomNumber: userData.room_number || ''
         });
         if (userData.room_number) {
@@ -53,7 +55,7 @@ const Services = () => {
 
         if (fullName || roomNumber) {
           setUserInfo({
-            name: fullName || 'Guest',
+            name: fullName || t('servicesPage.guest', 'Guest'),
             roomNumber: roomNumber
           });
         }
@@ -76,8 +78,8 @@ const Services = () => {
 
   const handleWhatsAppService = () => {
     toast({
-      title: "WhatsApp Service",
-      description: "Opening WhatsApp to connect with our concierge team."
+      title: t('servicesPage.whatsApp.toastTitle', 'WhatsApp Service'),
+      description: t('servicesPage.whatsApp.toastDesc', 'Opening WhatsApp to connect with our concierge team.')
     });
     window.open('https://wa.me/+21628784080', '_blank');
   };
@@ -86,16 +88,16 @@ const Services = () => {
     <Layout>
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-semibold text-foreground mb-4">Hotel Services</h1>
-          <p className="text-muted-foreground">24/7 dedicated concierge support</p>
+          <h1 className="text-4xl font-semibold text-foreground mb-4">{t('servicesPage.title', 'Hotel Services')}</h1>
+          <p className="text-muted-foreground">{t('servicesPage.subtitle', '24/7 dedicated concierge support')}</p>
         </div>
 
         <div className="max-w-xl mx-auto mb-8 px-4">
-          <h2 className="text-xl font-medium text-foreground mb-3">Quick Service Search</h2>
+          <h2 className="text-xl font-medium text-foreground mb-3">{t('servicesPage.quickSearch', 'Quick Service Search')}</h2>
           <div className="relative">
             <div className="relative flex items-center border rounded-xl px-4 py-3.5 bg-background shadow-md cursor-pointer hover:shadow-lg transition-all group">
               <Search className="h-5 w-5 mr-3 text-primary group-hover:text-primary/80 transition-colors" />
-              <span className="text-muted-foreground group-hover:text-foreground transition-colors">Search for services (towels, cleaning, wifi support...)</span>
+              <span className="text-muted-foreground group-hover:text-foreground transition-colors">{t('servicesPage.searchPlaceholder', 'Search for services (towels, cleaning, wifi support...)')}</span>
             </div>
 
             <div className="absolute inset-0">
@@ -103,8 +105,8 @@ const Services = () => {
                 room={room}
                 onRequestSuccess={() => {
                   toast({
-                    title: "Request Sent",
-                    description: "Your service request has been submitted successfully."
+                    title: t('servicesPage.requestSentTitle', 'Request Sent'),
+                    description: t('servicesPage.requestSentDesc', 'Your service request has been submitted successfully.')
                   });
                 }}
               />
@@ -114,18 +116,18 @@ const Services = () => {
 
         <div className="grid md:grid-cols-2 gap-6 mb-8 px-4">
           <ServiceCard
-            title="Live Chat"
-            description="Instant messaging with our concierge team"
+            title={t('servicesPage.liveChat.title', 'Live Chat')}
+            description={t('servicesPage.liveChat.description', 'Instant messaging with our concierge team')}
             icon={MessageCircle}
-            actionText="Start Chat"
+            actionText={t('servicesPage.liveChat.action', 'Start Chat')}
             onAction={handleStartChat}
           />
 
           <ServiceCard
-            title="WhatsApp Service"
-            description="Direct messaging via WhatsApp"
+            title={t('servicesPage.whatsApp.title', 'WhatsApp Service')}
+            description={t('servicesPage.whatsApp.description', 'Direct messaging via WhatsApp')}
             icon={HeadphonesIcon}
-            actionText="Message Us"
+            actionText={t('servicesPage.whatsApp.action', 'Message Us')}
             onAction={handleWhatsAppService}
           />
         </div>

@@ -4,6 +4,7 @@ import { UnifiedMessagesList } from './UnifiedMessagesList';
 import { UnifiedChatInput } from './UnifiedChatInput';
 import { useUnifiedChat } from '@/hooks/useUnifiedChat';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { useTranslation } from 'react-i18next';
 
 interface UnifiedChatContainerProps {
   userInfo: {
@@ -28,6 +29,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   hotelId: propHotelId,
   onGoBack
 }) => {
+  const { t } = useTranslation();
   const { hotelId: contextHotelId } = useCurrentHotelId();
   const hotelId = propHotelId || contextHotelId;
 
@@ -51,7 +53,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
       <div className={`flex items-center justify-center h-full bg-background ${className}`}>
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-muted-foreground">Loading chat...</p>
+          <p className="text-muted-foreground">{t('chat.container.loadingChat')}</p>
         </div>
       </div>
     );

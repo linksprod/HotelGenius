@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +27,7 @@ const FeaturesSection = ({
   onSave
 }: FeaturesSectionProps) => {
   const [editableFeatures, setEditableFeatures] = useState<FeatureItem[]>(features || []);
+  const { t } = useTranslation();
 
   const getIconComponent = (iconName: string) => {
     switch (iconName) {
@@ -151,7 +153,7 @@ const FeaturesSection = ({
 
   return (
     <Card className="p-6 mb-6">
-      <h2 className="text-xl font-semibold mb-4">About Our Hotel</h2>
+      <h2 className="text-xl font-semibold mb-4">{t('about.title', 'About Our Hotel')}</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {features.map((feature, index) => (
           <div key={index} className="flex flex-col items-center text-center p-4">

@@ -39,7 +39,7 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
     openHours: item.open_hours,
     location: item.location,
     status: item.status as 'open' | 'closed',
-    actionText: item.action_text || "Book a Table",
+    actionText: item.action_text || null,
     isFeatured: item.is_featured || false
   }));
 };
@@ -68,7 +68,7 @@ export const fetchRestaurantById = async (id: string): Promise<Restaurant> => {
     openHours: data.open_hours,
     location: data.location,
     status: data.status as 'open' | 'closed',
-    actionText: data.action_text || "Book a Table",
+    actionText: data.action_text || null,
     isFeatured: data.is_featured || false
   };
 };
@@ -111,7 +111,7 @@ export const fetchFeaturedRestaurants = async (hotelId: string | null = null, is
     openHours: item.open_hours,
     location: item.location,
     status: item.status as 'open' | 'closed',
-    actionText: item.action_text || "Book a Table",
+    actionText: item.action_text || null,
     isFeatured: item.is_featured || false
   }));
 };

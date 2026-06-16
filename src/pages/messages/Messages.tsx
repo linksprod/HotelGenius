@@ -9,11 +9,16 @@ import { ArrowLeft, User } from 'lucide-react';
 import { useMessageBadge } from '@/hooks/useMessageBadge';
 import Layout from '@/components/Layout';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useTranslation } from 'react-i18next';
+
+import { useHotelPath } from '@/hooks/useHotelPath';
 
 const Messages = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { hotel } = useHotel();
+  const { resolvePath } = useHotelPath();
   const [userInfo, setUserInfo] = useState<{
     name: string;
     email?: string;
@@ -52,8 +57,7 @@ const Messages = () => {
         if (!user) {
           console.warn('[Messages] No active session found, redirecting to login');
           if (isMounted) {
-            const currentSlug = location.pathname.split('/')[1];
-            navigate(`/${currentSlug}/guests/auth/login?redirect=${encodeURIComponent(location.pathname)}`);
+            navigate(resolvePath('/guests/auth/login') + `?redirect=${encodeURIComponent(location.pathname)}`);
           }
           return;
         }
@@ -120,7 +124,7 @@ const Messages = () => {
       <div className="fixed inset-0 bg-background flex items-center justify-center z-50">
         <div className="text-center space-y-4">
           <div className="h-12 w-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin mx-auto"></div>
-          <p className="text-muted-foreground font-medium animate-pulse">Initializing Neural Secure Chat...</p>
+          <p className="text-muted-foreground font-medium animate-pulse">{t('chat.messagesPage.initializingChat')}</p>
         </div>
       </div>
     );
@@ -133,12 +137,12 @@ const Messages = () => {
           <div className="bg-muted rounded-full p-6 mb-6">
             <User className="h-12 w-12 text-muted-foreground" />
           </div>
-          <h2 className="text-2xl font-bold mb-2">Session Required</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('chat.messagesPage.sessionRequired')}</h2>
           <p className="text-muted-foreground mb-8 max-w-md">
-            Please log in to your account to access your personal messaging dashboard and stay in touch with our team.
+            {t('chat.messagesPage.loginPrompt')}
           </p>
-          <Button onClick={() => navigate(`/${location.pathname.split('/')[1]}/guests/auth/login`)}>
-            Go to Login
+          <Button onClick={() => navigate(resolvePath('/guests/auth/login'))}>
+            {t('chat.messagesPage.goToLogin')}
           </Button>
         </div>
       </Layout>

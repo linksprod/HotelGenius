@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { MenuItem } from '@/features/dining/types';
 import { Dialog, DialogContent, DialogTitle, DialogHeader } from '@/components/ui/dialog';
@@ -12,16 +12,17 @@ interface RestaurantMenuProps {
 }
 
 const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
+  const { t } = useTranslation();
   const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
 
   if (isLoading) {
-    return <div className="text-center py-8">Chargement du menu...</div>;
+    return <div className="text-center py-8">{t('dining.menu.loading', 'Chargement du menu...')}</div>;
   }
 
   if (!menuItems || menuItems.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground">Menu non disponible</p>
+        <p className="text-muted-foreground">{t('dining.menu.notAvailable', 'Menu non disponible')}</p>
       </div>
     );
   }
@@ -33,7 +34,7 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
       <div className="space-y-8">
         {categories.map(category => (
           <div key={category} className="space-y-4">
-            <h3 className="text-xl font-semibold border-b pb-2">{category}</h3>
+            <h3 className="text-xl font-semibold border-b pb-2">{t(`dining.menu.category.${category}`, category)}</h3>
             <div className="grid gap-4 sm:grid-cols-2">
               {menuItems.filter(item => item.category === category).map(item => (
                 <Card key={item.id} className="overflow-hidden">
@@ -41,13 +42,13 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
                     <div className="relative aspect-video">
                       <img
                         src={item.image}
-                        alt={item.name}
+                        alt={t(`dining.menu.item.${item.id}.name`, item.name)}
                         className="w-full h-full object-cover"
                       />
                       {item.isFeatured && (
                         <div className="absolute top-2 left-2">
                           <span className="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            Recommandé
+                            {t('dining.menu.recommended', 'Recommandé')}
                           </span>
                         </div>
                       )}
@@ -56,8 +57,8 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-1">
                       <div>
-                        <h4 className="font-semibold">{item.name}</h4>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                        <h4 className="font-semibold">{t(`dining.menu.item.${item.id}.name`, item.name)}</h4>
+                        <p className="text-sm text-muted-foreground">{t(`dining.menu.item.${item.id}.description`, item.description)}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2">
                         <span className="font-semibold">{item.price} €</span>
@@ -69,7 +70,7 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
                             onClick={() => setSelectedPdf(item.menuPdf)}
                           >
                             <FileText className="h-4 w-4" />
-                            Voir le menu
+                            {t('dining.menu.viewPdf', 'Voir le menu')}
                           </Button>
                         )}
                       </div>
@@ -98,7 +99,7 @@ const RestaurantMenu = ({ menuItems, isLoading }: RestaurantMenuProps) => {
             <iframe
               src={selectedPdf}
               className="w-full h-full"
-              title="Menu PDF"
+              title={t('dining.menu.pdfTitle', 'Menu PDF')}
               style={{ border: 'none' }}
             />
           )}

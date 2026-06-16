@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { User, Bot, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ChatListScreenProps {
   onSelectChat: (type: 'concierge' | 'safety_ai') => void;
@@ -15,13 +16,14 @@ export const ChatListScreen: React.FC<ChatListScreenProps> = ({
   onSelectChat,
   userInfo
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="py-6 px-4 max-w-5xl mx-auto">
       {/* Selection Header */}
       <div className="bg-muted/30 border border-border/50 rounded-2xl px-8 py-10 mb-8 shadow-sm">
-        <h1 className="text-3xl font-bold text-foreground">Messages</h1>
+        <h1 className="text-3xl font-bold text-foreground">{t('chat.listScreen.messages')}</h1>
         <p className="text-muted-foreground mt-2 text-lg">
-          Connect with our team or Aura AI
+          {t('chat.listScreen.connectSubtitle')}
         </p>
       </div>
 
@@ -41,9 +43,9 @@ export const ChatListScreen: React.FC<ChatListScreenProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-xl text-foreground">Hotel Team</h3>
+              <h3 className="font-bold text-xl text-foreground">{t('chat.listScreen.hotelTeam')}</h3>
               <p className="text-muted-foreground mt-1">
-                Connect directly with our staff
+                {t('chat.listScreen.hotelTeamDesc')}
               </p>
             </div>
 
@@ -65,9 +67,9 @@ export const ChatListScreen: React.FC<ChatListScreenProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-xl text-foreground">Aura AI</h3>
+              <h3 className="font-bold text-xl text-foreground">{t('chat.listScreen.smartAssistant')}</h3>
               <p className="text-muted-foreground mt-1">
-                Instant AI help, can escalate to staff
+                {t('chat.listScreen.smartAssistantDesc')}
               </p>
             </div>
 

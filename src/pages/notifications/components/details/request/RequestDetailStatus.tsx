@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, Clock, Loader2, XCircle, Pause } from 'lucide-react';
 
 interface RequestDetailStatusProps {
@@ -7,6 +8,7 @@ interface RequestDetailStatusProps {
 }
 
 export const RequestDetailStatus: React.FC<RequestDetailStatusProps> = ({ status }) => {
+  const { t } = useTranslation();
   const isPending = status === 'pending';
   const isOnHold = status === 'on_hold';
   const isInProgress = status === 'in_progress';
@@ -22,9 +24,9 @@ export const RequestDetailStatus: React.FC<RequestDetailStatusProps> = ({ status
               <Clock className="h-5 w-5 text-yellow-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">Demande en attente</h3>
+              <h3 className="text-sm font-medium text-yellow-800">{t('notifications.requestStatus.pendingTitle')}</h3>
               <div className="mt-2 text-sm text-yellow-700">
-                <p>Votre demande est en cours de traitement. Notre équipe s'en occupera dans les plus brefs délais.</p>
+                <p>{t('notifications.requestStatus.pendingDesc')}</p>
               </div>
             </div>
           </div>
@@ -38,9 +40,9 @@ export const RequestDetailStatus: React.FC<RequestDetailStatusProps> = ({ status
               <Pause className="h-5 w-5 text-orange-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-orange-800">Demande en pause</h3>
+              <h3 className="text-sm font-medium text-orange-800">{t('notifications.requestStatus.onHoldTitle')}</h3>
               <div className="mt-2 text-sm text-orange-700">
-                <p>Votre demande est temporairement en attente. Notre équipe la traitera dès que possible.</p>
+                <p>{t('notifications.requestStatus.onHoldDesc')}</p>
               </div>
             </div>
           </div>
@@ -54,9 +56,9 @@ export const RequestDetailStatus: React.FC<RequestDetailStatusProps> = ({ status
               <Loader2 className="h-5 w-5 text-blue-400 animate-spin" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">Demande en cours</h3>
+              <h3 className="text-sm font-medium text-blue-800">{t('notifications.requestStatus.inProgressTitle')}</h3>
               <div className="mt-2 text-sm text-blue-700">
-                <p>Notre équipe est en train de traiter votre demande.</p>
+                <p>{t('notifications.requestStatus.inProgressDesc')}</p>
               </div>
             </div>
           </div>
@@ -70,9 +72,9 @@ export const RequestDetailStatus: React.FC<RequestDetailStatusProps> = ({ status
               <CheckCircle2 className="h-5 w-5 text-green-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">Demande complétée</h3>
+              <h3 className="text-sm font-medium text-green-800">{t('notifications.requestStatus.completedTitle')}</h3>
               <div className="mt-2 text-sm text-green-700">
-                <p>Votre demande a été traitée avec succès.</p>
+                <p>{t('notifications.requestStatus.completedDesc')}</p>
               </div>
             </div>
           </div>
@@ -86,9 +88,9 @@ export const RequestDetailStatus: React.FC<RequestDetailStatusProps> = ({ status
               <XCircle className="h-5 w-5 text-red-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Demande annulée</h3>
+              <h3 className="text-sm font-medium text-red-800">{t('notifications.requestStatus.cancelledTitle')}</h3>
               <div className="mt-2 text-sm text-red-700">
-                <p>Cette demande a été annulée.</p>
+                <p>{t('notifications.requestStatus.cancelledDesc')}</p>
               </div>
             </div>
           </div>

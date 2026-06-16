@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
@@ -14,6 +15,7 @@ const SpaServiceCard = ({
   service,
   onBook
 }: SpaServiceCardProps) => {
+  const { t } = useTranslation();
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   // Parse comma-separated images or fallback
@@ -88,7 +90,7 @@ const SpaServiceCard = ({
           size="sm" 
           className="w-full mt-2"
         >
-          Book Now
+          {t('spa.book_now', 'Book Now')}
         </Button>
       </CardContent>
     </Card>

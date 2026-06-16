@@ -6,12 +6,14 @@ import { useHotelPath } from '@/hooks/useHotelPath';
 import { motion } from 'framer-motion';
 import { isCustomDomain } from '@/utils/domain';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const { hotel } = useHotel();
   const onCustomDomain = isCustomDomain();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkSession = async () => {
@@ -105,10 +107,10 @@ const Login = () => {
             transition={{ duration: 0.7, delay: 0.2 }}
           >
             <h1 className="text-5xl font-bold text-white leading-tight tracking-tight">
-              Manage your<br />hotel smarter.
+              {t('auth.adminHeroTitle', 'Manage your hotel smarter.')}
             </h1>
             <p className="text-white/75 text-lg mt-4 leading-relaxed max-w-sm">
-              One platform for every guest experience — from bookings to room service, powered by AI.
+              {t('auth.adminHeroDesc', 'One platform for every guest experience — from bookings to room service, powered by AI.')}
             </p>
           </motion.div>
 
@@ -120,9 +122,9 @@ const Login = () => {
             className="flex flex-col gap-3"
           >
             {[
-              'Real-time guest request management',
-              'AI-powered chat & assistant',
-              'Full booking & restaurant control',
+              t('auth.adminFeature1', 'Real-time guest request management'),
+              t('auth.adminFeature2', 'AI-powered chat & assistant'),
+              t('auth.adminFeature3', 'Full booking & restaurant control'),
             ].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
                 <div className="h-5 w-5 rounded-full bg-white/25 flex items-center justify-center shrink-0">
@@ -138,7 +140,7 @@ const Login = () => {
 
         {/* Bottom tagline */}
         <div className="relative z-10 text-white/40 text-xs">
-          © {new Date().getFullYear()} Hotel Genius · Trusted by hotels worldwide
+          © {new Date().getFullYear()} Hotel Genius · {t('auth.trustedBy', 'Trusted by hotels worldwide')}
         </div>
       </div>
 

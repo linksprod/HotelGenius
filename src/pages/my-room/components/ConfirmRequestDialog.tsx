@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -31,15 +32,16 @@ const ConfirmRequestDialog = ({
   onCancel,
   onConfirm,
 }: ConfirmRequestDialogProps) => {
+  const { t } = useTranslation();
   if (!item) return null;
 
   return (
     <Dialog open={open} onOpenChange={onCancel}>
       <DialogContent className="sm:max-w-md mx-4 rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl">Confirm Service Request</DialogTitle>
+          <DialogTitle className="text-xl">{t('myRoom.request.confirmTitle', 'Confirm Service Request')}</DialogTitle>
           <DialogDescription className="text-gray-500">
-            Are you sure you want to request the following service?
+            {t('myRoom.request.confirmDesc', 'Are you sure you want to request the following service?')}
           </DialogDescription>
         </DialogHeader>
         <div className="bg-primary/5 rounded-xl p-4 my-4">
@@ -55,7 +57,7 @@ const ConfirmRequestDialog = ({
             disabled={isSubmitting}
             className="w-full sm:w-auto rounded-xl"
           >
-            Cancel
+            {t('common.cancel', 'Cancel')}
           </Button>
           <Button 
             onClick={onConfirm}
@@ -65,12 +67,12 @@ const ConfirmRequestDialog = ({
             {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Submitting...</span>
+                <span>{t('myRoom.request.submitting', 'Submitting...')}</span>
               </>
             ) : (
               <>
                 <Check className="h-4 w-4" />
-                <span>Confirm Request</span>
+                <span>{t('myRoom.request.confirmButton', 'Confirm Request')}</span>
               </>
             )}
           </Button>

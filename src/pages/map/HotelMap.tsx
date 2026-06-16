@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Layout from '@/components/Layout';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Search, Building, Utensils, Coffee, LifeBuoy, Dumbbell, Wifi, DoorClose
 import { Input } from '@/components/ui/input';
 
 const HotelMap = () => {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState('');
 
   const handleClearSearch = () => {
@@ -21,7 +23,7 @@ const HotelMap = () => {
           <div className="relative">
             <Input
               type="search"
-              placeholder="Search for locations, rooms, or facilities..."
+              placeholder={t('mapPage.searchPlaceholder')}
               className="w-full pl-12 pr-10 py-4 rounded-xl text-base bg-card shadow-lg"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -40,20 +42,20 @@ const HotelMap = () => {
 
         {/* Interactive Map */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Hotel Map</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('mapPage.title')}</h2>
           <Card className="p-0 rounded-xl overflow-hidden mb-4">
             <div className="relative h-[400px] bg-muted">
               {/* This would be your interactive map component */}
               <img
                 src="https://images.unsplash.com/photo-1580846062738-c9558ed4d26b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
-                alt="Hotel Map"
+                alt={t('mapPage.title')}
                 className="w-full h-full object-cover opacity-60"
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center bg-card/80 backdrop-blur-sm p-6 rounded-xl">
-                  <h3 className="text-xl font-bold mb-2">Interactive Map</h3>
-                  <p className="mb-4">Explore our hotel facilities and navigate with ease</p>
-                  <Button>View Full Screen</Button>
+                  <h3 className="text-xl font-bold mb-2">{t('mapPage.interactiveMap.title')}</h3>
+                  <p className="mb-4">{t('mapPage.interactiveMap.subtitle')}</p>
+                  <Button>{t('mapPage.interactiveMap.viewFullScreen')}</Button>
                 </div>
               </div>
             </div>
@@ -61,18 +63,18 @@ const HotelMap = () => {
 
           {/* Floor Selector */}
           <div className="flex overflow-x-auto gap-2 pb-2 mb-4">
-            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Ground Floor</Button>
-            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Floor 1</Button>
-            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Floor 2</Button>
-            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Floor 3</Button>
-            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Floor 4</Button>
-            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">Floor 5</Button>
+            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">{t('mapPage.floors.ground')}</Button>
+            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">{t('mapPage.floors.floor1')}</Button>
+            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">{t('mapPage.floors.floor2')}</Button>
+            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">{t('mapPage.floors.floor3')}</Button>
+            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">{t('mapPage.floors.floor4')}</Button>
+            <Button variant="outline" className="whitespace-nowrap min-w-[80px]">{t('mapPage.floors.floor5')}</Button>
           </div>
         </div>
 
         {/* Key Facilities */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Key Facilities</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('mapPage.keyFacilities.title')}</h2>
           <div className="grid grid-cols-2 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-3">
@@ -80,8 +82,8 @@ const HotelMap = () => {
                   <Utensils className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium">Restaurants</h3>
-                  <p className="text-sm text-muted-foreground">Level 1 & Rooftop</p>
+                  <h3 className="font-medium">{t('mapPage.keyFacilities.restaurants')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('mapPage.keyFacilities.restaurantsLocation')}</p>
                 </div>
               </div>
             </Card>
@@ -91,8 +93,8 @@ const HotelMap = () => {
                   <Coffee className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium">Cafe</h3>
-                  <p className="text-sm text-muted-foreground">Lobby & Level 2</p>
+                  <h3 className="font-medium">{t('mapPage.keyFacilities.cafe')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('mapPage.keyFacilities.cafeLocation')}</p>
                 </div>
               </div>
             </Card>
@@ -102,8 +104,8 @@ const HotelMap = () => {
                   <LifeBuoy className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium">Pool</h3>
-                  <p className="text-sm text-muted-foreground">Level 3</p>
+                  <h3 className="font-medium">{t('mapPage.keyFacilities.pool')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('mapPage.keyFacilities.poolLocation')}</p>
                 </div>
               </div>
             </Card>
@@ -113,8 +115,8 @@ const HotelMap = () => {
                   <Dumbbell className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium">Fitness Center</h3>
-                  <p className="text-sm text-muted-foreground">Basement Level</p>
+                  <h3 className="font-medium">{t('mapPage.keyFacilities.fitnessCenter')}</h3>
+                  <p className="text-sm text-muted-foreground">{t('mapPage.keyFacilities.fitnessCenterLocation')}</p>
                 </div>
               </div>
             </Card>
@@ -123,21 +125,21 @@ const HotelMap = () => {
 
         {/* Emergency Info */}
         <div>
-          <h2 className="text-2xl font-bold text-foreground mb-4">Emergency Information</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">{t('mapPage.emergency.title')}</h2>
           <Card className="p-6">
             <div className="flex items-center gap-4 mb-4 text-red-600">
               <div className="p-2 bg-red-100 rounded-lg">
                 <DoorClosed className="h-5 w-5" />
               </div>
-              <h3 className="font-medium">Emergency Exits</h3>
+              <h3 className="font-medium">{t('mapPage.emergency.exits')}</h3>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">Emergency exits are located at the end of each corridor on all floors. Follow the illuminated signs in case of evacuation.</p>
+            <p className="text-sm text-muted-foreground mb-4">{t('mapPage.emergency.exitsDescription')}</p>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium">Emergency Contact</p>
-                <p className="text-sm text-muted-foreground">Dial 9 from your room phone</p>
+                <p className="text-sm font-medium">{t('mapPage.emergency.contact')}</p>
+                <p className="text-sm text-muted-foreground">{t('mapPage.emergency.contactDescription')}</p>
               </div>
-              <Button variant="outline" size="sm">View Emergency Map</Button>
+              <Button variant="outline" size="sm">{t('mapPage.emergency.viewMap')}</Button>
             </div>
           </Card>
         </div>

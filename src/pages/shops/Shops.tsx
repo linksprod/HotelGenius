@@ -47,12 +47,12 @@ const Shops = () => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <h3 className="font-semibold text-sm md:text-base mb-1">{shop.name}</h3>
+                      <h3 className="font-semibold text-sm md:text-base mb-1">{t(`shops.name.${shop.id}`, shop.name)}</h3>
                       <div className="flex items-center text-xs md:text-sm text-muted-foreground mb-1">
                         <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-                        <span className="truncate">{shop.location || t('shopsPage.hotelShops.insideHotel')}</span>
+                        <span className="truncate">{t(`shops.location.${shop.id}`, shop.location || t('shopsPage.hotelShops.insideHotel'))}</span>
                       </div>
-                      <p className="text-xs md:text-sm text-muted-foreground mb-2 flex-grow line-clamp-2 md:line-clamp-none">{shop.description}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mb-2 flex-grow line-clamp-2 md:line-clamp-none">{t(`shops.description.${shop.id}`, shop.description)}</p>
                       <div className="flex gap-2 mt-auto">
                         {shop.hours && (
                           <div className="text-xs text-muted-foreground">
@@ -97,12 +97,12 @@ const Shops = () => {
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <h3 className="font-semibold text-sm md:text-base mb-1">{shop.name}</h3>
+                      <h3 className="font-semibold text-sm md:text-base mb-1">{t(`shops.name.${shop.id}`, shop.name)}</h3>
                       <div className="flex items-center text-xs md:text-sm text-muted-foreground mb-1">
                         <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-                        <span className="truncate">{shop.location}</span>
+                        <span className="truncate">{t(`shops.location.${shop.id}`, shop.location)}</span>
                       </div>
-                      <p className="text-xs md:text-sm text-muted-foreground mb-2 flex-grow line-clamp-2 md:line-clamp-none">{shop.description}</p>
+                      <p className="text-xs md:text-sm text-muted-foreground mb-2 flex-grow line-clamp-2 md:line-clamp-none">{t(`shops.description.${shop.id}`, shop.description)}</p>
                       <div className="flex gap-2 mt-auto">
                         {shop.location && (
                           <Button size="sm" variant="outline" className="text-xs" asChild>

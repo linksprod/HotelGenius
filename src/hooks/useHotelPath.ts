@@ -20,7 +20,14 @@ export const useHotelPath = () => {
         if (!slug && location.pathname !== '/') {
             const pathSlug = location.pathname.split('/')[1];
             // Reserved global routes should not be treated as hotel slugs
-            const reservedSlugs = ['administration', 'demo', 'login', 'auth'];
+            // Reserved global routes should not be treated as hotel slugs
+            const reservedSlugs = [
+                'administration', 'demo', 'login', 'auth', 'guests',
+                'rooms', 'dining', 'spa', 'activities', 'events', 
+                'destination', 'map', 'about', 'contact', 'services', 
+                'shops', 'feedback', 'messages', 'notifications', 
+                'requests', 'my-room', 'debug', 'profile', 'tipping'
+            ];
             if (!reservedSlugs.includes(pathSlug)) {
                 slug = pathSlug;
             }

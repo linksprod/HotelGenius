@@ -15,6 +15,7 @@ import { useHotelPath } from '@/hooks/useHotelPath';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { isCustomDomain } from '@/utils/domain';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
+import { useTranslation } from 'react-i18next';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
@@ -31,6 +32,7 @@ const LoginForm: React.FC = () => {
   const onCustomDomain = isCustomDomain();
   const [loading, setLoading] = useState(false);
   const { setUserData } = useAuth();
+  const { t } = useTranslation();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -149,9 +151,9 @@ const LoginForm: React.FC = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('auth.email', 'Email')}</FormLabel>
               <FormControl>
-                <Input placeholder="votre@email.com" autoComplete="email" {...field} />
+                <Input placeholder={t('auth.emailPlaceholder', 'votre@email.com')} autoComplete="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -163,9 +165,9 @@ const LoginForm: React.FC = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('auth.password', 'Password')}</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" autoComplete="current-password" {...field} />
+                <Input type="password" placeholder={t('auth.passwordPlaceholder', '••••••••')} autoComplete="current-password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -176,10 +178,10 @@ const LoginForm: React.FC = () => {
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
+              {t('auth.signingIn', 'Signing in...')}
             </>
           ) : (
-            'Sign In'
+            t('auth.signInBtn', 'Sign In')
           )}
         </Button>
       </form>

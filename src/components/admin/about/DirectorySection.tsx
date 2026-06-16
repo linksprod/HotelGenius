@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 import { InfoItem } from '@/lib/types';
 import InfoItemSection from './InfoItemSection';
 
@@ -42,6 +43,7 @@ const DirectorySection = ({
   onSaveHotelPolicies,
   onSaveAdditionalInfo
 }: DirectorySectionProps) => {
+  const { t } = useTranslation();
   const sectionTitle = directoryTitle || title || 'Hotel Directory & Information';
   const [editableTitle, setEditableTitle] = useState(sectionTitle);
 
@@ -123,29 +125,41 @@ const DirectorySection = ({
       <div className="space-y-6">
         {importantNumbers.length > 0 && (
           <InfoItemSection
-            title="Important Numbers"
-            items={importantNumbers}
+            title={t('about.directory.section.Important Numbers', 'Important Numbers')}
+            items={importantNumbers.map(item => ({
+              label: t(`about.directory.label.${item.label}`, item.label),
+              value: t(`about.directory.value.${item.value}`, item.value)
+            }))}
           />
         )}
         
         {facilities.length > 0 && (
           <InfoItemSection
-            title="Facilities & Amenities"
-            items={facilities}
+            title={t('about.directory.section.Facilities & Amenities', 'Facilities & Amenities')}
+            items={facilities.map(item => ({
+              label: t(`about.directory.label.${item.label}`, item.label),
+              value: t(`about.directory.value.${item.value}`, item.value)
+            }))}
           />
         )}
         
         {hotelPolicies.length > 0 && (
           <InfoItemSection
-            title="Hotel Policies"
-            items={hotelPolicies}
+            title={t('about.directory.section.Hotel Policies', 'Hotel Policies')}
+            items={hotelPolicies.map(item => ({
+              label: t(`about.directory.label.${item.label}`, item.label),
+              value: t(`about.directory.value.${item.value}`, item.value)
+            }))}
           />
         )}
         
         {additionalInfo.length > 0 && (
           <InfoItemSection
-            title="Additional Information"
-            items={additionalInfo}
+            title={t('about.directory.section.Additional Information', 'Additional Information')}
+            items={additionalInfo.map(item => ({
+              label: t(`about.directory.label.${item.label}`, item.label),
+              value: t(`about.directory.value.${item.value}`, item.value)
+            }))}
           />
         )}
       </div>

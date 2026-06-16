@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import RegistrationForm from './RegistrationForm';
 import LoginForm from './LoginForm';
 import { useHotel } from '@/features/hotels/context/HotelContext';
@@ -8,6 +9,7 @@ import { useHotel } from '@/features/hotels/context/HotelContext';
 const GuestLoginCard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('login');
   const { hotel } = useHotel();
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -19,12 +21,12 @@ const GuestLoginCard: React.FC = () => {
       {/* ── Header: Hotel Logo / Brand ── */}
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          {hotel?.name || 'Guest Portal'}
+          {hotel?.name || t('auth.guestPortal', 'Guest Portal')}
         </h1>
         <p className="text-muted-foreground text-sm mt-1.5">
           {activeTab === 'login'
-            ? 'Sign in to access your guest dashboard'
-            : 'Create an account to start your stay'}
+            ? t('auth.guestLoginDesc', 'Sign in to access your guest dashboard')
+            : t('auth.guestRegisterDesc', 'Create an account to start your stay')}
         </p>
       </div>
 
@@ -42,13 +44,13 @@ const GuestLoginCard: React.FC = () => {
                 value="login"
                 className="rounded-lg text-sm font-medium transition-all data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground"
               >
-                Sign In
+                {t('auth.signIn', 'Sign In')}
               </TabsTrigger>
               <TabsTrigger
                 value="register"
                 className="rounded-lg text-sm font-medium transition-all data-[state=active]:bg-card data-[state=active]:shadow-sm data-[state=active]:text-foreground"
               >
-                Create Account
+                {t('auth.createAccount', 'Create Account')}
               </TabsTrigger>
             </TabsList>
 
@@ -74,7 +76,7 @@ const GuestLoginCard: React.FC = () => {
         {/* Footer */}
         <div className="px-7 pb-5 pt-0 text-center">
           <p className="text-xs text-muted-foreground/60">
-            Secured by Hotel Genius · {new Date().getFullYear()}
+            {t('auth.securedBy', 'Secured by Hotel Genius')} · {new Date().getFullYear()}
           </p>
         </div>
       </div>

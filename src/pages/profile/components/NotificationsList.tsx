@@ -1,46 +1,53 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Bell, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+
 interface Notification {
-  id: string | number; // Updated to accept either string or number
+  id: string | number;
   message: string;
   time: string;
 }
+
 interface NotificationsListProps {
   notifications: Notification[];
-  dismissNotification: (id: string | number) => void; // Updated to accept either string or number
+  dismissNotification: (id: string | number) => void;
 }
+
 const NotificationsList = ({
   notifications,
   dismissNotification
 }: NotificationsListProps) => {
-  const {
-    toast
-  } = useToast();
+  const { t } = useTranslation();
+  const { toast } = useToast();
+
   const handleDismiss = (id: string | number) => {
     dismissNotification(id);
     toast({
-      title: "Notification dismissed",
-      description: "The notification has been removed from your list."
+      title: t('profilePage.notificationsList.toastDismissedTitle'),
+      description: t('profilePage.notificationsList.toastDismissedDesc')
     });
   };
+
   if (notifications.length === 0) {
-    return <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Notifications</h2>
+    return (
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">{t('profilePage.notificationsList.title')}</h2>
         <Card>
           <CardContent className="p-6 text-center">
             <Bell className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium mb-1">No notifications</h3>
+            <h3 className="text-lg font-medium mb-1">{t('profilePage.notificationsList.noNotifications')}</h3>
             <p className="text-gray-500 text-sm">
-              You don't have any notifications at the moment.
+              {t('profilePage.notificationsList.noNotificationsDesc')}
             </p>
           </CardContent>
         </Card>
-      </div>;
+      </div>
+    );
   }
-  return;
+
+  return null;
 };
+
 export default NotificationsList;

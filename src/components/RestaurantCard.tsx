@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, MapPin, UtensilsCrossed, Calendar, BookText } from 'lucide-react';
 import { Restaurant } from '../features/dining/types';
 import { Link, useNavigate } from 'react-router-dom';
+import { translateOpenHours } from '@/utils/restaurantTranslation';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -13,7 +14,8 @@ interface RestaurantCardProps {
 }
 
 const RestaurantCard = ({ restaurant, onBookTable }: RestaurantCardProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language;
   const navigate = useNavigate();
   
   return (
@@ -37,19 +39,19 @@ const RestaurantCard = ({ restaurant, onBookTable }: RestaurantCardProps) => {
         </div>
       </div>
       <div className="p-4 bg-card">
-        <h3 className="text-lg font-semibold text-card-foreground mb-2">{restaurant.name}</h3>
+        <h3 className="text-lg font-semibold text-card-foreground mb-2">{t(`restaurants.name.${restaurant.id}`, restaurant.name)}</h3>
         <div className="flex flex-col gap-2 mb-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <UtensilsCrossed className="w-4 h-4" />
-            {t(`restaurants.cuisine.${restaurant.cuisine}`) || restaurant.cuisine}
+            {t(`restaurants.cuisine.${restaurant.cuisine?.trim()}`) || restaurant.cuisine}
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="w-4 h-4" />
-            {restaurant.openHours}
+            {translateOpenHours(restaurant.openHours, language)}
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="w-4 h-4" />
-            {t(`restaurants.location.${restaurant.location}`) || restaurant.location}
+            {t(`restaurants.location.${restaurant.location?.trim()}`) || restaurant.location}
           </div>
         </div>
         <p className="text-sm text-muted-foreground mb-4">{t(`restaurants.description.${restaurant.id}`) || restaurant.description}</p>
@@ -59,7 +61,7 @@ const RestaurantCard = ({ restaurant, onBookTable }: RestaurantCardProps) => {
             className="w-full flex items-center justify-center gap-1"
           >
             <Calendar size={16} />
-            {restaurant.actionText || t('dining.bookTable')}
+            {restaurant.actionText ? t(`restaurants.action.${restaurant.actionText}`, restaurant.actionText) : t('dining.bookTable')}
           </Button>
           <Button 
             variant="outline" 

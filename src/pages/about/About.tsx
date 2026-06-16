@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Layout from '@/components/Layout';
 import { useAboutData } from '@/hooks/useAboutData';
 import HeroSection from '@/components/admin/about/HeroSection';
@@ -10,6 +11,7 @@ import FeaturesSection from '@/components/admin/about/FeaturesSection';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const About = () => {
+  const { t } = useTranslation();
   const { aboutData, isLoadingAbout } = useAboutData();
 
   if (isLoadingAbout) {
@@ -45,30 +47,38 @@ const About = () => {
       <div className="pt-6 md:pt-8">
         <HeroSection 
           heroImage={aboutData.hero_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80'} 
-          heroTitle={aboutData.hero_title || 'Welcome to Our Hotel'} 
-          heroSubtitle={aboutData.hero_subtitle || 'Discover luxury and comfort'} 
+          heroTitle={t(`about.content.heroTitle.${aboutData.id}`, aboutData.hero_title || 'Welcome to Our Hotel')} 
+          heroSubtitle={t(`about.content.heroSubtitle.${aboutData.id}`, aboutData.hero_subtitle || 'Discover luxury and comfort')} 
         />
       </div>
       
       <div className="container mx-auto py-8">
         <WelcomeSection 
-          welcomeTitle={aboutData.welcome_title} 
-          welcomeDescription={aboutData.welcome_description} 
-          welcomeDescriptionExtended={aboutData.welcome_description_extended}
+          welcomeTitle={t(`about.content.welcomeTitle.${aboutData.id}`, aboutData.welcome_title || '')} 
+          welcomeDescription={t(`about.content.welcomeDescription.${aboutData.id}`, aboutData.welcome_description || '')} 
+          welcomeDescriptionExtended={t(`about.content.welcomeDescriptionExtended.${aboutData.id}`, aboutData.welcome_description_extended || '')}
         />
         
         {aboutData.mission && (
-          <MissionSection mission={aboutData.mission} />
+          <MissionSection mission={t(`about.content.mission.${aboutData.id}`, aboutData.mission)} />
         )}
         
-        <FeaturesSection features={aboutData.features} />
+        <FeaturesSection features={aboutData.features?.map(feature => ({
+          ...feature,
+          title: t(`about.content.features.${feature.icon}.title`, feature.title),
+          description: t(`about.content.features.${feature.icon}.description`, feature.description)
+        })) || []} />
         
         <DirectorySection 
-          directoryTitle={aboutData.directory_title}
-          importantNumbers={aboutData.important_numbers}
-          facilities={aboutData.facilities}
-          hotelPolicies={aboutData.hotel_policies}
-          additionalInfo={aboutData.additional_info}
+          directoryTitle={t(`about.content.directoryTitle.${aboutData.id}`, 
+            aboutData.directory_title === 'Hotel Directory & Information' || !aboutData.directory_title
+              ? t('about.directory.title', 'Hotel Directory & Information')
+              : t(`about.directory.title.${aboutData.directory_title}`, aboutData.directory_title)
+          )}
+          importantNumbers={aboutData.important_numbers || []}
+          facilities={aboutData.facilities || []}
+          hotelPolicies={aboutData.hotel_policies || []}
+          additionalInfo={aboutData.additional_info || []}
         />
       </div>
     </Layout>

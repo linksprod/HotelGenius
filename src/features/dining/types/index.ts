@@ -8,7 +8,7 @@ export interface Restaurant {
   openHours: string;
   location: string;
   status: 'open' | 'closed';
-  actionText?: string;
+  actionText?: string | null;
   isFeatured?: boolean;
   is_published?: boolean;
   menuPdf?: string;

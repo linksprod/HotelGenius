@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { UseFormReturn } from "react-hook-form";
 import { Input } from '@/components/ui/input';
 import { Eye, EyeOff } from 'lucide-react';
@@ -18,6 +19,7 @@ interface PasswordFieldProps {
 }
 
 const PasswordField: React.FC<PasswordFieldProps> = ({ form }) => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
@@ -36,12 +38,12 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ form }) => {
         name="password"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Password</FormLabel>
+            <FormLabel>{t('auth.password', 'Password')}</FormLabel>
             <div className="relative">
               <FormControl>
                 <Input 
                   type={showPassword ? "text" : "password"} 
-                  placeholder="Password"
+                  placeholder={t('auth.password', 'Password')}
                   {...field} 
                 />
               </FormControl>
@@ -65,12 +67,12 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ form }) => {
         name="confirmPassword"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Confirm Password</FormLabel>
+            <FormLabel>{t('auth.confirmPassword', 'Confirm Password')}</FormLabel>
             <div className="relative">
               <FormControl>
                 <Input 
                   type={showConfirmPassword ? "text" : "password"} 
-                  placeholder="Confirm Password"
+                  placeholder={t('auth.confirmPassword', 'Confirm Password')}
                   {...field} 
                 />
               </FormControl>

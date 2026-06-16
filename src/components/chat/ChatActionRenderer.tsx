@@ -12,6 +12,7 @@ import {
     Wrench, Trash2, Monitor, Shield, ChevronRight,
     Loader2, Check, Settings
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ChatActionRendererProps {
@@ -22,6 +23,7 @@ interface ChatActionRendererProps {
 }
 
 const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () => void }> = ({ initialCategory, onSuccess }) => {
+    const { t } = useTranslation();
     const [step, setStep] = React.useState<'categories' | 'items' | 'submitting' | 'confirmed'>(initialCategory ? 'items' : 'categories');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
@@ -66,7 +68,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
         } catch (error) {
             console.error('Error submitting service request:', error);
             setStep('categories');
-            toast.error('Failed to submit request. Please try again.');
+            toast.error(t('chat.actionRenderer.submitFailed'));
         }
     };
 
@@ -122,7 +124,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                         className="text-[10px] h-6"
                         onClick={() => setStep('categories')}
                     >
-                        Back
+                        {t('chat.actionRenderer.back')}
                     </Button>
                 </div>
 
@@ -145,7 +147,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                                 </Button>
                             ))
                         ) : (
-                            <p className="text-[10px] text-muted-foreground text-center py-2">No items available in this category.</p>
+                            <p className="text-[10px] text-muted-foreground text-center py-2">{t('chat.actionRenderer.noItems')}</p>
                         )}
                     </div>
                 )}
@@ -157,7 +159,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
         return (
             <Card className="p-6 flex flex-col items-center justify-center gap-3 bg-muted/30 border-dashed mt-2">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-sm font-medium text-muted-foreground">Sending your request...</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('chat.actionRenderer.submitting')}</p>
             </Card>
         );
     }
@@ -170,8 +172,8 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                         <Check className="h-5 w-5" />
                     </div>
                     <div>
-                        <h4 className="font-semibold text-sm">Request Confirmed</h4>
-                        <p className="text-xs text-muted-foreground">We've received your request and our team is on it!</p>
+                        <h4 className="font-semibold text-sm">{t('chat.actionRenderer.requestConfirmed')}</h4>
+                        <p className="text-xs text-muted-foreground">{t('chat.actionRenderer.requestConfirmedDesc')}</p>
                     </div>
                 </div>
             </Card>
@@ -186,6 +188,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     metadata,
     onSuccess
 }) => {
+    const { t } = useTranslation();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [entities, setEntities] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(
@@ -248,7 +251,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
         return (
             <Card className="p-4 flex items-center justify-center space-x-2 bg-muted/30 border-dashed">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                <span className="text-sm text-muted-foreground">Preparing...</span>
+                <span className="text-sm text-muted-foreground">{t('chat.actionRenderer.preparing')}</span>
             </Card>
         );
     }
@@ -262,7 +265,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Utensils className="h-5 w-5" />
-                        <h4 className="font-semibold">Book a table at {entity.name}</h4>
+                        <h4 className="font-semibold">{t('chat.actionRenderer.bookTable', { name: entity.name })}</h4>
                     </div>
                     <RestaurantBookingForm
                         restaurant={entity}
@@ -280,7 +283,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Calendar className="h-5 w-5" />
-                        <h4 className="font-semibold">Book your spot for {entity.title}</h4>
+                        <h4 className="font-semibold">{t('chat.actionRenderer.bookSpot', { title: entity.title })}</h4>
                     </div>
                     <EventReservationForm
                         eventId={entity.id}
@@ -301,7 +304,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Sparkles className="h-5 w-5" />
-                        <h4 className="font-semibold">Book your {entity.name} treatment</h4>
+                        <h4 className="font-semibold">{t('chat.actionRenderer.bookTreatment', { name: entity.name })}</h4>
                     </div>
                     <SpaBookingForm
                         service={entity}
@@ -318,7 +321,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
             <Card className="p-4 bg-muted/20 border-dashed text-center">
                 <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm font-medium text-muted-foreground">
-                    {metadata?.entity_type?.toUpperCase()} booking form coming soon.
+                    {t('chat.actionRenderer.bookingFormComingSoon', { type: metadata?.entity_type?.toUpperCase() })}
                 </p>
             </Card>
         );
@@ -339,10 +342,10 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                     </div>
                     <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                            <h4 className="font-semibold text-sm">Reservation Pending</h4>
-                            <span className="text-[10px] bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-full font-medium">Processing</span>
+                            <h4 className="font-semibold text-sm">{t('chat.actionRenderer.reservationPending')}</h4>
+                            <span className="text-[10px] bg-amber-500/20 text-amber-600 px-2 py-0.5 rounded-full font-medium">{t('chat.actionRenderer.processing')}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-2">Your request has been sent to the hotel team.</p>
+                        <p className="text-xs text-muted-foreground mb-2">{t('chat.actionRenderer.requestSent')}</p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2 bg-background/50 rounded-lg border border-border/50">
                             <div>
@@ -350,12 +353,12 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                                 <p className="text-xs font-medium">{entityName}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Date & Time</p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">{t('chat.actionRenderer.dateAndTime')}</p>
                                 <p className="text-xs font-medium">{metadata?.date} • {metadata?.time}</p>
                             </div>
                             <div>
-                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">Guests</p>
-                                <p className="text-xs font-medium">{metadata?.guests} Person(s)</p>
+                                <p className="text-[10px] text-muted-foreground uppercase tracking-tight">{t('chat.actionRenderer.guests')}</p>
+                                <p className="text-xs font-medium">{t('chat.actionRenderer.persons', { guests: metadata?.guests })}</p>
                             </div>
                         </div>
                     </div>
@@ -370,7 +373,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
             <div className="flex flex-col gap-3 mt-2 animate-in fade-in slide-in-from-bottom-2">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground px-1">
                     <Utensils className="h-4 w-4" />
-                    Our Featured Dining
+                    {t('chat.actionRenderer.featuredDining')}
                 </div>
                 <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
                     {entities.map((r) => (
@@ -392,7 +395,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                                         window.dispatchEvent(new CustomEvent('ai_trigger_form', { detail: { type: 'restaurant', id: r.id } }));
                                     }}
                                 >
-                                    View Menu / Book
+                                    {t('chat.actionRenderer.viewMenuBook')}
                                 </Button>
                             </div>
                         </Card>
@@ -411,8 +414,8 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         <Info className="h-5 w-5" />
                     </div>
                     <div>
-                        <h4 className="font-semibold text-sm">Request Completed</h4>
-                        <p className="text-xs text-muted-foreground">{metadata?.message || 'Your request has been processed successfully.'}</p>
+                        <h4 className="font-semibold text-sm">{t('chat.actionRenderer.requestCompleted')}</h4>
+                        <p className="text-xs text-muted-foreground">{metadata?.message || t('chat.actionRenderer.requestProcessedSuccess')}</p>
                     </div>
                 </div>
             </Card>

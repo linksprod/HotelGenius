@@ -42,7 +42,7 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
     { icon: <ShoppingBag className="h-5 w-5" />, label: t('nav.shops'), path: '/shops' },
     { icon: <Map className="h-5 w-5" />, label: t('nav.hotelMap'), path: '/map' },
     { icon: <BedDouble className="h-5 w-5" />, label: t('nav.myRoom'), path: '/my-room' },
-    { icon: <Coins className="h-5 w-5" />, label: 'Digital Tipping', path: '/tipping' },
+    { icon: <Coins className="h-5 w-5" />, label: t('nav.digitalTipping', 'Digital Tipping'), path: '/tipping' },
   ];
 
   const handleNavigate = (path: string) => {

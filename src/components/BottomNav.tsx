@@ -69,7 +69,7 @@ const BottomNav = () => {
           )}
         </div>
       ),
-      label: 'Messages',
+      label: t('nav.messages', 'Messages'),
       path: '/messages'
     }
   ], [t, unreadCount]);

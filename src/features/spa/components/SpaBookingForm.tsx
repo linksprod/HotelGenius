@@ -22,8 +22,8 @@ const createSpaBookingSchema = (t: any) => z.object({
   guestEmail: z.string().email({ message: t('forms.validation.emailInvalid') }).optional().or(z.literal('')),
   guestPhone: z.string().optional().or(z.literal('')),
   roomNumber: z.string().min(1, { message: t('forms.validation.roomNumberRequired') }),
-  date: z.date({ required_error: "Please select a date" }),
-  time: z.string().min(1, { message: "Please select a time" }),
+  date: z.date({ required_error: t('forms.validation.dateRequired', 'Please select a date') }),
+  time: z.string().min(1, { message: t('forms.validation.timeRequired', 'Please select a time') }),
   specialRequests: z.string().optional().or(z.literal(''))
 });
 
@@ -107,8 +107,8 @@ export default function SpaBookingForm({
       }
 
       toast({
-        title: "Spa booking request sent",
-        description: "We've received your request and will confirm shortly."
+        title: t('spa.booking_sent_title', 'Spa booking request sent'),
+        description: t('spa.booking_sent_desc', "We've received your request and will confirm shortly.")
       });
 
       if (onSuccess) {
@@ -120,8 +120,8 @@ export default function SpaBookingForm({
     } catch (error) {
       console.error("Error creating spa booking:", error);
       toast({
-        title: "Error",
-        description: "Failed to send spa booking request.",
+        title: t('common.error', 'Error'),
+        description: t('spa.booking_failed', 'Failed to send spa booking request.'),
         variant: "destructive"
       });
     }
@@ -142,7 +142,7 @@ export default function SpaBookingForm({
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Booking Date</FormLabel>
+                <FormLabel>{t('spa.booking_date', 'Booking Date')}</FormLabel>
                 <DatePicker
                   mode="single"
                   selected={field.value}
@@ -161,13 +161,13 @@ export default function SpaBookingForm({
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Time</FormLabel>
+                <FormLabel>{t('spa.time', 'Time')}</FormLabel>
                 <FormControl>
                   <select
                     {...field}
                     className="w-full flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   >
-                    <option value="">Select a time</option>
+                    <option value="">{t('spa.select_time', 'Select a time')}</option>
                     {[...Array(13)].map((_, i) => {
                       const hour = (i + 9).toString().padStart(2, '0');
                       return (
@@ -190,9 +190,9 @@ export default function SpaBookingForm({
           name="specialRequests"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Special Requests</FormLabel>
+              <FormLabel>{t('spa.special_requests_label', 'Special Requests')}</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Any details for your treatment?" />
+                <Textarea {...field} placeholder={t('spa.special_requests_placeholder', 'Any details for your treatment?')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -200,7 +200,7 @@ export default function SpaBookingForm({
         />
 
         <Button type="submit" className="w-full">
-          {existingBooking ? 'Update Booking' : 'Submit Booking Request'}
+          {existingBooking ? t('spa.update_booking', 'Update Booking') : t('spa.submit_booking', 'Submit Booking Request')}
         </Button>
       </form>
     </Form>

@@ -47,9 +47,14 @@ const ThemeCustomizer = () => {
         const primaryHex = hotel.primary_color || '#94b3a3';
         let secondaryHex = hotel.secondary_color || '#8b5cf6';
         
-        // If secondary color is black/near-black, fallback to a vibrant secondary color to make it premium
+        // If secondary color is black/near-black, fallback to a matching theme color
         if (secondaryHex === '#000000' || secondaryHex === '#1a1a1a' || secondaryHex === '#111111') {
-            secondaryHex = '#8b5cf6'; // premium violet
+            const p = hexToHslComponents(primaryHex);
+            if (p.l > 30) {
+                secondaryHex = primaryHex;
+            } else {
+                secondaryHex = '#C5A059'; // premium gold
+            }
         }
 
         try {
@@ -82,7 +87,10 @@ const ThemeCustomizer = () => {
 
             // Calculate readable foregrounds
             const primaryFg = p.l > 65 ? '220 40% 2%' : '0 0% 100%';
-            const secondaryFg = adjustedL > 65 ? '220 40% 2%' : '0 0% 100%';
+            // Use dark text for warm colors (gold/yellow/orange) if lightness is above 45% to ensure readable contrast
+            const secondaryFg = (adjustedL > 45 && s.h >= 30 && s.h <= 75) || adjustedL > 65 
+                ? '220 40% 2%' 
+                : '0 0% 100%';
 
             // Apply variables
             root.style.setProperty('--primary', primaryHsl);

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import NotificationItem from './NotificationItem';
@@ -14,10 +15,12 @@ const NotificationList: React.FC<NotificationListProps> = ({
   notifications, 
   isAuthenticated 
 }) => {
+  const { t } = useTranslation();
+
   if (!isAuthenticated) {
     return (
       <div className="py-4 text-center text-sm text-gray-500">
-        Sign in to view your notifications
+        {t('notifications.signInToView')}
       </div>
     );
   }
@@ -25,7 +28,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
   if (notifications.length === 0) {
     return (
       <div className="py-4 text-center text-sm text-gray-500">
-        No notifications
+        {t('notifications.noNotifications')}
       </div>
     );
   }
