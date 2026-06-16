@@ -575,6 +575,33 @@
       "cancelConfirmDesc": "This action cannot be undone. The reservation will be permanently cancelled.",
       "cancel": "Cancel",
       "cancelConfirmYes": "Yes, cancel reservation"
+    },
+    "noEvents": "No events available at the moment",
+    "spotsAvailable": "{{count}} spots available",
+    "limitedSpots": "Limited spots",
+    "availableDaily": "Available Daily",
+    "availableWeekly": "Available Weekly",
+    "availableMonthly": "Available Monthly",
+    "dateTbd": "Date TBD",
+    "noUpcomingEvents": "No upcoming events",
+    "addToCalendar": "Add to Calendar",
+    "noActivePromotions": "No active promotions",
+    "specialOffer": "Special Offer",
+    "validUntil": "Valid until {{date}}",
+    "noEventsAvailable": "No events available",
+    "categoryEvent": "Event",
+    "categoryPromotion": "Promotion",
+    "bookEvent": "Book Event",
+    "bookingDialog": {
+      "editTitle": "Edit your reservation - {{title}}",
+      "bookTitle": "Book - {{title}}",
+      "editDesc": "Edit the details of your reservation below.",
+      "bookDesc": "Fill out the form below to reserve your spot at this event.",
+      "updateBtn": "Update Reservation"
+    },
+    "calendar": {
+      "title": "Event Calendar",
+      "allDay": "All day"
     }
   },
 
@@ -1020,6 +1047,14 @@
       "success": "Your activity has been booked successfully!",
       "failed": "Booking Failed",
       "signInRequired": "Please sign in to book an activity"
+    },
+    "spotsAvailable": "{{count}} spots available",
+    "bookActivity": "Book Activity",
+    "status": {
+      "available": "Available",
+      "upcoming": "Upcoming",
+      "full": "Full",
+      "cancelled": "Cancelled"
     }
   },
   "shopsPage": {

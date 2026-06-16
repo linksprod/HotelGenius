@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Clock, MapPin, Users, Calendar } from 'lucide-react';
@@ -12,6 +13,7 @@ interface ActivityCardProps {
 }
 
 const ActivityCard = ({ activity, onBook, showBookingButton = true }: ActivityCardProps) => {
+  const { t } = useTranslation();
   const statusColors = {
     'upcoming': 'bg-blue-100 text-blue-800',
     'in-progress': 'bg-green-100 text-green-800',
@@ -29,7 +31,9 @@ const ActivityCard = ({ activity, onBook, showBookingButton = true }: ActivityCa
         />
         <div className="absolute top-2 right-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[activity.status]}`}>
-            {activity.status === 'upcoming' ? 'Available' : activity.status}
+            {activity.status === 'upcoming' 
+              ? t('activities.status.available', 'Available') 
+              : t(`activities.status.${activity.status}`, activity.status)}
           </span>
         </div>
       </div>
@@ -53,7 +57,7 @@ const ActivityCard = ({ activity, onBook, showBookingButton = true }: ActivityCa
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="w-4 h-4" />
-            {activity.capacity} spots available
+            {t('activities.spotsAvailable', '{{count}} spots available', { count: activity.capacity })}
           </div>
         </div>
         <p className="text-sm text-muted-foreground mb-4">{activity.description}</p>
@@ -63,7 +67,7 @@ const ActivityCard = ({ activity, onBook, showBookingButton = true }: ActivityCa
             className="w-full bg-primary hover:bg-primary/90 transition-colors"
             disabled={activity.status === 'full' || activity.status === 'cancelled'}
           >
-            Book Activity
+            {t('activities.bookActivity', 'Book Activity')}
           </Button>
         )}
       </div>

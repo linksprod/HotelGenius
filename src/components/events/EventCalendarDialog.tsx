@@ -1,11 +1,12 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Event } from '@/types/event';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { enUS, fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 interface EventCalendarDialogProps {
@@ -15,6 +16,9 @@ interface EventCalendarDialogProps {
 }
 
 const EventCalendarDialog = ({ isOpen, onOpenChange, events }: EventCalendarDialogProps) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+  const dateLocale = currentLang === 'fr' ? fr : enUS;
   // Create a map of dates to events
   const eventsByDate = events.reduce((acc: Record<string, Event[]>, event) => {
     const date = event.date;
@@ -41,7 +45,7 @@ const EventCalendarDialog = ({ isOpen, onOpenChange, events }: EventCalendarDial
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Event Calendar</DialogTitle>
+          <DialogTitle>{t('events.calendar.title', 'Event Calendar')}</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
           <Calendar
@@ -49,17 +53,17 @@ const EventCalendarDialog = ({ isOpen, onOpenChange, events }: EventCalendarDial
             className={cn("p-3 pointer-events-auto")}
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
-            locale={enUS}
+            locale={dateLocale}
             footer={
               <div className="mt-4 space-y-2">
                 {Object.entries(eventsByDate).map(([date, dateEvents]) => (
                   <div key={date} className="flex flex-col gap-1">
                     <div className="font-semibold">
-                      {format(new Date(date), 'MMMM d, yyyy', { locale: enUS })}
+                      {format(new Date(date), 'd MMMM yyyy', { locale: dateLocale })}
                     </div>
                     {dateEvents.map(event => (
                       <div key={event.id} className="flex items-center gap-2 text-sm">
-                        <Badge variant="outline">{event.time || "All day"}</Badge>
+                        <Badge variant="outline">{event.time || t('events.calendar.allDay', 'All day')}</Badge>
                         {event.title}
                       </div>
                     ))}

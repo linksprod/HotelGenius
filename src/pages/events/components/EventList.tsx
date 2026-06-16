@@ -1,10 +1,12 @@
 
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin, Users, Heart, Share } from 'lucide-react';
 import { Event } from '@/types/event';
 import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface EventListProps {
@@ -14,6 +16,9 @@ interface EventListProps {
 }
 
 export const EventList = ({ events, loading, onBookEvent }: EventListProps) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+  const dateLocale = currentLang === 'fr' ? fr : enUS;
   // Memoize filtered events to prevent unnecessary calculations
   const filteredEvents = useMemo(() => {
     return events
@@ -51,7 +56,7 @@ export const EventList = ({ events, loading, onBookEvent }: EventListProps) => {
   if (filteredEvents.length === 0) {
     return (
       <Card className="p-4 text-center">
-        <p className="text-gray-500">No upcoming events</p>
+        <p className="text-gray-500">{t('events.noUpcomingEvents', 'No upcoming events')}</p>
       </Card>
     );
   }
@@ -83,7 +88,7 @@ export const EventList = ({ events, loading, onBookEvent }: EventListProps) => {
               <div className="space-y-2 mb-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <Calendar className="h-4 w-4 mr-2 text-primary" />
-                  <span>{format(new Date(event.date), 'dd MMMM yyyy')}</span>
+                  <span>{format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale })}</span>
                 </div>
                 {event.time && (
                   <div className="flex items-center text-sm text-gray-600">
@@ -99,13 +104,13 @@ export const EventList = ({ events, loading, onBookEvent }: EventListProps) => {
                 )}
                 <div className="flex items-center text-sm text-gray-600">
                   <Users className="h-4 w-4 mr-2 text-primary" />
-                  <span>Limited spots</span>
+                  <span>{t('events.limitedSpots', 'Limited spots')}</span>
                 </div>
               </div>
               <p className="text-gray-600 mb-4">{event.description}</p>
               <div className="flex gap-3">
-                <Button onClick={() => onBookEvent(event)}>Book</Button>
-                <Button variant="outline">Add to Calendar</Button>
+                <Button onClick={() => onBookEvent(event)}>{t('common.book', 'Book')}</Button>
+                <Button variant="outline">{t('events.addToCalendar', 'Add to Calendar')}</Button>
               </div>
             </div>
           </div>

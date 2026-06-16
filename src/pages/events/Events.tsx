@@ -11,11 +11,12 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
 const Events = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { events, loading } = useEvents();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -39,13 +40,15 @@ const Events = () => {
   };
 
   const formatEventDate = (event: Event) => {
-    if (event.recurrence_type === 'daily') return 'Available Daily';
-    if (event.recurrence_type === 'weekly') return 'Available Weekly';
-    if (event.recurrence_type === 'monthly') return 'Available Monthly';
+    if (event.recurrence_type === 'daily') return t('events.availableDaily', 'Available Daily');
+    if (event.recurrence_type === 'weekly') return t('events.availableWeekly', 'Available Weekly');
+    if (event.recurrence_type === 'monthly') return t('events.availableMonthly', 'Available Monthly');
     if (event.date) {
-      return format(new Date(event.date), 'dd MMMM yyyy');
+      const currentLang = i18n.language;
+      const dateLocale = currentLang === 'fr' ? fr : enUS;
+      return format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale });
     }
-    return 'Date TBD';
+    return t('events.dateTbd', 'Date TBD');
   };
 
   return (
@@ -95,7 +98,7 @@ const Events = () => {
                   />
                   {event.is_featured && (
                     <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded">
-                      Featured
+                      {t('common.featured', 'Featured')}
                     </span>
                   )}
                 </div>
@@ -130,7 +133,7 @@ const Events = () => {
                     {event.capacity && (
                       <div className="flex items-center text-sm text-muted-foreground">
                         <Users className="h-4 w-4 mr-2 text-primary" />
-                        <span>{event.capacity} spots available</span>
+                        <span>{t('events.spotsAvailable', '{{count}} spots available', { count: event.capacity })}</span>
                       </div>
                     )}
                   </div>

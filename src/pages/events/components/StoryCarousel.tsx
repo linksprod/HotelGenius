@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Carousel,
   CarouselContent,
@@ -20,6 +21,7 @@ interface StoryCarouselProps {
 }
 
 export const StoryCarousel = ({ events, loading, onBookEvent }: StoryCarouselProps) => {
+  const { t } = useTranslation();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   // Memoize filtered events to prevent unnecessary renders
@@ -51,7 +53,7 @@ export const StoryCarousel = ({ events, loading, onBookEvent }: StoryCarouselPro
   if (filteredEvents.length === 0) {
     return (
       <div className="h-[50vh] rounded-3xl bg-gray-100 flex items-center justify-center mb-6">
-        <p className="text-gray-500">No events available</p>
+        <p className="text-gray-500">{t('events.noEventsAvailable', 'No events available')}</p>
       </div>
     );
   }
@@ -94,12 +96,12 @@ export const StoryCarousel = ({ events, loading, onBookEvent }: StoryCarouselPro
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-6 text-white">
                   <span className="text-sm font-medium bg-primary/50 backdrop-blur-sm px-3 py-1 rounded-full mb-2 inline-block">
-                    {event.category === 'event' ? 'Event' : 'Promotion'}
+                    {event.category === 'event' ? t('events.categoryEvent', 'Event') : t('events.categoryPromotion', 'Promotion')}
                   </span>
                   <h1 className="text-2xl font-bold mb-1">{event.title}</h1>
                   <p className="mb-3">{event.description}</p>
                   <Button size="sm" onClick={() => onBookEvent(event)}>
-                    Book
+                    {t('common.book', 'Book')}
                   </Button>
                 </div>
               </div>

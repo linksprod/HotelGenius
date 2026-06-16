@@ -1,10 +1,12 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin, Users, Clock } from 'lucide-react';
 import { Event } from '@/types/event';
 import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import EventBookingDialog from './EventBookingDialog';
 import { useRequireAuth } from '@/hooks/useRequireAuth';
 
@@ -13,6 +15,9 @@ interface EventBookingCardProps {
 }
 
 export const EventBookingCard = ({ event }: EventBookingCardProps) => {
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language;
+  const dateLocale = currentLang === 'fr' ? fr : enUS;
   const [isBookingOpen, setIsBookingOpen] = React.useState(false);
   const { requireAuth } = useRequireAuth();
 
@@ -43,10 +48,10 @@ export const EventBookingCard = ({ event }: EventBookingCardProps) => {
               <div className="flex items-center text-sm text-gray-600">
                 <Calendar className="h-4 w-4 mr-2 text-primary" />
                 <span>
-                  {event.recurrence_type === 'daily' ? 'Available Daily' :
-                   event.recurrence_type === 'weekly' ? 'Available Weekly' :
-                   event.recurrence_type === 'monthly' ? 'Available Monthly' :
-                   event.date ? format(new Date(event.date), 'dd MMMM yyyy') : 'Date TBD'}
+                  {event.recurrence_type === 'daily' ? t('events.availableDaily', 'Available Daily') :
+                   event.recurrence_type === 'weekly' ? t('events.availableWeekly', 'Available Weekly') :
+                   event.recurrence_type === 'monthly' ? t('events.availableMonthly', 'Available Monthly') :
+                   event.date ? format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale }) : t('events.dateTbd', 'Date TBD')}
                 </span>
               </div>
               {event.time && (
@@ -64,14 +69,14 @@ export const EventBookingCard = ({ event }: EventBookingCardProps) => {
               {event.capacity && (
                 <div className="flex items-center text-sm text-gray-600">
                   <Users className="h-4 w-4 mr-2 text-primary" />
-                  <span>{event.capacity} spots available</span>
+                  <span>{t('events.spotsAvailable', '{{count}} spots available', { count: event.capacity })}</span>
                 </div>
               )}
             </div>
           </div>
           <p className="text-gray-600 mb-4">{event.description}</p>
           <Button onClick={handleBookEvent}>
-            Book Event
+            {t('events.bookEvent', 'Book Event')}
           </Button>
         </div>
       </div>

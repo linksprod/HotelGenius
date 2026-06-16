@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { EventBookingCard } from './EventBookingCard';
 import { Event } from '@/types/event';
 
@@ -8,10 +9,11 @@ interface EventsSectionProps {
 }
 
 export const EventsSection = ({ events }: EventsSectionProps) => {
+  const { t } = useTranslation();
   if (events.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        Aucun événement à venir
+        {t('events.noUpcomingEvents', 'No upcoming events')}
       </div>
     );
   }

@@ -568,6 +568,33 @@
       "cancelConfirmDesc": "Cette action ne peut pas être annulée. La réservation sera définitivement annulée.",
       "cancel": "Annuler",
       "cancelConfirmYes": "Oui, annuler la réservation"
+    },
+    "noEvents": "Aucun événement disponible pour le moment",
+    "spotsAvailable": "{{count}} places disponibles",
+    "limitedSpots": "Places limitées",
+    "availableDaily": "Disponible tous les jours",
+    "availableWeekly": "Disponible toutes les semaines",
+    "availableMonthly": "Disponible tous les mois",
+    "dateTbd": "Date à déterminer",
+    "noUpcomingEvents": "Aucun événement à venir",
+    "addToCalendar": "Ajouter au calendrier",
+    "noActivePromotions": "Aucune promotion active",
+    "specialOffer": "Offre spéciale",
+    "validUntil": "Valable jusqu'au {{date}}",
+    "noEventsAvailable": "Aucun événement disponible",
+    "categoryEvent": "Événement",
+    "categoryPromotion": "Promotion",
+    "bookEvent": "Réserver l'événement",
+    "bookingDialog": {
+      "editTitle": "Modifier votre réservation - {{title}}",
+      "bookTitle": "Réserver - {{title}}",
+      "editDesc": "Modifiez les détails de votre réservation ci-dessous.",
+      "bookDesc": "Remplissez le formulaire ci-dessous pour réserver votre place à cet événement.",
+      "updateBtn": "Mettre à jour la réservation"
+    },
+    "calendar": {
+      "title": "Calendrier des Événements",
+      "allDay": "Toute la journée"
     }
   },
 
@@ -973,6 +1000,14 @@
       "success": "Votre activité a été réservée avec succès !",
       "failed": "Échec de la Réservation",
       "signInRequired": "Veuillez vous connecter pour réserver une activité"
+    },
+    "spotsAvailable": "{{count}} places disponibles",
+    "bookActivity": "Réserver l'activité",
+    "status": {
+      "available": "Disponible",
+      "upcoming": "À venir",
+      "full": "Complet",
+      "cancelled": "Annulé"
     }
   },
   "shopsPage": {
