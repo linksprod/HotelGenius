@@ -76,14 +76,12 @@ const About = () => {
           <MissionSection mission={safeT(t, aboutData.id, 'about.content.mission', aboutData.mission)} />
         )}
 
-        <FeaturesSection features={(aboutData.features || [])
-          .filter(feature => feature.title || feature.description)
-          .map(feature => ({
+        <FeaturesSection features={(aboutData.features || []).map(feature => ({
             ...feature,
-            title: feature.icon && feature.icon !== 'undefined'
+            title: (feature.icon && feature.icon !== 'undefined' && feature.icon !== 'null')
               ? t(`about.content.features.${feature.icon}.title`, feature.title || '')
               : (feature.title || ''),
-            description: feature.icon && feature.icon !== 'undefined'
+            description: (feature.icon && feature.icon !== 'undefined' && feature.icon !== 'null')
               ? t(`about.content.features.${feature.icon}.description`, feature.description || '')
               : (feature.description || '')
           }))} />
