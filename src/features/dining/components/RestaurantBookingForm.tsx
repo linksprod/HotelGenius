@@ -23,9 +23,9 @@ const createBookingSchema = (t: any) => z.object({
   guestEmail: z.string().email({ message: t('forms.validation.emailInvalid') }).optional().or(z.literal('')),
   guestPhone: z.string().optional().or(z.literal('')),
   roomNumber: z.string().min(1, { message: t('forms.validation.roomNumberRequired') }),
-  date: z.date({ required_error: "Please select a date" }),
-  time: z.string().min(1, { message: "Please select a time" }),
-  guests: z.number().min(1, { message: "Min 1 guest" }).max(20, { message: "Max 20 guests" }),
+  date: z.date({ required_error: t('dining.booking.validation.dateRequired', 'Please select a date') }),
+  time: z.string().min(1, { message: t('dining.booking.validation.timeRequired', 'Please select a time') }),
+  guests: z.number().min(1, { message: t('dining.booking.validation.minGuests', 'Min 1 guest') }).max(20, { message: t('dining.booking.validation.maxGuests', 'Max 20 guests') }),
   specialRequests: z.string().optional().or(z.literal(''))
 });
 
@@ -95,8 +95,8 @@ export default function RestaurantBookingForm({
       await createReservation(bookingDTO);
 
       toast({
-        title: "Reservation request sent",
-        description: "Your reservation request has been registered successfully."
+        title: t('dining.booking.successTitle', 'Reservation request sent'),
+        description: t('dining.booking.successDesc', 'Your reservation request has been registered successfully.')
       });
 
       // Dispatch event for AI chat components
@@ -120,8 +120,8 @@ export default function RestaurantBookingForm({
     } catch (error: any) {
       console.error("Error creating restaurant booking:", error);
       toast({
-        title: "Error",
-        description: `Failed to send reservation request: ${error.message || 'Unknown error'}`,
+        title: t('common.error', 'Error'),
+        description: t('dining.booking.errorDesc', 'Failed to send reservation request: {{message}}', { message: error.message || 'Unknown error' }),
         variant: "destructive"
       });
     }
@@ -142,7 +142,7 @@ export default function RestaurantBookingForm({
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Reservation Date</FormLabel>
+                <FormLabel>{t('dining.booking.dateLabel', 'Reservation Date')}</FormLabel>
                 <DatePicker
                   mode="single"
                   selected={field.value}
@@ -161,13 +161,13 @@ export default function RestaurantBookingForm({
             name="time"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Time</FormLabel>
+                <FormLabel>{t('dining.booking.timeLabel', 'Time')}</FormLabel>
                 <FormControl>
                   <select
                     {...field}
                     className="w-full h-10 p-2 border rounded-md bg-background focus:ring-2 focus:ring-ring"
                   >
-                    <option value="">Select a time</option>
+                    <option value="">{t('dining.booking.selectTimePlaceholder', 'Select a time')}</option>
                     {['17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'].map((time) => (
                       <option key={time} value={time}>{time}</option>
                     ))}
@@ -184,7 +184,7 @@ export default function RestaurantBookingForm({
           name="guests"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Number of Guests</FormLabel>
+              <FormLabel>{t('dining.booking.guestsLabel', 'Number of Guests')}</FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -204,9 +204,9 @@ export default function RestaurantBookingForm({
           name="specialRequests"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Special Requests</FormLabel>
+              <FormLabel>{t('dining.booking.specialRequestsLabel', 'Special Requests')}</FormLabel>
               <FormControl>
-                <Textarea {...field} placeholder="Dietary restrictions or preferences..." />
+                <Textarea {...field} placeholder={t('dining.booking.specialRequestsPlaceholder', 'Dietary restrictions or preferences...')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -214,7 +214,11 @@ export default function RestaurantBookingForm({
         />
 
         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Confirming...' : (existingBooking ? 'Update Reservation' : 'Confirm Reservation')}
+          {form.formState.isSubmitting 
+            ? t('dining.booking.confirmingBtn', 'Confirming...') 
+            : (existingBooking 
+                ? t('dining.booking.updateBtn', 'Update Reservation') 
+                : t('dining.booking.confirmBtn', 'Confirm Reservation'))}
         </Button>
       </form>
     </Form>

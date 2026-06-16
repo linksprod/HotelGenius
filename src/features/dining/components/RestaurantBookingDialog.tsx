@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -22,28 +23,29 @@ const RestaurantBookingDialog = ({
   restaurant,
   onSuccess
 }: RestaurantBookingDialogProps) => {
+  const { t } = useTranslation();
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-secondary">
-            Book a Table at {restaurant.name}
+            {t('dining.booking.bookTitle', 'Book a Table - {{name}}', { name: restaurant.name })}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Reserve your table for a wonderful dining experience. Fill in the details below.
+            {t('dining.booking.bookDesc', 'Fill out the form below to book a table.')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="mt-4">
           <div className="mb-4 p-3 bg-muted/50 rounded-lg">
             <p className="text-sm text-muted-foreground mb-1">
-              <strong>Restaurant:</strong> {restaurant.name}
+              <strong>{t('dining.booking.restaurantLabel', 'Restaurant:')}</strong> {restaurant.name}
             </p>
             <p className="text-sm text-muted-foreground mb-1">
-              <strong>Cuisine:</strong> {restaurant.cuisine}
+              <strong>{t('dining.booking.cuisineLabel', 'Cuisine:')}</strong> {restaurant.cuisine}
             </p>
             <p className="text-sm text-muted-foreground">
-              <strong>Location:</strong> {restaurant.location}
+              <strong>{t('dining.booking.locationLabel', 'Location:')}</strong> {restaurant.location}
             </p>
           </div>
           

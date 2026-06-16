@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useSpaServices } from '@/hooks/useSpaServices';
@@ -22,6 +23,7 @@ const SpaBookingDialog = ({
   onSuccess,
   existingBooking
 }: SpaBookingDialogProps) => {
+  const { t } = useTranslation();
   const { getServiceById } = useSpaServices();
   const [service, setService] = React.useState<SpaService | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -48,13 +50,13 @@ const SpaBookingDialog = ({
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>
             {isEditing 
-              ? `Edit Your Booking - ${service?.name}` 
-              : `Book a Treatment - ${service?.name}`}
+              ? t('spa.edit_booking_title', 'Edit Your Booking - {{serviceName}}', { serviceName: service?.name }) 
+              : t('spa.book_treatment_title', 'Book a Treatment - {{serviceName}}', { serviceName: service?.name })}
           </DialogTitle>
           <DialogDescription>
             {isEditing 
-              ? "Modify your booking details below."
-              : "Fill out the form below to book a treatment."}
+              ? t('spa.edit_booking_desc', 'Modify your booking details below.')
+              : t('spa.book_treatment_desc', 'Fill out the form below to book a treatment.')}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
