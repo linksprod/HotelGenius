@@ -45,6 +45,18 @@ const DirectorySection = ({
 }: DirectorySectionProps) => {
   const { t } = useTranslation();
   const sectionTitle = directoryTitle || title || 'Hotel Directory & Information';
+
+  // Safe translate: only use as i18n key if label/value is a real non-empty string
+  const safeLabel = (raw: string | undefined) => {
+    if (!raw || raw === 'undefined' || raw === 'null') return '';
+    const translated = t(`about.directory.label.${raw}`, raw);
+    return translated;
+  };
+  const safeValue = (raw: string | undefined) => {
+    if (!raw || raw === 'undefined' || raw === 'null') return '';
+    const translated = t(`about.directory.value.${raw}`, raw);
+    return translated;
+  };
   const [editableTitle, setEditableTitle] = useState(sectionTitle);
 
   // Local handler for standalone edit mode
@@ -127,9 +139,9 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Important Numbers', 'Important Numbers')}
             items={importantNumbers.map(item => ({
-              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
-              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
-            }))}
+              label: safeLabel(item.label),
+              value: safeValue(item.value)
+            })).filter(item => item.label || item.value)}
           />
         )}
         
@@ -137,9 +149,9 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Facilities & Amenities', 'Facilities & Amenities')}
             items={facilities.map(item => ({
-              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
-              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
-            }))}
+              label: safeLabel(item.label),
+              value: safeValue(item.value)
+            })).filter(item => item.label || item.value)}
           />
         )}
         
@@ -147,9 +159,9 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Hotel Policies', 'Hotel Policies')}
             items={hotelPolicies.map(item => ({
-              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
-              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
-            }))}
+              label: safeLabel(item.label),
+              value: safeValue(item.value)
+            })).filter(item => item.label || item.value)}
           />
         )}
         
@@ -157,9 +169,9 @@ const DirectorySection = ({
           <InfoItemSection
             title={t('about.directory.section.Additional Information', 'Additional Information')}
             items={additionalInfo.map(item => ({
-              label: item.label ? t(`about.directory.label.${item.label}`, item.label) : '',
-              value: item.value ? t(`about.directory.value.${item.value}`, item.value) : ''
-            }))}
+              label: safeLabel(item.label),
+              value: safeValue(item.value)
+            })).filter(item => item.label || item.value)}
           />
         )}
       </div>

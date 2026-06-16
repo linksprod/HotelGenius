@@ -10,6 +10,19 @@ import DirectorySection from '@/components/admin/about/DirectorySection';
 import FeaturesSection from '@/components/admin/about/FeaturesSection';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// Safe i18n helper: only build a dynamic key if the segment is a real non-empty string
+const safeT = (
+  t: (key: string, fallback: string) => string,
+  keySegment: string | undefined | null,
+  prefix: string,
+  fallback: string
+): string => {
+  if (!keySegment || keySegment === 'undefined' || keySegment === 'null') {
+    return fallback || '';
+  }
+  return t(`${prefix}.${keySegment}`, fallback || '');
+};
+
 const About = () => {
   const { t } = useTranslation();
   const { aboutData, isLoadingAbout } = useAboutData();
@@ -45,36 +58,42 @@ const About = () => {
   return (
     <Layout>
       <div className="pt-6 md:pt-8">
-        <HeroSection 
-          heroImage={aboutData.hero_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80'} 
-          heroTitle={t(`about.content.heroTitle.${aboutData.id}`, aboutData.hero_title || 'Welcome to Our Hotel')} 
-          heroSubtitle={t(`about.content.heroSubtitle.${aboutData.id}`, aboutData.hero_subtitle || 'Discover luxury and comfort')} 
+        <HeroSection
+          heroImage={aboutData.hero_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80'}
+          heroTitle={safeT(t, aboutData.id, 'about.content.heroTitle', aboutData.hero_title || 'Welcome to Our Hotel')}
+          heroSubtitle={safeT(t, aboutData.id, 'about.content.heroSubtitle', aboutData.hero_subtitle || 'Discover luxury and comfort')}
         />
       </div>
-      
+
       <div className="container mx-auto py-8">
-        <WelcomeSection 
-          welcomeTitle={t(`about.content.welcomeTitle.${aboutData.id}`, aboutData.welcome_title || '')} 
-          welcomeDescription={t(`about.content.welcomeDescription.${aboutData.id}`, aboutData.welcome_description || '')} 
-          welcomeDescriptionExtended={t(`about.content.welcomeDescriptionExtended.${aboutData.id}`, aboutData.welcome_description_extended || '')}
+        <WelcomeSection
+          welcomeTitle={safeT(t, aboutData.id, 'about.content.welcomeTitle', aboutData.welcome_title || '')}
+          welcomeDescription={safeT(t, aboutData.id, 'about.content.welcomeDescription', aboutData.welcome_description || '')}
+          welcomeDescriptionExtended={safeT(t, aboutData.id, 'about.content.welcomeDescriptionExtended', aboutData.welcome_description_extended || '')}
         />
-        
+
         {aboutData.mission && (
-          <MissionSection mission={t(`about.content.mission.${aboutData.id}`, aboutData.mission)} />
+          <MissionSection mission={safeT(t, aboutData.id, 'about.content.mission', aboutData.mission)} />
         )}
-        
-        <FeaturesSection features={aboutData.features?.map(feature => ({
-          ...feature,
-          title: t(`about.content.features.${feature.icon}.title`, feature.title),
-          description: t(`about.content.features.${feature.icon}.description`, feature.description)
-        })) || []} />
-        
-        <DirectorySection 
-          directoryTitle={t(`about.content.directoryTitle.${aboutData.id}`, 
-            aboutData.directory_title === 'Hotel Directory & Information' || !aboutData.directory_title
+
+        <FeaturesSection features={(aboutData.features || [])
+          .filter(feature => feature.title || feature.description)
+          .map(feature => ({
+            ...feature,
+            title: feature.icon && feature.icon !== 'undefined'
+              ? t(`about.content.features.${feature.icon}.title`, feature.title || '')
+              : (feature.title || ''),
+            description: feature.icon && feature.icon !== 'undefined'
+              ? t(`about.content.features.${feature.icon}.description`, feature.description || '')
+              : (feature.description || '')
+          }))} />
+
+        <DirectorySection
+          directoryTitle={
+            !aboutData.directory_title || aboutData.directory_title === 'Hotel Directory & Information'
               ? t('about.directory.title', 'Hotel Directory & Information')
-              : t(`about.directory.title.${aboutData.directory_title}`, aboutData.directory_title)
-          )}
+              : safeT(t, aboutData.directory_title, 'about.directory.title', aboutData.directory_title)
+          }
           importantNumbers={aboutData.important_numbers || []}
           facilities={aboutData.facilities || []}
           hotelPolicies={aboutData.hotel_policies || []}
