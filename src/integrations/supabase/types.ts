@@ -851,6 +851,11 @@ export type Database = {
           created_at: string | null
           enabled_features: string[] | null
           feedback_hero_image: string | null
+          featured_experiences: Json | null
+          home_hero_image: string | null
+          home_hero_subtitle: string | null
+          home_hero_title: string | null
+          hotel_id: string | null
           id: string
           logo_url: string | null
           name: string
@@ -864,6 +869,11 @@ export type Database = {
           created_at?: string | null
           enabled_features?: string[] | null
           feedback_hero_image?: string | null
+          featured_experiences?: Json | null
+          home_hero_image?: string | null
+          home_hero_subtitle?: string | null
+          home_hero_title?: string | null
+          hotel_id?: string | null
           id?: string
           logo_url?: string | null
           name: string
@@ -877,6 +887,11 @@ export type Database = {
           created_at?: string | null
           enabled_features?: string[] | null
           feedback_hero_image?: string | null
+          featured_experiences?: Json | null
+          home_hero_image?: string | null
+          home_hero_subtitle?: string | null
+          home_hero_title?: string | null
+          hotel_id?: string | null
           id?: string
           logo_url?: string | null
           name?: string

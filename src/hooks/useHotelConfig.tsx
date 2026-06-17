@@ -14,6 +14,11 @@ export interface HotelConfig {
   contact_email?: string;
   contact_phone?: string;
   feedback_hero_image?: string;
+  home_hero_title?: string;
+  home_hero_subtitle?: string;
+  home_hero_image?: string;
+  hotel_id?: string | null;
+  featured_experiences?: any[] | null;
   created_at?: string;
   updated_at?: string;
 }
@@ -44,10 +49,16 @@ export function useHotelConfig() {
 
   const updateConfig = useMutation({
     mutationFn: async (newConfig: Partial<HotelConfig>) => {
-      const { data: existingConfig } = await supabase
-        .from('hotel_config')
-        .select('id')
-        .single();
+      // Find existing config for this hotel
+      let query = supabase.from('hotel_config').select('id');
+      if (hotelId) {
+        query = query.eq('hotel_id', hotelId);
+      } else {
+        // Fallback for global admin or when hotelId is not resolved
+        query = query.is('hotel_id', null);
+      }
+      
+      const { data: existingConfig } = await query.maybeSingle();
 
       let result;
 
@@ -68,6 +79,7 @@ export function useHotelConfig() {
           name: newConfig.name || 'Hotel Genius',
           primary_color: newConfig.primary_color || '#1e40af',
           secondary_color: newConfig.secondary_color || '#4f46e5',
+          hotel_id: hotelId || null,
           ...newConfig
         };
 

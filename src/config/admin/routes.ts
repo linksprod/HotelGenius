@@ -39,6 +39,7 @@ export const TippingManager = React.lazy(() => import('@/pages/admin/operations/
 // Settings
 export const UnifiedSettingsLayout = React.lazy(() => import('@/pages/admin/settings/UnifiedSettingsLayout'));
 export const HotelProfile = React.lazy(() => import('@/pages/admin/settings/HotelProfile'));
+export const HomePageEditor = React.lazy(() => import('@/pages/admin/settings/HomePageEditor'));
 export const LiveApp = React.lazy(() => import('@/pages/admin/settings/LiveApp'));
 export const ModuleSettings = React.lazy(() => import('@/pages/admin/settings/ModuleSettings'));
 export const StaffManager = React.lazy(() => import('@/pages/admin/settings/StaffManager'));
@@ -97,6 +98,7 @@ export const adminRoutes: AdminRouteConfig[] = [
     component: UnifiedSettingsLayout,
     children: [
       { path: 'hotel-profile', component: HotelProfile },
+      { path: 'home-page', component: HomePageEditor },
       { path: 'about', component: AboutEditor },
       { path: 'destinations', component: DestinationAdmin },
       { path: 'destinations/:id', component: DestinationManager },

@@ -10,12 +10,15 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { useNavigate } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
 
+import { useHotelConfig } from '@/hooks/useHotelConfig';
+
 const FeaturedExperienceSection = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const { config } = useHotelConfig();
 
   React.useEffect(() => {
     if (!emblaApi) return;
@@ -31,7 +34,7 @@ const FeaturedExperienceSection = () => {
     };
   }, [emblaApi]);
 
-  const featuredExperiences = [
+  const defaultExperiences = [
     {
       id: '1',
       title: t('home.featuredExperience.luxurySpa'),
@@ -49,6 +52,10 @@ const FeaturedExperienceSection = () => {
       path: '/dining'
     }
   ];
+
+  const featuredExperiences = config?.featured_experiences && config.featured_experiences.length > 0
+    ? config.featured_experiences
+    : defaultExperiences;
 
   return (
     <section className="px-6 mb-10">

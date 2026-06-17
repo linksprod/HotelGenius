@@ -123,6 +123,7 @@ export const settingsNavigation = [
     title: 'General',
     items: [
       { title: 'Hotel Profile', url: '/admin/settings/hotel-profile', icon: ImageIcon },
+      { title: 'Home Page', url: '/admin/settings/home-page', icon: LayoutDashboard },
       { title: 'About Editor', url: '/admin/settings/about', icon: FileText },
       { title: 'AI Content Import', url: '/admin/settings/ai-import', icon: Sparkles },
       { title: 'Destinations', url: '/admin/settings/destinations', icon: MapPin },
