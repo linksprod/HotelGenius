@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -44,8 +45,33 @@ export function useHotelConfig() {
       if (error) throw error;
 
       return data as HotelConfig;
-    }
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  React.useEffect(() => {
+    // Enable realtime updates for this specific hotel
+    const channel = supabase
+      .channel('public:hotel_config')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'hotel_config',
+          filter: hotelId ? `hotel_id=eq.${hotelId}` : 'hotel_id=is.null',
+        },
+        () => {
+          // When a change is detected, invalidate the query to refetch
+          queryClient.invalidateQueries({ queryKey: ['hotelConfig', hotelId] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [hotelId, queryClient]);
 
   const updateConfig = useMutation({
     mutationFn: async (newConfig: Partial<HotelConfig>) => {
