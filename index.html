@@ -55,6 +55,36 @@
   
   <div id="root"></div>
 
+  <script>
+    // Handle dynamic import failures (due to deleted chunks during redeployments)
+    window.addEventListener('error', function(e) {
+      if (e.message && (
+        e.message.indexOf('Failed to fetch dynamically imported module') > -1 ||
+        e.message.indexOf('Importing a module script failed') > -1
+      )) {
+        const lastReload = sessionStorage.getItem('chunk_reload_time');
+        const now = Date.now();
+        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+          sessionStorage.setItem('chunk_reload_time', String(now));
+          window.location.reload();
+        }
+      }
+    }, true);
+
+    window.addEventListener('unhandledrejection', function(e) {
+      if (e.reason && e.reason.message && (
+        e.reason.message.indexOf('Failed to fetch dynamically imported module') > -1 ||
+        e.reason.message.indexOf('Importing a module script failed') > -1
+      )) {
+        const lastReload = sessionStorage.getItem('chunk_reload_time');
+        const now = Date.now();
+        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+          sessionStorage.setItem('chunk_reload_time', String(now));
+          window.location.reload();
+        }
+      }
+    });
+  </script>
 
   <script type="module" src="/src/main.tsx"></script>
   <script>
