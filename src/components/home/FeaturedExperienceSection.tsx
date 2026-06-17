@@ -18,7 +18,7 @@ const FeaturedExperienceSection = () => {
   const { resolvePath } = useHotelPath();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const { config } = useHotelConfig();
+  const { config, isLoading } = useHotelConfig();
 
   React.useEffect(() => {
     if (!emblaApi) return;
@@ -56,6 +56,15 @@ const FeaturedExperienceSection = () => {
   const featuredExperiences = config?.featured_experiences && config.featured_experiences.length > 0
     ? config.featured_experiences
     : defaultExperiences;
+
+  if (isLoading) {
+    return (
+      <section className="px-6 mb-10">
+        <div className="h-8 w-48 bg-muted animate-pulse mb-4 rounded" />
+        <div className="h-72 bg-muted animate-pulse rounded-xl" />
+      </section>
+    );
+  }
 
   return (
     <section className="px-6 mb-10">
