@@ -57,7 +57,7 @@ const FeaturedExperienceSection = () => {
     ? config.featured_experiences
     : defaultExperiences;
 
-  if (isLoading) {
+  if (isLoading && !config) {
     return (
       <section className="px-6 mb-10">
         <div className="h-8 w-48 bg-muted animate-pulse mb-4 rounded" />

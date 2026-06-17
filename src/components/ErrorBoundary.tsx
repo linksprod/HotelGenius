@@ -33,7 +33,9 @@ export class ErrorBoundary extends Component<Props, State> {
       const now = Date.now();
       if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
         sessionStorage.setItem('chunk_reload_time', String(now));
-        window.location.reload();
+        const url = new URL(window.location.href);
+        url.searchParams.set('cb', String(now));
+        window.location.href = url.toString();
         return;
       }
     }

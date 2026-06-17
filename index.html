@@ -56,18 +56,35 @@
   <div id="root"></div>
 
   <script>
+    // Force clean reload bypassing cache
+    function forceCacheBustReload() {
+      const lastReload = sessionStorage.getItem('chunk_reload_time');
+      const now = Date.now();
+      if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+        sessionStorage.setItem('chunk_reload_time', String(now));
+        // Add cache buster query parameter to force fetching new index.html from server
+        const cacheBuster = 'cb=' + now;
+        const url = new URL(window.location.href);
+        url.searchParams.set('cb', String(now));
+        window.location.href = url.toString();
+      }
+    }
+
+    // Handle Vite preload failures
+    window.addEventListener('vite:preloadError', function(e) {
+      e.preventDefault();
+      console.warn('Vite preload error detected, forcing cache-busting reload...');
+      forceCacheBustReload();
+    });
+
     // Handle dynamic import failures (due to deleted chunks during redeployments)
     window.addEventListener('error', function(e) {
       if (e.message && (
         e.message.indexOf('Failed to fetch dynamically imported module') > -1 ||
         e.message.indexOf('Importing a module script failed') > -1
       )) {
-        const lastReload = sessionStorage.getItem('chunk_reload_time');
-        const now = Date.now();
-        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
-          sessionStorage.setItem('chunk_reload_time', String(now));
-          window.location.reload();
-        }
+        console.warn('Dynamic import error detected, forcing cache-busting reload...');
+        forceCacheBustReload();
       }
     }, true);
 
@@ -76,12 +93,8 @@
         e.reason.message.indexOf('Failed to fetch dynamically imported module') > -1 ||
         e.reason.message.indexOf('Importing a module script failed') > -1
       )) {
-        const lastReload = sessionStorage.getItem('chunk_reload_time');
-        const now = Date.now();
-        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
-          sessionStorage.setItem('chunk_reload_time', String(now));
-          window.location.reload();
-        }
+        console.warn('Unhandled promise rejection for dynamic import, forcing cache-busting reload...');
+        forceCacheBustReload();
       }
     });
   </script>
