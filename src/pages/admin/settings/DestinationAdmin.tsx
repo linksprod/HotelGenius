@@ -9,6 +9,7 @@ import AttractionsTab from './destinations/AttractionsTab';
 import ActivitiesTab from './destinations/ActivitiesTab';
 import CarRentalsTab from './destinations/CarRentalsTab';
 import PublicTransportsTab from './destinations/PublicTransportsTab';
+import NearbyShopsTab from '@/pages/admin/modules/shops/shops/NearbyShopsTab';
 import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
 
 const DestinationAdmin = () => {
@@ -22,10 +23,11 @@ const DestinationAdmin = () => {
         />
       </div>
       <Tabs defaultValue="categories" className="w-full">
-        <TabsList className="grid grid-cols-5 mb-6">
+        <TabsList className="grid grid-cols-6 mb-6">
           <TabsTrigger value="categories">Catégories</TabsTrigger>
           <TabsTrigger value="attractions">Attractions</TabsTrigger>
           <TabsTrigger value="activities">Activités</TabsTrigger>
+          <TabsTrigger value="nearby">Nearby Places</TabsTrigger>
           <TabsTrigger value="carRentals">Locations Voiture</TabsTrigger>
           <TabsTrigger value="transports">Transports</TabsTrigger>
         </TabsList>
@@ -40,6 +42,10 @@ const DestinationAdmin = () => {
 
         <TabsContent value="activities">
           <ActivitiesTab />
+        </TabsContent>
+
+        <TabsContent value="nearby">
+          <NearbyShopsTab />
         </TabsContent>
 
         <TabsContent value="carRentals">
