@@ -18,10 +18,12 @@ const SpaServiceCard = ({
   const { t } = useTranslation();
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
-  // Parse comma-separated images or fallback
+  // Parse comma-separated images or fallback. If it is a base64 Data URL, treat as a single image.
   const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80";
   const images = service.image 
-    ? service.image.split(',').map(s => s.trim()).filter(Boolean) 
+    ? (service.image.startsWith('data:') 
+        ? [service.image] 
+        : service.image.split(',').map(s => s.trim()).filter(Boolean)) 
     : [FALLBACK_IMAGE];
 
   const handleImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {

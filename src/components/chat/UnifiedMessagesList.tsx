@@ -16,6 +16,7 @@ interface UnifiedMessagesListProps {
     roomNumber?: string;
   };
   isAdmin?: boolean;
+  hotelId?: string | null;
 }
 
 export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
@@ -23,7 +24,8 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
   isTyping,
   messagesEndRef,
   currentUser,
-  isAdmin = false
+  isAdmin = false,
+  hotelId
 }) => {
   const { t } = useTranslation();
   const formatTime = (dateString: string) => {
@@ -105,6 +107,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                   <ChatActionRenderer
                     type={message.metadata.action_type || 'booking_form'}
                     metadata={message.metadata}
+                    hotelId={hotelId}
                   />
                 )}
 

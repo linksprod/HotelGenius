@@ -68,10 +68,10 @@ export default function RestaurantBookingForm({
   useEffect(() => {
     if (userData && !existingBooking) {
       const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-      form.setValue('guestName', fullName);
+      form.setValue('guestName', fullName || 'Guest');
       form.setValue('guestEmail', userData.email || '');
       form.setValue('guestPhone', userData.phone || '');
-      form.setValue('roomNumber', userData.room_number || '');
+      form.setValue('roomNumber', userData.room_number || 'N/A');
     }
   }, [userData, existingBooking, form]);
 
@@ -129,7 +129,17 @@ export default function RestaurantBookingForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form 
+        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.error("RestaurantBookingForm validation errors:", errors);
+          toast({
+            title: t('common.error', 'Validation Error'),
+            description: Object.values(errors).map(err => err.message).join(', '),
+            variant: "destructive"
+          });
+        })} 
+        className="space-y-4"
+      >
         <GuestInfoFields
           form={form}
           hideNameEmail={isChatMode && !!userData}

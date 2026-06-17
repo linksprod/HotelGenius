@@ -1263,13 +1263,24 @@
     "container": {
       "loadingChat": "Loading chat..."
     },
+    "history": {
+      "title": "Chat History",
+      "empty": "No conversations yet",
+      "chatFrom": "Chat of {{date}}",
+      "deleteConfirm": "Are you sure you want to delete this conversation?",
+      "deleteSuccess": "Conversation deleted successfully.",
+      "deleteError": "Failed to delete conversation."
+    },
     "header": {
       "smartAssistant": "Smart Hotel Assistant",
       "humanAgent": "Human Agent",
       "available247": "24/7 Available",
       "liveSupport": "Live Support",
       "talkToHuman": "Talk to Human",
-      "takeOver": "Take Over"
+      "takeOver": "Take Over",
+      "newConversation": "New Chat",
+      "newConversationStarted": "New Chat Started",
+      "newConversationDesc": "Your previous chat history has been saved."
     },
     "input": {
       "typeMessage": "Type your message to concierge..."

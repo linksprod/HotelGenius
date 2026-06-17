@@ -31,9 +31,9 @@ serve(async (req) => {
       throw new Error('DeepSeek API key is missing. Please set the DEEPSEEK_API_KEY secret in your Supabase dashboard.');
     }
 
-    const { message, userId, userName, roomNumber, conversationId, hotelId } = await req.json();
+    const { message, userId, userName, roomNumber, conversationId, hotelId, language } = await req.json();
 
-    console.log('[AI] Request received:', { userId, userName, hotelId, messageLength: message?.length });
+    console.log('[AI] Request received:', { userId, userName, hotelId, messageLength: message?.length, language });
 
     if (!message || !userId || !userName) {
       return new Response(JSON.stringify({ error: 'Missing required fields (message, userId, userName)' }), {
@@ -42,7 +42,7 @@ serve(async (req) => {
       });
     }
 
-    const response = await sendChatMessage(message, userId, userName, roomNumber, hotelId, conversationId);
+    const response = await sendChatMessage(message, userId, userName, roomNumber, hotelId, conversationId, language);
 
     return new Response(JSON.stringify(response), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -115,11 +115,11 @@ function formatTwinForPrompt(twin: GuestTwin): string {
   return lines.join('\n');
 }
 
-async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, hotelId: string, conversationId?: string) {
+async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, hotelId: string, conversationId?: string, language?: string) {
   // Determine the effective hotel ID (fallback to demo hotel if missing)
   const effectiveHotelId = hotelId || '00000000-0000-0000-0000-000000000000';
   
-  console.log(`[AI] Processing request for hotel: ${effectiveHotelId}`);
+  console.log(`[AI] Processing request for hotel: ${effectiveHotelId}, language: ${language}`);
 
   // ── Phase 4: Fetch Guest Digital Twin ──────────────────────────────────────
   const guestTwin = await fetchGuestTwin(userId, effectiveHotelId);
@@ -212,7 +212,9 @@ CRITICAL CONCIERGE RULES:
 4. FEW-SHOT EXAMPLE: Guest: "I need towels" -> Action: show_service_categories(category="Housekeeping") -> Content: "I've opened the housekeeping menu for you."
 5. ALWAYS favor visual tools over text descriptions.
 
-Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to answer specific questions about hotel history, policies, or unique services.`;
+Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to answer specific questions about hotel history, policies, or unique services.
+
+CRITICAL: The guest's active language/locale is "${language || guestTwin.language || 'en'}". You MUST respond and converse in this language. If the language is "fr" (or starts with "fr"), you MUST reply in French. If the language is "en", you MUST reply in English. Always match the guest's language/locale.`;
 
   const tools = [
     {
@@ -380,13 +382,29 @@ Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to
         bookingResult = await createServiceRequest(functionArgs, userId, userName, roomNumber, hotelId);
         break;
       case 'show_restaurant_list':
-        bookingResult = { success: true, message: 'I\'ve opened the restaurant list for you.' };
+        bookingResult = { 
+          success: true, 
+          message: (language || guestTwin.language || 'en').toLowerCase().startsWith('fr')
+            ? "J'ai ouvert la liste des restaurants pour vous."
+            : "I've opened the restaurant list for you."
+        };
         break;
       case 'show_service_categories':
-        bookingResult = { success: true, message: `I've opened the service menu for you${functionArgs.category ? ` for ${functionArgs.category}.` : '.'}` };
+        bookingResult = { 
+          success: true, 
+          message: (language || guestTwin.language || 'en').toLowerCase().startsWith('fr')
+            ? `J'ai ouvert le menu des services pour vous${functionArgs.category ? ` pour la catégorie ${functionArgs.category}.` : '.'}`
+            : `I've opened the service menu for you${functionArgs.category ? ` for ${functionArgs.category}.` : '.'}`
+        };
         break;
       case 'trigger_booking_form':
-        bookingResult = { success: true, message: `I've opened the booking form for the ${functionArgs.type}. Please fill in the details.` };
+        const typeFr = functionArgs.type === 'restaurant' ? 'restaurant' : functionArgs.type === 'spa' ? 'spa' : 'événement';
+        bookingResult = { 
+          success: true, 
+          message: (language || guestTwin.language || 'en').toLowerCase().startsWith('fr')
+            ? `J'ai ouvert le formulaire de réservation pour le/la ${typeFr}. Veuillez remplir les détails.`
+            : `I've opened the booking form for the ${functionArgs.type}. Please fill in the details.`
+        };
         break;
       default:
         bookingResult = { success: false, message: 'Unknown function' };
@@ -395,6 +413,29 @@ Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to
     // For visual tools, we return immediately to prevent the follow-up text from overriding cards
     if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list'].includes(functionName)) {
       if (conversationId) {
+        let actionType = 'booking_form';
+        let metadataObj: any = {};
+        
+        if (functionName === 'show_service_categories') {
+          actionType = 'service_request_flow';
+          metadataObj = {
+            action_type: 'service_request_flow',
+            category: functionArgs.category || null
+          };
+        } else if (functionName === 'show_restaurant_list') {
+          actionType = 'restaurant_list';
+          metadataObj = {
+            action_type: 'restaurant_list'
+          };
+        } else if (functionName === 'trigger_booking_form') {
+          actionType = 'booking_form';
+          metadataObj = {
+            action_type: 'booking_form',
+            entity_type: functionArgs.type,
+            entity_id: functionArgs.entity_id
+          };
+        }
+
         await supabase
           .from('messages')
           .insert({
@@ -402,7 +443,9 @@ Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to
             sender_type: 'ai',
             sender_name: 'AI Assistant',
             content: bookingResult.message || 'I\'ve opened that for you.',
-            message_type: 'text'
+            message_type: 'action',
+            metadata: metadataObj,
+            hotel_id: hotelId
           });
       }
       return { response: bookingResult.message || 'I\'ve opened that for you.' };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Bot, User, Phone, ArrowLeft, Sparkles } from 'lucide-react';
+import { Bot, User, Phone, ArrowLeft, Sparkles, Plus, History } from 'lucide-react';
 import type { Conversation } from '@/types/chat';
 import { useTranslation } from 'react-i18next';
 
@@ -11,6 +11,10 @@ interface UnifiedChatHeaderProps {
   isAdmin?: boolean;
   onEscalateToHuman?: () => void;
   onTakeOver?: (conversationId: string) => void;
+  onNewConversation?: () => void;
+  conversationType?: 'concierge' | 'safety_ai';
+  onToggleHistory?: () => void;
+  showHistoryButton?: boolean;
   onGoBack?: () => void;
 }
 
@@ -20,12 +24,17 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
   isAdmin = false,
   onEscalateToHuman,
   onTakeOver,
+  onNewConversation,
+  conversationType = 'concierge',
+  onToggleHistory,
+  showHistoryButton = false,
   onGoBack
 }) => {
   const { t } = useTranslation();
   const isAIHandling = currentHandler === 'ai';
   const canEscalate = !isAdmin && isAIHandling && onEscalateToHuman;
   const canTakeOver = isAdmin && isAIHandling && conversation && onTakeOver;
+  const canStartNewConversation = !isAdmin && conversationType === 'safety_ai' && onNewConversation;
 
   return (
     <div className="flex items-center justify-between p-3 sm:p-4 border-b bg-background/95 backdrop-blur-md flex-shrink-0 z-10">
@@ -68,6 +77,30 @@ export const UnifiedChatHeader: React.FC<UnifiedChatHeaderProps> = ({
       </div>
 
       <div className="flex items-center space-x-2">
+        {showHistoryButton && onToggleHistory && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onToggleHistory}
+            className="md:hidden h-9 w-9 bg-muted hover:bg-muted/80 rounded-lg text-muted-foreground"
+            title={t('chat.history.title')}
+          >
+            <History className="h-5 w-5" />
+          </Button>
+        )}
+
+        {canStartNewConversation && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onNewConversation}
+            className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/5 text-primary"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">{t('chat.header.newConversation')}</span>
+          </Button>
+        )}
+
         {canEscalate && (
           <Button
             variant="outline"

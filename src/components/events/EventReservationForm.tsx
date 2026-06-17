@@ -94,16 +94,10 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
       console.log("Populating form with user data:", userData);
 
       const fullName = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
-      form.setValue('guestName', fullName || '');
+      form.setValue('guestName', fullName || 'Guest');
       form.setValue('guestEmail', userData.email || '');
       form.setValue('guestPhone', userData.phone || '');
-      form.setValue('roomNumber', userData.room_number || '');
-      console.log("Form values after update:", {
-        name: fullName,
-        email: userData.email,
-        phone: userData.phone,
-        roomNumber: userData.room_number
-      });
+      form.setValue('roomNumber', userData.room_number || 'N/A');
     } else {
       console.log("No user data available to populate form");
 
@@ -185,7 +179,17 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
   }, (_, i) => i + 1);
 
   return <Form {...form}>
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form 
+      onSubmit={form.handleSubmit(onSubmit, (errors) => {
+        console.error("EventReservationForm validation errors:", errors);
+        toast({
+          title: t('common.error', 'Validation Error'),
+          description: Object.values(errors).map(err => err.message).join(', '),
+          variant: "destructive"
+        });
+      })} 
+      className="space-y-6"
+    >
       <GuestInfoFields
         form={form}
         hideNameEmail={isChatMode && !!userData}

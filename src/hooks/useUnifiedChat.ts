@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import type { Conversation, Message, ChatState } from '@/types/chat';
 
 interface UseUnifiedChatProps {
@@ -40,152 +41,153 @@ export const useUnifiedChat = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Initialize or load conversation
-  useEffect(() => {
-    const loadConversationById = async (id: string) => {
-      try {
-        setChatState(prev => ({ ...prev, isLoading: true }));
+  const { t, i18n } = useTranslation();
 
-        const { data: conversation, error: convError } = await supabase
+  const loadConversationById = useCallback(async (id: string) => {
+    try {
+      setChatState(prev => ({ ...prev, isLoading: true }));
+
+      const { data: conversation, error: convError } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (convError) throw convError;
+
+      const { data: messages, error: messagesError } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', id)
+        .order('created_at', { ascending: true });
+
+      if (messagesError) throw messagesError;
+
+      setChatState({
+        conversation,
+        messages: messages || [],
+        isLoading: false,
+        isTyping: false,
+        currentHandler: conversation.current_handler
+      });
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load conversation.",
+        variant: "destructive"
+      });
+      setChatState(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [toast]);
+
+  const initializeConversation = useCallback(async () => {
+    try {
+      setChatState(prev => ({ ...prev, isLoading: true }));
+
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) {
+        setChatState(prev => ({ ...prev, isLoading: false }));
+        return;
+      }
+
+      const { data: existingConversation } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('guest_id', user.user.id)
+        .eq('conversation_type', conversationType)
+        .in('status', ['active', 'escalated'])
+        .maybeSingle();
+
+      let conversation = existingConversation;
+
+      // Self-healing: if conversation exists but has no hotel_id, assign it now
+      if (conversation && !conversation.hotel_id && hotelId) {
+        console.log(`[useUnifiedChat] Self-healing: Assigning hotel_id ${hotelId} to conversation ${conversation.id}`);
+        const { data: updatedConv } = await (supabase
           .from('conversations')
-          .select('*')
-          .eq('id', id)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .update({ hotel_id: hotelId } as any) as any)
+          .eq('id', conversation.id)
+          .select()
           .single();
 
-        if (convError) throw convError;
-
-        const { data: messages, error: messagesError } = await supabase
-          .from('messages')
-          .select('*')
-          .eq('conversation_id', id)
-          .order('created_at', { ascending: true });
-
-        if (messagesError) throw messagesError;
-
-        setChatState({
-          conversation,
-          messages: messages || [],
-          isLoading: false,
-          isTyping: false,
-          currentHandler: conversation.current_handler
-        });
-      } catch (error) {
-        console.error('Error loading conversation:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load conversation.",
-          variant: "destructive"
-        });
-        setChatState(prev => ({ ...prev, isLoading: false }));
+        if (updatedConv) conversation = updatedConv;
       }
-    };
 
-    const initializeConversation = async () => {
-      try {
-        setChatState(prev => ({ ...prev, isLoading: true }));
-
-        const { data: user } = await supabase.auth.getUser();
-        if (!user.user) {
-          setChatState(prev => ({ ...prev, isLoading: false }));
-          return;
-        }
-
-        const { data: existingConversation } = await supabase
+      if (!conversation) {
+        const { data: newConversation, error } = await supabase
           .from('conversations')
-          .select('*')
-          .eq('guest_id', user.user.id)
-          .eq('conversation_type', conversationType)
-          .in('status', ['active', 'escalated'])
-          .maybeSingle();
+          .insert({
+            guest_id: user.user.id,
+            guest_name: userInfo?.name || 'Guest',
+            guest_email: userInfo?.email || user.user.email,
+            room_number: userInfo?.roomNumber,
+            status: 'active',
+            current_handler: conversationType === 'concierge' ? 'human' : 'ai',
+            conversation_type: conversationType,
+            hotel_id: hotelId ?? null // Always set hotel_id; trigger resolves from guests table if null
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any)
+          .select()
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .single() as any;
 
-        let conversation = existingConversation;
+        if (error) throw error;
+        conversation = newConversation;
 
-        // Self-healing: if conversation exists but has no hotel_id, assign it now
-        if (conversation && !conversation.hotel_id && hotelId) {
-          console.log(`[useUnifiedChat] Self-healing: Assigning hotel_id ${hotelId} to conversation ${conversation.id}`);
-          const { data: updatedConv } = await (supabase
-            .from('conversations')
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .update({ hotel_id: hotelId } as any) as any)
-            .eq('id', conversation.id)
-            .select()
-            .single();
+        const welcomeMessage = conversationType === 'safety_ai'
+          ? `Hello ${userInfo?.name || 'there'}! I'm your AI Assistant. I can help with bookings, hotel information, and much more. If you need human assistance, I can connect you to our staff. How can I help you today?`
+          : `Hello ${userInfo?.name || 'there'}! Welcome to our Hotel Team chat. Our staff will assist you directly with any questions or requests you may have.`;
 
-          if (updatedConv) conversation = updatedConv;
-        }
-
-        if (!conversation) {
-          const { data: newConversation, error } = await supabase
-            .from('conversations')
-            .insert({
-              guest_id: user.user.id,
-              guest_name: userInfo?.name || 'Guest',
-              guest_email: userInfo?.email || user.user.email,
-              room_number: userInfo?.roomNumber,
-              status: 'active',
-              current_handler: conversationType === 'concierge' ? 'human' : 'ai',
-              conversation_type: conversationType,
-              hotel_id: hotelId ?? null // Always set hotel_id; trigger resolves from guests table if null
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } as any)
-            .select()
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .single() as any;
-
-          if (error) throw error;
-          conversation = newConversation;
-
-          const welcomeMessage = conversationType === 'safety_ai'
-            ? `Hello ${userInfo?.name || 'there'}! I'm your AI Assistant. I can help with bookings, hotel information, and much more. If you need human assistance, I can connect you to our staff. How can I help you today?`
-            : `Hello ${userInfo?.name || 'there'}! Welcome to our Hotel Team chat. Our staff will assist you directly with any questions or requests you may have.`;
-
-          await supabase
-            .from('messages')
-            .insert({
-              conversation_id: conversation.id,
-              sender_type: conversationType === 'concierge' ? 'staff' : 'ai',
-              sender_name: conversationType === 'safety_ai' ? 'AI Assistant' : 'Hotel Team',
-              content: welcomeMessage,
-              message_type: 'text',
-              hotel_id: hotelId
-            });
-        }
-
-        const { data: messages, error: messagesError } = await supabase
+        await supabase
           .from('messages')
-          .select('*')
-          .eq('conversation_id', conversation.id)
-          .order('created_at', { ascending: true });
-
-        if (messagesError) throw messagesError;
-
-        setChatState({
-          conversation,
-          messages: messages || [],
-          isLoading: false,
-          isTyping: false,
-          currentHandler: conversation.current_handler
-        });
-
-      } catch (error) {
-        console.error('Error initializing conversation:', error);
-        toast({
-          title: "Error",
-          description: "Failed to initialize chat. Please try again.",
-          variant: "destructive"
-        });
-      } finally {
-        setChatState(prev => ({ ...prev, isLoading: false }));
+          .insert({
+            conversation_id: conversation.id,
+            sender_type: conversationType === 'concierge' ? 'staff' : 'ai',
+            sender_name: conversationType === 'safety_ai' ? 'AI Assistant' : 'Hotel Team',
+            content: welcomeMessage,
+            message_type: 'text',
+            hotel_id: hotelId
+          });
       }
-    };
 
+      const { data: messages, error: messagesError } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversation.id)
+        .order('created_at', { ascending: true });
+
+      if (messagesError) throw messagesError;
+
+      setChatState({
+        conversation,
+        messages: messages || [],
+        isLoading: false,
+        isTyping: false,
+        currentHandler: conversation.current_handler
+      });
+
+    } catch (error) {
+      console.error('Error initializing conversation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to initialize chat. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setChatState(prev => ({ ...prev, isLoading: false }));
+    }
+  }, [conversationType, hotelId, userInfo?.name, userInfo?.email, userInfo?.roomNumber, toast]);
+
+  // Initialize or load conversation
+  useEffect(() => {
     if (conversationId) {
       loadConversationById(conversationId);
     } else if (userInfo?.name) {
       initializeConversation();
     }
-  }, [conversationId, userInfo?.name, userInfo?.email, userInfo?.roomNumber, conversationType, toast]);
+  }, [conversationId, userInfo?.name, loadConversationById, initializeConversation]);
 
   // Real-time subscription for messages
   useEffect(() => {
@@ -427,7 +429,8 @@ export const useUnifiedChat = ({
           userName: userInfo.name,
           roomNumber: userInfo.roomNumber || 'N/A',
           conversationId: chatState.conversation?.id,
-          hotelId: chatState.conversation?.hotel_id || hotelId
+          hotelId: chatState.conversation?.hotel_id || hotelId,
+          language: i18n.language || 'en'
         }
       });
 
@@ -553,6 +556,78 @@ export const useUnifiedChat = ({
     }
   };
 
+  // Start a new conversation (archive old one)
+  const startNewConversation = async () => {
+    if (!chatState.conversation?.id) return;
+
+    try {
+      setChatState(prev => ({ ...prev, isLoading: true }));
+
+      // Archive the old conversation by setting its status to 'closed'
+      const { error } = await supabase
+        .from('conversations')
+        .update({ status: 'closed' })
+        .eq('id', chatState.conversation.id);
+
+      if (error) throw error;
+
+      // Re-initialize to create a new active/escalated conversation
+      await initializeConversation();
+
+      toast({
+        title: t('chat.header.newConversationStarted'),
+        description: t('chat.header.newConversationDesc')
+      });
+    } catch (error) {
+      console.error('Error starting new conversation:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start a new conversation.",
+        variant: "destructive"
+      });
+      setChatState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  // Delete a conversation (and its messages)
+  const deleteConversation = async (id: string) => {
+    try {
+      // Delete messages in the conversation first
+      const { error: messagesError } = await supabase
+        .from('messages')
+        .delete()
+        .eq('conversation_id', id);
+
+      if (messagesError) throw messagesError;
+
+      // Delete routing entries
+      await supabase
+        .from('chat_routing')
+        .delete()
+        .eq('conversation_id', id);
+
+      // Delete the conversation itself
+      const { error: convError } = await supabase
+        .from('conversations')
+        .delete()
+        .eq('id', id);
+
+      if (convError) throw convError;
+
+      toast({
+        title: t('chat.history.deleteSuccess'),
+      });
+    } catch (error) {
+      console.error('Error deleting conversation:', error);
+      toast({
+        title: "Error",
+        description: t('chat.history.deleteError'),
+        variant: "destructive"
+      });
+      throw error;
+    }
+  };
+
   return {
     ...chatState,
     inputMessage,
@@ -560,6 +635,8 @@ export const useUnifiedChat = ({
     sendMessage,
     escalateToHuman,
     takeOverConversation,
+    startNewConversation,
+    deleteConversation,
     messagesEndRef,
     inputRef
   };

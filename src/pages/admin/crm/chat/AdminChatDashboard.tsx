@@ -18,12 +18,27 @@ import type { Conversation } from '@/types/chat';
 export const AdminChatDashboard: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
+  
+  const selectedConversationRef = React.useRef(selectedConversation);
+  useEffect(() => {
+    selectedConversationRef.current = selectedConversation;
+  }, [selectedConversation]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({ active: 8, escalated: 4, total: 24, aiResolved: 12, avgResponse: '1.2m' });
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const { markSectionSeen } = useAdminNotifications();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
+
+  // Clear unread counts locally and mark seen in DB when conversation changes
+  useEffect(() => {
+    if (selectedConversation?.id) {
+      const convId = selectedConversation.id;
+      markSectionSeen('chat:' + convId);
+      setUnreadCounts(prev => ({ ...prev, [convId]: 0 }));
+    }
+  }, [selectedConversation?.id, markSectionSeen]);
 
   useEffect(() => {
     markSectionSeen('chat');
@@ -40,7 +55,10 @@ export const AdminChatDashboard: React.FC = () => {
         const msg = payload.new as any;
         if (msg.sender_type === 'guest' && msg.conversation_id) {
           const convId = msg.conversation_id;
-          if (selectedConversation?.id !== convId) {
+          const currentSelected = selectedConversationRef.current;
+          if (currentSelected?.id === convId) {
+            markSectionSeen('chat:' + convId);
+          } else {
             setUnreadCounts(prev => ({ ...prev, [convId]: (prev[convId] || 0) + 1 }));
           }
         }
@@ -49,7 +67,7 @@ export const AdminChatDashboard: React.FC = () => {
       .subscribe();
     
     return () => { supabase.removeChannel(channel); };
-  }, [hotelId, selectedConversation?.id]); // updated dependency
+  }, [hotelId, markSectionSeen]);
 
   const fetchUnreadCounts = useCallback(async (targetConversations?: Conversation[]) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -88,8 +106,13 @@ export const AdminChatDashboard: React.FC = () => {
     const { data: guestMessages } = await messagesQuery;
 
     const counts: Record<string, number> = {};
+    const activeId = selectedConversationRef.current?.id;
     if (guestMessages) {
       for (const msg of guestMessages) {
+        if (msg.conversation_id === activeId) {
+          counts[msg.conversation_id] = 0;
+          continue;
+        }
         const lastSeen = seenMap[`chat:${msg.conversation_id}`] || '1970-01-01T00:00:00Z';
         if (msg.created_at > lastSeen) {
           counts[msg.conversation_id] = (counts[msg.conversation_id] || 0) + 1;
@@ -299,6 +322,7 @@ export const AdminChatDashboard: React.FC = () => {
           {selectedConversation ? (
             <div className="flex-1 flex flex-col min-h-0">
                < UnifiedChatContainer
+                key={selectedConversation.id}
                 userInfo={{ name: 'Admin Hub', email: 'concierge@hotelgenius.online' }}
                 isAdmin={true}
                 className="h-full"

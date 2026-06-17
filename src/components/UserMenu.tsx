@@ -115,8 +115,10 @@ const UserMenu = () => {
 
   // Get user initials for avatar fallback
   const getInitials = () => {
-    if (!userData || !userData.first_name) return '?';
-    return `${userData.first_name?.charAt(0) || ''}${userData.last_name?.charAt(0) || ''}`;
+    if (!userData) return '?';
+    const firstInitial = userData.first_name?.trim().charAt(0).toUpperCase() || '';
+    const lastInitial = userData.last_name?.trim().charAt(0).toUpperCase() || '';
+    return (firstInitial + lastInitial) || '?';
   };
 
   // Get user full name
@@ -145,10 +147,8 @@ const UserMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button id="onboarding-profile" variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar key={userData?.profile_image || 'no-image'}>
-            {userData?.profile_image ? (
+            {userData?.profile_image && (
               <AvatarImage src={userData.profile_image} alt={t('user.profileImage')} />
-            ) : (
-              <AvatarImage src="/placeholder.svg" />
             )}
             <AvatarFallback className="bg-primary text-primary-foreground font-medium">
               {getInitials()}

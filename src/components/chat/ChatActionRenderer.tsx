@@ -19,6 +19,7 @@ interface ChatActionRendererProps {
     type: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata: any;
+    hotelId?: string | null;
     onSuccess?: () => void;
 }
 
@@ -186,6 +187,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
 export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     type,
     metadata,
+    hotelId,
     onSuccess
 }) => {
     const { t } = useTranslation();
@@ -229,10 +231,11 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         setEntities([data]);
                     }
                 } else if (type === 'restaurant_list') {
-                    const { data, error } = await supabase
-                        .from('restaurants')
-                        .select('*')
-                        .limit(5);
+                    let query = supabase.from('restaurants').select('*');
+                    if (hotelId) {
+                        query = query.eq('hotel_id', hotelId);
+                    }
+                    const { data, error } = await query.limit(5);
 
                     if (error) throw error;
                     setEntities(data || []);
@@ -245,7 +248,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
         };
 
         fetchEntities();
-    }, [type, metadata]);
+    }, [type, metadata, hotelId]);
 
     if (loading) {
         return (

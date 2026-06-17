@@ -70,7 +70,7 @@ export default function SpaManager() {
   }, []);
 
   return (
-    <div className="flex flex-col h-full bg-background text-foreground overflow-hidden">
+    <div className="flex flex-col bg-background text-foreground">
       
       <motion.div 
         className="p-8 pb-4"
