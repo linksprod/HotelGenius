@@ -162,12 +162,6 @@ const UserMenu = () => {
           <GuestStatusBadge role={role || 'user'} />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link to={resolvePath("/my-room")}>
-          <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>{t('nav.myRoom')}</span>
-          </DropdownMenuItem>
-        </Link>
         <Link to={resolvePath("/profile")}>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
