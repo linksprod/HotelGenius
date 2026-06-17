@@ -144,7 +144,21 @@ const TenantGuard = ({ children }: TenantGuardProps) => {
                         </div>
                     )}
                     <button 
-                        onClick={() => window.location.href = '/login'} 
+                        onClick={() => {
+                            const currentSlug = window.location.pathname.split('/')[1];
+                            const reservedSlugs = [
+                                'administration', 'demo', 'login', 'auth', 'guests',
+                                'rooms', 'dining', 'spa', 'activities', 'events', 
+                                'destination', 'map', 'about', 'contact', 'services', 
+                                'shops', 'feedback', 'messages', 'notifications', 
+                                'requests', 'my-room', 'debug', 'profile', 'tipping'
+                            ];
+                            if (currentSlug && !reservedSlugs.includes(currentSlug)) {
+                                window.location.href = `/${currentSlug}/auth/login`;
+                            } else {
+                                window.location.href = '/login';
+                            }
+                        }} 
                         className="w-full px-6 py-2.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity font-medium text-sm"
                     >
                         Retour à la page de connexion / Go to Login
