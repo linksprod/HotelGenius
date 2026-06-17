@@ -151,16 +151,18 @@ export default function RestaurantBookingForm({
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem>
                 <FormLabel>{t('dining.booking.dateLabel', 'Reservation Date')}</FormLabel>
-                <DatePicker
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  minDate={new Date()}
-                  maxDate={addDays(new Date(), 30)}
-                  required
-                />
+                <FormControl>
+                  <DatePicker
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    minDate={new Date()}
+                    maxDate={addDays(new Date(), 30)}
+                    required
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

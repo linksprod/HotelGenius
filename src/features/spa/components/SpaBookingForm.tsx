@@ -151,16 +151,18 @@ export default function SpaBookingForm({
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>{t('spa.booking_date', 'Booking Date')}</FormLabel>
-                <DatePicker
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  minDate={new Date()}
-                  maxDate={addDays(new Date(), 30)}
-                  required
-                />
+              <FormItem>
+                <FormLabel>{t('spa.booking.dateLabel', 'Date de réservation')}</FormLabel>
+                <FormControl>
+                  <DatePicker
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    minDate={new Date()}
+                    maxDate={addDays(new Date(), 30)}
+                    required
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
