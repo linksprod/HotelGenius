@@ -32,6 +32,7 @@ interface UnifiedChatContainerProps {
   conversationId?: string; // Load specific conversation by ID (for admin)
   hotelId?: string; // Tenant scope
   onGoBack?: () => void;
+  onDeleteSuccess?: () => void;
 }
 
 export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
@@ -41,7 +42,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   conversationType = 'concierge',
   conversationId,
   hotelId: propHotelId,
-  onGoBack
+  onGoBack,
+  onDeleteSuccess
 }) => {
   const { t } = useTranslation();
   const { hotelId: contextHotelId } = useCurrentHotelId();
@@ -129,6 +131,10 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
       
       // If we deleted the current conversation, clear the selection to load/create active chat
       if (selectedConversationId === conversationToDelete || conversation?.id === conversationToDelete) {
+        if (onDeleteSuccess) {
+          onDeleteSuccess();
+          return;
+        }
         setSelectedConversationId(undefined);
       }
       

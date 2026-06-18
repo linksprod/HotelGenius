@@ -27,6 +27,7 @@ const Messages = () => {
   const [selectedChatType, setSelectedChatType] = useState<'concierge' | 'safety_ai' | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [chatKey, setChatKey] = useState(0);
   const { markAsSeen } = useMessageBadge();
 
   const handleBack = () => {
@@ -155,11 +156,13 @@ const Messages = () => {
       <Layout>
         <div className="flex flex-col h-full w-full">
           <UnifiedChatContainer
+            key={chatKey}
             userInfo={userInfo}
             conversationType={selectedChatType}
             className="h-full w-full"
             hotelId={hotel?.id}
             onGoBack={handleBack}
+            onDeleteSuccess={() => setChatKey(prev => prev + 1)}
           />
         </div>
       </Layout>
