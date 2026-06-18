@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { createReservation } from '../services/reservationService';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 import { Restaurant } from '../types';
@@ -161,24 +162,27 @@ export default function RestaurantBookingForm({
               <FormItem className="flex flex-col">
                 <FormLabel>{t('dining.booking.dateLabel', 'Reservation Date')}</FormLabel>
                 <FormControl>
-                  <input
-                    type="date"
-                    value={field.value ? formatDateLocal(field.value) : ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      field.onChange(val ? new Date(val + 'T00:00:00') : undefined);
-                    }}
-                    onClick={(e) => {
-                      try {
-                        e.currentTarget.showPicker();
-                      } catch (err) {
-                        console.error("showPicker not supported", err);
-                      }
-                    }}
-                    min={formatDateLocal(new Date())}
-                    max={formatDateLocal(addDays(new Date(), 30))}
-                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
-                  />
+                  <div className="relative">
+                    <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                    <input
+                      type="date"
+                      value={field.value ? formatDateLocal(field.value) : ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        field.onChange(val ? new Date(val + 'T00:00:00') : undefined);
+                      }}
+                      onClick={(e) => {
+                        try {
+                          e.currentTarget.showPicker();
+                        } catch (err) {
+                          console.error("showPicker not supported", err);
+                        }
+                      }}
+                      min={formatDateLocal(new Date())}
+                      max={formatDateLocal(addDays(new Date(), 365 * 5))}
+                      className="w-full pl-10 pr-3 flex h-10 rounded-md border border-input bg-background py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
