@@ -45,33 +45,41 @@ const SpaBookingDialog = ({
   const isEditing = !!existingBooking;
   
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0">
-        <DialogHeader className="p-6 pb-2">
-          <DialogTitle>
-            {isEditing 
-              ? t('spa.edit_booking_title', 'Edit Your Booking - {{serviceName}}', { serviceName: service?.name }) 
-              : t('spa.book_treatment_title', 'Book a Treatment - {{serviceName}}', { serviceName: service?.name })}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing 
-              ? t('spa.edit_booking_desc', 'Modify your booking details below.')
-              : t('spa.book_treatment_desc', 'Fill out the form below to book a treatment.')}
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="max-h-[80vh]">
-          <div className="p-6 pt-2">
-            {!loading && service && (
-              <SpaBookingForm
-                service={service}
-                onSuccess={onSuccess}
-                existingBooking={existingBooking}
-              />
-            )}
-          </div>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+    <>
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80" 
+          onClick={() => onOpenChange(false)} 
+        />
+      )}
+      <Dialog open={isOpen} onOpenChange={onOpenChange} modal={false}>
+        <DialogContent className="sm:max-w-[500px] p-0">
+          <DialogHeader className="p-6 pb-2">
+            <DialogTitle>
+              {isEditing 
+                ? t('spa.edit_booking_title', 'Edit Your Booking - {{serviceName}}', { serviceName: service?.name }) 
+                : t('spa.book_treatment_title', 'Book a Treatment - {{serviceName}}', { serviceName: service?.name })}
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing 
+                ? t('spa.edit_booking_desc', 'Modify your booking details below.')
+                : t('spa.book_treatment_desc', 'Fill out the form below to book a treatment.')}
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[80vh]">
+            <div className="p-6 pt-2">
+              {!loading && service && (
+                <SpaBookingForm
+                  service={service}
+                  onSuccess={onSuccess}
+                  existingBooking={existingBooking}
+                />
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
