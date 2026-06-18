@@ -25,6 +25,7 @@ import DebugInfo from '@/pages/debug/DebugInfo';
 import MyRoom from '@/pages/my-room/MyRoom';
 import ServiceRequestDetails from '@/pages/my-room/ServiceRequestDetails';
 import Requests from '@/pages/requests/Requests';
+import DigitalTipping from '@/pages/tipping/DigitalTipping';
 import NotFound from '@/pages/NotFound';
 
 const PublicRoutes = () => {
@@ -54,6 +55,7 @@ const PublicRoutes = () => {
       <Route path="my-room" element={<MyRoom />} />
       <Route path="my-room/requests/:id" element={<ServiceRequestDetails />} />
       <Route path="debug" element={<DebugInfo />} />
+      <Route path="tipping" element={<DigitalTipping />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
