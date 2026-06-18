@@ -1,10 +1,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 const STORAGE_KEY = 'lastSeenMessagesAt';
 
 export const useMessageBadge = () => {
+  const location = useLocation();
+  const isMessagesPage = location.pathname.includes('/messages');
+
   const [unreadCount, setUnreadCount] = useState(0);
   const [lastSeenAt, setLastSeenAt] = useState<string>(() => {
     return localStorage.getItem(STORAGE_KEY) || new Date(0).toISOString();
@@ -13,6 +17,11 @@ export const useMessageBadge = () => {
   // Fetch unread message count
   const fetchUnreadCount = useCallback(async () => {
     try {
+      if (isMessagesPage) {
+        setUnreadCount(0);
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setUnreadCount(0);
@@ -47,7 +56,7 @@ export const useMessageBadge = () => {
     } catch (error) {
       console.error('Error fetching unread count:', error);
     }
-  }, [lastSeenAt]);
+  }, [lastSeenAt, isMessagesPage]);
 
   // Mark messages as seen
   const markAsSeen = useCallback(() => {
@@ -55,11 +64,35 @@ export const useMessageBadge = () => {
     localStorage.setItem(STORAGE_KEY, now);
     setLastSeenAt(now);
     setUnreadCount(0);
+    window.dispatchEvent(new Event('messages-seen'));
   }, []);
+
+  // Listen to messages-seen events from other instances
+  useEffect(() => {
+    const handleSeen = () => {
+      const now = localStorage.getItem(STORAGE_KEY) || new Date(0).toISOString();
+      setLastSeenAt(now);
+      setUnreadCount(0);
+    };
+
+    window.addEventListener('messages-seen', handleSeen);
+    return () => {
+      window.removeEventListener('messages-seen', handleSeen);
+    };
+  }, []);
+
+  // Automatically mark as seen when page becomes messages page
+  useEffect(() => {
+    if (isMessagesPage) {
+      markAsSeen();
+    }
+  }, [isMessagesPage, markAsSeen]);
 
   // Initial fetch and realtime subscription
   useEffect(() => {
-    fetchUnreadCount();
+    if (!isMessagesPage) {
+      fetchUnreadCount();
+    }
 
     // Subscribe to new messages
     const channel = supabase
@@ -73,7 +106,11 @@ export const useMessageBadge = () => {
         // Only increment if message is from staff/AI and after our lastSeenAt
         if ((newMessage.sender_type === 'staff' || newMessage.sender_type === 'ai') && 
             newMessage.created_at > lastSeenAt) {
-          setUnreadCount(prev => prev + 1);
+          if (isMessagesPage) {
+            markAsSeen();
+          } else {
+            setUnreadCount(prev => prev + 1);
+          }
         }
       })
       .subscribe();
@@ -81,7 +118,7 @@ export const useMessageBadge = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchUnreadCount, lastSeenAt]);
+  }, [fetchUnreadCount, lastSeenAt, isMessagesPage, markAsSeen]);
 
-  return { unreadCount, markAsSeen, refetch: fetchUnreadCount };
+  return { unreadCount: isMessagesPage ? 0 : unreadCount, markAsSeen, refetch: fetchUnreadCount };
 };

@@ -24,6 +24,14 @@ const CATEGORY_MAP: Record<string, SectionKey> = {
   '2f96741e-3e04-4117-8d37-e94795e37a68': 'information-technology',
 };
 
+const CATEGORY_NAME_MAP: Record<string, SectionKey> = {
+  'housekeeping': 'housekeeping',
+  'maintenance': 'maintenance',
+  'security': 'security',
+  'it support': 'information-technology',
+  'information technology': 'information-technology',
+};
+
 async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<SectionKey, number>; restaurantCounts: Record<string, number>; spaServiceCounts: Record<string, number> }> {
   const counts: Record<string, number> = {};
   SECTION_KEYS.forEach((k) => (counts[k] = 0));
@@ -165,30 +173,19 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
   // Service requests by category
   let serviceRequestsQuery = supabase
     .from('service_requests')
-    .select('category_id, created_at, guest_id')
+    .select('category_id, created_at, guest_id, request_categories(name)' as any)
     .eq('status', 'pending');
 
-  let userIds: string[] = [];
   if (hotelId) {
-    const { data: guests } = await supabase
-      .from('guests')
-      .select('user_id')
-      .eq('hotel_id', hotelId);
-    userIds = guests?.map(g => g.user_id).filter(Boolean) as string[] || [];
-
-    if (userIds.length > 0) {
-      serviceRequestsQuery = serviceRequestsQuery.in('guest_id', userIds);
-    } else {
-      // If no guests for this hotel, we won't have matching requests
-      return { counts: counts as Record<SectionKey, number>, restaurantCounts, spaServiceCounts };
-    }
+    serviceRequestsQuery = serviceRequestsQuery.eq('hotel_id', hotelId);
   }
 
   const { data: serviceRequests } = await serviceRequestsQuery;
 
   if (serviceRequests) {
-    for (const req of serviceRequests) {
-      const section = CATEGORY_MAP[req.category_id || ''];
+    for (const req of serviceRequests as any[]) {
+      const catName = req.request_categories?.name?.toLowerCase();
+      const section = catName ? CATEGORY_NAME_MAP[catName] : CATEGORY_MAP[req.category_id || ''];
       if (section) {
         const lastSeen = getLastSeen(section);
         if (req.created_at && req.created_at > lastSeen) {
