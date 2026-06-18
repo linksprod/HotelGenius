@@ -99,9 +99,8 @@ export const loginUser = async (
     localStorage.setItem('user_data', JSON.stringify(userData));
     localStorage.setItem('user_id', authData.user.id);
 
-    if (!guestData || !guestData.room_number) {
-      await syncGuestData(authData.user.id, userData);
-    }
+    // Always sync guest data on login to keep database record up-to-date with Auth metadata & email
+    await syncGuestData(authData.user.id, userData);
 
     console.log('User logged in successfully');
     return { success: true, userData };
