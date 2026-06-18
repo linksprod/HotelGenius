@@ -75,6 +75,13 @@ export default function RestaurantBookingForm({
     }
   }, [userData, existingBooking, form]);
 
+  const formatDateLocal = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const onSubmit = async (values: BookingFormValues) => {
     try {
       const bookingDTO = {
@@ -84,7 +91,7 @@ export default function RestaurantBookingForm({
         guestEmail: values.guestEmail,
         guestPhone: values.guestPhone,
         roomNumber: values.roomNumber,
-        date: values.date.toISOString().split('T')[0],
+        date: formatDateLocal(values.date),
         time: values.time,
         guests: values.guests,
         specialRequests: values.specialRequests,
@@ -104,7 +111,7 @@ export default function RestaurantBookingForm({
         detail: {
           entityName: restaurant.name,
           entityType: 'restaurant',
-          date: values.date.toISOString().split('T')[0],
+          date: formatDateLocal(values.date),
           time: values.time,
           guests: values.guests
         }
@@ -151,16 +158,19 @@ export default function RestaurantBookingForm({
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>{t('dining.booking.dateLabel', 'Reservation Date')}</FormLabel>
                 <FormControl>
-                  <DatePicker
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    minDate={new Date()}
-                    maxDate={addDays(new Date(), 30)}
-                    required
+                  <input
+                    type="date"
+                    value={field.value ? formatDateLocal(field.value) : ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      field.onChange(val ? new Date(val + 'T00:00:00') : undefined);
+                    }}
+                    min={formatDateLocal(new Date())}
+                    max={formatDateLocal(addDays(new Date(), 30))}
+                    className="w-full flex h-10 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
                   />
                 </FormControl>
                 <FormMessage />

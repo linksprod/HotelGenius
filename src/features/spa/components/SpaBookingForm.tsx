@@ -73,6 +73,13 @@ export default function SpaBookingForm({
     }
   }, [userData, existingBooking, form]);
 
+  const formatDateLocal = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const onSubmit = async (values: SpaBookingFormValues) => {
     try {
       const bookingData = {
@@ -83,7 +90,7 @@ export default function SpaBookingForm({
         guest_email: values.guestEmail,
         guest_phone: values.guestPhone,
         room_number: values.roomNumber,
-        date: values.date.toISOString().split('T')[0],
+        date: formatDateLocal(values.date),
         time: values.time,
         special_requests: values.specialRequests,
         status: 'pending' as const,
@@ -151,16 +158,19 @@ export default function SpaBookingForm({
             control={form.control}
             name="date"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>{t('spa.booking.dateLabel', 'Date de réservation')}</FormLabel>
                 <FormControl>
-                  <DatePicker
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    minDate={new Date()}
-                    maxDate={addDays(new Date(), 30)}
-                    required
+                  <input
+                    type="date"
+                    value={field.value ? formatDateLocal(field.value) : ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      field.onChange(val ? new Date(val + 'T00:00:00') : undefined);
+                    }}
+                    min={formatDateLocal(new Date())}
+                    max={formatDateLocal(addDays(new Date(), 30))}
+                    className="w-full flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
                   />
                 </FormControl>
                 <FormMessage />
