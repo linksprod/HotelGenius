@@ -617,6 +617,18 @@ export const useUnifiedChat = ({
       toast({
         title: t('chat.history.deleteSuccess'),
       });
+
+      // If we deleted the current active conversation, reset state and initialize a new one
+      if (chatState.conversation?.id === id) {
+        setChatState({
+          conversation: null,
+          messages: [],
+          isLoading: true,
+          isTyping: false,
+          currentHandler: conversationType === 'concierge' ? 'human' : 'ai'
+        });
+        await initializeConversation();
+      }
     } catch (error) {
       console.error('Error deleting conversation:', error);
       toast({

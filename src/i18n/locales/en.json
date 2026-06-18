@@ -1281,6 +1281,7 @@
       "title": "Chat History",
       "empty": "No conversations yet",
       "chatFrom": "Chat of {{date}}",
+      "deleteTitle": "Delete Conversation",
       "deleteConfirm": "Are you sure you want to delete this conversation?",
       "deleteSuccess": "Conversation deleted successfully.",
       "deleteError": "Failed to delete conversation."

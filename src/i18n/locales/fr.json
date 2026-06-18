@@ -1274,6 +1274,7 @@
       "title": "Historique des conversations",
       "empty": "Aucune conversation pour le moment",
       "chatFrom": "Discussion du {{date}}",
+      "deleteTitle": "Supprimer la conversation",
       "deleteConfirm": "Voulez-vous supprimer cette conversation ?",
       "deleteSuccess": "Conversation supprimée avec succès.",
       "deleteError": "Échec de la suppression de la conversation."

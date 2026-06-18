@@ -9,6 +9,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Clock, X, Plus, MessageSquare, Trash2 } from 'lucide-react';
 import type { Conversation } from '@/types/chat';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface UnifiedChatContainerProps {
   userInfo: {
@@ -41,6 +51,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   const [selectedConversationId, setSelectedConversationId] = useState<string | undefined>(conversationId);
   const [history, setHistory] = useState<Conversation[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState<string | null>(null);
 
   const {
     conversation,
@@ -103,15 +115,20 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     setSelectedConversationId(undefined);
   };
 
-  const handleDeleteConversation = async (e: React.MouseEvent, id: string) => {
+  const handleDeleteConversation = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (!window.confirm(t('chat.history.deleteConfirm'))) return;
+    setConversationToDelete(id);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!conversationToDelete) return;
 
     try {
-      await deleteConversation(id);
+      await deleteConversation(conversationToDelete);
       
       // If we deleted the current conversation, clear the selection to load/create active chat
-      if (selectedConversationId === id || conversation?.id === id) {
+      if (selectedConversationId === conversationToDelete || conversation?.id === conversationToDelete) {
         setSelectedConversationId(undefined);
       }
       
@@ -119,6 +136,9 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
       fetchHistory();
     } catch (error) {
       console.error('Failed to delete conversation:', error);
+    } finally {
+      setDeleteConfirmOpen(false);
+      setConversationToDelete(null);
     }
   };
 
@@ -272,6 +292,23 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
           userInfo={userInfo}
         />
       </div>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('chat.history.deleteTitle', 'Supprimer la conversation')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('chat.history.deleteConfirm')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
