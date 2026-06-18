@@ -66,13 +66,13 @@ const MainMenu = ({ buttonClassName }: MainMenuProps = {}) => {
       <SheetContent side="left" className="p-0 w-80 sm:max-w-sm bg-card border-border">
         <div className="flex flex-col bg-card">
           <SheetHeader className="p-6 bg-gradient-to-br from-primary/10 to-primary/5 border-b border-border">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1">
-                <span className="text-2xl font-qurova font-light tracking-wide text-sidebar-foreground">
-                  HotelGenius
-                </span>
-              </div>
-              <SheetTitle className="text-2xl text-card-foreground font-semibold">{t('nav.services')}</SheetTitle>
+            <div className="flex flex-col items-start gap-1">
+              <span className="text-2xl font-qurova font-light tracking-wide text-sidebar-foreground leading-none">
+                HotelGenius
+              </span>
+              <SheetTitle className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-semibold">
+                {t('nav.services')}
+              </SheetTitle>
             </div>
           </SheetHeader>
           <ScrollArea className="flex-1 bg-card">
