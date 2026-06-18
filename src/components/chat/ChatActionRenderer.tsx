@@ -22,11 +22,12 @@ interface ChatActionRendererProps {
     metadata: any;
     hotelId?: string | null;
     onSuccess?: () => void;
+    language?: 'en' | 'fr';
 }
 
-const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () => void }> = ({ initialCategory, onSuccess }) => {
+const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () => void, language?: 'en' | 'fr' }> = ({ initialCategory, onSuccess, language }) => {
     const { t } = useTranslation();
-    const { translateCategory, translateItemName } = useTranslatedServices();
+    const { translateCategory, translateItemName } = useTranslatedServices(language);
     const [step, setStep] = React.useState<'categories' | 'items' | 'submitting' | 'confirmed'>(initialCategory ? 'items' : 'categories');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
@@ -114,6 +115,14 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
     }
 
     if (step === 'items') {
+        if (!selectedCategory) {
+            return (
+                <div className="flex items-center justify-center p-8">
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+            );
+        }
+
         return (
             <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-right-2">
                 <div className="flex items-center justify-between mb-4">
@@ -190,7 +199,8 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     type,
     metadata,
     hotelId,
-    onSuccess
+    onSuccess,
+    language
 }) => {
     const { t } = useTranslation();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -270,7 +280,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Utensils className="h-5 w-5" />
-                        <h4 className="font-semibold">{t('chat.actionRenderer.bookTable', { name: entity.name })}</h4>
+                        <h4 className="font-semibold">{t('chat.actionRenderer.bookTable', { name: entity.name, lng: language })}</h4>
                     </div>
                     <RestaurantBookingForm
                         restaurant={entity}
@@ -278,6 +288,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         onSuccess={() => {
                             if (onSuccess) onSuccess();
                         }}
+                        language={language}
                     />
                 </Card>
             );
@@ -288,7 +299,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Calendar className="h-5 w-5" />
-                        <h4 className="font-semibold">{t('chat.actionRenderer.bookSpot', { title: entity.title })}</h4>
+                        <h4 className="font-semibold">{t('chat.actionRenderer.bookSpot', { title: entity.title, lng: language })}</h4>
                     </div>
                     <EventReservationForm
                         eventId={entity.id}
@@ -299,6 +310,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         onSuccess={() => {
                             if (onSuccess) onSuccess();
                         }}
+                        language={language}
                     />
                 </Card>
             );
@@ -309,7 +321,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                 <Card className="p-4 border-primary/20 bg-primary/5 mt-2 animate-in fade-in slide-in-from-bottom-2">
                     <div className="flex items-center gap-2 mb-4 text-primary">
                         <Sparkles className="h-5 w-5" />
-                        <h4 className="font-semibold">{t('chat.actionRenderer.bookTreatment', { name: entity.name })}</h4>
+                        <h4 className="font-semibold">{t('chat.actionRenderer.bookTreatment', { name: entity.name, lng: language })}</h4>
                     </div>
                     <SpaBookingForm
                         service={entity}
@@ -317,6 +329,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         onSuccess={() => {
                             if (onSuccess) onSuccess();
                         }}
+                        language={language}
                     />
                 </Card>
             );
@@ -326,7 +339,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
             <Card className="p-4 bg-muted/20 border-dashed text-center">
                 <Info className="h-8 w-8 mx-auto mb-2 opacity-50" />
                 <p className="text-sm font-medium text-muted-foreground">
-                    {t('chat.actionRenderer.bookingFormComingSoon', { type: metadata?.entity_type?.toUpperCase() })}
+                    {t('chat.actionRenderer.bookingFormComingSoon', { type: metadata?.entity_type?.toUpperCase(), lng: language })}
                 </p>
             </Card>
         );
@@ -429,7 +442,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
 
     // Action: Service Request Flow
     if (type === 'service_request_flow') {
-        return <ServiceRequestFlow initialCategory={metadata?.category} onSuccess={onSuccess} />;
+        return <ServiceRequestFlow initialCategory={metadata?.category} onSuccess={onSuccess} language={language} />;
     }
 
     // Action: General Message or fallback

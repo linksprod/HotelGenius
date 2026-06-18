@@ -44,6 +44,7 @@ export interface EventReservationFormProps {
   existingReservation?: EventReservation;
   maxGuests?: number;
   isChatMode?: boolean;
+  language?: 'en' | 'fr';
 }
 
 const EventReservationForm: React.FC<EventReservationFormProps> = ({
@@ -54,7 +55,8 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
   buttonText,
   existingReservation,
   maxGuests = 10,
-  isChatMode = false
+  isChatMode = false,
+  language
 }) => {
   const {
     toast
@@ -67,7 +69,8 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
     userData
   } = useAuth();
   const { hotelId } = useCurrentHotelId();
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const t = i18n.getFixedT(language || i18n.language);
   const isEditing = !!existingReservation;
 
   const form = useForm<ReservationFormValues>({
@@ -194,6 +197,7 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
         form={form}
         hideNameEmail={isChatMode && !!userData}
         hidePhoneRoom={isChatMode && !!userData}
+        t={t}
       />
       <div className="form-field">
         <label className="block text-sm font-medium text-foreground mb-1">

@@ -228,31 +228,43 @@ export const requestService = async (
 
     console.log('Submitting service request with room_number:', room_number, 'and guest_name:', guest_name);
 
-    // Vérifier si le roomId est au format UUID ou au format numéro de chambre
+    // Vérifier si le roomId est au format UUID ou au format numéro de chambre, ou s'il est vide (auquel cas on utilise le room_number)
     let actualRoomId = roomId;
 
-    if (!roomId.includes('-')) {
-      const { data: roomData, error: roomError } = await supabase
-        .from('rooms')
-        .select('id')
-        .eq('room_number', roomId)
-        .maybeSingle();
+    if (!roomId || !roomId.includes('-')) {
+      const roomNumToLookup = roomId || room_number;
 
-      if (roomError) {
-        console.error('Error fetching room data:', roomError);
-        throw roomError;
-      }
+      if (roomNumToLookup) {
+        const { data: roomData, error: roomError } = await supabase
+          .from('rooms')
+          .select('id')
+          .eq('room_number', roomNumToLookup)
+          .maybeSingle();
 
-      if (roomData) {
-        actualRoomId = roomData.id;
+        if (roomError) {
+          console.error('Error fetching room data:', roomError);
+          throw roomError;
+        }
+
+        if (roomData) {
+          actualRoomId = roomData.id;
+        } else {
+          console.error('Room not found:', roomNumToLookup);
+          toast({
+            title: "Room Not Found",
+            description: `We couldn't find room ${roomNumToLookup} in our system.`,
+            variant: "destructive"
+          });
+          throw new Error(`Room ${roomNumToLookup} not found`);
+        }
       } else {
-        console.error('Room not found:', roomId);
+        console.error('No room identifier or room number provided');
         toast({
           title: "Room Not Found",
-          description: `We couldn't find room ${roomId} in our system.`,
+          description: "Please set your room number first.",
           variant: "destructive"
         });
-        throw new Error(`Room ${roomId} not found`);
+        throw new Error("No room identifier provided");
       }
     }
 

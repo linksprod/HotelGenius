@@ -6,6 +6,22 @@ import type { Message } from '@/types/chat';
 import { ChatActionRenderer } from './ChatActionRenderer';
 import { useTranslation } from 'react-i18next';
 
+const detectTextLanguage = (text: string): 'en' | 'fr' => {
+  if (!text) return 'en';
+  const lowerText = text.toLowerCase();
+  if (
+    lowerText.includes("j'ai ouvert") || 
+    lowerText.includes("je suis là") || 
+    lowerText.includes("veuillez") || 
+    lowerText.includes("pour vous") ||
+    lowerText.includes("ménage") ||
+    lowerText.includes("menage")
+  ) {
+    return 'fr';
+  }
+  return 'en';
+};
+
 interface UnifiedMessagesListProps {
   messages: Message[];
   isTyping: boolean;
@@ -108,6 +124,7 @@ export const UnifiedMessagesList: React.FC<UnifiedMessagesListProps> = ({
                     type={message.metadata.action_type || 'booking_form'}
                     metadata={message.metadata}
                     hotelId={hotelId}
+                    language={detectTextLanguage(message.content)}
                   />
                 )}
 

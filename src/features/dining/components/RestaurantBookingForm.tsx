@@ -38,18 +38,21 @@ interface RestaurantBookingFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   existingBooking?: any;
   isChatMode?: boolean;
+  language?: 'en' | 'fr';
 }
 
 export default function RestaurantBookingForm({
   restaurant,
   onSuccess,
   existingBooking,
-  isChatMode = false
+  isChatMode = false,
+  language
 }: RestaurantBookingFormProps) {
   const { userData } = useAuth();
   const { hotelId } = useCurrentHotelId();
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const t = i18n.getFixedT(language || i18n.language);
   const userId = localStorage.getItem('user_id');
 
   const form = useForm<BookingFormValues>({
@@ -152,6 +155,7 @@ export default function RestaurantBookingForm({
           form={form}
           hideNameEmail={isChatMode && !!userData}
           hidePhoneRoom={isChatMode && !!userData}
+          t={t}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

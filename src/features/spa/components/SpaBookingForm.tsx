@@ -36,19 +36,22 @@ interface SpaBookingFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   existingBooking?: any;
   isChatMode?: boolean;
+  language?: 'en' | 'fr';
 }
 
 export default function SpaBookingForm({
   service,
   onSuccess,
   existingBooking,
-  isChatMode = false
+  isChatMode = false,
+  language
 }: SpaBookingFormProps) {
   const { toast } = useToast();
   const { createBooking } = useSpaBookings();
   const { userData } = useAuth();
   const { hotelId } = useCurrentHotelId();
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const t = i18n.getFixedT(language || i18n.language);
   const userId = localStorage.getItem('user_id');
 
   const form = useForm<SpaBookingFormValues>({
@@ -152,6 +155,7 @@ export default function SpaBookingForm({
           form={form}
           hideNameEmail={isChatMode && !!userData}
           hidePhoneRoom={isChatMode && !!userData}
+          t={t}
         />
 
         <div className="grid gap-4 sm:grid-cols-2">

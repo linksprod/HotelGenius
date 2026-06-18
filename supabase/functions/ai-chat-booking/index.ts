@@ -115,6 +115,45 @@ function formatTwinForPrompt(twin: GuestTwin): string {
   return lines.join('\n');
 }
 
+function detectMessageLanguage(message: string, fallbackLanguage?: string): 'fr' | 'en' {
+  const text = message.toLowerCase();
+  
+  // French markers
+  const frenchMarkers = [
+    'je ', 'veux', 'voudrais', 'besoin', 's\'il', 'plait', 'plaît', 'merci', 'bonjour', 
+    'chambre', 'serviette', 'papier', 'manger', 'de ', 'la ', 'le ', 'les ', 'une ', 
+    'un ', 'est ', 'pourquoi', 'pas', 'passe', 'avec', 'dans', 'pour', 'qui', 'que', 
+    'est-ce', 'ouvert', 'reservation', 'reserver', 'réserver', 'déjeuner', 'diner', 
+    'petit', 'piscine', 'spa', 'massage', 'boutique', 'lieux', 'serviettes'
+  ];
+  
+  // English markers
+  const englishMarkers = [
+    'i ', 'want', 'would like', 'need', 'please', 'thanks', 'thank you', 'hello', 
+    'hi ', 'room', 'towel', 'towels', 'towl', 'paper', 'eat', 'the ', 'a ', 'an ', 'is ', 'why', 'not', 
+    'went', 'through', 'with', 'in ', 'for', 'who', 'that', 'what', 'open', 'booking', 
+    'book', 'lunch', 'dinner', 'breakfast', 'pool', 'spa', 'massage', 'shop', 'near'
+  ];
+  
+  let frenchScore = 0;
+  let englishScore = 0;
+  
+  for (const marker of frenchMarkers) {
+    if (text.includes(marker)) frenchScore++;
+  }
+  
+  for (const marker of englishMarkers) {
+    if (text.includes(marker)) englishScore++;
+  }
+  
+  if (frenchScore > englishScore) return 'fr';
+  if (englishScore > frenchScore) return 'en';
+  
+  // If scores are equal or zero, fallback to the client language or guest preference
+  const fallback = (fallbackLanguage || 'en').toLowerCase();
+  return fallback.startsWith('fr') ? 'fr' : 'en';
+}
+
 async function sendChatMessage(message: string, userId: string, userName: string, roomNumber: string, hotelId: string, conversationId?: string, language?: string) {
   // Determine the effective hotel ID (fallback to demo hotel if missing)
   const effectiveHotelId = hotelId || '00000000-0000-0000-0000-000000000000';
@@ -125,6 +164,10 @@ async function sendChatMessage(message: string, userId: string, userName: string
   const guestTwin = await fetchGuestTwin(userId, effectiveHotelId);
   const guestTwinContext = formatTwinForPrompt(guestTwin);
   console.log('[AI] Guest twin loaded:', guestTwin.loyalty_tier ?? 'no tier');
+
+  // Detect language based on the message content, fallback to client language
+  const detectedLang = detectMessageLanguage(message, language || guestTwin.language || 'en');
+  console.log(`[AI] Detected language for response: ${detectedLang} (client was: ${language})`);
 
   // 1. Get Hotel Knowledge (RAG) - Only if OpenAI key is available
   let knowledgeContext = '';
@@ -214,7 +257,7 @@ CRITICAL CONCIERGE RULES:
 
 Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to answer specific questions about hotel history, policies, or unique services.
 
-CRITICAL: The guest's active language/locale is "${language || guestTwin.language || 'en'}". You MUST respond and converse in this language. If the language is "fr" (or starts with "fr"), you MUST reply in French. If the language is "en", you MUST reply in English. Always match the guest's language/locale.`;
+CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST respond and converse in this language. If the language is "fr" (or starts with "fr"), you MUST reply in French. If the language is "en", you MUST reply in English. Always match the guest's language/locale.`;
 
   const tools = [
     {
@@ -384,7 +427,7 @@ CRITICAL: The guest's active language/locale is "${language || guestTwin.languag
       case 'show_restaurant_list':
         bookingResult = { 
           success: true, 
-          message: (language || guestTwin.language || 'en').toLowerCase().startsWith('fr')
+          message: detectedLang === 'fr'
             ? "J'ai ouvert la liste des restaurants pour vous."
             : "I've opened the restaurant list for you."
         };
@@ -392,7 +435,7 @@ CRITICAL: The guest's active language/locale is "${language || guestTwin.languag
       case 'show_service_categories':
         bookingResult = { 
           success: true, 
-          message: (language || guestTwin.language || 'en').toLowerCase().startsWith('fr')
+          message: detectedLang === 'fr'
             ? `J'ai ouvert le menu des services pour vous${functionArgs.category ? ` pour la catégorie ${functionArgs.category}.` : '.'}`
             : `I've opened the service menu for you${functionArgs.category ? ` for ${functionArgs.category}.` : '.'}`
         };
@@ -401,7 +444,7 @@ CRITICAL: The guest's active language/locale is "${language || guestTwin.languag
         const typeFr = functionArgs.type === 'restaurant' ? 'restaurant' : functionArgs.type === 'spa' ? 'spa' : 'événement';
         bookingResult = { 
           success: true, 
-          message: (language || guestTwin.language || 'en').toLowerCase().startsWith('fr')
+          message: detectedLang === 'fr'
             ? `J'ai ouvert le formulaire de réservation pour le/la ${typeFr}. Veuillez remplir les détails.`
             : `I've opened the booking form for the ${functionArgs.type}. Please fill in the details.`
         };

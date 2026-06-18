@@ -12,12 +12,14 @@ interface GuestInfoFieldsProps {
   form: UseFormReturn<any>;
   hideNameEmail?: boolean;
   hidePhoneRoom?: boolean;
+  t?: any;
 }
 
-const GuestInfoFields = ({ form, hideNameEmail, hidePhoneRoom }: GuestInfoFieldsProps) => {
+const GuestInfoFields = ({ form, hideNameEmail, hidePhoneRoom, t: propT }: GuestInfoFieldsProps) => {
   const roomNumber = form.watch('roomNumber');
   const guestName = form.watch('guestName');
-  const { t } = useTranslation();
+  const { t: hookT } = useTranslation();
+  const t = propT || hookT;
 
   return (
     <>
