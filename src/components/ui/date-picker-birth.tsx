@@ -61,7 +61,7 @@ export function BirthDatePicker({
 
   return (
     <div className={className}>
-      <Popover>
+      <Popover modal={false}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"

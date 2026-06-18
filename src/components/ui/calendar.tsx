@@ -5,7 +5,6 @@ import { DayPicker } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
@@ -92,37 +91,29 @@ function Calendar({
         </div>
 
         <div className="flex items-center gap-1">
-          <Select
+          <select
             value={currentMonth.toString()}
-            onValueChange={(value) => setCurrentMonth(parseInt(value))}
+            onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
+            className="h-8 w-[110px] text-sm font-medium rounded-md border border-input bg-background px-2 py-1 focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer text-foreground"
           >
-            <SelectTrigger className="h-8 w-[110px] text-sm font-medium">
-              <SelectValue>{months[currentMonth]}</SelectValue>
-            </SelectTrigger>
-            <SelectContent position="popper" className="max-h-60 overflow-y-auto" disablePortal>
-              {months.map((month, index) => (
-                <SelectItem key={index} value={index.toString()}>
-                  {month}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            {months.map((month, index) => (
+              <option key={index} value={index.toString()}>
+                {month}
+              </option>
+            ))}
+          </select>
 
-          <Select
+          <select
             value={currentYear.toString()}
-            onValueChange={(value) => setCurrentYear(parseInt(value))}
+            onChange={(e) => setCurrentYear(parseInt(e.target.value))}
+            className="h-8 w-[80px] text-sm font-medium rounded-md border border-input bg-background px-2 py-1 focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer text-foreground"
           >
-            <SelectTrigger className="h-8 w-[80px] text-sm font-medium">
-              <SelectValue>{currentYear}</SelectValue>
-            </SelectTrigger>
-            <SelectContent position="popper" className="max-h-60 overflow-y-auto" disablePortal>
-              {years.map((year) => (
-                <SelectItem key={year} value={year.toString()}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            {years.map((year) => (
+              <option key={year} value={year.toString()}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex items-center">
