@@ -95,7 +95,6 @@ function Calendar({
           <Select
             value={currentMonth.toString()}
             onValueChange={(value) => setCurrentMonth(parseInt(value))}
-            modal={false}
           >
             <SelectTrigger className="h-8 w-[110px] text-sm font-medium">
               <SelectValue>{months[currentMonth]}</SelectValue>
@@ -112,7 +111,6 @@ function Calendar({
           <Select
             value={currentYear.toString()}
             onValueChange={(value) => setCurrentYear(parseInt(value))}
-            modal={false}
           >
             <SelectTrigger className="h-8 w-[80px] text-sm font-medium">
               <SelectValue>{currentYear}</SelectValue>
