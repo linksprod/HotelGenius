@@ -99,7 +99,7 @@ function Calendar({
             <SelectTrigger className="h-8 w-[110px] text-sm font-medium">
               <SelectValue>{months[currentMonth]}</SelectValue>
             </SelectTrigger>
-            <SelectContent position="popper" className="max-h-60 overflow-y-auto">
+            <SelectContent position="popper" className="max-h-60 overflow-y-auto" disablePortal>
               {months.map((month, index) => (
                 <SelectItem key={index} value={index.toString()}>
                   {month}
@@ -115,7 +115,7 @@ function Calendar({
             <SelectTrigger className="h-8 w-[80px] text-sm font-medium">
               <SelectValue>{currentYear}</SelectValue>
             </SelectTrigger>
-            <SelectContent position="popper" className="max-h-60 overflow-y-auto">
+            <SelectContent position="popper" className="max-h-60 overflow-y-auto" disablePortal>
               {years.map((year) => (
                 <SelectItem key={year} value={year.toString()}>
                   {year}
