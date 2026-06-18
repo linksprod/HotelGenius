@@ -54,8 +54,18 @@ export function DatePicker({
       initialFocus: true,
       className: "p-3 pointer-events-auto",
       disabled: (dateToCheck: Date) => {
-        const isBeforeMin = minDate && dateToCheck < minDate
-        const isAfterMax = maxDate && dateToCheck > maxDate
+        let isBeforeMin = false
+        if (minDate) {
+          const minDateDay = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate())
+          const checkDateDay = new Date(dateToCheck.getFullYear(), dateToCheck.getMonth(), dateToCheck.getDate())
+          isBeforeMin = checkDateDay < minDateDay
+        }
+        let isAfterMax = false
+        if (maxDate) {
+          const maxDateDay = new Date(maxDate.getFullYear(), maxDate.getMonth(), maxDate.getDate())
+          const checkDateDay = new Date(dateToCheck.getFullYear(), dateToCheck.getMonth(), dateToCheck.getDate())
+          isAfterMax = checkDateDay > maxDateDay
+        }
         return Boolean(isBeforeMin || isAfterMax)
       },
     }
@@ -94,7 +104,7 @@ export function DatePicker({
 
   return (
     <div className={className}>
-      <Popover>
+      <Popover modal={false}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
