@@ -156,17 +156,15 @@ const GuestDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column: Guest Identity & Activity (5 cols) */}
           <motion.div variants={itemVariants} className="lg:col-span-5 space-y-8">
-            <div className="space-y-8">
-              <GuestProfileCard guest={guest} />
-              <GuestPreferencesCard guestId={guest.id} />
-              <GuestActivityCard />
-            </div>
+            <GuestProfileCard guest={guest} />
           </motion.div>
 
           {/* Right Column: AI Insight Engine (7 cols) */}
-          <motion.div variants={itemVariants} className="lg:col-span-7 space-y-12 lg:pl-8">
+          <motion.div variants={itemVariants} className="lg:col-span-7 space-y-8 lg:pl-8">
             {/* Intelligence Card */}
             <GuestIntelligenceCard guest={guest} />
+            <GuestPreferencesCard guestId={guest.id} />
+            <GuestActivityCard />
           </motion.div>
         </div>
       </motion.div>
