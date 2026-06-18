@@ -168,6 +168,13 @@ export default function SpaBookingForm({
                       const val = e.target.value;
                       field.onChange(val ? new Date(val + 'T00:00:00') : undefined);
                     }}
+                    onClick={(e) => {
+                      try {
+                        e.currentTarget.showPicker();
+                      } catch (err) {
+                        console.error("showPicker not supported", err);
+                      }
+                    }}
                     min={formatDateLocal(new Date())}
                     max={formatDateLocal(addDays(new Date(), 30))}
                     className="w-full flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
