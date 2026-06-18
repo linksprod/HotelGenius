@@ -104,7 +104,7 @@ export function DatePicker({
 
   return (
     <div className={className}>
-      <Popover modal={false}>
+      <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="outline"

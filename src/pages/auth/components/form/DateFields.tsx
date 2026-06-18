@@ -61,7 +61,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>{t('auth.checkInDate', 'Check-in Date')}</FormLabel>
-                <Popover modal={false}>
+                <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
@@ -117,7 +117,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>{t('auth.checkOutDate', 'Check-out Date')}</FormLabel>
-                <Popover modal={false}>
+                <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
