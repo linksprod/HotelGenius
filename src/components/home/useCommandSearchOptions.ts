@@ -5,6 +5,7 @@ import { useShops } from '@/hooks/useShops';
 import { useRequestCategories } from '@/hooks/useRequestCategories';
 import { Leaf, UtensilsCrossed, Store, Wrench } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Define the SearchOption interface at the top
 interface SearchOption {
@@ -17,21 +18,6 @@ interface SearchOption {
   category?: string;
 }
 
-const SEARCHABLE_PAGES: SearchOption[] = [
-  { label: "About Us", route: "/about", keywords: "information hotel story", type: 'page' },
-  { label: "Gastronomy", route: "/dining", keywords: "dining restaurant food", type: 'page' },
-  { label: "Concierge", route: "/services", keywords: "concierge service support", type: 'page' },
-  { label: "Spa & Wellness", route: "/spa", keywords: "spa wellness relax", type: 'page' },
-  { label: "Shops", route: "/shops", keywords: "shopping shop luxury", type: 'page' },
-  { label: "Hotel Map", route: "/map", keywords: "map navigation directions", type: 'page' },
-  { label: "Destination", route: "/destination", keywords: "nearby activities", type: 'page' },
-  { label: "Events", route: "/events", keywords: "event", type: 'page' },
-  { label: "Activities", route: "/activities", keywords: "activity leisure fun", type: 'page' },
-  { label: "My Room", route: "/my-room", keywords: "room command requests", type: 'page' },
-  { label: "Contact", route: "/contact", keywords: "contact help assistance", type: 'page' },
-  { label: "Feedback", route: "/feedback", keywords: "review feedback", type: 'page' },
-];
-
 const normalize = (str: string) =>
   str
     .toLowerCase()
@@ -39,6 +25,7 @@ const normalize = (str: string) =>
     .replace(/[\u0300-\u036f]/g, '');
 
 export const useCommandSearchOptions = () => {
+  const { t } = useTranslation();
   const { services: spaServices = [] } = useSpaServices();
   const { restaurants = [] } = useRestaurants();
   const { shops = [] } = useShops();
@@ -96,8 +83,23 @@ export const useCommandSearchOptions = () => {
     };
   });
 
+  const searchablePages: SearchOption[] = [
+    { label: t('search.pages.aboutUs', 'About Us'), route: "/about", keywords: t('search.pages.aboutUsKeywords', 'information hotel story'), type: 'page' },
+    { label: t('search.pages.gastronomy', 'Gastronomy'), route: "/dining", keywords: t('search.pages.gastronomyKeywords', 'dining restaurant food'), type: 'page' },
+    { label: t('search.pages.concierge', 'Concierge'), route: "/services", keywords: t('search.pages.conciergeKeywords', 'concierge service support'), type: 'page' },
+    { label: t('search.pages.spaWellness', 'Spa & Wellness'), route: "/spa", keywords: t('search.pages.spaWellnessKeywords', 'spa wellness relax'), type: 'page' },
+    { label: t('search.pages.shops', 'Shops'), route: "/shops", keywords: t('search.pages.shopsKeywords', 'shopping shop luxury'), type: 'page' },
+    { label: t('search.pages.hotelMap', 'Hotel Map'), route: "/map", keywords: t('search.pages.hotelMapKeywords', 'map navigation directions'), type: 'page' },
+    { label: t('search.pages.destination', 'Destination'), route: "/destination", keywords: t('search.pages.destinationKeywords', 'nearby activities'), type: 'page' },
+    { label: t('search.pages.events', 'Events'), route: "/events", keywords: t('search.pages.eventsKeywords', 'event'), type: 'page' },
+    { label: t('search.pages.activities', 'Activities'), route: "/activities", keywords: t('search.pages.activitiesKeywords', 'activity leisure fun'), type: 'page' },
+    { label: t('search.pages.myRoom', 'My Room'), route: "/my-room", keywords: t('search.pages.myRoomKeywords', 'room command requests'), type: 'page' },
+    { label: t('search.pages.contact', 'Contact'), route: "/contact", keywords: t('search.pages.contactKeywords', 'contact help assistance'), type: 'page' },
+    { label: t('search.pages.feedback', 'Feedback'), route: "/feedback", keywords: t('search.pages.feedbackKeywords', 'review feedback'), type: 'page' },
+  ];
+
   const allSearchOptions = [
-    ...SEARCHABLE_PAGES,
+    ...searchablePages,
     ...spaServiceOptions,
     ...restaurantOptions,
     ...shopOptions,

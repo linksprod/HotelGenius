@@ -154,20 +154,57 @@ export const useNotificationsData = () => {
       );
 
       // Map unified notifications to the common format
-      const mappedUnified: NotificationItem[] = unifiedNotifications.map(n => ({
-        id: n.notification_id,
-        type: n.type.includes('service') ? 'request' : (n.type.includes('reservation') || n.type.includes('booking')) ? 'reservation' : 'general',
-        title: n.title,
-        description: n.body,
-        status: n.status,
-        time: new Date(n.created_at),
-        link: n.type.includes('service') ? '/requests' : (n.type.includes('reservation') || n.type.includes('booking')) ? '/dining' : '/notifications',
-        data: n
-      }));
+      const mappedUnified: NotificationItem[] = unifiedNotifications.map(n => {
+        const type = (n.reference_type === 'SpaBooking' || n.type === 'spa_booking' ? 'spa_booking' :
+          n.reference_type === 'TableReservation' || n.type === 'table_reservation' ? 'reservation' :
+          n.reference_type === 'ServiceRequest' || n.type.includes('service') ? 'request' :
+          n.reference_type === 'EventReservation' ? 'event_reservation' : 'general') as any;
 
-      // Final merge (Unique by reference_id if possible, or just combined)
-      // For now, simple combining and sorting by date
-      const finalNotifications = [...mappedUnified, ...legacyNotifications].sort((a, b) => b.time.getTime() - a.time.getTime());
+        return {
+          id: n.notification_id,
+          type,
+          title: n.title,
+          description: n.body,
+          status: n.status,
+          time: new Date(n.created_at),
+          link: n.reference_type === 'SpaBooking' ? `/spa/booking/${n.reference_id}` :
+            n.reference_type === 'TableReservation' ? `/dining/reservations/${n.reference_id}` :
+            n.reference_type === 'ServiceRequest' ? `/requests/${n.reference_id}` : '#',
+          data: {
+            ...(n.data || {}),
+            notification_id: n.notification_id,
+            reference_id: n.reference_id,
+            reference_type: n.reference_type
+          }
+        };
+      });
+
+      const mergedMap = new Map<string, NotificationItem>();
+
+      // Process legacy notifications first
+      for (const legacy of legacyNotifications) {
+        mergedMap.set(legacy.id, legacy);
+      }
+
+      // Process central/unified notifications and merge if they reference a legacy one
+      for (const unified of mappedUnified) {
+        const refId = unified.data?.reference_id;
+        if (refId && mergedMap.has(refId)) {
+          const legacy = mergedMap.get(refId)!;
+          mergedMap.set(refId, {
+            ...unified,
+            data: {
+              ...legacy.data,
+              ...unified.data
+            }
+          });
+        } else {
+          mergedMap.set(unified.id, unified);
+        }
+      }
+
+      const finalNotifications = Array.from(mergedMap.values())
+        .sort((a, b) => b.time.getTime() - a.time.getTime());
 
       setNotifications(finalNotifications);
       setCombinedError(false);

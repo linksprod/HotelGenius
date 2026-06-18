@@ -130,24 +130,34 @@ export const transformEventReservations = (reservations: any[]): NotificationIte
 export const transformUnifiedNotifications = (notifications: any[]): NotificationItem[] => {
   if (!Array.isArray(notifications)) return [];
 
-  return notifications.map(n => ({
-    id: n.notification_id || n.id,
-    type: (n.type === 'spa_booking' ? 'spa_booking' :
-      n.type === 'table_reservation' ? 'reservation' :
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        n.type === 'service_ticket_created' ? 'request' : 'general') as any,
-    title: n.title,
-    description: n.body,
-    icon: n.type === 'spa_booking' ? '💆' :
-      n.type === 'table_reservation' ? '🍽️' :
-        n.type === 'service_ticket_created' ? '🔔' : '🔔',
-    status: n.status === 'read' ? 'read' : 'pending',
-    time: createSafeDate(n.created_at) || new Date(),
-    link: n.reference_type === 'SpaBooking' ? `/spa/booking/${n.reference_id}` :
-      n.reference_type === 'TableReservation' ? `/dining/reservations/${n.reference_id}` :
+  return notifications.map(n => {
+    const type = (n.reference_type === 'SpaBooking' || n.type === 'spa_booking' ? 'spa_booking' :
+      n.reference_type === 'TableReservation' || n.type === 'table_reservation' ? 'reservation' :
+      n.reference_type === 'ServiceRequest' || n.type === 'service_ticket_created' ? 'request' : 
+      n.reference_type === 'EventReservation' ? 'event_reservation' : 'general') as any;
+
+    return {
+      id: n.notification_id || n.id,
+      type,
+      title: n.title,
+      description: n.body,
+      icon: type === 'spa_booking' ? '💆' :
+        type === 'reservation' ? '🍽️' :
+        type === 'request' ? '🔔' :
+        type === 'event_reservation' ? '📅' : '🔔',
+      status: n.status === 'read' ? 'read' : 'pending',
+      time: createSafeDate(n.created_at) || new Date(),
+      link: n.reference_type === 'SpaBooking' ? `/spa/booking/${n.reference_id}` :
+        n.reference_type === 'TableReservation' ? `/dining/reservations/${n.reference_id}` :
         n.reference_type === 'ServiceRequest' ? `/requests/${n.reference_id}` : '#',
-    data: n.data || {}
-  }));
+      data: {
+        ...(n.data || {}),
+        notification_id: n.notification_id || n.id,
+        reference_id: n.reference_id,
+        reference_type: n.reference_type
+      }
+    };
+  });
 };
 
 // Combine and sort all notifications
@@ -170,26 +180,39 @@ export const combineAndSortNotifications = (
   const eventNotifications = transformEventReservations(eventReservations);
   const centralNotifications = transformUnifiedNotifications(unifiedNotifications);
 
-  // Combine all notifications
-  const allNotifications = [
+  const mergedMap = new Map<string, NotificationItem>();
+
+  // Combine legacy notifications
+  const legacyNotifications = [
     ...requestNotifications,
     ...reservationNotifications,
     ...spaNotifications,
-    ...eventNotifications,
-    ...centralNotifications
+    ...eventNotifications
   ];
 
-  // Filter out duplicates based on id or reference_id 
-  // (to avoid showing the same thing from legacy and unified)
-  const seenIds = new Set();
-  const uniqueNotifications = allNotifications.filter(n => {
-    // If it's from the unified table, use it preferentially
-    // We can use the reference ID to find duplicates from legacy tables
-    const refId = n.data?.reference_id || n.id;
-    if (seenIds.has(refId)) return false;
-    seenIds.add(refId);
-    return true;
-  });
+  // Process legacy notifications first
+  for (const legacy of legacyNotifications) {
+    mergedMap.set(legacy.id, legacy);
+  }
+
+  // Process central/unified notifications and merge if they reference a legacy one
+  for (const central of centralNotifications) {
+    const refId = central.data?.reference_id;
+    if (refId && mergedMap.has(refId)) {
+      const legacy = mergedMap.get(refId)!;
+      mergedMap.set(refId, {
+        ...central,
+        data: {
+          ...legacy.data,
+          ...central.data
+        }
+      });
+    } else {
+      mergedMap.set(central.id, central);
+    }
+  }
+
+  const uniqueNotifications = Array.from(mergedMap.values());
 
   // Sort by date, newest first
   return uniqueNotifications.sort((a, b) => {

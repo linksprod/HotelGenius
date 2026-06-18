@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Check, Loader2 } from 'lucide-react';
+import { useTranslatedServices } from '@/i18n/translationHelpers';
 
 interface ConfirmRequestDialogProps {
   open: boolean;
@@ -33,6 +34,7 @@ const ConfirmRequestDialog = ({
   onConfirm,
 }: ConfirmRequestDialogProps) => {
   const { t } = useTranslation();
+  const { translateItemName, translateItemDescription } = useTranslatedServices();
   if (!item) return null;
 
   return (
@@ -45,9 +47,9 @@ const ConfirmRequestDialog = ({
           </DialogDescription>
         </DialogHeader>
         <div className="bg-primary/5 rounded-xl p-4 my-4">
-          <div className="font-medium text-lg">{item.name}</div>
+          <div className="font-medium text-lg">{translateItemName(item.name)}</div>
           {item.description && (
-            <div className="text-gray-600 mt-1">{item.description}</div>
+            <div className="text-gray-600 mt-1">{translateItemDescription(item.name, item.description)}</div>
           )}
         </div>
         <DialogFooter className="sm:justify-between gap-3">

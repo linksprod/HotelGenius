@@ -17,7 +17,7 @@ const AdditionalServicesSection = () => {
           icon={<ShoppingBag className="w-6 h-6 text-primary" />}
           title={t('home.additionalServices.shops')}
           description={t('home.additionalServices.shopsDescription')}
-          actionText={t('common.shopNow')}
+          actionText={t('common.exploreNow')}
           actionLink={resolvePath("/shops")}
           status={t('common.open')}
         />
@@ -38,6 +38,7 @@ const AdditionalServicesSection = () => {
           actionText={t('common.explore')}
           actionLink={resolvePath("/destination")}
           status={t('common.available')}
+          disabled={true}
         />
 
         <ServiceCard

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { UseFormReturn } from "react-hook-form";
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import {
   FormControl,
@@ -17,6 +18,7 @@ interface AdditionalFieldsProps {
 }
 
 const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
+  const { t } = useTranslation();
   return (
     <>
       {(step === undefined || step === 1) && (
@@ -25,9 +27,9 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
           name="nationality"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nationality</FormLabel>
+              <FormLabel>{t('auth.nationality', 'Nationality')}</FormLabel>
               <FormControl>
-                <Input placeholder="Nationality" {...field} />
+                <Input placeholder={t('auth.nationalityPlaceholder', 'Nationality')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

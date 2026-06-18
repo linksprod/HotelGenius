@@ -10,7 +10,7 @@
     "about": "About",
     "contact": "Contact",
     "services": "Services",
-    "shops": "Shops",
+    "shops": "Nearby Places",
     "feedback": "Feedback",
     "messages": "Messages",
     "notifications": "Notifications",
@@ -178,8 +178,8 @@
     },
     "additionalServices": {
       "title": "Additional Services",
-      "shops": "Shops",
-      "shopsDescription": "Luxury shopping experience",
+      "shops": "Nearby Places",
+      "shopsDescription": "Discover local shops and points of interest around the hotel",
       "hotelMap": "Hotel Map",
       "hotelMapDescription": "Interactive indoor navigation",
       "destination": "Destination",
@@ -277,7 +277,18 @@
     "createHotel": "Create Hotel",
     "dateOfBirth": "Date of Birth",
     "checkInDate": "Check-in Date",
-    "checkOutDate": "Check-out Date"
+    "checkOutDate": "Check-out Date",
+    "personalInfo": "Personal",
+    "tellUsMore": "Who are you?",
+    "stayDetails": "Stay",
+    "checkInInfo": "Where & When?",
+    "security": "Security",
+    "protectAccount": "Final details",
+    "nationality": "Nationality",
+    "nationalityPlaceholder": "Nationality",
+    "selectDate": "Select a date",
+    "welcomeToast": "Welcome!",
+    "enjoyStayToast": "Enjoy your stay."
   },
   "user": {
     "guestStatus": "Guest",
@@ -537,8 +548,8 @@
       "3dddc826-9507-4aa4-842d-200985129331": "The historical gold market. It features beautiful architecture and is the absolute go-to spot for fine gold and silver jewelry.",
       "6ac82cb4-9eb7-46dc-88c6-9246dce8a19f": "Located in downtown Tunis (a 15-minute walk or 5-minute drive). It features high-street shopping, cafes, and smaller retail galleries like The Claridge."
     },
-    "title": "Shops",
-    "subtitle": "Luxury shopping at your fingertips",
+    "title": "Nearby Places",
+    "subtitle": "Discover local shops and points of interest around the hotel",
     "categories": "Categories",
     "products": "Products",
     "nearbyShops": "Nearby Shops",
@@ -839,6 +850,7 @@
     "thisWeek": "This Week",
     "older": "Older",
     "status": {
+      "all": "All Status",
       "pending": "Pending",
       "inProgress": "In progress",
       "in_progress": "In progress",
@@ -852,6 +864,7 @@
     },
     "types": {
       "spa_reservation": "Spa Reservation",
+      "spa_booking": "Spa Reservation",
       "restaurant_reservation": "Restaurant Reservation",
       "service_request": "Service Request",
       "event_reservation": "Event Reservation"
@@ -863,6 +876,7 @@
       "event_booking": "Reservation for {{guests}} person(s) on {{date}}"
     },
     "type": {
+      "all": "All Types",
       "request": "Request",
       "restaurant": "Restaurant",
       "spa": "Spa",
@@ -1308,7 +1322,33 @@
     "spaWellness": "Spa & Wellness",
     "restaurants": "Restaurants",
     "shops": "Shops",
-    "placeholderLong": "Search for services, activities, or amenities..."
+    "placeholderLong": "Search for services, activities, or amenities...",
+    "pages": {
+      "aboutUs": "About Us",
+      "aboutUsKeywords": "information hotel story",
+      "gastronomy": "Gastronomy",
+      "gastronomyKeywords": "dining restaurant food",
+      "concierge": "Concierge",
+      "conciergeKeywords": "concierge service support",
+      "spaWellness": "Spa & Wellness",
+      "spaWellnessKeywords": "spa wellness relax",
+      "shops": "Shops",
+      "shopsKeywords": "shopping shop luxury",
+      "hotelMap": "Hotel Map",
+      "hotelMapKeywords": "map navigation directions",
+      "destination": "Destination",
+      "destinationKeywords": "nearby activities",
+      "events": "Events",
+      "eventsKeywords": "event",
+      "activities": "Activities",
+      "activitiesKeywords": "activity leisure fun",
+      "myRoom": "My Room",
+      "myRoomKeywords": "room command requests",
+      "contact": "Contact",
+      "contactKeywords": "contact help assistance",
+      "feedback": "Feedback",
+      "feedbackKeywords": "review feedback"
+    }
   },
   "mapPage": {
     "title": "Hotel Map",
@@ -1474,6 +1514,148 @@
       "title": "Notifications",
       "noNotifications": "No notifications",
       "noNotificationsDesc": "You don't have any notifications at the moment."
+    },
+    "servicesList": {
+      "categories": {
+        "housekeeping": "Housekeeping",
+        "housekeepingDescription": "Room cleaning and amenities",
+        "security": "Security",
+        "securityDescription": "Safety and security services",
+        "maintenance": "Maintenance",
+        "maintenanceDescription": "Repairs and technical support",
+        "informationtechnology": "Information Technology",
+        "informationtechnologyDescription": "Wi-Fi and electronic help"
+      },
+      "items": {
+        "towels": {
+          "name": "Towels",
+          "description": "A set of clean, soft, and absorbent bath and hand towels, replenished daily for guest comfort."
+        },
+        "roomcleaning": {
+          "name": "Room Cleaning",
+          "description": "Daily room cleaning"
+        },
+        "minibarrefill": {
+          "name": "Mini-bar Refill",
+          "description": "Refill mini-bar items"
+        },
+        "extrapillow": {
+          "name": "Extra Pillow",
+          "description": "Additional pillows"
+        },
+        "shampoo": {
+          "name": "Shampoo",
+          "description": "A cleansing hair wash provided for guests to refresh and clean their hair, leaving it soft and manageable."
+        },
+        "hairdryer": {
+          "name": "Hair Dryer",
+          "description": "A standard hair dryer is provided in the bathroom for guests' convenience."
+        },
+        "coffeepods": {
+          "name": "Coffee Pods",
+          "description": "Pre-measured, single-serving coffee pods for a quick and convenient hot beverage, ensuring a fresh cup of coffee at any time."
+        },
+        "bedsheets": {
+          "name": "Bed Sheets",
+          "description": "A complete set of clean and ironed bed linens (fitted sheet, flat sheet, pillowcases), available in various sizes to fit single, double, queen, or king beds, ensuring fresh and comfortable bedding for every stay."
+        },
+        "hangers": {
+          "name": "Hangers",
+          "description": "Durable hangers provided for organizing guests' clothes in the wardrobe, ensuring a neat and tidy stay."
+        },
+        "cctvcamera": {
+          "name": "CCTV camera",
+          "description": "CCTV request"
+        },
+        "lostandfoundassistance": {
+          "name": "Lost and found assistance",
+          "description": "Lost and found"
+        },
+        "reportnoisesecurityconcerns": {
+          "name": "Report noise, security concerns",
+          "description": "Noise/ security"
+        },
+        "safeblocked": {
+          "name": "Safe blocked",
+          "description": "Safe deposit blocked"
+        },
+        "safedepositrequest": {
+          "name": "Safe deposit request",
+          "description": "Safe deposit"
+        },
+        "smokedetectorsemergencylightsmalfunction": {
+          "name": "Smoke detectors, emergency lights malfunction",
+          "description": "Request security"
+        },
+        "additionaldoorlock": {
+          "name": "Additional Door Lock",
+          "description": "An extra security mechanism for the room door, to be engaged by the guest from inside for enhanced personal safety and privacy."
+        },
+        "emergencyphonecharger": {
+          "name": "Emergency Phone Charger",
+          "description": "A portable charger available for guests whose mobile phone battery is low, ensuring they can stay connected in emergencies."
+        },
+        "replacementroomkey": {
+          "name": "Replacement Room Key",
+          "description": "Issued to guests who have lost or forgotten their room key/card, ensuring secure and immediate access to their room."
+        },
+        "acrepair": {
+          "name": "AC repair",
+          "description": "Air conditioning issue"
+        },
+        "lightbulbreplacement": {
+          "name": "Light bulb replacement",
+          "description": "Burned out bulb"
+        },
+        "plumbingissue": {
+          "name": "Plumbing issue",
+          "description": "Leak or clog"
+        },
+        "cloggedtoiletflushnotworking": {
+          "name": "Clogged toilet / Flush not working",
+          "description": "Clogged toilet / Flush not working."
+        },
+        "faultypowersocketnotworking": {
+          "name": "Faulty power socket / Not working.",
+          "description": "The power socket next to the bed is not working / there's no electricity."
+        },
+        "splitsystem": {
+          "name": "Split System",
+          "description": "A wall-mounted, reversible split-system air conditioner, 12000 BTU, complete with remote control, ensuring optimal room temperature."
+        },
+        "showertapwithouthotwater": {
+          "name": "Shower / Tap without hot water.",
+          "description": "There is no hot water in the shower / at the sink tap."
+        },
+        "waterleakinthebathroom": {
+          "name": "Water leak in the bathroom.",
+          "description": "There is a water leak under the sink / near the shower."
+        },
+        "guestwifihelp": {
+          "name": "Guest Wi-Fi help",
+          "description": "Connection issues"
+        },
+        "tvremoteissue": {
+          "name": "TV Remote issue",
+          "description": "Remote not working"
+        },
+        "phonesystem": {
+          "name": "Phone system",
+          "description": "Internal phone help"
+        },
+        "internetconnectionissue": {
+          "name": "Internet Connection Issue",
+          "description": "The Wi-Fi isn’t working in my room / I can’t connect to the Internet."
+        },
+        "televisionremotecontrolfaulty": {
+          "name": "Television / Remote control faulty",
+          "description": "Television out of order, HDMI cable issue, worn-out remote control batteries, or faulty IPTV system."
+        },
+        "thephoneintheroomisnotworking": {
+          "name": "The phone in the room is not working",
+          "description": "Telephone line issue (IP or analog), handset malfunction, or problem with the hotel’s telephone exchange."
+        }
+      }
     }
   }
 }

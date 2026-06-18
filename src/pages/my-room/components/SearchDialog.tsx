@@ -14,6 +14,7 @@ import { filterItemsBySearch } from "./commandSearchUtils";
 import { Room } from "@/hooks/useRoom";
 import { RequestCategory, RequestItem } from "@/features/rooms/types";
 import { Check, Search, X } from "lucide-react";
+import { useTranslatedServices } from "@/i18n/translationHelpers";
 
 type Props = {
   open: boolean;
@@ -43,6 +44,7 @@ const SearchDialog: React.FC<Props> = ({
   onSelect
 }) => {
   const { t } = useTranslation();
+  const { translateCategory, translateItemName, translateItemDescription } = useTranslatedServices();
   const handleClearSearch = () => {
     onSearchTermChange('');
   };
@@ -91,7 +93,7 @@ const SearchDialog: React.FC<Props> = ({
             <>
               {/* Security Category (Special handling for urgency) */}
               {securityCategory && (
-                <CommandGroup heading={securityCategory.name.toUpperCase()} className="px-3 py-2">
+                <CommandGroup heading={translateCategory(securityCategory.name).toUpperCase()} className="px-3 py-2">
                   {filterItemsBySearch(
                     allItems.filter(item => item.category_id === securityCategory.id && item.is_active),
                     searchTerm
@@ -107,9 +109,9 @@ const SearchDialog: React.FC<Props> = ({
                           <span className="text-rose-600 font-bold text-lg">!</span>
                         </div>
                         <div className="min-w-0">
-                          <div className="font-semibold text-slate-800 group-hover:text-rose-700 transition-colors">{item.name}</div>
+                          <div className="font-semibold text-slate-800 group-hover:text-rose-700 transition-colors">{translateItemName(item.name)}</div>
                           {item.description && (
-                            <div className="text-sm text-slate-500 mt-0.5 line-clamp-1 group-hover:text-rose-600/70 transition-colors">{item.description}</div>
+                            <div className="text-sm text-slate-500 mt-0.5 line-clamp-1 group-hover:text-rose-600/70 transition-colors">{translateItemDescription(item.name, item.description)}</div>
                           )}
                         </div>
                       </div>
@@ -140,7 +142,7 @@ const SearchDialog: React.FC<Props> = ({
                 const styles = getCategoryStyles(category.name);
 
                 return (
-                  <CommandGroup key={categoryId} heading={category.name.toUpperCase()} className="px-3 py-2">
+                  <CommandGroup key={categoryId} heading={translateCategory(category.name).toUpperCase()} className="px-3 py-2">
                     {filtered.map(item => (
                       <CommandItem
                         key={item.id}
@@ -151,13 +153,13 @@ const SearchDialog: React.FC<Props> = ({
                         <div className="flex flex-1 items-center">
                           <div className={`mr-4 h-11 w-11 rounded-xl ${styles.iconBg} flex items-center justify-center shrink-0 group-hover:opacity-80 transition-opacity`}>
                             <span className={`${styles.text} font-bold text-base`}>
-                              {category.name.charAt(0)}
+                              {translateCategory(category.name).charAt(0)}
                             </span>
                           </div>
                           <div className="min-w-0">
-                            <div className="font-semibold text-slate-800 group-hover:text-slate-900 transition-colors">{item.name}</div>
+                            <div className="font-semibold text-slate-800 group-hover:text-slate-900 transition-colors">{translateItemName(item.name)}</div>
                             {item.description && (
-                              <div className="text-sm text-slate-500 mt-0.5 line-clamp-1">{item.description}</div>
+                              <div className="text-sm text-slate-500 mt-0.5 line-clamp-1">{translateItemDescription(item.name, item.description)}</div>
                             )}
                           </div>
                         </div>

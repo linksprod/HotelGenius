@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Loader } from 'lucide-react';
 import { useRequestCategories } from '@/hooks/useRequestCategories';
 import { RequestCategory } from '@/features/rooms/types';
+import { useTranslatedServices } from '@/i18n/translationHelpers';
 
 interface RequestCategoryListProps {
   onSelectCategory: (category: RequestCategory) => void;
@@ -11,6 +12,7 @@ interface RequestCategoryListProps {
 
 const RequestCategoryList = ({ onSelectCategory }: RequestCategoryListProps) => {
   const { categories, isLoading } = useRequestCategories();
+  const { translateCategory, translateCategoryDescription } = useTranslatedServices();
 
   if (isLoading) {
     return (
@@ -45,9 +47,11 @@ const RequestCategoryList = ({ onSelectCategory }: RequestCategoryListProps) => 
               )}
             </div>
             <div>
-              <h3 className="font-medium">{category.name}</h3>
+              <h3 className="font-medium">{translateCategory(category.name)}</h3>
               {category.description && (
-                <p className="text-sm text-muted-foreground">{category.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {translateCategoryDescription(category.name, category.description)}
+                </p>
               )}
             </div>
           </div>

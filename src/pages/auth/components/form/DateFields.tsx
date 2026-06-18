@@ -45,6 +45,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
                 <BirthDatePicker
                   selected={field.value}
                   onSelect={field.onChange}
+                  placeholder={t('auth.selectDate', 'Select a date')}
                 />
               </FormControl>
               <FormMessage />

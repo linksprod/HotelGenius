@@ -87,6 +87,7 @@ export interface Notification {
     created_at: string;
     updated_at: string;
     created_by: string;
+    data?: any;
 }
 
 export interface CreateNotificationParams {
@@ -106,6 +107,7 @@ export interface CreateNotificationParams {
     scheduled_at?: string;
     created_by?: string;
     idempotency_key?: string;
+    data?: any;
 }
 
 export interface NotificationPreference {

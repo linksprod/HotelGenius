@@ -13,7 +13,7 @@ import { useHotelPath } from '@/hooks/useHotelPath';
 import { useHotelConfig } from '@/hooks/useHotelConfig';
 
 const FeaturedExperienceSection = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -53,9 +53,32 @@ const FeaturedExperienceSection = () => {
     }
   ];
 
-  const featuredExperiences = config?.featured_experiences && config.featured_experiences.length > 0
+  const rawExperiences = config?.featured_experiences && config.featured_experiences.length > 0
     ? config.featured_experiences
     : defaultExperiences;
+
+  const featuredExperiences = React.useMemo(() => {
+    if (i18n.language !== 'fr') return rawExperiences;
+
+    return rawExperiences.map((exp: any) => {
+      let title = exp.title;
+      let description = exp.description;
+
+      if (title === 'The Art of the Traditional Hammam') {
+        title = "L'Art du Hammam Traditionnel";
+        description = "Plongez dans un rituel ancestral de purification. Laissez la douce chaleur de notre sanctuaire de marbre vous envelopper pour un moment d'évasion absolue.";
+      } else if (title === 'Teatime Experience at Surya Tea House') {
+        title = "L'Heure du Thé à la Maison de Thé Surya";
+        description = "Savourez une pause thé sereine à la Maison de Thé « Surya », avec des thés originaux, du thé à la menthe tunisien traditionnel et des pâtisseries fines artisanales.";
+      }
+
+      return {
+        ...exp,
+        title,
+        description
+      };
+    });
+  }, [rawExperiences, i18n.language]);
 
   if (isLoading && !config) {
     return (

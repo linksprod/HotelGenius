@@ -97,6 +97,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
     }
   }
 
+  function getTranslatedTitle(rawTitle: string) {
+    const key = rawTitle.toLowerCase().replace(/ /g, '_');
+    return t('notifications.types.' + key, rawTitle);
+  }
+
   // Get action buttons based on status
   function getActionButtons() {
     const canCancel = ['pending', 'confirmed', 'in_progress'].includes(notification.status);
@@ -215,7 +220,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
 
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-medium">{notification.title}</h3>
+                  <h3 className="font-medium">{getTranslatedTitle(notification.title)}</h3>
                   <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
                     {getTypeLabel(notification.type)}
                   </span>

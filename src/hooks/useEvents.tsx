@@ -8,6 +8,27 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useCurrentHotelId } from './useCurrentHotelId';
 
+const convertTo12Hour = (timeStr: string | undefined | null): string => {
+  if (!timeStr) return '';
+  // If it's already in AM/PM format, return it
+  if (timeStr.toLowerCase().includes('am') || timeStr.toLowerCase().includes('pm')) {
+    return timeStr;
+  }
+  
+  // Parse HH:mm:ss or HH:mm
+  const parts = timeStr.split(':');
+  if (parts.length >= 2) {
+    const hours = parseInt(parts[0], 10);
+    const minutes = parts[1].substring(0, 2);
+    if (!isNaN(hours)) {
+      const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+      const ampm = hours < 12 ? 'AM' : 'PM';
+      return `${hour12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+    }
+  }
+  return timeStr;
+};
+
 export const useEvents = (filterBySpaFacility = false) => {
   const { toast } = useToast();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
@@ -46,7 +67,11 @@ export const useEvents = (filterBySpaFacility = false) => {
       }
 
       console.log('Events fetched successfully:', data);
-      return data as Event[];
+      const formattedEvents = (data as Event[]).map(event => ({
+        ...event,
+        time: event.time ? convertTo12Hour(event.time) : ''
+      }));
+      return formattedEvents;
     },
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,

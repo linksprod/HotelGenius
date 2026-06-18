@@ -39,7 +39,8 @@ export class NotificationService {
                     scheduled_at: params.scheduled_at,
                     created_by: params.created_by || 'system',
                     idempotency_key: idempotencyKey,
-                    status: 'pending'
+                    status: 'pending',
+                    data: params.data || params.template_data || {}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } as any)
                 .select()
@@ -86,7 +87,8 @@ export class NotificationService {
                     reference_id: params.reference_id,
                     reference_type: params.reference_type,
                     source_module: params.source_module,
-                    source_event: params.source_event
+                    source_event: params.source_event,
+                    data: params.data || params.template_data || {}
                 },
                 bypass_rpc: true,
                 forced_channels: channels

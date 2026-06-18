@@ -102,12 +102,12 @@ const LoginForm: React.FC = () => {
           // @ts-ignore
           const hotelSlug = guestData?.hotels?.slug;
           if (hotelSlug) {
-            toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
+            toast({ title: t('auth.welcomeToast', 'Welcome!'), description: t('auth.enjoyStayToast', 'Enjoy your stay.') });
             navigate(`/${hotelSlug}`, { replace: true });
           } else {
             const targetPath = resolvePath('/');
             if (targetPath !== '/') {
-              toast({ title: 'Welcome!', description: 'Enjoy your stay.' });
+              toast({ title: t('auth.welcomeToast', 'Welcome!'), description: t('auth.enjoyStayToast', 'Enjoy your stay.') });
               navigate(targetPath, { replace: true });
             } else {
               // Show error: Guests must log in through their hotel's guest portal

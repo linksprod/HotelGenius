@@ -82,7 +82,7 @@ const Requests = () => {
               <SelectValue placeholder={t('notifications.filterByType')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t('notifications.status.all', 'All Types')}</SelectItem>
+              <SelectItem value="all">{t('notifications.type.all', 'All Types')}</SelectItem>
               <SelectItem value="request">{t('notifications.type.request')}</SelectItem>
               <SelectItem value="spa_booking">{t('notifications.type.spa')}</SelectItem>
               <SelectItem value="reservation">{t('notifications.type.restaurant')}</SelectItem>

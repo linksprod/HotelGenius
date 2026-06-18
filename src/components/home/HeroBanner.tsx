@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useHotelConfig } from '@/hooks/useHotelConfig';
 
 const HeroBanner = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { config, isLoading } = useHotelConfig();
 
   const defaultImage = "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80";
@@ -14,8 +14,17 @@ const HeroBanner = () => {
   }
 
   const heroImage = config?.home_hero_image || defaultImage;
-  const heroTitle = config?.home_hero_title || t('home.hero.stayGuideTitle');
-  const heroSubtitle = config?.home_hero_subtitle || t('home.hero.stayGuideSubtitle');
+  let heroTitle = config?.home_hero_title || t('home.hero.stayGuideTitle');
+  let heroSubtitle = config?.home_hero_subtitle || t('home.hero.stayGuideSubtitle');
+
+  if (i18n.language === 'fr') {
+    if (heroTitle === 'Welcome to Hotel Palais Bayram') {
+      heroTitle = "Bienvenue à l'Hôtel Palais Bayram";
+    }
+    if (heroSubtitle === 'Experience history and luxury in the Tunis Medina') {
+      heroSubtitle = "Vivez l'histoire et le luxe dans la médina de Tunis";
+    }
+  }
 
   return (
     <div className="relative h-64 overflow-hidden rounded-b-3xl">

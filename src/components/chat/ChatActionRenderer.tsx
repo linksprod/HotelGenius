@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslatedServices } from '@/i18n/translationHelpers';
 
 interface ChatActionRendererProps {
     type: string;
@@ -25,6 +26,7 @@ interface ChatActionRendererProps {
 
 const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () => void }> = ({ initialCategory, onSuccess }) => {
     const { t } = useTranslation();
+    const { translateCategory, translateItemName } = useTranslatedServices();
     const [step, setStep] = React.useState<'categories' | 'items' | 'submitting' | 'confirmed'>(initialCategory ? 'items' : 'categories');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
@@ -103,7 +105,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                             <div className="p-2 rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                                 {getCategoryIcon(cat.name)}
                             </div>
-                            <span className="text-xs font-semibold">{cat.name}</span>
+                            <span className="text-xs font-semibold">{translateCategory(cat.name)}</span>
                         </div>
                     </Card>
                 ))}
@@ -117,7 +119,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2 text-primary">
                         {getCategoryIcon(selectedCategory.name)}
-                        <h4 className="font-semibold text-sm">{selectedCategory.name}</h4>
+                        <h4 className="font-semibold text-sm">{translateCategory(selectedCategory.name)}</h4>
                     </div>
                     <Button
                         variant="ghost"
@@ -143,7 +145,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                                     className="justify-between text-xs h-9 bg-background/50 border-primary/10 hover:border-primary/30 hover:bg-primary/5 group"
                                     onClick={() => handleItemSelect(item)}
                                 >
-                                    {item.name}
+                                    {translateItemName(item.name)}
                                     <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </Button>
                             ))

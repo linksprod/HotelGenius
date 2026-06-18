@@ -10,7 +10,7 @@
     "about": "À propos",
     "contact": "Contact",
     "services": "Services",
-    "shops": "Boutiques",
+    "shops": "Lieux à proximité",
     "feedback": "Commentaires",
     "messages": "Messages",
     "notifications": "Notifications",
@@ -178,8 +178,8 @@
     },
     "additionalServices": {
       "title": "Services Supplémentaires",
-      "shops": "Boutiques",
-      "shopsDescription": "Expérience shopping de luxe",
+      "shops": "Lieux à proximité",
+      "shopsDescription": "Découvrez les commerces et points d'intérêt autour de l'hôtel",
       "hotelMap": "Plan de l'Hôtel",
       "hotelMapDescription": "Navigation interactive intérieure",
       "destination": "Destination",
@@ -207,7 +207,7 @@
     },
     "welcome": {
       "greeting": "Bienvenue {{name}}",
-      "message": "Nous sommes ravis de vous accueillir. Profitez de votre séjour au {{hotelName}} !",
+      "message": "Nous sommes ravis de vous accueillir. Profitez de votre séjour à l'hôtel Bayram !",
       "seeReservation": "Voir la réservation"
     }
   },
@@ -270,7 +270,18 @@
     "createHotel": "Créer l'hôtel",
     "dateOfBirth": "Date de Naissance",
     "checkInDate": "Date d'arrivée",
-    "checkOutDate": "Date de départ"
+    "checkOutDate": "Date de départ",
+    "personalInfo": "Personnel",
+    "tellUsMore": "Qui êtes-vous ?",
+    "stayDetails": "Séjour",
+    "checkInInfo": "Où et Quand ?",
+    "security": "Sécurité",
+    "protectAccount": "Détails finaux",
+    "nationality": "Nationalité",
+    "nationalityPlaceholder": "Nationalité",
+    "selectDate": "Sélectionner une date",
+    "welcomeToast": "Bienvenue !",
+    "enjoyStayToast": "Profitez de votre séjour."
   },
   "user": {
     "guestStatus": "Invité",
@@ -530,8 +541,8 @@
       "3dddc826-9507-4aa4-842d-200985129331": "Le marché historique de l'or. Il présente une architecture magnifique et constitue le lieu incontournable pour les bijoux fins en or et en argent.",
       "6ac82cb4-9eb7-46dc-88c6-9246dce8a19f": "Situé au centre-ville de Tunis (à 15 minutes à pied ou 5 minutes en voiture). Il abrite des boutiques de grandes marques, des cafés et de petites galeries commerciales comme Le Claridge."
     },
-    "title": "Boutiques",
-    "subtitle": "Shopping de luxe à portée de main",
+    "title": "Lieux à proximité",
+    "subtitle": "Découvrez les commerces et points d'intérêt autour de l'hôtel",
     "categories": "Catégories",
     "products": "Produits",
     "nearbyShops": "Boutiques à Proximité",
@@ -832,6 +843,7 @@
     "thisWeek": "Cette Semaine",
     "older": "Plus Ancien",
     "status": {
+      "all": "Tous les statuts",
       "pending": "En attente",
       "inProgress": "En cours",
       "in_progress": "En cours",
@@ -845,6 +857,7 @@
     },
     "types": {
       "spa_reservation": "Réservation de Spa",
+      "spa_booking": "Réservation de Spa",
       "restaurant_reservation": "Réservation de Restaurant",
       "service_request": "Demande de Service",
       "event_reservation": "Réservation d'Événement"
@@ -856,6 +869,7 @@
       "event_booking": "Réservation pour {{guests}} personne(s) le {{date}}"
     },
     "type": {
+      "all": "Tous les types",
       "request": "Demande",
       "restaurant": "Restaurant",
       "spa": "Spa",
@@ -1301,7 +1315,33 @@
     "spaWellness": "Spa & Bien-être",
     "restaurants": "Restaurants",
     "shops": "Boutiques",
-    "placeholderLong": "Recherchez des services, des activités ou des équipements..."
+    "placeholderLong": "Recherchez des services, des activités ou des équipements...",
+    "pages": {
+      "aboutUs": "À propos de nous",
+      "aboutUsKeywords": "information hotel histoire a propos de nous",
+      "gastronomy": "Gastronomie",
+      "gastronomyKeywords": "restaurant nourriture gastronomie manger repas",
+      "concierge": "Conciergerie",
+      "conciergeKeywords": "concierge service assistance support demande",
+      "spaWellness": "Spa & Bien-être",
+      "spaWellnessKeywords": "spa bien-etre detente massage soin",
+      "shops": "Boutiques",
+      "shopsKeywords": "boutique magasin shopping luxe achat",
+      "hotelMap": "Plan de l'Hôtel",
+      "hotelMapKeywords": "plan carte navigation itineraire directions",
+      "destination": "Destination",
+      "destinationKeywords": "destination alentours environs activites",
+      "events": "Événements",
+      "eventsKeywords": "evenement spectacle animation fete",
+      "activities": "Activités",
+      "activitiesKeywords": "activite loisir amusement fun sport",
+      "myRoom": "Ma Chambre",
+      "myRoomKeywords": "chambre commandes requetes service lit",
+      "contact": "Contact",
+      "contactKeywords": "contact aide assistance message telephone",
+      "feedback": "Avis",
+      "feedbackKeywords": "avis retour d'experience commentaire note"
+    }
   },
   "mapPage": {
     "title": "Plan de l'Hôtel",
@@ -1467,6 +1507,148 @@
       "title": "Notifications",
       "noNotifications": "Aucune notification",
       "noNotificationsDesc": "Vous n'avez aucune notification pour le moment."
+    },
+    "servicesList": {
+      "categories": {
+        "housekeeping": "Ménage",
+        "housekeepingDescription": "Entretien de la chambre et commodités",
+        "security": "Sécurité",
+        "securityDescription": "Services de protection et de sécurité",
+        "maintenance": "Maintenance & Entretien",
+        "maintenanceDescription": "Réparations et assistance technique",
+        "informationtechnology": "Support Informatique",
+        "informationtechnologyDescription": "Assistance Wi-Fi et appareils électroniques"
+      },
+      "items": {
+        "towels": {
+          "name": "Serviettes",
+          "description": "Un ensemble de serviettes de bain et de toilette propres, douces et absorbantes, renouvelées quotidiennement pour votre confort."
+        },
+        "roomcleaning": {
+          "name": "Ménage de la Chambre",
+          "description": "Nettoyage quotidien de votre chambre."
+        },
+        "minibarrefill": {
+          "name": "Recharge du Mini-bar",
+          "description": "Remplissage des boissons et collations du mini-bar."
+        },
+        "extrapillow": {
+          "name": "Oreiller Supplémentaire",
+          "description": "Oreillers supplémentaires pour plus de confort."
+        },
+        "shampoo": {
+          "name": "Shampooing",
+          "description": "Un soin lavant pour les cheveux, les laissant propres, doux et faciles à coiffer."
+        },
+        "hairdryer": {
+          "name": "Sèche-cheveux",
+          "description": "Un sèche-cheveux standard est mis à votre disposition dans la salle de bain."
+        },
+        "coffeepods": {
+          "name": "Capsules de Café",
+          "description": "Capsules de café individuelles pré-dosées pour une boisson chaude rapide et savoureuse à tout moment."
+        },
+        "bedsheets": {
+          "name": "Draps de Lit",
+          "description": "Un ensemble complet de linge de lit propre et repassé (drap-housse, drap plat, taies d'oreiller) pour un lit frais et confortable."
+        },
+        "hangers": {
+          "name": "Cintres",
+          "description": "Cintres robustes fournis pour organiser vos vêtements dans la penderie."
+        },
+        "cctvcamera": {
+          "name": "Caméra de surveillance",
+          "description": "Demande ou signalement concernant les caméras de surveillance."
+        },
+        "lostandfoundassistance": {
+          "name": "Assistance Objets Trouvés",
+          "description": "Aide pour retrouver ou déclarer un objet perdu."
+        },
+        "reportnoisesecurityconcerns": {
+          "name": "Signaler bruit / sécurité",
+          "description": "Signaler des nuisances sonores ou toute autre inquiétude de sécurité."
+        },
+        "safeblocked": {
+          "name": "Coffre-fort bloqué",
+          "description": "Assistance pour débloquer le coffre-fort de votre chambre."
+        },
+        "safedepositrequest": {
+          "name": "Demande de Coffre-fort",
+          "description": "Assistance ou informations concernant le coffre-fort."
+        },
+        "smokedetectorsemergencylightsmalfunction": {
+          "name": "Panne Détecteurs / Éclairage de Secours",
+          "description": "Signaler un problème avec les détecteurs de fumée ou l'éclairage de secours."
+        },
+        "additionaldoorlock": {
+          "name": "Verrou de Porte Supplémentaire",
+          "description": "Un verrou de sécurité supplémentaire à enclencher depuis l'intérieur pour plus d'intimité."
+        },
+        "emergencyphonecharger": {
+          "name": "Chargeur de Téléphone d'Urgence",
+          "description": "Un chargeur portable mis à disposition pour recharger votre téléphone en cas d'urgence."
+        },
+        "replacementroomkey": {
+          "name": "Remplacement Clé de Chambre",
+          "description": "Émission d'une nouvelle carte ou clé de chambre si vous avez perdu ou oublié la vôtre."
+        },
+        "acrepair": {
+          "name": "Réparation Climatisation",
+          "description": "Signaler un problème ou une panne de la climatisation."
+        },
+        "lightbulbreplacement": {
+          "name": "Remplacement d'Ampoule",
+          "description": "Demande de remplacement d'une ampoule grillée dans votre chambre."
+        },
+        "plumbingissue": {
+          "name": "Problème de Plomberie",
+          "description": "Signaler une fuite d'eau, un robinet défectueux ou une canalisation bouchée."
+        },
+        "cloggedtoiletflushnotworking": {
+          "name": "Toilettes Bouchées / Chasse d'eau en Panne",
+          "description": "Signaler des toilettes obstruées ou un dysfonctionnement de la chasse d'eau."
+        },
+        "faultypowersocketnotworking": {
+          "name": "Prise Électrique Défectueuse",
+          "description": "La prise de courant à côté du lit ne fonctionne pas / il n'y a pas d'électricité."
+        },
+        "splitsystem": {
+          "name": "Système de Climatisation Split",
+          "description": "Climatiseur mural réversible de 12000 BTU avec télécommande pour ajuster la température."
+        },
+        "showertapwithouthotwater": {
+          "name": "Pas d'Eau Chaude (Douche/Robinet)",
+          "description": "Il n'y a pas d'eau chaude sous la douche ou au robinet du lavabo."
+        },
+        "waterleakinthebathroom": {
+          "name": "Fuite d'Eau dans la Salle de Bain",
+          "description": "Il y a une fuite d'eau sous le lavabo ou près de la douche."
+        },
+        "guestwifihelp": {
+          "name": "Assistance Connexion Wi-Fi",
+          "description": "Aide pour se connecter au réseau Wi-Fi de l'hôtel."
+        },
+        "tvremoteissue": {
+          "name": "Problème Télécommande TV",
+          "description": "La télécommande ne fonctionne pas ou nécessite de nouvelles piles."
+        },
+        "phonesystem": {
+          "name": "Système Téléphonique",
+          "description": "Aide pour utiliser le téléphone fixe de la chambre."
+        },
+        "internetconnectionissue": {
+          "name": "Problème de Connexion Internet",
+          "description": "Le Wi-Fi ne fonctionne pas dans ma chambre / impossible de se connecter."
+        },
+        "televisionremotecontrolfaulty": {
+          "name": "Téléviseur ou Télécommande Défectueux",
+          "description": "Télévision en panne, problème de câble HDMI, piles usées ou souci de télévision."
+        },
+        "thephoneintheroomisnotworking": {
+          "name": "Téléphone en Panne",
+          "description": "Ligne téléphonique défectueuse, combiné en panne ou problème de centrale téléphonique."
+        }
+      }
     }
   }
 }

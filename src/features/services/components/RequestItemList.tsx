@@ -6,6 +6,7 @@ import { Loader, ChevronLeft } from 'lucide-react';
 import { useRequestItems } from '@/hooks/useRequestCategories';
 import { RequestCategory, RequestItem } from '@/features/rooms/types';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useTranslatedServices } from '@/i18n/translationHelpers';
 
 interface RequestItemListProps {
   category: RequestCategory;
@@ -21,6 +22,7 @@ const RequestItemList = ({
   onToggleItem
 }: RequestItemListProps) => {
   const { data: items, isLoading, error } = useRequestItems(category.id);
+  const { translateCategory, translateItemName, translateItemDescription } = useTranslatedServices();
 
   // Filter only active items
   const activeItems = items?.filter(item => item.is_active) || [];
@@ -46,7 +48,7 @@ const RequestItemList = ({
           <ChevronLeft className="h-4 w-4 mr-1" />
           Back
         </Button>
-        <h3 className="text-lg font-medium">{category.name}</h3>
+        <h3 className="text-lg font-medium">{translateCategory(category.name)}</h3>
       </div>
 
       {isLoading ? (
@@ -79,9 +81,11 @@ const RequestItemList = ({
                     htmlFor={`item-${item.id}`}
                     className="flex-1 cursor-pointer"
                   >
-                    <div className="font-medium">{item.name}</div>
+                    <div className="font-medium">{translateItemName(item.name)}</div>
                     {item.description && (
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {translateItemDescription(item.name, item.description)}
+                      </p>
                     )}
                   </label>
                 </div>
