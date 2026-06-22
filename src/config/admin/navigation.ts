@@ -1,5 +1,5 @@
 import { 
-  LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, 
+  LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, Brush,
   Wrench, Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, MapPin, 
   FileText, ImageIcon, Globe, Settings, Building2, UserCog, Bot,
   CreditCard, LayoutTemplate, Coins
@@ -42,7 +42,7 @@ export const adminNavigation: NavSectionConfig[] = [
     label: 'Services',
     defaultOpen: true,
     items: [
-      { title: 'Housekeeping', url: '/admin/housekeeping', icon: Trash2, notificationKey: 'housekeeping' },
+      { title: 'Housekeeping', url: '/admin/housekeeping', icon: Brush, notificationKey: 'housekeeping' },
       { title: 'Maintenance', url: '/admin/maintenance', icon: Wrench, notificationKey: 'maintenance' },
       { title: 'IT Support', url: '/admin/information-technology', icon: Wifi, notificationKey: 'information-technology' },
       { title: 'Security', url: '/admin/security', icon: Shield, notificationKey: 'security' },

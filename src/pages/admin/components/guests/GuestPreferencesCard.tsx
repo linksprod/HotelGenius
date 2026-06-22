@@ -34,25 +34,25 @@ import { useAdminGuestPreferences } from '@/hooks/admin/useAdminGuestPreferences
 
 /* ── Category config ─────────────────────────────────── */
 const PREFERENCE_CATEGORIES = [
-  { value: 'room', label: 'Chambre', icon: BedDouble, color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800' },
-  { value: 'dining', label: 'Restauration', icon: Utensils, color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
+  { value: 'room', label: 'Room', icon: BedDouble, color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800' },
+  { value: 'dining', label: 'Dining', icon: Utensils, color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
   { value: 'service', label: 'Service', icon: Sparkles, color: 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800' },
-  { value: 'other', label: 'Autre', icon: Brain, color: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800' },
+  { value: 'other', label: 'Other', icon: Brain, color: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800' },
 ];
 
 const ALERT_SEVERITIES = [
-  { value: 'low', label: 'Faible', color: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-300 dark:border-yellow-800' },
-  { value: 'medium', label: 'Moyen', color: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-300 dark:border-orange-800' },
-  { value: 'high', label: 'Élevé', color: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-300 dark:border-red-800' },
+  { value: 'low', label: 'Low', color: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-300 dark:border-yellow-800' },
+  { value: 'medium', label: 'Medium', color: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-300 dark:border-orange-800' },
+  { value: 'high', label: 'High', color: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-300 dark:border-red-800' },
 ];
 
 const ALERT_TYPES = [
-  'Allergie alimentaire',
-  'Allergie médicamenteuse',
-  'Condition médicale',
-  'Mobilité réduite',
-  'Régime alimentaire',
-  'Autre',
+  'Food allergy',
+  'Drug allergy',
+  'Medical condition',
+  'Reduced mobility',
+  'Dietary requirement',
+  'Other',
 ];
 
 function getCategoryConfig(category: string) {
@@ -87,12 +87,12 @@ const AddPreferenceDialog: React.FC<AddPreferenceDialogProps> = ({ open, onClose
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
-            Ajouter une préférence
+            Add Preference
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>Catégorie</Label>
+            <Label>Category</Label>
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger>
                 <SelectValue />
@@ -107,9 +107,9 @@ const AddPreferenceDialog: React.FC<AddPreferenceDialogProps> = ({ open, onClose
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Préférence</Label>
+            <Label>Preference</Label>
             <Input
-              placeholder="Ex: Non-fumeur, Chambre calme, Sans gluten…"
+              placeholder="E.g., Non-smoking, Quiet room, Gluten-free..."
               value={value}
               onChange={e => setValue(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSubmit()}
@@ -117,10 +117,10 @@ const AddPreferenceDialog: React.FC<AddPreferenceDialogProps> = ({ open, onClose
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSubmit} disabled={!value.trim() || isPending}>
             {isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Ajouter
+            Add
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -154,12 +154,12 @@ const AddAlertDialog: React.FC<AddAlertDialogProps> = ({ open, onClose, onAdd, i
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldAlert className="h-5 w-5 text-destructive" />
-            Ajouter une alerte
+            Add Alert
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>Type d'alerte</Label>
+            <Label>Alert Type</Label>
             <Select value={alertType} onValueChange={setAlertType}>
               <SelectTrigger>
                 <SelectValue />
@@ -172,7 +172,7 @@ const AddAlertDialog: React.FC<AddAlertDialogProps> = ({ open, onClose, onAdd, i
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Sévérité</Label>
+            <Label>Severity</Label>
             <Select value={severity} onValueChange={setSeverity}>
               <SelectTrigger>
                 <SelectValue />
@@ -187,7 +187,7 @@ const AddAlertDialog: React.FC<AddAlertDialogProps> = ({ open, onClose, onAdd, i
           <div className="space-y-2">
             <Label>Description</Label>
             <Textarea
-              placeholder="Décrivez l'alerte en détail…"
+              placeholder="Describe the alert in detail..."
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={3}
@@ -195,10 +195,10 @@ const AddAlertDialog: React.FC<AddAlertDialogProps> = ({ open, onClose, onAdd, i
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button variant="destructive" onClick={handleSubmit} disabled={!description.trim() || isPending}>
             {isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Ajouter l'alerte
+            Add Alert
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -245,14 +245,14 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
       <Card className="overflow-hidden border border-border dark:border-none bg-card/50 dark:bg-zinc-900/50 backdrop-blur-xl shadow-sm dark:shadow-2xl rounded-[2rem]">
         <CardContent className="p-8 space-y-8">
 
-          {/* ── Préférences ── */}
+          {/* ── Preferences ── */}
           <div>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-zinc-100 dark:bg-white/5 rounded-xl">
                   <Brain className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground tracking-tight">Préférences du Guest</h3>
+                <h3 className="text-lg font-bold text-foreground tracking-tight">Guest Preferences</h3>
               </div>
               <Button
                 size="sm"
@@ -261,7 +261,7 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
                 onClick={() => setPrefDialogOpen(true)}
               >
                 <Plus className="h-3.5 w-3.5" />
-                Ajouter
+                Add
               </Button>
             </div>
 
@@ -271,7 +271,7 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
               </div>
             ) : preferences.length === 0 ? (
               <p className="text-sm text-muted-foreground italic text-center py-3">
-                Aucune préférence enregistrée
+                No preferences recorded
               </p>
             ) : (
               <div className="space-y-4">
@@ -296,7 +296,7 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
                             <button
                               onClick={() => deletePreference.mutate(pref.id)}
                               className="ml-0.5 rounded-full opacity-60 hover:opacity-100 transition-opacity"
-                              title="Supprimer"
+                              title="Delete"
                             >
                               <X className="h-3 w-3" />
                             </button>
@@ -310,17 +310,17 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
             )}
           </div>
 
-          {/* ── Séparateur ── */}
+          {/* ── Separator ── */}
           <div className="border-t border-border/40" />
 
-          {/* ── Alertes ── */}
+          {/* ── Alerts ── */}
           <div>
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-red-50 dark:bg-red-500/10 rounded-xl">
                   <ShieldAlert className="h-5 w-5 text-destructive" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground tracking-tight">Alertes</h3>
+                <h3 className="text-lg font-bold text-foreground tracking-tight">Alerts</h3>
               </div>
               <Button
                 size="sm"
@@ -329,7 +329,7 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
                 onClick={() => setAlertDialogOpen(true)}
               >
                 <Plus className="h-3.5 w-3.5" />
-                Ajouter
+                Add
               </Button>
             </div>
 
@@ -339,7 +339,7 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
               </div>
             ) : alerts.length === 0 ? (
               <p className="text-sm text-muted-foreground italic text-center py-3">
-                Aucune alerte enregistrée
+                No alerts recorded
               </p>
             ) : (
               <div className="space-y-2">
@@ -365,7 +365,7 @@ const GuestPreferencesCard: React.FC<GuestPreferencesCardProps> = ({ guestId }) 
                       <button
                         onClick={() => deleteAlert.mutate(alert.id)}
                         className="shrink-0 opacity-50 hover:opacity-100 transition-opacity mt-0.5"
-                        title="Supprimer l'alerte"
+                        title="Delete alert"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>

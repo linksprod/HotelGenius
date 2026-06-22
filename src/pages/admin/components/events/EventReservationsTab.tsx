@@ -9,7 +9,7 @@ import { useStories } from '@/hooks/useStories';
 import { ReservationsGrid } from './ReservationsGrid';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Calendar } from 'lucide-react';
 
 export const EventReservationsTab: React.FC<{
   selectedEventId?: string;

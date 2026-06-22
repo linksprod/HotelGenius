@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Plus, MessageSquare, Trash2, Loader2, StickyNote, UserCircle2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { Guest } from './types';
 import { useStaffNotes } from '@/hooks/admin/useStaffNotes';
 
@@ -42,14 +42,14 @@ const AddNoteDialog: React.FC<AddNoteDialogProps> = ({ open, onClose, onAdd, isP
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <StickyNote className="h-5 w-5 text-blue-500" />
-            Ajouter une note interne
+            Add internal note
           </DialogTitle>
         </DialogHeader>
         <p className="text-xs text-muted-foreground -mt-1 mb-2">
-          🔒 Visible uniquement par le staff — jamais par le guest.
+          🔒 Visible only to staff — never to the guest.
         </p>
         <Textarea
-          placeholder="Écrire une note pour l'équipe…"
+          placeholder="Write a note for the team…"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={4}
@@ -57,10 +57,10 @@ const AddNoteDialog: React.FC<AddNoteDialogProps> = ({ open, onClose, onAdd, isP
           autoFocus
         />
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Annuler</Button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
           <Button onClick={handleSubmit} disabled={!content.trim() || isPending}>
             {isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-            Ajouter la note
+            Add note
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -90,10 +90,10 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
               </div>
               <div>
                 <h3 className="text-lg font-bold text-foreground dark:text-white tracking-tight">
-                  Notes internes
+                  Internal notes
                 </h3>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
-                  Visibles uniquement par le staff
+                  Visible only to staff
                 </p>
               </div>
             </div>
@@ -104,7 +104,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
               onClick={() => setDialogOpen(true)}
             >
               <Plus className="h-3.5 w-3.5" />
-              Ajouter
+              Add
             </Button>
           </div>
 
@@ -118,7 +118,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
               <div className="p-3 rounded-full bg-zinc-100 dark:bg-white/5">
                 <StickyNote className="h-5 w-5 text-muted-foreground/50" />
               </div>
-              <p className="text-sm text-muted-foreground italic">Aucune note disponible</p>
+              <p className="text-sm text-muted-foreground italic">No notes available</p>
               <Button
                 variant="outline"
                 size="sm"
@@ -126,7 +126,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
                 onClick={() => setDialogOpen(true)}
               >
                 <Plus className="h-3.5 w-3.5" />
-                Première note
+                First note
               </Button>
             </div>
           ) : (
@@ -150,7 +150,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
                         {note.author_name}
                       </span>
                       <span className="text-[10px] text-muted-foreground/60">
-                        {formatDistanceToNow(new Date(note.created_at), { addSuffix: true, locale: fr })}
+                        {formatDistanceToNow(new Date(note.created_at), { addSuffix: true, locale: enUS })}
                       </span>
                     </div>
                     <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
@@ -162,7 +162,7 @@ const GuestIntelligenceCard: React.FC<GuestIntelligenceCardProps> = ({ guest }) 
                   <button
                     onClick={() => deleteNote.mutate(note.id)}
                     className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full hover:bg-red-500/10 text-muted-foreground hover:text-red-500"
-                    title="Supprimer la note"
+                    title="Delete note"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>

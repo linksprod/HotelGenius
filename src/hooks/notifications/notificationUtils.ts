@@ -145,7 +145,9 @@ export const transformUnifiedNotifications = (notifications: any[]): Notificatio
         type === 'reservation' ? '🍽️' :
         type === 'request' ? '🔔' :
         type === 'event_reservation' ? '📅' : '🔔',
-      status: n.status === 'read' ? 'read' : 'pending',
+      status: n.source_event && ['confirmed', 'cancelled', 'completed', 'in_progress', 'on_hold', 'pending'].includes(n.source_event) 
+        ? n.source_event 
+        : (n.status === 'read' ? 'read' : 'pending'),
       time: createSafeDate(n.created_at) || new Date(),
       link: n.reference_type === 'SpaBooking' ? `/spa/booking/${n.reference_id}` :
         n.reference_type === 'TableReservation' ? `/dining/reservations/${n.reference_id}` :
@@ -202,6 +204,9 @@ export const combineAndSortNotifications = (
       const legacy = mergedMap.get(refId)!;
       mergedMap.set(refId, {
         ...central,
+        // Preserve the business state (e.g. 'confirmed', 'cancelled') from the legacy module
+        // instead of overwriting it with the notification's 'read'/'pending' state.
+        status: legacy.status,
         data: {
           ...legacy.data,
           ...central.data

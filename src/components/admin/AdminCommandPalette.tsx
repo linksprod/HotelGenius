@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import {
-  Search, LayoutDashboard, MessageCircle, Users, Trash2, Wrench,
+  Search, LayoutDashboard, MessageCircle, Users, Brush, Wrench,
   Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, Settings,
   Bot, X, ArrowRight, Clock
 } from 'lucide-react';
@@ -22,7 +22,7 @@ const ALL_COMMANDS: CommandItem[] = [
   { id: 'dashboard', label: 'Live Dashboard', description: 'Overview & stats', icon: LayoutDashboard, path: '/admin', group: 'Navigation', keywords: ['home', 'overview'] },
   { id: 'chat', label: 'Unified Inbox', description: 'Guest messages', icon: MessageCircle, path: '/admin/chat', group: 'Navigation', keywords: ['messages', 'chat'] },
   { id: 'guests', label: 'Guest Directory', description: 'All guests & profiles', icon: Users, path: '/admin/guests', group: 'Navigation', keywords: ['crm', 'guests'] },
-  { id: 'housekeeping', label: 'Housekeeping', description: 'Room status & requests', icon: Trash2, path: '/admin/housekeeping', group: 'Operations', keywords: ['cleaning', 'rooms'] },
+  { id: 'housekeeping', label: 'Housekeeping', description: 'Room status & requests', icon: Brush, path: '/admin/housekeeping', group: 'Operations', keywords: ['cleaning', 'rooms'] },
   { id: 'maintenance', label: 'Maintenance', description: 'Issue tracking', icon: Wrench, path: '/admin/maintenance', group: 'Operations', keywords: ['repairs', 'fix'] },
   { id: 'security', label: 'Security', description: 'Access & incidents', icon: Shield, path: '/admin/security', group: 'Operations', keywords: ['safety'] },
   { id: 'it', label: 'IT Support', description: 'Tech & network issues', icon: Wifi, path: '/admin/information-technology', group: 'Operations', keywords: ['wifi', 'tech'] },

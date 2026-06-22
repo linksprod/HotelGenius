@@ -174,8 +174,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
           
           {/* Sidebar Panel */}
           <div className={`
-            fixed md:static inset-y-0 left-0 w-64 border-r bg-muted/20 flex flex-col z-30 transition-transform duration-300
-            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+            fixed md:static inset-y-0 left-0 w-64 border-r bg-background md:bg-muted/20 flex flex-col z-30 transition-transform duration-300
+            ${isSidebarOpen ? 'translate-x-0 shadow-2xl md:shadow-none' : '-translate-x-full md:translate-x-0'}
             md:flex flex-shrink-0 h-full
           `}>
             {/* Sidebar Header */}

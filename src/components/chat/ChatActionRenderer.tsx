@@ -251,6 +251,15 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
 
                     if (error) throw error;
                     setEntities(data || []);
+                } else if (type === 'event_list') {
+                    let query = supabase.from('events').select('*').gte('date', new Date().toISOString().split('T')[0]);
+                    if (hotelId) {
+                        query = query.eq('hotel_id', hotelId);
+                    }
+                    const { data, error } = await query.limit(5);
+
+                    if (error) throw error;
+                    setEntities(data || []);
                 }
             } catch (err) {
                 console.error('Error fetching entities for chat action:', err);
@@ -414,6 +423,45 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                                     }}
                                 >
                                     {t('chat.actionRenderer.viewMenuBook')}
+                                </Button>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Action: Display event list
+    if (type === 'event_list') {
+        return (
+            <div className="flex flex-col gap-3 mt-2 animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground px-1">
+                    <Calendar className="h-4 w-4" />
+                    {t('chat.actionRenderer.upcomingEvents', 'Upcoming Events')}
+                </div>
+                <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
+                    {entities.map((e) => (
+                        <Card key={e.id} className="min-w-[240px] max-w-[85vw] flex-shrink-0 snap-center overflow-hidden border-border bg-card shadow-md">
+                            {e.image && (
+                                <div className="h-24 w-full">
+                                    <img src={e.image} alt={e.title} className="h-full w-full object-cover" />
+                                </div>
+                            )}
+                            <div className="p-3">
+                                <h5 className="font-bold text-sm mb-1 line-clamp-1">{e.title}</h5>
+                                <p className="text-[10px] text-muted-foreground mb-3 line-clamp-1">
+                                    {new Date(e.date).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')} • {e.location || 'TBA'}
+                                </p>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full text-[10px] h-7"
+                                    onClick={() => {
+                                        window.dispatchEvent(new CustomEvent('ai_trigger_form', { detail: { type: 'event', id: e.id } }));
+                                    }}
+                                >
+                                    {t('chat.actionRenderer.bookEvent', 'Book Event')}
                                 </Button>
                             </div>
                         </Card>

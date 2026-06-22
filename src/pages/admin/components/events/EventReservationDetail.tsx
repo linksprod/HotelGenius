@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { User, Mail, Phone, Home, Calendar, Users } from 'lucide-react';
+import { User, AtSign, Phone, Home, Calendar, Users } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -68,7 +68,7 @@ export const EventReservationDetail: React.FC<EventReservationDetailProps> = ({
                 <span className="font-medium">Name:</span> <span className="ml-1">{reservation.guestName || '-'}</span>
               </p>
               <p className="text-sm flex items-center">
-                <Mail className="h-4 w-4 mr-2 opacity-70" />
+                <AtSign className="h-4 w-4 mr-2 opacity-70" />
                 <span className="font-medium">Email:</span> <span className="ml-1">{reservation.guestEmail || '-'}</span>
               </p>
               <p className="text-sm flex items-center">

@@ -31,19 +31,19 @@ const DeleteChatDialog = ({
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer la conversation</AlertDialogTitle>
+          <AlertDialogTitle>Delete conversation</AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer cette conversation avec {chatToDelete.userInfo?.firstName || chatToDelete.userName} ?
-            Cette action ne peut pas être annulée.
+            Are you sure you want to delete this conversation with {chatToDelete.userInfo?.firstName || chatToDelete.userName}?
+            This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction 
             onClick={onConfirmDelete} 
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            Supprimer
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

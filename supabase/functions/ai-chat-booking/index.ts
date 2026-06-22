@@ -343,6 +343,13 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
     {
       type: "function",
       function: {
+        name: "show_event_list",
+        description: "Display a visual list of all upcoming events to the guest."
+      }
+    },
+    {
+      type: "function",
+      function: {
         name: "show_service_categories",
         description: "CRITICAL: Displays visual cards for service categories (Maintenance, Housekeeping, IT, Security). Use this whenever a guest needs room assistance, cleaning, repairs, or 'room services' related to their stay experience.",
         parameters: {
@@ -432,6 +439,14 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
             : "I've opened the restaurant list for you."
         };
         break;
+      case 'show_event_list':
+        bookingResult = { 
+          success: true, 
+          message: detectedLang === 'fr'
+            ? "J'ai ouvert la liste des événements pour vous."
+            : "I've opened the event list for you."
+        };
+        break;
       case 'show_service_categories':
         bookingResult = { 
           success: true, 
@@ -454,7 +469,7 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
     }
 
     // For visual tools, we return immediately to prevent the follow-up text from overriding cards
-    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list'].includes(functionName)) {
+    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list'].includes(functionName)) {
       if (conversationId) {
         let actionType = 'booking_form';
         let metadataObj: any = {};
@@ -469,6 +484,11 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
           actionType = 'restaurant_list';
           metadataObj = {
             action_type: 'restaurant_list'
+          };
+        } else if (functionName === 'show_event_list') {
+          actionType = 'event_list';
+          metadataObj = {
+            action_type: 'event_list'
           };
         } else if (functionName === 'trigger_booking_form') {
           actionType = 'booking_form';
