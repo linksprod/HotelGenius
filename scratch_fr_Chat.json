@@ -1,0 +1,79 @@
+{
+  "chat": {
+    "actionRenderer": {
+      "back": "Retour",
+      "noItems": "Aucun article disponible dans cette catégorie.",
+      "submitting": "Envoi de votre demande...",
+      "requestConfirmed": "Demande confirmée",
+      "requestConfirmedDesc": "Nous avons bien reçu votre demande et notre équipe s'en occupe !",
+      "submitFailed": "Échec de l'envoi de la demande. Veuillez réessayer.",
+      "preparing": "Préparation...",
+      "bookTable": "Réservez une table chez {{name}}",
+      "bookSpot": "Réservez votre place pour {{title}}",
+      "bookTreatment": "Réservez votre soin {{name}}",
+      "bookingFormComingSoon": "Formulaire de réservation {{type}} bientôt disponible.",
+      "reservationPending": "Réservation en attente",
+      "processing": "En cours de traitement",
+      "requestSent": "Votre demande a été envoyée à l'équipe de l'hôtel.",
+      "dateAndTime": "Date & Heure",
+      "guests": "Invités",
+      "persons": "{{guests}} Personne(s)",
+      "featuredDining": "Notre sélection de restaurants",
+      "viewMenuBook": "Voir le menu / Réserver",
+      "requestCompleted": "Demande terminée",
+      "requestProcessedSuccess": "Votre demande a été traitée avec succès."
+    },
+    "listScreen": {
+      "messages": "Messages",
+      "connectSubtitle": "Connectez-vous avec notre équipe ou notre assistant hôtelier intelligent",
+      "hotelTeam": "Équipe de l'hôtel",
+      "hotelTeamDesc": "Connectez-vous directement avec notre personnel",
+      "smartAssistant": "Assistant hôtelier intelligent",
+      "smartAssistantDesc": "Aide de l'IA instantanée, possibilité de transférer au personnel"
+    },
+    "selectionScreen": {
+      "messageCenter": "Centre de messages",
+      "welcome": "Bienvenue, {{name}}",
+      "room": "Chambre {{roomNumber}}",
+      "guestServices": "Services aux clients",
+      "hotelAssistance": "Assistance hôtelière 24/7",
+      "available247": "Disponible 24/7",
+      "aiAndHumanSupport": "Support IA + Humain",
+      "generalServices": "Services hôteliers généraux, réservations, demandes de chambre et plus",
+      "safetyAssistant": "Assistant de sécurité",
+      "emergencySafetySupport": "Support d'urgence et de sécurité",
+      "immediateResponse": "Réponse immédiate",
+      "aiSafetyProtocols": "Protocoles de sécurité IA",
+      "emergencyProcedures": "Procédures d'urgence, informations de sécurité et assistance urgente"
+    },
+    "container": {
+      "loadingChat": "Chargement du chat..."
+    },
+    "header": {
+      "smartAssistant": "Assistant hôtelier intelligent",
+      "humanAgent": "Agent humain",
+      "available247": "Disponible 24/7",
+      "liveSupport": "Assistance en direct",
+      "talkToHuman": "Parler à un humain",
+      "takeOver": "Prendre le relais"
+    },
+    "input": {
+      "typeMessage": "Tapez votre message pour le concierge..."
+    },
+    "messagesList": {
+      "startConversation": "Commencez une conversation avec notre assistant IA !",
+      "systemMessage": "Message système",
+      "actionPerformed": "Action effectuée...",
+      "aiAssistant": "Assistant IA",
+      "staff": "Personnel",
+      "guest": "Invité",
+      "aiTyping": "L'assistant IA est en train de taper..."
+    },
+    "messagesPage": {
+      "initializingChat": "Initialisation du chat sécurisé...",
+      "sessionRequired": "Session requise",
+      "loginPrompt": "Veuillez vous connecter à votre compte pour accéder à votre tableau de bord de messagerie personnel et rester en contact avec notre équipe.",
+      "goToLogin": "Aller à la connexion"
+    }
+  }
+}

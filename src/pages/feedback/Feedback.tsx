@@ -8,7 +8,6 @@ import { useHotelConfig } from '@/hooks/useHotelConfig';
 import HeroSection from './components/HeroSection';
 import FeedbackForm from './components/FeedbackForm';
 import TripAdvisorSection from './components/TripAdvisorSection';
-import FAQSection from './components/FAQSection';
 import ContactCard from './components/ContactCard';
 
 const Feedback = () => {
@@ -46,9 +45,6 @@ const Feedback = () => {
 
         {/* TripAdvisor Integration Section */}
         <TripAdvisorSection />
-
-        {/* FAQ Section */}
-        <FAQSection />
 
         {/* Contact Card */}
         <ContactCard />

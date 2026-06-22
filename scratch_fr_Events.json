@@ -1,0 +1,84 @@
+{
+  "spa": {
+    "bookingDetails": {
+      "title": "Détails de votre réservation",
+      "serviceNotFound": "Les détails du service pour cette réservation sont introuvables",
+      "header": {
+        "back": "Retour"
+      },
+      "contact": {
+        "title": "Informations de contact",
+        "name": "Nom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "room": "Chambre",
+        "specialRequests": "Demandes spéciales"
+      },
+      "date": {
+        "title": "Détails de réservation",
+        "dateTime": "Date et heure",
+        "at": "à",
+        "dateUnavailable": "Date non disponible"
+      },
+      "facility": {
+        "title": "Détails de l'installation",
+        "notAvailable": "Informations sur l'installation non disponibles",
+        "openingHours": "Heures d'ouverture"
+      },
+      "notFound": {
+        "title": "Réservation introuvable",
+        "description": "La réservation que vous recherchez n'existe pas ou a été supprimée.",
+        "backToProfile": "Retour au profil"
+      },
+      "status": {
+        "confirmed": "Confirmée",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "inProgress": "En cours",
+        "pending": "En attente"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "cancel": "Annuler",
+        "cancelBooking": "Annuler la réservation",
+        "cancelConfirmDescription": "Êtes-vous sûr de vouloir annuler cette réservation ? Cette action ne peut pas être annulée.",
+        "confirmCancellation": "Confirmer l'annulation"
+      }
+    }
+  },
+  "events": {
+    "reservation": {
+      "cancelSuccess": "La réservation a été annulée avec succès",
+      "cancelError": "Une erreur s'est produite lors de l'annulation de la réservation",
+      "errorTitle": "Erreur",
+      "errorMessage": "La réservation n'a pas pu être trouvée ou une erreur s'est produite.",
+      "back": "Retour",
+      "status": {
+        "confirmed": "Confirmée",
+        "cancelled": "Annulée",
+        "pending": "En attente"
+      },
+      "title": "Détails de la réservation",
+      "eventLabel": "Événement:",
+      "eventFallback": "Événement",
+      "eventDetails": "Détails de l'événement",
+      "location": "Lieu:",
+      "info": "Informations de réservation",
+      "date": "Date:",
+      "time": "Heure:",
+      "guests": "Nombre de personnes:",
+      "room": "Chambre:",
+      "contact": "Informations de contact",
+      "name": "Nom:",
+      "email": "Email:",
+      "phone": "Téléphone:",
+      "specialRequests": "Demandes spéciales",
+      "cancelling": "Annulation en cours...",
+      "cancelAction": "Annuler la réservation",
+      "cancelConfirmTitle": "Êtes-vous sûr de vouloir annuler cette réservation?",
+      "cancelConfirmDesc": "Cette action ne peut pas être annulée. La réservation sera définitivement annulée.",
+      "cancel": "Annuler",
+      "cancelConfirmYes": "Oui, annuler la réservation"
+    }
+  }
+}

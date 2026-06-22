@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminNotifications } from '@/hooks/admin/useAdminNotifications';
-import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
+import { useUserRole } from '@/hooks/useUserRole';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,7 +29,7 @@ export const AdminChatDashboard: React.FC = () => {
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const { markSectionSeen } = useAdminNotifications();
-  const { hotelId, isSuperAdmin } = useCurrentHotelId();
+  const { hotelId, isSuperAdmin } = useUserRole();
 
   // Clear unread counts locally and mark seen in DB when conversation changes
   useEffect(() => {

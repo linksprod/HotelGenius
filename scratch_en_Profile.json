@@ -1,0 +1,71 @@
+{
+  "notifications": {
+    "status": {
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "confirmed": "Confirmed"
+    },
+    "timeAgo": {
+      "recently": "recently"
+    },
+    "type": {
+      "request": "Request",
+      "restaurant": "Restaurant",
+      "spa": "Spa",
+      "notification": "Notification"
+    },
+    "toast": {
+      "markedAsRead": "Marked as read",
+      "failedToUpdate": "Failed to update notification"
+    },
+    "action": {
+      "markAsRead": "Mark as read",
+      "edit": "Edit",
+      "cancel": "Cancel"
+    },
+    "summary": {
+      "title": "Summary",
+      "date": "Date",
+      "time": "Time",
+      "room": "Room",
+      "specialRequests": "Special requests",
+      "people": "People",
+      "type": "Type",
+      "service": "Service",
+      "description": "Description"
+    },
+    "requestStatus": {
+      "pendingTitle": "Pending request",
+      "pendingDesc": "Your request is currently being processed. Our team will handle it as soon as possible.",
+      "onHoldTitle": "Request on hold",
+      "onHoldDesc": "Your request is temporarily on hold. Our team will handle it as soon as possible.",
+      "inProgressTitle": "Request in progress",
+      "inProgressDesc": "Our team is currently processing your request.",
+      "completedTitle": "Completed request",
+      "completedDesc": "Your request has been successfully processed.",
+      "cancelledTitle": "Cancelled request",
+      "cancelledDesc": "This request has been cancelled."
+    },
+    "spaBooking": {
+      "contactInfo": "Contact Information",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "room": "Room",
+      "specialRequests": "Special requests",
+      "dateNotAvailable": "Date not available",
+      "bookingDetails": "Booking details",
+      "date": "Date",
+      "time": "Time",
+      "facilityDetails": "Facility Details",
+      "facilityNotAvailable": "Facility information not available",
+      "openingHours": "Opening Hours",
+      "backToNotifications": "Back to notifications",
+      "bookingNotFound": "Booking not found",
+      "bookingNotFoundWithId": "We could not find the booking with identifier {{bookingId}}.",
+      "bookingNotFoundDesc": "The booking may have been cancelled or the identifier is incorrect."
+    }
+  }
+}

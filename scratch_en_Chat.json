@@ -1,0 +1,79 @@
+{
+  "chat": {
+    "actionRenderer": {
+      "back": "Back",
+      "noItems": "No items available in this category.",
+      "submitting": "Sending your request...",
+      "requestConfirmed": "Request Confirmed",
+      "requestConfirmedDesc": "We've received your request and our team is on it!",
+      "submitFailed": "Failed to submit request. Please try again.",
+      "preparing": "Preparing...",
+      "bookTable": "Book a table at {{name}}",
+      "bookSpot": "Book your spot for {{title}}",
+      "bookTreatment": "Book your {{name}} treatment",
+      "bookingFormComingSoon": "{{type}} booking form coming soon.",
+      "reservationPending": "Reservation Pending",
+      "processing": "Processing",
+      "requestSent": "Your request has been sent to the hotel team.",
+      "dateAndTime": "Date & Time",
+      "guests": "Guests",
+      "persons": "{{guests}} Person(s)",
+      "featuredDining": "Our Featured Dining",
+      "viewMenuBook": "View Menu / Book",
+      "requestCompleted": "Request Completed",
+      "requestProcessedSuccess": "Your request has been processed successfully."
+    },
+    "listScreen": {
+      "messages": "Messages",
+      "connectSubtitle": "Connect with our team or Smart Hotel Assistant",
+      "hotelTeam": "Hotel Team",
+      "hotelTeamDesc": "Connect directly with our staff",
+      "smartAssistant": "Smart Hotel Assistant",
+      "smartAssistantDesc": "Instant AI help, can escalate to staff"
+    },
+    "selectionScreen": {
+      "messageCenter": "Message Center",
+      "welcome": "Welcome, {{name}}",
+      "room": "Room {{roomNumber}}",
+      "guestServices": "Guest Services",
+      "hotelAssistance": "24/7 Hotel Assistance",
+      "available247": "Available 24/7",
+      "aiAndHumanSupport": "AI + Human Support",
+      "generalServices": "General hotel services, bookings, room requests, and more",
+      "safetyAssistant": "Safety Assistant",
+      "emergencySafetySupport": "Emergency & Safety Support",
+      "immediateResponse": "Immediate Response",
+      "aiSafetyProtocols": "AI Safety Protocols",
+      "emergencyProcedures": "Emergency procedures, safety information, and urgent assistance"
+    },
+    "container": {
+      "loadingChat": "Loading chat..."
+    },
+    "header": {
+      "smartAssistant": "Smart Hotel Assistant",
+      "humanAgent": "Human Agent",
+      "available247": "24/7 Available",
+      "liveSupport": "Live Support",
+      "talkToHuman": "Talk to Human",
+      "takeOver": "Take Over"
+    },
+    "input": {
+      "typeMessage": "Type your message to concierge..."
+    },
+    "messagesList": {
+      "startConversation": "Start a conversation with our AI assistant!",
+      "systemMessage": "System Message",
+      "actionPerformed": "Action performed...",
+      "aiAssistant": "AI Assistant",
+      "staff": "Staff",
+      "guest": "Guest",
+      "aiTyping": "AI Assistant is typing..."
+    },
+    "messagesPage": {
+      "initializingChat": "Initializing Neural Secure Chat...",
+      "sessionRequired": "Session Required",
+      "loginPrompt": "Please log in to your account to access your personal messaging dashboard and stay in touch with our team.",
+      "goToLogin": "Go to Login"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 
 export interface StaffNotification {
   id: string;
@@ -16,21 +17,28 @@ export interface StaffNotification {
 
 export const useStaffNotifications = () => {
   const { user } = useAuth();
+  // Get the hotel ID from the staff user's role — safe, no context dependency
+  const { hotelId } = useUserRole();
   const [notifications, setNotifications] = useState<StaffNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotifications = useCallback(async () => {
     if (!user?.id) return;
 
-    // Fetch from unified notifications table for staff
-    const { data } = await supabase
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .from('notifications' as any)
+    // Fetch from unified notifications table for staff, filtered by hotel
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const query = (supabase as any)
+      .from('notifications')
       .select('*')
       .eq('recipient_type', 'staff')
       .or(`recipient_id.eq.${user.id},recipient_id.eq.00000000-0000-0000-0000-000000000000`)
       .order('created_at', { ascending: false })
       .limit(50);
+
+    // Filter by current hotel — each hotel sees only its own notifications
+    const finalQuery = hotelId ? query.eq('hotel_id', hotelId) : query;
+
+    const { data } = await finalQuery;
 
     if (data) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +57,7 @@ export const useStaffNotifications = () => {
       setNotifications(mappedNotifs);
       setUnreadCount(mappedNotifs.filter((n) => !n.is_read).length);
     }
-  }, [user?.id]);
+  }, [user?.id, hotelId]);
 
   useEffect(() => {
     fetchNotifications();
@@ -72,8 +80,11 @@ export const useStaffNotifications = () => {
         async (payload) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const n = payload.new as any;
-          // Filter in JS since .or filters aren't supported in realtime filter strings yet
-          if (n.recipient_id === user.id || n.recipient_id === '00000000-0000-0000-0000-000000000000') {
+          // Filter in JS: must match user and hotel
+          const matchesUser = n.recipient_id === user.id || n.recipient_id === '00000000-0000-0000-0000-000000000000';
+          const matchesHotel = !hotelId || n.hotel_id === hotelId;
+
+          if (matchesUser && matchesHotel) {
             const newNotif: StaffNotification = {
               id: n.notification_id,
               user_id: n.recipient_id,
@@ -97,7 +108,7 @@ export const useStaffNotifications = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user?.id]);
+  }, [user?.id, hotelId]);
 
   const markAsRead = useCallback(async (id: string) => {
     await supabase
@@ -114,17 +125,22 @@ export const useStaffNotifications = () => {
 
   const markAllAsRead = useCallback(async () => {
     if (!user?.id) return;
-    await supabase
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .from('notifications' as any)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const baseQuery = (supabase as any)
+      .from('notifications')
       .update({ status: 'read', read_at: new Date().toISOString() })
       .eq('recipient_type', 'staff')
       .or(`recipient_id.eq.${user.id},recipient_id.eq.00000000-0000-0000-0000-000000000000`)
       .neq('status', 'read');
 
+    // Scope update to current hotel only
+    const finalQuery = hotelId ? baseQuery.eq('hotel_id', hotelId) : baseQuery;
+    await finalQuery;
+
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
     setUnreadCount(0);
-  }, [user?.id]);
+  }, [user?.id, hotelId]);
 
   return { notifications, unreadCount, markAsRead, markAllAsRead, refetch: fetchNotifications };
 };

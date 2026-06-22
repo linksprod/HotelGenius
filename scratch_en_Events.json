@@ -1,0 +1,84 @@
+{
+  "spa": {
+    "bookingDetails": {
+      "title": "Reservation Details",
+      "serviceNotFound": "Service details for this reservation could not be found",
+      "header": {
+        "back": "Back"
+      },
+      "contact": {
+        "title": "Contact Information",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "room": "Room",
+        "specialRequests": "Special Requests"
+      },
+      "date": {
+        "title": "Booking Details",
+        "dateTime": "Date and time",
+        "at": "at",
+        "dateUnavailable": "Date unavailable"
+      },
+      "facility": {
+        "title": "Facility Details",
+        "notAvailable": "Facility information not available",
+        "openingHours": "Opening Hours"
+      },
+      "notFound": {
+        "title": "Booking Not Found",
+        "description": "The booking you are looking for doesn't exist or has been deleted.",
+        "backToProfile": "Back to Profile"
+      },
+      "status": {
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "inProgress": "In Progress",
+        "pending": "Pending"
+      },
+      "actions": {
+        "edit": "Edit",
+        "cancel": "Cancel",
+        "cancelBooking": "Cancel Booking",
+        "cancelConfirmDescription": "Are you sure you want to cancel this booking? This action cannot be undone.",
+        "confirmCancellation": "Confirm Cancellation"
+      }
+    }
+  },
+  "events": {
+    "reservation": {
+      "cancelSuccess": "Reservation successfully cancelled",
+      "cancelError": "An error occurred while cancelling the reservation",
+      "errorTitle": "Error",
+      "errorMessage": "The reservation could not be found or an error occurred.",
+      "back": "Back",
+      "status": {
+        "confirmed": "Confirmed",
+        "cancelled": "Cancelled",
+        "pending": "Pending"
+      },
+      "title": "Reservation Details",
+      "eventLabel": "Event:",
+      "eventFallback": "Event",
+      "eventDetails": "Event Details",
+      "location": "Location:",
+      "info": "Reservation Information",
+      "date": "Date:",
+      "time": "Time:",
+      "guests": "Number of guests:",
+      "room": "Room:",
+      "contact": "Contact Information",
+      "name": "Name:",
+      "email": "Email:",
+      "phone": "Phone:",
+      "specialRequests": "Special Requests",
+      "cancelling": "Cancelling...",
+      "cancelAction": "Cancel reservation",
+      "cancelConfirmTitle": "Are you sure you want to cancel this reservation?",
+      "cancelConfirmDesc": "This action cannot be undone. The reservation will be permanently cancelled.",
+      "cancel": "Cancel",
+      "cancelConfirmYes": "Yes, cancel reservation"
+    }
+  }
+}

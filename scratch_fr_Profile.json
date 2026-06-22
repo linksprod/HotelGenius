@@ -1,0 +1,71 @@
+{
+  "notifications": {
+    "status": {
+      "pending": "En attente",
+      "inProgress": "En cours",
+      "completed": "Complété",
+      "cancelled": "Annulé",
+      "confirmed": "Confirmé"
+    },
+    "timeAgo": {
+      "recently": "récemment"
+    },
+    "type": {
+      "request": "Demande",
+      "restaurant": "Restaurant",
+      "spa": "Spa",
+      "notification": "Notification"
+    },
+    "toast": {
+      "markedAsRead": "Marqué comme lu",
+      "failedToUpdate": "Échec de la mise à jour de la notification"
+    },
+    "action": {
+      "markAsRead": "Marquer comme lu",
+      "edit": "Modifier",
+      "cancel": "Annuler"
+    },
+    "summary": {
+      "title": "Résumé",
+      "date": "Date",
+      "time": "Heure",
+      "room": "Chambre",
+      "specialRequests": "Demandes spéciales",
+      "people": "Personnes",
+      "type": "Type",
+      "service": "Service",
+      "description": "Description"
+    },
+    "requestStatus": {
+      "pendingTitle": "Demande en attente",
+      "pendingDesc": "Votre demande est en cours de traitement. Notre équipe s'en occupera dans les plus brefs délais.",
+      "onHoldTitle": "Demande en pause",
+      "onHoldDesc": "Votre demande est temporairement en attente. Notre équipe la traitera dès que possible.",
+      "inProgressTitle": "Demande en cours",
+      "inProgressDesc": "Notre équipe est en train de traiter votre demande.",
+      "completedTitle": "Demande complétée",
+      "completedDesc": "Votre demande a été traitée avec succès.",
+      "cancelledTitle": "Demande annulée",
+      "cancelledDesc": "Cette demande a été annulée."
+    },
+    "spaBooking": {
+      "contactInfo": "Informations de contact",
+      "name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "room": "Chambre",
+      "specialRequests": "Demandes spéciales",
+      "dateNotAvailable": "Date non disponible",
+      "bookingDetails": "Détails de la réservation",
+      "date": "Date",
+      "time": "Heure",
+      "facilityDetails": "Détails de l'établissement",
+      "facilityNotAvailable": "Informations sur l'établissement non disponibles",
+      "openingHours": "Heures d'ouverture",
+      "backToNotifications": "Retour aux notifications",
+      "bookingNotFound": "Réservation introuvable",
+      "bookingNotFoundWithId": "Nous n'avons pas pu trouver la réservation avec l'identifiant {{bookingId}}.",
+      "bookingNotFoundDesc": "La réservation peut avoir été annulée ou l'identifiant est incorrect."
+    }
+  }
+}

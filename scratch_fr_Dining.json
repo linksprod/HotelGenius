@@ -1,0 +1,70 @@
+{
+  "dining": {
+    "details": {
+      "missingId": "Identifiant de réservation manquant",
+      "errorLoadingRestaurant": "Impossible de charger les détails du restaurant",
+      "notFound": "Réservation non trouvée",
+      "cancelledSuccess": "Votre réservation a été annulée",
+      "editedSuccess": "Votre réservation a été modifiée",
+      "cannotFind": "Impossible de trouver les détails de cette réservation.",
+      "pageTitle": "Détails de votre réservation",
+      "guestsPlural": "personnes",
+      "guestsSingular": "personne",
+      "restaurantLabel": "Restaurant :",
+      "specialRequests": "Demandes spéciales :",
+      "pendingTitle": "Réservation en attente",
+      "pendingDesc": "Votre réservation est en cours de traitement. Vous recevrez une confirmation prochainement.",
+      "confirmedTitle": "Réservation confirmée",
+      "confirmedDesc": "Votre table est réservée. Nous vous attendons le {{date}} à {{time}}.",
+      "cancelledTitle": "Réservation annulée",
+      "cancelledDesc": "Cette réservation a été annulée.",
+      "viewRestaurant": "Voir le restaurant",
+      "viewAllRequests": "Voir toutes les demandes",
+      "editReservationBtn": "Modifier ma réservation",
+      "cancelTitle": "Annuler votre réservation",
+      "cancelConfirm": "Êtes-vous sûr de vouloir annuler votre réservation au restaurant {{name}} pour le {{date}} à {{time}} ?",
+      "keepReservationBtn": "Non, garder ma réservation"
+    },
+    "status": {
+      "confirmed": "Confirmée",
+      "cancelled": "Annulée",
+      "pending": "En attente"
+    },
+    "loadingDetails": "Chargement des détails du restaurant...",
+    "notFound": "Restaurant introuvable.",
+    "bookTable": "Réserver une table",
+    "viewMenu": "Voir le menu",
+    "tabs": {
+      "info": "Informations",
+      "menu": "Menu"
+    },
+    "upcomingEvents": "Événements à venir",
+    "reviews": "Avis",
+    "noReviews": "Aucun avis pour le moment.",
+    "about": {
+      "title": "À propos de {{name}}",
+      "hours": "Heures d'ouverture",
+      "location": "Emplacement"
+    },
+    "booking": {
+      "editTitle": "Modifier votre réservation - {{name}}",
+      "bookTitle": "Réserver une table - {{name}}",
+      "editDesc": "Modifiez les détails de votre réservation ci-dessous.",
+      "bookDesc": "Remplissez le formulaire ci-dessous pour réserver une table.",
+      "updateBtn": "Mettre à jour la réservation",
+      "bookBtn": "Réserver une table"
+    },
+    "menu": {
+      "loading": "Chargement du menu...",
+      "notAvailable": "Menu non disponible",
+      "recommended": "Recommandé",
+      "viewPdf": "Voir le menu",
+      "pdfTitle": "Menu PDF"
+    }
+  },
+  "common": {
+    "cancelling": "Annulation...",
+    "yesCancel": "Oui, annuler",
+    "backToNotifications": "Retour aux notifications"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "dining": {
+    "details": {
+      "missingId": "Reservation ID missing",
+      "errorLoadingRestaurant": "Unable to load restaurant details",
+      "notFound": "Reservation not found",
+      "cancelledSuccess": "Your reservation has been cancelled",
+      "editedSuccess": "Your reservation has been modified",
+      "cannotFind": "Cannot find the details for this reservation.",
+      "pageTitle": "Your Reservation Details",
+      "guestsPlural": "people",
+      "guestsSingular": "person",
+      "restaurantLabel": "Restaurant:",
+      "specialRequests": "Special requests:",
+      "pendingTitle": "Reservation pending",
+      "pendingDesc": "Your reservation is being processed. You will receive a confirmation shortly.",
+      "confirmedTitle": "Reservation confirmed",
+      "confirmedDesc": "Your table is reserved. We look forward to seeing you on {{date}} at {{time}}.",
+      "cancelledTitle": "Reservation cancelled",
+      "cancelledDesc": "This reservation has been cancelled.",
+      "viewRestaurant": "View restaurant",
+      "viewAllRequests": "View All Requests",
+      "editReservationBtn": "Edit my reservation",
+      "cancelTitle": "Cancel your reservation",
+      "cancelConfirm": "Are you sure you want to cancel your reservation at the {{name}} restaurant for {{date}} at {{time}}?",
+      "keepReservationBtn": "No, keep my reservation"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "pending": "Pending"
+    },
+    "loadingDetails": "Loading restaurant details...",
+    "notFound": "Restaurant not found.",
+    "bookTable": "Book a Table",
+    "viewMenu": "View Menu",
+    "tabs": {
+      "info": "Information",
+      "menu": "Menu"
+    },
+    "upcomingEvents": "Upcoming Events",
+    "reviews": "Reviews",
+    "noReviews": "No reviews yet.",
+    "about": {
+      "title": "About {{name}}",
+      "hours": "Opening Hours",
+      "location": "Location"
+    },
+    "booking": {
+      "editTitle": "Edit your reservation - {{name}}",
+      "bookTitle": "Book a Table - {{name}}",
+      "editDesc": "Edit the details of your reservation below.",
+      "bookDesc": "Fill out the form below to book a table.",
+      "updateBtn": "Update Reservation",
+      "bookBtn": "Book a Table"
+    },
+    "menu": {
+      "loading": "Loading menu...",
+      "notAvailable": "Menu not available",
+      "recommended": "Recommended",
+      "viewPdf": "View menu",
+      "pdfTitle": "Menu PDF"
+    }
+  },
+  "common": {
+    "cancelling": "Cancelling...",
+    "yesCancel": "Yes, cancel",
+    "backToNotifications": "Back to notifications"
+  }
+}

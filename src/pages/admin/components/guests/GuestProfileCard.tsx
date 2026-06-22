@@ -96,13 +96,7 @@ const GuestProfileCard: React.FC<GuestProfileCardProps> = ({ guest }) => {
           </div>
         </div>
 
-        {/* Loyalty Quick Stats */}
-        <div className="mt-8 pt-8 border-t border-border dark:border-white/5">
-          <div className="space-y-1">
-            <span className="text-[10px] font-bold text-muted-foreground dark:text-zinc-500 uppercase tracking-widest">Lifetime Value</span>
-            <div className="text-2xl font-black text-foreground dark:text-white">{lifetimeValue}</div>
-          </div>
-        </div>
+
       </CardContent>
     </Card>
   );

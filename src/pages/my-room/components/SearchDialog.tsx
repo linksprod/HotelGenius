@@ -109,9 +109,9 @@ const SearchDialog: React.FC<Props> = ({
                           <span className="text-rose-600 font-bold text-lg">!</span>
                         </div>
                         <div className="min-w-0">
-                          <div className="font-semibold text-slate-800 group-hover:text-rose-700 transition-colors">{translateItemName(item.name)}</div>
+                          <div className="font-semibold text-foreground group-hover:text-rose-600 transition-colors">{translateItemName(item.name)}</div>
                           {item.description && (
-                            <div className="text-sm text-slate-500 mt-0.5 line-clamp-1 group-hover:text-rose-600/70 transition-colors">{translateItemDescription(item.name, item.description)}</div>
+                            <div className="text-sm text-muted-foreground mt-0.5 line-clamp-1 group-hover:text-rose-500 transition-colors">{translateItemDescription(item.name, item.description)}</div>
                           )}
                         </div>
                       </div>
@@ -157,9 +157,9 @@ const SearchDialog: React.FC<Props> = ({
                             </span>
                           </div>
                           <div className="min-w-0">
-                            <div className="font-semibold text-slate-800 group-hover:text-slate-900 transition-colors">{translateItemName(item.name)}</div>
+                            <div className="font-semibold text-foreground group-hover:text-foreground/80 transition-colors">{translateItemName(item.name)}</div>
                             {item.description && (
-                              <div className="text-sm text-slate-500 mt-0.5 line-clamp-1">{translateItemDescription(item.name, item.description)}</div>
+                              <div className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{translateItemDescription(item.name, item.description)}</div>
                             )}
                           </div>
                         </div>
