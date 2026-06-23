@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, Brush,
   Wrench, Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, MapPin, 
   FileText, ImageIcon, Globe, Settings, Building2, UserCog, Bot,
-  CreditCard, LayoutTemplate, Coins
+  CreditCard, LayoutTemplate, Coins, Calendar
 } from 'lucide-react';
 import React from 'react';
 
@@ -75,6 +75,7 @@ export const adminNavigation: NavSectionConfig[] = [
       { title: 'Wellness', url: '/admin/spa', icon: Sparkles, notificationKey: 'spa', requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'], requiredModules: ['spa'] },
       { title: 'Events', url: '/admin/events', icon: PartyPopper, notificationKey: 'events', requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'], requiredModules: ['events'] },
       { title: 'Shops', url: '/admin/shops', icon: Store, requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'], requiredModules: ['shops'] },
+      { title: 'Daily Activities', url: '/admin/activities', icon: Calendar, requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'] },
       { title: 'Booking Engine', url: '/admin/booking-engine', icon: CreditCard, requiredPlan: 'elite' },
       { title: 'Smart Upselling', url: '/admin/upselling', icon: Sparkles, requiredPlan: 'elite' },
       { title: 'Social Ads', url: '/admin/ads', icon: Globe, requiredPlan: 'elite' },

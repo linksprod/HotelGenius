@@ -1,174 +1,137 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Clock, MapPin, Sparkles, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
-import { Activity } from '@/features/activities/types';
-import ActivityCard from '@/features/activities/components/ActivityCard';
-import { useToast } from '@/hooks/use-toast';
-import { useRequireAuth } from '@/hooks/useRequireAuth';
+import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useHotelActivities } from '@/hooks/useHotelActivities';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const cardVariants = {
+  hidden: { y: 24, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring', stiffness: 90, damping: 16 },
+  },
+};
 
 const Activities = () => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const { requireAuth } = useRequireAuth();
-  const [activeFilter, setActiveFilter] = useState<string>('all');
-
-  const activities: Activity[] = [
-    {
-      id: '1',
-      name: 'Treasure Hunt Adventure',
-      description: 'An exciting treasure hunt around the hotel grounds',
-      date: '2024-03-20',
-      time: '10:00 AM',
-      duration: '1.5 hours',
-      location: 'Hotel Garden',
-      price: 45,
-      capacity: 20,
-      image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-      category: 'entertainment',
-      status: 'upcoming'
-    },
-    {
-      id: '2',
-      name: 'Wine Tasting',
-      description: 'Experience the finest wines from our cellar',
-      date: '2024-03-21',
-      time: '18:00',
-      duration: '2 hours',
-      location: 'Wine Cellar',
-      price: 75,
-      capacity: 12,
-      image: '/lovable-uploads/298d1ba4-d372-413d-9386-a531958ccd9c.png',
-      category: 'entertainment',
-      status: 'upcoming'
-    },
-    {
-      id: '3',
-      name: 'Morning Yoga Class',
-      description: 'Start your day with rejuvenating yoga by the pool',
-      date: '2024-03-22',
-      time: '08:00',
-      duration: '1 hour',
-      location: 'Poolside Deck',
-      price: 25,
-      capacity: 15,
-      image: '/lovable-uploads/3cbdcf79-9da5-48bd-90f2-2c1737b76741.png',
-      category: 'fitness',
-      status: 'upcoming'
-    },
-    {
-      id: '4',
-      name: 'Local Market Tour',
-      description: 'Explore the vibrant local market with our guide',
-      date: '2024-03-23',
-      time: '09:30',
-      duration: '3 hours',
-      location: 'Hotel Lobby (Meeting Point)',
-      price: 60,
-      capacity: 10,
-      image: '/lovable-uploads/ad4ef1bb-ac95-4aaf-87df-6e874d0fcf46.png',
-      category: 'culture',
-      status: 'upcoming'
-    },
-    {
-      id: '5',
-      name: 'Sunset Sailing',
-      description: 'Enjoy a relaxing sail at sunset with drinks and snacks',
-      date: '2024-03-24',
-      time: '17:30',
-      duration: '2.5 hours',
-      location: 'Hotel Marina',
-      price: 120,
-      capacity: 8,
-      image: '/lovable-uploads/b0b89a1c-2c12-444b-be2c-1a65b9884f18.png',
-      category: 'entertainment',
-      status: 'upcoming'
-    }
-  ];
-
-  const filteredActivities = activeFilter === 'all' 
-    ? activities 
-    : activities.filter(activity => {
-        switch(activeFilter) {
-          case 'on-site':
-            return ['Hotel Garden', 'Wine Cellar', 'Poolside Deck'].includes(activity.location);
-          case 'local':
-            return activity.location.includes('Lobby') || activity.location.includes('Marina');
-          case 'guided':
-            return activity.description.toLowerCase().includes('guide') || activity.description.toLowerCase().includes('tour');
-          case 'special':
-            return activity.price > 100;
-          default:
-            return true;
-        }
-      });
-
-  const handleBookActivity = (activityId: string) => {
-    requireAuth(() => {
-      toast({
-        title: t('activities.booking.confirmed'),
-        description: t('activities.booking.success'),
-      });
-    });
-  };
+  const { hotelId, hotel } = useHotel();
+  const { activities, isLoading } = useHotelActivities(hotelId);
 
   return (
     <Layout>
-      <div className="text-center mb-8 pt-6 md:pt-8">
-        <h1 className="text-4xl font-semibold text-secondary mb-4">{t('activities.title')}</h1>
-        <p className="text-gray-600">{t('activities.subtitle')}</p>
-      </div>
+      {/* Hero Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="text-center pt-8 pb-10 px-4"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest mb-4">
+          <Sparkles className="w-3.5 h-3.5" />
+          {hotel?.name || 'Your Hotel'}
+        </div>
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
+          Today's Activities
+        </h1>
+        <p className="text-muted-foreground text-base max-w-md mx-auto leading-relaxed">
+          Discover what's happening at the hotel today — workshops, events, and curated experiences just for you.
+        </p>
+      </motion.div>
 
-      <div className="flex flex-wrap gap-4 mb-8 justify-center">
-        <Button 
-          variant={activeFilter === 'all' ? 'default' : 'outline'} 
-          className={activeFilter === 'all' ? 'bg-primary' : ''}
-          onClick={() => setActiveFilter('all')}
+      {/* Content */}
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center min-h-[35vh] gap-4">
+          <div className="relative">
+            <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+              <Loader2 className="w-6 h-6 text-primary animate-spin" />
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground font-medium">Loading today's schedule…</p>
+        </div>
+      ) : activities.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center min-h-[35vh] text-center px-6"
         >
-          {t('activities.filters.all')}
-        </Button>
-        <Button 
-          variant={activeFilter === 'on-site' ? 'default' : 'outline'} 
-          className={activeFilter === 'on-site' ? 'bg-primary' : ''}
-          onClick={() => setActiveFilter('on-site')}
+          <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mb-6 shadow-inner">
+            <Calendar className="w-9 h-9 text-primary/70" />
+          </div>
+          <h3 className="text-xl font-bold text-foreground mb-2">No activities today</h3>
+          <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
+            The hotel team hasn't scheduled any activities for today yet. Check back soon!
+          </p>
+        </motion.div>
+      ) : (
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 pb-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          {t('activities.filters.onSite')}
-        </Button>
-        <Button 
-          variant={activeFilter === 'local' ? 'default' : 'outline'} 
-          className={activeFilter === 'local' ? 'bg-primary' : ''}
-          onClick={() => setActiveFilter('local')}
-        >
-          {t('activities.filters.local')}
-        </Button>
-        <Button 
-          variant={activeFilter === 'guided' ? 'default' : 'outline'} 
-          className={activeFilter === 'guided' ? 'bg-primary' : ''}
-          onClick={() => setActiveFilter('guided')}
-        >
-          {t('activities.filters.guided')}
-        </Button>
-        <Button 
-          variant={activeFilter === 'special' ? 'default' : 'outline'} 
-          className={activeFilter === 'special' ? 'bg-primary' : ''}
-          onClick={() => setActiveFilter('special')}
-        >
-          {t('activities.filters.special')}
-        </Button>
-      </div>
+          {activities.map((activity, index) => (
+            <motion.div
+              key={activity.id}
+              variants={cardVariants}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              className="group"
+            >
+              <div className="relative h-full rounded-2xl bg-card border border-border dark:border-white/[0.05] shadow-sm hover:shadow-lg hover:border-primary/25 transition-all duration-300 overflow-hidden flex flex-col">
+                {/* Colored top accent bar */}
+                <div className="h-1 w-full bg-gradient-to-r from-primary to-primary/40" />
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredActivities.map((activity) => (
-          <ActivityCard 
-            key={activity.id} 
-            activity={activity} 
-            onBook={handleBookActivity} 
-          />
-        ))}
-      </div>
+                <div className="p-6 flex flex-col flex-1 gap-4">
+                  {/* Badge + activity number */}
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-wider">
+                      <Sparkles className="w-3 h-3" />
+                      Hotel Event
+                    </span>
+                    <span className="text-3xl font-black text-border dark:text-white/10 select-none tabular-nums">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+
+                  {/* Name */}
+                  <h3 className="text-xl font-bold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                    {activity.name}
+                  </h3>
+
+                  {/* Divider */}
+                  <div className="border-t border-border/60 dark:border-white/5" />
+
+                  {/* Meta info */}
+                  <div className="space-y-2.5 mt-auto">
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/8 shrink-0">
+                        <MapPin className="w-4 h-4 text-primary" />
+                      </span>
+                      <span className="text-muted-foreground font-medium truncate">{activity.location}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/8 shrink-0">
+                        <Clock className="w-4 h-4 text-primary" />
+                      </span>
+                      <span className="text-muted-foreground font-medium">{activity.time}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
     </Layout>
   );
 };

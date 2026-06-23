@@ -27,6 +27,10 @@ export interface TableReservation {
   status: string;
   created_at?: string;
   updated_at?: string;
+  restaurant?: {
+    name: string;
+    location: string;
+  };
 }
 
 export interface ServiceRequest {

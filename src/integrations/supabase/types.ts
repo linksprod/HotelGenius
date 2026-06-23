@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -11,6 +11,31 @@ export type Database = {
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -261,6 +286,7 @@ export type Database = {
           guest_email?: string | null
           guest_id?: string | null
           guest_name: string
+          hotel_id?: string | null
           id?: string
           room_number?: string | null
           status?: string
@@ -274,12 +300,21 @@ export type Database = {
           guest_email?: string | null
           guest_id?: string | null
           guest_name?: string
+          hotel_id?: string | null
           id?: string
           room_number?: string | null
           status?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "conversations_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       demo_sessions: {
         Row: {
@@ -353,7 +388,6 @@ export type Database = {
           description: string
           id: string
           image: string
-          is_published: boolean | null
           name: string
           updated_at: string | null
         }
@@ -362,7 +396,6 @@ export type Database = {
           description: string
           id?: string
           image: string
-          is_published?: boolean | null
           name: string
           updated_at?: string | null
         }
@@ -371,7 +404,6 @@ export type Database = {
           description?: string
           id?: string
           image?: string
-          is_published?: boolean | null
           name?: string
           updated_at?: string | null
         }
@@ -426,6 +458,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           guests: number
+          hotel_id?: string | null
           id?: string
           room_number?: string | null
           special_requests?: string | null
@@ -441,6 +474,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           guests?: number
+          hotel_id?: string | null
           id?: string
           room_number?: string | null
           special_requests?: string | null
@@ -456,6 +490,13 @@ export type Database = {
             referencedRelation: "events"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "event_reservations_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
         ]
       }
       events: {
@@ -465,6 +506,7 @@ export type Database = {
           created_at: string
           date: string | null
           description: string
+          hotel_id: string | null
           id: string
           image: string
           is_featured: boolean | null
@@ -482,6 +524,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description: string
+          hotel_id?: string | null
           id?: string
           image: string
           is_featured?: boolean | null
@@ -499,6 +542,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string
+          hotel_id?: string | null
           id?: string
           image?: string
           is_featured?: boolean | null
@@ -511,6 +555,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "events_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "events_restaurant_id_fkey"
             columns: ["restaurant_id"]
@@ -527,12 +578,53 @@ export type Database = {
           },
         ]
       }
+      guest_digital_twin: {
+        Row: {
+          guest_id: string
+          hotel_id: string | null
+          id: string
+          snapshot: Json
+          updated_at: string | null
+        }
+        Insert: {
+          guest_id: string
+          hotel_id?: string | null
+          id?: string
+          snapshot?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          guest_id?: string
+          hotel_id?: string | null
+          id?: string
+          snapshot?: Json
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_digital_twin_guest_id_fkey"
+            columns: ["guest_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_digital_twin_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guest_feedback: {
         Row: {
           comment: string | null
           created_at: string | null
           guest_email: string
+          guest_id: string | null
           guest_name: string
+          hotel_id: string | null
           id: string
           rating: number
           updated_at: string | null
@@ -541,7 +633,9 @@ export type Database = {
           comment?: string | null
           created_at?: string | null
           guest_email: string
+          guest_id?: string | null
           guest_name: string
+          hotel_id?: string | null
           id?: string
           rating: number
           updated_at?: string | null
@@ -550,12 +644,22 @@ export type Database = {
           comment?: string | null
           created_at?: string | null
           guest_email?: string
+          guest_id?: string | null
           guest_name?: string
+          hotel_id?: string | null
           id?: string
           rating?: number
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "guest_feedback_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       guest_medical_alerts: {
         Row: {
@@ -684,6 +788,7 @@ export type Database = {
           email?: string | null
           first_name: string
           guest_type?: string | null
+          hotel_id?: string | null
           id?: string
           last_name: string
           nationality?: string | null
@@ -702,6 +807,7 @@ export type Database = {
           email?: string | null
           first_name?: string
           guest_type?: string | null
+          hotel_id?: string | null
           id?: string
           last_name?: string
           nationality?: string | null
@@ -712,7 +818,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "guests_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hotel_about: {
         Row: {
@@ -800,48 +914,42 @@ export type Database = {
           },
         ]
       }
-      hotel_knowledge: {
+      hotel_activities: {
         Row: {
-          id: string
-          hotel_id: string
-          content: string
-          embedding: string | null
-          metadata: Json
-          source_type: string | null
-          source_name: string | null
           created_at: string
+          hotel_id: string
+          id: string
+          location: string
+          name: string
+          time: string
           updated_at: string
         }
         Insert: {
-          id?: string
-          hotel_id: string
-          content: string
-          embedding?: string | null
-          metadata?: Json
-          source_type?: string | null
-          source_name?: string | null
           created_at?: string
+          hotel_id: string
+          id?: string
+          location: string
+          name: string
+          time: string
           updated_at?: string
         }
         Update: {
-          id?: string
-          hotel_id?: string
-          content?: string
-          embedding?: string | null
-          metadata?: Json
-          source_type?: string | null
-          source_name?: string | null
           created_at?: string
+          hotel_id?: string
+          id?: string
+          location?: string
+          name?: string
+          time?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "hotel_knowledge_hotel_id_fkey"
+            foreignKeyName: "hotel_activities_hotel_id_fkey"
             columns: ["hotel_id"]
             isOneToOne: false
             referencedRelation: "hotels"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       hotel_config: {
@@ -850,8 +958,8 @@ export type Database = {
           contact_phone: string | null
           created_at: string | null
           enabled_features: string[] | null
-          feedback_hero_image: string | null
           featured_experiences: Json | null
+          feedback_hero_image: string | null
           home_hero_image: string | null
           home_hero_subtitle: string | null
           home_hero_title: string | null
@@ -868,8 +976,8 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string | null
           enabled_features?: string[] | null
-          feedback_hero_image?: string | null
           featured_experiences?: Json | null
+          feedback_hero_image?: string | null
           home_hero_image?: string | null
           home_hero_subtitle?: string | null
           home_hero_title?: string | null
@@ -886,8 +994,8 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string | null
           enabled_features?: string[] | null
-          feedback_hero_image?: string | null
           featured_experiences?: Json | null
+          feedback_hero_image?: string | null
           home_hero_image?: string | null
           home_hero_subtitle?: string | null
           home_hero_title?: string | null
@@ -899,11 +1007,74 @@ export type Database = {
           secondary_color?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "hotel_config_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hotel_setup_sessions: {
+        Row: {
+          ai_draft: Json | null
+          committed_sections: string[] | null
+          created_at: string
+          error_message: string | null
+          hotel_id: string
+          id: string
+          progress_percent: number | null
+          raw_text: string | null
+          source_names: string[] | null
+          source_type: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ai_draft?: Json | null
+          committed_sections?: string[] | null
+          created_at?: string
+          error_message?: string | null
+          hotel_id: string
+          id?: string
+          progress_percent?: number | null
+          raw_text?: string | null
+          source_names?: string[] | null
+          source_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_draft?: Json | null
+          committed_sections?: string[] | null
+          created_at?: string
+          error_message?: string | null
+          hotel_id?: string
+          id?: string
+          progress_percent?: number | null
+          raw_text?: string | null
+          source_names?: string[] | null
+          source_type?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hotel_setup_sessions_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       hotels: {
         Row: {
+          active_modules: string[] | null
           address: string
+          api_key: string | null
           config: Json | null
           contact_email: string | null
           contact_phone: string | null
@@ -913,6 +1084,7 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
+          plan: string
           primary_color: string | null
           secondary_color: string | null
           slug: string
@@ -920,7 +1092,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          address?: string
+          active_modules?: string[] | null
+          address: string
+          api_key?: string | null
           config?: Json | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -930,6 +1104,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
+          plan?: string
           primary_color?: string | null
           secondary_color?: string | null
           slug: string
@@ -937,7 +1112,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active_modules?: string[] | null
           address?: string
+          api_key?: string | null
           config?: Json | null
           contact_email?: string | null
           contact_phone?: string | null
@@ -947,6 +1124,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          plan?: string
           primary_color?: string | null
           secondary_color?: string | null
           slug?: string
@@ -972,6 +1150,7 @@ export type Database = {
           content: string
           conversation_id: string
           created_at?: string
+          hotel_id?: string | null
           id?: string
           message_type?: string
           metadata?: Json | null
@@ -983,6 +1162,7 @@ export type Database = {
           content?: string
           conversation_id?: string
           created_at?: string
+          hotel_id?: string | null
           id?: string
           message_type?: string
           metadata?: Json | null
@@ -996,6 +1176,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
             referencedColumns: ["id"]
           },
         ]
@@ -1020,6 +1207,155 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          booking_notifications: boolean | null
+          created_at: string | null
+          dnd_enabled: boolean | null
+          dnd_end_time: string | null
+          dnd_start_time: string | null
+          email_enabled: boolean | null
+          emergency_override: boolean | null
+          language: string | null
+          marketing_notifications: boolean | null
+          push_enabled: boolean | null
+          service_notifications: boolean | null
+          sms_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+          whatsapp_enabled: boolean | null
+        }
+        Insert: {
+          booking_notifications?: boolean | null
+          created_at?: string | null
+          dnd_enabled?: boolean | null
+          dnd_end_time?: string | null
+          dnd_start_time?: string | null
+          email_enabled?: boolean | null
+          emergency_override?: boolean | null
+          language?: string | null
+          marketing_notifications?: boolean | null
+          push_enabled?: boolean | null
+          service_notifications?: boolean | null
+          sms_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          whatsapp_enabled?: boolean | null
+        }
+        Update: {
+          booking_notifications?: boolean | null
+          created_at?: string | null
+          dnd_enabled?: boolean | null
+          dnd_end_time?: string | null
+          dnd_start_time?: string | null
+          email_enabled?: boolean | null
+          emergency_override?: boolean | null
+          language?: string | null
+          marketing_notifications?: boolean | null
+          push_enabled?: boolean | null
+          service_notifications?: boolean | null
+          sms_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          whatsapp_enabled?: boolean | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          channel: Database["public"]["Enums"]["notification_channel"]
+          created_at: string | null
+          created_by: string | null
+          created_by_id: string | null
+          data: Json | null
+          delivered_at: string | null
+          error_message: string | null
+          hotel_id: string | null
+          idempotency_key: string
+          notification_id: string
+          priority: Database["public"]["Enums"]["notification_priority"]
+          read_at: string | null
+          recipient_id: string
+          recipient_type: Database["public"]["Enums"]["recipient_type"]
+          reference_id: string | null
+          reference_type: string | null
+          retry_count: number | null
+          scheduled_at: string | null
+          sent_at: string | null
+          source_event: string | null
+          source_module: string | null
+          status: Database["public"]["Enums"]["notification_status"]
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          body: string
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string | null
+          created_by?: string | null
+          created_by_id?: string | null
+          data?: Json | null
+          delivered_at?: string | null
+          error_message?: string | null
+          hotel_id?: string | null
+          idempotency_key: string
+          notification_id?: string
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          recipient_id: string
+          recipient_type: Database["public"]["Enums"]["recipient_type"]
+          reference_id?: string | null
+          reference_type?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          source_event?: string | null
+          source_module?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          body?: string
+          channel?: Database["public"]["Enums"]["notification_channel"]
+          created_at?: string | null
+          created_by?: string | null
+          created_by_id?: string | null
+          data?: Json | null
+          delivered_at?: string | null
+          error_message?: string | null
+          hotel_id?: string | null
+          idempotency_key?: string
+          notification_id?: string
+          priority?: Database["public"]["Enums"]["notification_priority"]
+          read_at?: string | null
+          recipient_id?: string
+          recipient_type?: Database["public"]["Enums"]["recipient_type"]
+          reference_id?: string | null
+          reference_type?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          source_event?: string | null
+          source_module?: string | null
+          status?: Database["public"]["Enums"]["notification_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       public_transport: {
         Row: {
@@ -1052,6 +1388,7 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          hotel_id: string | null
           icon: string | null
           id: string
           is_active: boolean
@@ -1062,6 +1399,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          hotel_id?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
@@ -1072,6 +1410,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          hotel_id?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean
@@ -1079,13 +1418,22 @@ export type Database = {
           parent_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "request_categories_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       request_items: {
         Row: {
           category_id: string
           created_at: string | null
           description: string | null
+          hotel_id: string | null
           id: string
           is_active: boolean
           name: string
@@ -1095,6 +1443,7 @@ export type Database = {
           category_id: string
           created_at?: string | null
           description?: string | null
+          hotel_id?: string | null
           id?: string
           is_active?: boolean
           name: string
@@ -1104,12 +1453,21 @@ export type Database = {
           category_id?: string
           created_at?: string | null
           description?: string | null
+          hotel_id?: string | null
           id?: string
           is_active?: boolean
           name?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "request_items_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       restaurant_menus: {
         Row: {
@@ -1198,6 +1556,7 @@ export type Database = {
           id?: string
           images?: string[]
           is_featured?: boolean | null
+          is_published?: boolean | null
           location?: string
           name?: string
           open_hours?: string
@@ -1220,7 +1579,6 @@ export type Database = {
           capacity: number
           created_at: string | null
           floor: number
-          hotel_id: string | null
           id: string
           images: string[] | null
           is_published: boolean | null
@@ -1286,6 +1644,7 @@ export type Database = {
           description?: string | null
           guest_id: string
           guest_name?: string | null
+          hotel_id?: string | null
           id?: string
           request_item_id?: string | null
           room_id: string
@@ -1302,6 +1661,7 @@ export type Database = {
           description?: string | null
           guest_id?: string
           guest_name?: string | null
+          hotel_id?: string | null
           id?: string
           request_item_id?: string | null
           room_id?: string
@@ -1311,6 +1671,20 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_service_requests_category"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "request_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_requests_request_item_id_fkey"
             columns: ["request_item_id"]
@@ -1466,14 +1840,16 @@ export type Database = {
         Row: {
           created_at: string | null
           date: string
+          facility_id: string | null
           guest_email: string
           guest_name: string
+          guest_phone: string | null
           hotel_id: string | null
           id: string
           room_number: string | null
           service_id: string | null
           special_requests: string | null
-          status: string | null
+          status: string
           time: string
           updated_at: string | null
           user_id: string | null
@@ -1481,14 +1857,16 @@ export type Database = {
         Insert: {
           created_at?: string | null
           date: string
+          facility_id?: string | null
           guest_email: string
           guest_name: string
+          guest_phone?: string | null
           hotel_id?: string | null
           id?: string
           room_number?: string | null
           service_id?: string | null
           special_requests?: string | null
-          status?: string | null
+          status?: string
           time: string
           updated_at?: string | null
           user_id?: string | null
@@ -1496,19 +1874,28 @@ export type Database = {
         Update: {
           created_at?: string | null
           date?: string
+          facility_id?: string | null
           guest_email?: string
           guest_name?: string
+          guest_phone?: string | null
           hotel_id?: string | null
           id?: string
           room_number?: string | null
           service_id?: string | null
           special_requests?: string | null
-          status?: string | null
+          status?: string
           time?: string
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "spa_bookings_facility_id_fkey"
+            columns: ["facility_id"]
+            isOneToOne: false
+            referencedRelation: "spa_facilities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "spa_bookings_hotel_id_fkey"
             columns: ["hotel_id"]
@@ -1523,43 +1910,49 @@ export type Database = {
             referencedRelation: "spa_services"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "spa_bookings_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
         ]
       }
       spa_facilities: {
         Row: {
+          capacity: number | null
           created_at: string | null
           description: string | null
           hotel_id: string | null
           id: string
           image_url: string | null
           is_published: boolean | null
+          location: string | null
           name: string
+          opening_hours: string | null
+          status: string
           updated_at: string | null
         }
         Insert: {
+          capacity?: number | null
           created_at?: string | null
           description?: string | null
           hotel_id?: string | null
           id?: string
           image_url?: string | null
           is_published?: boolean | null
+          location?: string | null
           name: string
+          opening_hours?: string | null
+          status?: string
           updated_at?: string | null
         }
         Update: {
+          capacity?: number | null
           created_at?: string | null
           description?: string | null
           hotel_id?: string | null
           id?: string
           image_url?: string | null
+          is_published?: boolean | null
+          location?: string | null
           name?: string
+          opening_hours?: string | null
+          status?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1569,47 +1962,56 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "hotels"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       spa_services: {
         Row: {
+          category: string
           created_at: string | null
-          description: string | null
-          duration_minutes: number
+          description: string
+          duration: string
           facility_id: string | null
           hotel_id: string | null
           id: string
-          image_url: string | null
+          image: string | null
+          is_featured: boolean | null
+          is_published: boolean | null
           name: string
           price: number
-          status: string | null
+          status: string
           updated_at: string | null
         }
         Insert: {
+          category: string
           created_at?: string | null
-          description?: string | null
-          duration_minutes: number
+          description: string
+          duration: string
           facility_id?: string | null
           hotel_id?: string | null
           id?: string
-          image_url?: string | null
+          image?: string | null
+          is_featured?: boolean | null
+          is_published?: boolean | null
           name: string
           price: number
-          status?: string | null
+          status?: string
           updated_at?: string | null
         }
         Update: {
+          category?: string
           created_at?: string | null
-          description?: string | null
-          duration_minutes?: number
+          description?: string
+          duration?: string
           facility_id?: string | null
           hotel_id?: string | null
           id?: string
-          image_url?: string | null
+          image?: string | null
+          is_featured?: boolean | null
+          is_published?: boolean | null
           name?: string
           price?: number
-          status?: string | null
+          status?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1626,7 +2028,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "hotels"
             referencedColumns: ["id"]
-          }
+          },
         ]
       }
       staff_notifications: {
@@ -1671,6 +2073,7 @@ export type Database = {
           created_at: string
           description: string
           eventId: string | null
+          hotel_id: string | null
           id: string
           image: string
           is_active: boolean | null
@@ -1683,6 +2086,7 @@ export type Database = {
           created_at?: string
           description: string
           eventId?: string | null
+          hotel_id?: string | null
           id?: string
           image: string
           is_active?: boolean | null
@@ -1695,6 +2099,7 @@ export type Database = {
           created_at?: string
           description?: string
           eventId?: string | null
+          hotel_id?: string | null
           id?: string
           image?: string
           is_active?: boolean | null
@@ -1708,6 +2113,13 @@ export type Database = {
             columns: ["eventId"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stories_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
             referencedColumns: ["id"]
           },
         ]
@@ -1737,6 +2149,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           guests: number
+          hotel_id?: string | null
           id?: string
           restaurant_id?: string | null
           room_number?: string | null
@@ -1753,6 +2166,7 @@ export type Database = {
           guest_name?: string | null
           guest_phone?: string | null
           guests?: number
+          hotel_id?: string | null
           id?: string
           restaurant_id?: string | null
           room_number?: string | null
@@ -1763,6 +2177,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "table_reservations_hotel_id_fkey"
+            columns: ["hotel_id"]
+            isOneToOne: false
+            referencedRelation: "hotels"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "table_reservations_restaurant_id_fkey"
             columns: ["restaurant_id"]
@@ -1809,6 +2230,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_hotel_data: {
+        Args: { row_hotel_id: string }
+        Returns: boolean
+      }
+      get_effective_channels: {
+        Args: {
+          p_notification_type: Database["public"]["Enums"]["notification_type"]
+          p_priority?: Database["public"]["Enums"]["notification_priority"]
+          p_user_id: string
+        }
+        Returns: Database["public"]["Enums"]["notification_channel"][]
+      }
       get_guest_by_id: {
         Args: { p_user_id: string }
         Returns: {
@@ -1819,6 +2252,7 @@ export type Database = {
           email: string | null
           first_name: string
           guest_type: string | null
+          hotel_id: string | null
           id: string
           last_name: string
           nationality: string | null
@@ -1835,6 +2269,21 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      get_hotel_by_slug: {
+        Args: { p_custom_domain?: string; p_slug: string }
+        Returns: {
+          active_modules: string[]
+          custom_domain: string
+          domain_verified: boolean
+          id: string
+          logo_url: string
+          name: string
+          plan: string
+          primary_color: string
+          secondary_color: string
+          slug: string
+        }[]
       }
       get_user_hotels: {
         Args: { user_id: string }
@@ -1855,36 +2304,36 @@ export type Database = {
         Returns: boolean
       }
       insert_guest_from_registration:
-      | {
-        Args: {
-          birth_date?: string
-          check_in_date?: string
-          check_out_date?: string
-          email: string
-          first_name: string
-          last_name: string
-          nationality?: string
-          room_number: string
-          user_id: string
-        }
-        Returns: string
-      }
-      | {
-        Args: {
-          birth_date?: string
-          check_in_date?: string
-          check_out_date?: string
-          email: string
-          first_name: string
-          last_name: string
-          nationality?: string
-          phone?: string
-          profile_image?: string
-          room_number: string
-          user_id: string
-        }
-        Returns: string
-      }
+        | {
+            Args: {
+              birth_date?: string
+              check_in_date?: string
+              check_out_date?: string
+              email: string
+              first_name: string
+              last_name: string
+              nationality?: string
+              room_number: string
+              user_id: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              birth_date?: string
+              check_in_date?: string
+              check_out_date?: string
+              email: string
+              first_name: string
+              last_name: string
+              nationality?: string
+              phone?: string
+              profile_image?: string
+              room_number: string
+              user_id: string
+            }
+            Returns: string
+          }
       is_admin: { Args: { user_id: string }; Returns: boolean }
       is_hotel_admin: {
         Args: { hotel_id: string; user_id: string }
@@ -1897,15 +2346,71 @@ export type Database = {
         Args: { _guest_id: string; _user_id: string }
         Returns: boolean
       }
+      submit_guest_feedback: {
+        Args: {
+          p_comment?: string
+          p_guest_email: string
+          p_guest_id?: string
+          p_guest_name: string
+          p_hotel_id?: string
+          p_rating: number
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role:
-      | "admin"
-      | "moderator"
-      | "user"
-      | "staff"
-      | "super_admin"
-      | "hotel_admin"
+        | "admin"
+        | "moderator"
+        | "user"
+        | "staff"
+        | "super_admin"
+        | "hotel_admin"
+      notification_channel: "in_app" | "email" | "push" | "sms" | "whatsapp"
+      notification_priority: "low" | "normal" | "high" | "critical"
+      notification_status:
+        | "pending"
+        | "sent"
+        | "delivered"
+        | "failed"
+        | "read"
+        | "cancelled"
+      notification_type:
+        | "service_request"
+        | "table_reservation"
+        | "spa_booking"
+        | "message"
+        | "system"
+        | "event"
+        | "feedback"
+        | "booking_confirmed"
+        | "booking_cancelled"
+        | "booking_reminder"
+        | "booking_no_show"
+        | "checkin_ready"
+        | "checkout_reminder"
+        | "checkout_overdue"
+        | "room_ready"
+        | "room_maintenance_started"
+        | "room_maintenance_completed"
+        | "service_ticket_created"
+        | "service_ticket_assigned"
+        | "service_ticket_completed"
+        | "service_ticket_escalated"
+        | "service_ticket_sla_breach"
+        | "message_received"
+        | "message_unread_5min"
+        | "message_unread_10min"
+        | "message_vip_received"
+        | "sla_warning_75"
+        | "sla_warning_90"
+        | "sla_breach"
+        | "guest_vip_arrived"
+        | "guest_complaint"
+        | "system_alert"
+        | "payment_confirmation"
+        | "health_form_pending"
+      recipient_type: "guest" | "staff" | "manager" | "system"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1919,118 +2424,121 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-  : never = never,
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-  ? R
-  : never
+    ? R
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-  ? R
-  : never
-  : never
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Update: infer U
-  }
-  ? U
-  : never
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Update: infer U
-  }
-  ? U
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-  | keyof DefaultSchema["Enums"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-  | keyof DefaultSchema["CompositeTypes"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: [
@@ -2041,6 +2549,53 @@ export const Constants = {
         "super_admin",
         "hotel_admin",
       ],
+      notification_channel: ["in_app", "email", "push", "sms", "whatsapp"],
+      notification_priority: ["low", "normal", "high", "critical"],
+      notification_status: [
+        "pending",
+        "sent",
+        "delivered",
+        "failed",
+        "read",
+        "cancelled",
+      ],
+      notification_type: [
+        "service_request",
+        "table_reservation",
+        "spa_booking",
+        "message",
+        "system",
+        "event",
+        "feedback",
+        "booking_confirmed",
+        "booking_cancelled",
+        "booking_reminder",
+        "booking_no_show",
+        "checkin_ready",
+        "checkout_reminder",
+        "checkout_overdue",
+        "room_ready",
+        "room_maintenance_started",
+        "room_maintenance_completed",
+        "service_ticket_created",
+        "service_ticket_assigned",
+        "service_ticket_completed",
+        "service_ticket_escalated",
+        "service_ticket_sla_breach",
+        "message_received",
+        "message_unread_5min",
+        "message_unread_10min",
+        "message_vip_received",
+        "sla_warning_75",
+        "sla_warning_90",
+        "sla_breach",
+        "guest_vip_arrived",
+        "guest_complaint",
+        "system_alert",
+        "payment_confirmation",
+        "health_form_pending",
+      ],
+      recipient_type: ["guest", "staff", "manager", "system"],
     },
   },
 } as const

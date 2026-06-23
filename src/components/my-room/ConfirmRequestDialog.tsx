@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Check, Loader2 } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface ConfirmRequestDialogProps {
   open: boolean;
@@ -21,7 +23,7 @@ interface ConfirmRequestDialogProps {
     description?: string;
   } | null;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: (note: string) => void;
 }
 
 const ConfirmRequestDialog = ({
@@ -31,6 +33,14 @@ const ConfirmRequestDialog = ({
   onCancel,
   onConfirm,
 }: ConfirmRequestDialogProps) => {
+  const [note, setNote] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setNote('');
+    }
+  }, [open]);
+
   if (!item) return null;
 
   return (
@@ -51,12 +61,24 @@ const ConfirmRequestDialog = ({
             Are you sure you want to request the following service?
           </DialogDescription>
         </DialogHeader>
-        <div className="bg-primary/5 rounded-xl p-4 my-4 border border-primary/10">
+        <div className="bg-primary/5 rounded-xl p-4 my-3 border border-primary/10">
           <div className="font-medium text-lg">{item.name}</div>
           <div className="text-sm text-gray-500 mt-1">{item.category}</div>
           {item.description && (
             <div className="text-gray-600 mt-3">{item.description}</div>
           )}
+        </div>
+        <div className="space-y-1.5 my-3">
+          <Label htmlFor="request-note" className="text-sm font-medium text-muted-foreground">
+            Add a note (optional)
+          </Label>
+          <Textarea
+            id="request-note"
+            placeholder="E.g., Special instructions, specific details, or preferences..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="rounded-xl resize-none text-sm min-h-[80px]"
+          />
         </div>
         <DialogFooter className="sm:justify-between gap-3">
           <Button
@@ -69,7 +91,7 @@ const ConfirmRequestDialog = ({
             Cancel
           </Button>
           <Button 
-            onClick={onConfirm}
+            onClick={() => onConfirm(note)}
             disabled={isSubmitting}
             className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl hover:bg-primary/90 transition-colors"
             aria-label="Confirm request"

@@ -52,6 +52,10 @@ export interface TableReservation {
   status: 'pending' | 'confirmed' | 'cancelled';
   createdAt: string;
   hotelId?: string;
+  restaurant?: {
+    name: string;
+    location: string;
+  };
 }
 
 // Add the following DTOs for API communication

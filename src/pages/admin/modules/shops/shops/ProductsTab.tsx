@@ -12,14 +12,16 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 const ProductsTab = () => {
   const { shops, productsQuery, deleteProduct } = useShops();
-  const [selectedShopId, setSelectedShopId] = useState<string | undefined>(undefined);
+  const [selectedShopId, setSelectedShopId] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ShopProduct | null>(null);
 
   // Filter only hotel shops
   const hotelShops = shops.filter(shop => shop.is_hotel_shop);
 
-  const { data: products = [], isLoading: isLoadingProducts } = productsQuery(selectedShopId);
+  const { data: products = [], isLoading: isLoadingProducts } = productsQuery(
+    selectedShopId === 'all' ? undefined : selectedShopId
+  );
 
   const handleCreateProduct = () => {
     setSelectedProduct(null);
@@ -54,8 +56,7 @@ const ProductsTab = () => {
                   <SelectValue placeholder="Select hotel shop" />
                 </SelectTrigger>
                 <SelectContent>
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <SelectItem value={undefined as any}>All hotel shops</SelectItem>
+                  <SelectItem value="all">All hotel shops</SelectItem>
                   {hotelShops.map(shop => (
                     <SelectItem key={shop.id} value={shop.id}>{shop.name}</SelectItem>
                   ))}

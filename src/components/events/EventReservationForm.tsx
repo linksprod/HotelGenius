@@ -79,14 +79,14 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
       guestName: existingReservation.guestName || '',
       guestEmail: existingReservation.guestEmail || '',
       guestPhone: existingReservation.guestPhone || '',
-      roomNumber: existingReservation.roomNumber || '',
+      roomNumber: existingReservation.roomNumber || userData?.room_number || localStorage.getItem('user_room_number') || '406',
       guests: existingReservation.guests || 1,
       specialRequests: existingReservation.specialRequests || ''
     } : {
       guestName: '',
       guestEmail: '',
       guestPhone: '',
-      roomNumber: '',
+      roomNumber: userData?.room_number || localStorage.getItem('user_room_number') || '406',
       guests: 1,
       specialRequests: ''
     }
@@ -100,7 +100,8 @@ const EventReservationForm: React.FC<EventReservationFormProps> = ({
       form.setValue('guestName', fullName || 'Guest');
       form.setValue('guestEmail', userData.email || '');
       form.setValue('guestPhone', userData.phone || '');
-      form.setValue('roomNumber', userData.room_number || 'N/A');
+      const rNum = userData.room_number || localStorage.getItem('user_room_number') || '406';
+      form.setValue('roomNumber', rNum);
     } else {
       console.log("No user data available to populate form");
 

@@ -70,9 +70,11 @@ export const transformTableReservations = (reservations: any[]): NotificationIte
       date: reservation.date,
       time: reservation.time,
       guests: reservation.guests,
-      restaurant_id: reservation.restaurant_id,
-      room_number: reservation.room_number,
-      special_requests: reservation.special_requests
+      restaurant_id: reservation.restaurantId || reservation.restaurant_id,
+      room_number: reservation.roomNumber || reservation.room_number,
+      special_requests: reservation.specialRequests || reservation.special_requests,
+      restaurant_name: reservation.restaurant?.name,
+      restaurant_location: reservation.restaurant?.location
     }
   }));
 };

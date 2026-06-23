@@ -134,40 +134,34 @@ const RestaurantBookingsTab = () => {
                 {reservations.map((reservation) => (
                   <TableRow key={reservation.id}>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span className="font-medium cursor-default">
-                                {reservation.guestName || 'Client'}
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" className="space-y-1 text-xs">
-                              {reservation.guestEmail && (
-                                <div className="flex items-center gap-1.5"><Mail className="h-3 w-3" />{reservation.guestEmail}</div>
-                              )}
-                              {reservation.guestPhone && (
-                                <div className="flex items-center gap-1.5"><Phone className="h-3 w-3" />{reservation.guestPhone}</div>
-                              )}
-                              {!reservation.guestEmail && !reservation.guestPhone && <span>Aucune info de contact</span>}
-                            </TooltipContent>
-                          </Tooltip>
-                          {reservation.roomNumber && (
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Home className="h-3 w-3" />
-                              Rm. {reservation.roomNumber}
-                            </div>
-                          )}
-                        </div>
+                      <div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="font-medium cursor-default">
+                              {reservation.guestName || 'Client'}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="space-y-1 text-xs">
+                            {reservation.guestEmail && (
+                              <div className="flex items-center gap-1.5"><Mail className="h-3 w-3" />{reservation.guestEmail}</div>
+                            )}
+                            {reservation.guestPhone && (
+                              <div className="flex items-center gap-1.5"><Phone className="h-3 w-3" />{reservation.guestPhone}</div>
+                            )}
+                            {!reservation.guestEmail && !reservation.guestPhone && <span>No contact info</span>}
+                          </TooltipContent>
+                        </Tooltip>
+                        {reservation.roomNumber && (
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <Home className="h-3 w-3" />
+                            Rm. {reservation.roomNumber}
+                          </div>
+                        )}
                         {reservation.specialRequests && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <MessageSquare className="h-4 w-4 text-muted-foreground shrink-0 cursor-default" />
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-                              {reservation.specialRequests}
-                            </TooltipContent>
-                          </Tooltip>
+                          <div className="flex items-start gap-1 text-xs text-muted-foreground mt-0.5">
+                            <MessageSquare className="h-3 w-3 mt-0.5 shrink-0" />
+                            <span>{reservation.specialRequests}</span>
+                          </div>
                         )}
                       </div>
                     </TableCell>

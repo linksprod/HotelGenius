@@ -56,6 +56,10 @@ export interface TableReservation {
   special_requests?: string;
   status: string;
   created_at: string;
+  restaurant?: {
+    name: string;
+    location: string;
+  };
 }
 
 // Type definitions for service requests in notifications

@@ -134,9 +134,12 @@ const MaintenanceRequestsTab = ({ categoryIds }: MaintenanceRequestsTabProps) =>
                     <TableCell className="font-medium">{request.room_number || 'N/A'}</TableCell>
                     <TableCell>{request.guest_name || 'Anonymous'}</TableCell>
                     <TableCell>
-                      {request.request_items 
-                        ? request.request_items.name 
-                        : request.description || 'No description provided'}
+                      <div className="font-medium">
+                        {request.request_items?.name || request.type || 'No description provided'}
+                      </div>
+                      {request.request_items && request.description && (
+                        <p className="text-xs text-muted-foreground mt-1">{request.description}</p>
+                      )}
                     </TableCell>
                     <TableCell>
                       {format(new Date(request.created_at), 'MMM d, yyyy h:mm a')}

@@ -18,7 +18,7 @@ const ServiceCard = ({ title, description, icon: Icon, actionText, onAction }: S
   
   return (
     <Card className="p-4 sm:p-6 h-full">
-      <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 h-full">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-3 sm:gap-4 h-full">
         <div className="flex-shrink-0">
           <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
         </div>

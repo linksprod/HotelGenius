@@ -28,6 +28,7 @@ export const RestaurantReservationsManager = React.lazy(() => import('@/pages/ad
 export const SpaManager = React.lazy(() => import('@/pages/admin/modules/spa/SpaManager'));
 export const EventsManager = React.lazy(() => import('@/pages/admin/modules/events/EventsManager'));
 export const ShopsManager = React.lazy(() => import('@/pages/admin/modules/shops/ShopsManager'));
+export const ActivitiesManager = React.lazy(() => import('@/pages/admin/modules/activities/ActivitiesManager'));
 
 // Operations
 export const HousekeepingManager = React.lazy(() => import('@/pages/admin/operations/HousekeepingManager'));
@@ -85,6 +86,7 @@ export const adminRoutes: AdminRouteConfig[] = [
   { path: 'spa', component: SpaManager, requiredModules: ['spa'] },
   { path: 'events', component: EventsManager, requiredModules: ['events'] },
   { path: 'shops', component: ShopsManager, requiredModules: ['shops'] },
+  { path: 'activities', component: ActivitiesManager, requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'] },
 
   // AI
   { path: 'agent/concierge', component: AIConcierge },

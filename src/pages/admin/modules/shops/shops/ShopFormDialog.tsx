@@ -11,6 +11,7 @@ import { useShops } from '@/hooks/useShops';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ImageUploader from '@/components/admin/shops/ImageUploader';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 interface ShopFormDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ interface ShopFormDialogProps {
 
 const ShopFormDialog = ({ open, onClose, shop, isHotelShop = true }: ShopFormDialogProps) => {
   const { createShop, updateShop, categories } = useShops();
+  const { hotelId } = useCurrentHotelId();
 
   const form = useForm<ShopFormData>({
     defaultValues: {
@@ -40,10 +42,14 @@ const ShopFormDialog = ({ open, onClose, shop, isHotelShop = true }: ShopFormDia
   });
 
   const onSubmit = async (data: ShopFormData) => {
+    const dataWithHotel = {
+      ...data,
+      contact_email: shop?.contact_email || hotelId || ''
+    };
     if (shop) {
-      await updateShop({ id: shop.id, data });
+      await updateShop({ id: shop.id, data: dataWithHotel });
     } else {
-      await createShop(data);
+      await createShop(dataWithHotel);
     }
     onClose();
   };

@@ -153,6 +153,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             <p className="text-foreground/80">
               {getTranslatedDescription(notification.description, notification.type, notification.data)}
             </p>
+            {notification.type === 'reservation' && notification.data?.restaurant_location && (
+              <div className="mt-2 text-xs font-semibold text-primary bg-primary/5 rounded px-2.5 py-1.5 inline-block">
+                📍 {currentLang === 'fr' ? 'Emplacement :' : 'Location:'} {notification.data.restaurant_location}
+              </div>
+            )}
           </div>
         )}
         
@@ -163,13 +168,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           </div>
           
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate(getDetailLink())}
-            >
-              {t('notifications.action.viewDetails', 'View Details')}
-            </Button>
+            {notification.type !== 'reservation' && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate(getDetailLink())}
+              >
+                {t('notifications.action.viewDetails', 'View Details')}
+              </Button>
+            )}
             
             {canCancel && (
               <Button 

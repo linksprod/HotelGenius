@@ -44,6 +44,20 @@ export const useShops = () => {
     }
   });
 
+  // Filter shops by hotelId for tenant isolation
+  const filteredShops = (shopsQuery.data || []).filter(shop => {
+    if (isSuperAdmin) return true;
+    
+    // Default seed shops belong to the Palais Bayram / demo hotel (ID: '00000000-0000-0000-0000-000000000000')
+    const isSeedShop = !shop.contact_email || shop.contact_email === 'test@test.com';
+    
+    if (isSeedShop) {
+      return hotelId === '00000000-0000-0000-0000-000000000000';
+    }
+    
+    return shop.contact_email === hotelId;
+  });
+
   const shopQuery = (id: string) => useQuery({
     queryKey: ['shop', id],
     queryFn: () => fetchShopById(id),
@@ -145,7 +159,7 @@ export const useShops = () => {
 
   return {
     // Shops
-    shops: shopsQuery.data || [],
+    shops: filteredShops,
     isLoadingShops: shopsQuery.isLoading,
     shopQuery,
     createShop: createShopMutation.mutate,

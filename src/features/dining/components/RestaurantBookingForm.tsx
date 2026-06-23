@@ -65,6 +65,7 @@ export default function RestaurantBookingForm({
       date: existingBooking?.date ? new Date(existingBooking.date) : undefined,
       time: existingBooking?.time || '',
       guests: existingBooking?.guests || 2,
+      roomNumber: existingBooking?.roomNumber || userData?.room_number || localStorage.getItem('user_room_number') || '406',
       specialRequests: existingBooking?.specialRequests || ''
     }
   });
@@ -75,7 +76,8 @@ export default function RestaurantBookingForm({
       form.setValue('guestName', fullName || 'Guest');
       form.setValue('guestEmail', userData.email || '');
       form.setValue('guestPhone', userData.phone || '');
-      form.setValue('roomNumber', userData.room_number || 'N/A');
+      const rNum = userData.room_number || localStorage.getItem('user_room_number') || '406';
+      form.setValue('roomNumber', rNum);
     }
   }, [userData, existingBooking, form]);
 

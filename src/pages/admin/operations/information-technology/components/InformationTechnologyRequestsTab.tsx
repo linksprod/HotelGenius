@@ -115,7 +115,9 @@ const InformationTechnologyRequestsTab = ({
                   <TableCell className="font-medium">{request.room_number || '-'}</TableCell>
                   <TableCell>{request.guest_name || '-'}</TableCell>
                   <TableCell>
-                    {request.request_items?.name || request.type}
+                    <div className="font-medium">
+                      {request.request_items?.name || request.type}
+                    </div>
                     {request.description && (
                       <p className="text-xs text-muted-foreground mt-1">{request.description}</p>
                     )}

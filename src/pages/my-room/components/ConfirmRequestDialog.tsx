@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dialog,
@@ -12,6 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Check, Loader2 } from 'lucide-react';
 import { useTranslatedServices } from '@/i18n/translationHelpers';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface ConfirmRequestDialogProps {
   open: boolean;
@@ -23,7 +25,7 @@ interface ConfirmRequestDialogProps {
     description?: string;
   } | null;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: (note: string) => void;
 }
 
 const ConfirmRequestDialog = ({
@@ -35,6 +37,14 @@ const ConfirmRequestDialog = ({
 }: ConfirmRequestDialogProps) => {
   const { t } = useTranslation();
   const { translateItemName, translateItemDescription } = useTranslatedServices();
+  const [note, setNote] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setNote('');
+    }
+  }, [open]);
+
   if (!item) return null;
 
   return (
@@ -46,11 +56,23 @@ const ConfirmRequestDialog = ({
             {t('myRoom.request.confirmDesc', 'Are you sure you want to request the following service?')}
           </DialogDescription>
         </DialogHeader>
-        <div className="bg-primary/5 rounded-xl p-4 my-4">
+        <div className="bg-primary/5 rounded-xl p-4 my-3">
           <div className="font-medium text-lg">{translateItemName(item.name)}</div>
           {item.description && (
             <div className="text-gray-600 mt-1">{translateItemDescription(item.name, item.description)}</div>
           )}
+        </div>
+        <div className="space-y-1.5 my-3">
+          <Label htmlFor="request-note" className="text-sm font-medium text-muted-foreground">
+            {t('myRoom.request.noteLabel', 'Add a note (optional)')}
+          </Label>
+          <Textarea
+            id="request-note"
+            placeholder={t('myRoom.request.notePlaceholder', 'E.g., Special instructions, specific details, or preferences...')}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="rounded-xl resize-none text-sm min-h-[80px]"
+          />
         </div>
         <DialogFooter className="sm:justify-between gap-3">
           <Button
@@ -62,7 +84,7 @@ const ConfirmRequestDialog = ({
             {t('common.cancel', 'Cancel')}
           </Button>
           <Button 
-            onClick={onConfirm}
+            onClick={() => onConfirm(note)}
             disabled={isSubmitting}
             className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl"
           >

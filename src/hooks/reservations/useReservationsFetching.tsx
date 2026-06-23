@@ -26,7 +26,7 @@ export const useReservationsFetching = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
-        .select('*')
+        .select('*, restaurant:restaurants(name, location)')
         .eq('user_id', userId);
 
       if (hotelId) {
@@ -50,7 +50,7 @@ export const useReservationsFetching = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
-        .select('*')
+        .select('*, restaurant:restaurants(name, location)')
         .eq('guest_email', userEmail);
 
       if (hotelId) {
@@ -89,7 +89,7 @@ export const useReservationsFetching = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from('table_reservations')
-        .select('*')
+        .select('*, restaurant:restaurants(name, location)')
         .eq('restaurant_id', restaurantId);
 
       if (hotelId) {

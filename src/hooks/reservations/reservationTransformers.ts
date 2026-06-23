@@ -19,7 +19,11 @@ export const reservationTransformers = {
       status: item.status,
       roomNumber: item.room_number || '',
       createdAt: item.created_at,
-      updatedAt: item.updated_at
+      updatedAt: item.updated_at,
+      restaurant: item.restaurant ? {
+        name: item.restaurant.name,
+        location: item.restaurant.location
+      } : undefined
     })) as TableReservation[];
   },
 

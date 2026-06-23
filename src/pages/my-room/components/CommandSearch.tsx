@@ -80,7 +80,7 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
     setConfirmDialogOpen(true);
   };
 
-  const handleConfirmRequest = async () => {
+  const handleConfirmRequest = async (note?: string) => {
     if (!selectedItem) return;
     setIsSubmitting(true);
 
@@ -98,10 +98,19 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
       if (!roomId && roomNumber) {
         roomId = roomNumber;
       }
+
+      let description = `${selectedItem.name}`;
+      if (selectedItem.description) {
+        description += ` - ${selectedItem.description}`;
+      }
+      if (note && note.trim()) {
+        description += ` (Note: ${note.trim()})`;
+      }
+
       await requestService(
         roomId,
         'service',
-        `${selectedItem.name}${selectedItem.description ? " - " + selectedItem.description : ""}`,
+        description,
         selectedItem.id,
         selectedItem.category
       );
