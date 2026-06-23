@@ -98,7 +98,7 @@ const WelcomeSection = ({
       <h2 className="text-2xl font-bold mb-4">{welcomeTitle}</h2>
       <p className="text-lg mb-4">{welcomeDescription}</p>
       {welcomeDescriptionExtended && (
-        <p className="text-gray-600">{welcomeDescriptionExtended}</p>
+        <p className="text-muted-foreground">{welcomeDescriptionExtended}</p>
       )}
     </Card>
   );

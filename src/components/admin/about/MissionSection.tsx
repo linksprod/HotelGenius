@@ -65,7 +65,7 @@ const MissionSection = ({
   return (
     <Card className="p-6 mb-6">
       <h2 className="text-xl font-semibold mb-4">{t('about.mission', 'Our Mission')}</h2>
-      <blockquote className="border-l-4 border-primary pl-4 italic text-gray-700">
+      <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
         "{mission}"
       </blockquote>
     </Card>

@@ -161,7 +161,7 @@ const FeaturesSection = ({
               {getIconComponent(feature.icon)}
             </div>
             <h3 className="font-medium text-lg mb-2">{feature.title}</h3>
-            <p className="text-gray-600 text-sm">{feature.description}</p>
+            <p className="text-muted-foreground text-sm">{feature.description}</p>
           </div>
         ))}
       </div>
