@@ -31,14 +31,38 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
     const [step, setStep] = React.useState<'categories' | 'items' | 'submitting' | 'confirmed'>(initialCategory ? 'items' : 'categories');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [selectedCategory, setSelectedCategory] = React.useState<any>(null);
-    const { categories, isLoading: loadingCats } = useRequestCategories();
-    // Use the hook to fetch items for the selected category
-    const { data: items, isLoading: loadingItems } = useRequestItems(selectedCategory?.id);
+    const { categories, allItems, isLoading: loadingCats } = useRequestCategories();
+
+    // Deduplicate categories by name
+    const uniqueCategories = React.useMemo(() => {
+        const map = new Map<string, any>();
+        categories.forEach(cat => {
+            const normalized = cat.name.toLowerCase().trim();
+            if (!map.has(normalized)) {
+                map.set(normalized, {
+                    ...cat,
+                    ids: [cat.id]
+                });
+            } else {
+                const existing = map.get(normalized);
+                existing.ids.push(cat.id);
+            }
+        });
+        return Array.from(map.values());
+    }, [categories]);
+
+    // Filter items for the selected category locally, merging items from all duplicate categories
+    const items = React.useMemo(() => {
+        if (!selectedCategory) return [];
+        const ids = selectedCategory.ids || [selectedCategory.id];
+        return allItems.filter(item => ids.includes(item.category_id) && item.is_active !== false);
+    }, [selectedCategory, allItems]);
 
     React.useEffect(() => {
-        if (initialCategory && categories.length > 0 && !selectedCategory) {
-            const cat = categories.find(c =>
+        if (initialCategory && uniqueCategories.length > 0 && !selectedCategory) {
+            const cat = uniqueCategories.find(c =>
                 c.id === initialCategory ||
+                c.ids?.includes(initialCategory) ||
                 c.name.toLowerCase().includes(initialCategory.toLowerCase())
             );
             if (cat) {
@@ -48,7 +72,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                 setStep('categories');
             }
         }
-    }, [initialCategory, categories, selectedCategory]);
+    }, [initialCategory, uniqueCategories, selectedCategory]);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleCategorySelect = (category: any) => {
@@ -65,7 +89,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                 'service',
                 item.name,
                 item.id,
-                selectedCategory.id
+                item.category_id // Use actual category ID from the item
             );
             setStep('confirmed');
             if (onSuccess) onSuccess();
@@ -96,7 +120,7 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
     if (step === 'categories') {
         return (
             <div className="grid grid-cols-2 gap-3 mt-2 animate-in fade-in slide-in-from-bottom-2">
-                {categories.map((cat) => (
+                {uniqueCategories.map((cat) => (
                     <Card
                         key={cat.id}
                         className="p-4 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all border-border/50 bg-card group"
@@ -140,29 +164,23 @@ const ServiceRequestFlow: React.FC<{ initialCategory?: string, onSuccess?: () =>
                     </Button>
                 </div>
 
-                {loadingItems ? (
-                    <div className="flex items-center justify-center py-4">
-                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-2">
-                        {items && items.length > 0 ? (
-                            items.map((item) => (
-                                <Button
-                                    key={item.id}
-                                    variant="outline"
-                                    className="justify-between text-xs h-9 bg-background/50 border-primary/10 hover:border-primary/30 hover:bg-primary/5 group"
-                                    onClick={() => handleItemSelect(item)}
-                                >
-                                    {translateItemName(item.name)}
-                                    <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </Button>
-                            ))
-                        ) : (
-                            <p className="text-[10px] text-muted-foreground text-center py-2">{t('chat.actionRenderer.noItems')}</p>
-                        )}
-                    </div>
-                )}
+                <div className="flex flex-col gap-2">
+                    {items && items.length > 0 ? (
+                        items.map((item) => (
+                            <Button
+                                key={item.id}
+                                variant="outline"
+                                className="justify-between text-xs h-9 bg-background/50 border-primary/10 hover:border-primary/30 hover:bg-primary/5 group"
+                                onClick={() => handleItemSelect(item)}
+                            >
+                                {translateItemName(item.name)}
+                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </Button>
+                        ))
+                    ) : (
+                        <p className="text-[10px] text-muted-foreground text-center py-2">{t('chat.actionRenderer.noItems')}</p>
+                    )}
+                </div>
             </Card>
         );
     }

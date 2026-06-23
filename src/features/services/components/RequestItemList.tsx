@@ -3,7 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader, ChevronLeft } from 'lucide-react';
-import { useRequestItems } from '@/hooks/useRequestCategories';
+import { useRequestCategories } from '@/hooks/useRequestCategories';
 import { RequestCategory, RequestItem } from '@/features/rooms/types';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslatedServices } from '@/i18n/translationHelpers';
@@ -21,11 +21,12 @@ const RequestItemList = ({
   selectedItems,
   onToggleItem
 }: RequestItemListProps) => {
-  const { data: items, isLoading, error } = useRequestItems(category.id);
+  const { allItems, isLoading, error } = useRequestCategories();
   const { translateCategory, translateItemName, translateItemDescription } = useTranslatedServices();
 
-  // Filter only active items
-  const activeItems = items?.filter(item => item.is_active) || [];
+  // Filter only active items for this category (including merged duplicate category IDs)
+  const categoryIds = (category as any).ids || [category.id];
+  const activeItems = allItems?.filter(item => categoryIds.includes(item.category_id) && item.is_active) || [];
 
   // Helper function to check if an item is selected
   const isItemSelected = (itemId: string) => {

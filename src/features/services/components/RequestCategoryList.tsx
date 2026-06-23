@@ -22,6 +22,24 @@ const RequestCategoryList = ({ onSelectCategory }: RequestCategoryListProps) => 
     );
   }
 
+  // Deduplicate categories by name
+  const uniqueCategories = React.useMemo(() => {
+    const map = new Map<string, any>();
+    categories.forEach(cat => {
+      const normalized = cat.name.toLowerCase().trim();
+      if (!map.has(normalized)) {
+        map.set(normalized, {
+          ...cat,
+          ids: [cat.id]
+        });
+      } else {
+        const existing = map.get(normalized);
+        existing.ids.push(cat.id);
+      }
+    });
+    return Array.from(map.values());
+  }, [categories]);
+
   if (!categories || categories.length === 0) {
     return (
       <div className="text-center py-8">
@@ -32,7 +50,7 @@ const RequestCategoryList = ({ onSelectCategory }: RequestCategoryListProps) => 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {categories.map((category) => (
+      {uniqueCategories.map((category) => (
         <Card 
           key={category.id}
           className="p-4 hover:shadow-md transition-shadow cursor-pointer"
