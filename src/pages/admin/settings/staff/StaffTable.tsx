@@ -111,7 +111,7 @@ const StaffTable: React.FC<StaffTableProps> = ({
               <TableCell>{member.email}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   <Badge variant={roleBadgeVariant(member.role) as any} className="capitalize flex items-center w-fit">
                     {roleIcon(member.role)}
                     {member.role}
