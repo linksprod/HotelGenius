@@ -246,6 +246,7 @@ IMPORTANT BOOKING RULES:
 - NEVER ask the guest if they want to see the form; JUST TRIGGER IT as the first action. 
 - The form is the FASTEST way for guests to book. Use it immediately to collect missing information (date, time, etc.) visually.
 - After triggering the form, your response should invite the guest to fill it out and offer help with any specific questions.
+- If the guest wants to browse or book spa services/treatments in general, or asks what spa services are available, you MUST call 'show_spa_list'.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
 
 CRITICAL CONCIERGE RULES:
@@ -350,6 +351,13 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
     {
       type: "function",
       function: {
+        name: "show_spa_list",
+        description: "Display a visual list of all available spa services/treatments to the guest."
+      }
+    },
+    {
+      type: "function",
+      function: {
         name: "show_service_categories",
         description: "CRITICAL: Displays visual cards for service categories (Maintenance, Housekeeping, IT, Security). Use this whenever a guest needs room assistance, cleaning, repairs, or 'room services' related to their stay experience.",
         parameters: {
@@ -447,6 +455,14 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
             : "I've opened the event list for you."
         };
         break;
+      case 'show_spa_list':
+        bookingResult = { 
+          success: true, 
+          message: detectedLang === 'fr'
+            ? "J'ai ouvert la liste des services de spa pour vous."
+            : "I've opened the spa services list for you."
+        };
+        break;
       case 'show_service_categories':
         bookingResult = { 
           success: true, 
@@ -469,7 +485,7 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
     }
 
     // For visual tools, we return immediately to prevent the follow-up text from overriding cards
-    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list'].includes(functionName)) {
+    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list', 'show_spa_list'].includes(functionName)) {
       if (conversationId) {
         let actionType = 'booking_form';
         let metadataObj: any = {};
@@ -489,6 +505,11 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
           actionType = 'event_list';
           metadataObj = {
             action_type: 'event_list'
+          };
+        } else if (functionName === 'show_spa_list') {
+          actionType = 'spa_list';
+          metadataObj = {
+            action_type: 'spa_list'
           };
         } else if (functionName === 'trigger_booking_form') {
           actionType = 'booking_form';

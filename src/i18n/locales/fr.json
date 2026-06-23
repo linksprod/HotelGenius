@@ -335,7 +335,9 @@
       "requestSentDesc": "Votre demande pour « {{name}} » a été envoyée avec succès.",
       "requestError": "Erreur",
       "requestErrorDesc": "Impossible d'envoyer la demande. Veuillez réessayer.",
-      "openSearch": "Ouvrir la recherche de services"
+      "openSearch": "Ouvrir la recherche de services",
+      "noteLabel": "Ajouter une note (optionnel)",
+      "notePlaceholder": "Ex : Instructions spéciales, détails spécifiques ou préférences..."
     },
     "requestHistory": {
       "title": "Historique des Demandes",
@@ -1241,6 +1243,8 @@
       "persons": "{{guests}} Personne(s)",
       "featuredDining": "Notre sélection de restaurants",
       "viewMenuBook": "Voir le menu / Réserver",
+      "spaServices": "Prestations Spa & Bien-être",
+      "bookTreatmentShort": "Réserver",
       "requestCompleted": "Demande terminée",
       "requestProcessedSuccess": "Votre demande a été traitée avec succès."
     },

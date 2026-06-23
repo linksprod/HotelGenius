@@ -207,7 +207,9 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
     const [entities, setEntities] = React.useState<any[]>([]);
     const [loading, setLoading] = React.useState(
         (type === 'booking_form' && (metadata?.entity_type === 'restaurant' || metadata?.entity_type === 'event' || metadata?.entity_type === 'spa')) ||
-        type === 'restaurant_list'
+        type === 'restaurant_list' ||
+        type === 'event_list' ||
+        type === 'spa_list'
     );
 
     React.useEffect(() => {
@@ -253,6 +255,15 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                     setEntities(data || []);
                 } else if (type === 'event_list') {
                     let query = supabase.from('events').select('*').gte('date', new Date().toISOString().split('T')[0]);
+                    if (hotelId) {
+                        query = query.eq('hotel_id', hotelId);
+                    }
+                    const { data, error } = await query.limit(5);
+
+                    if (error) throw error;
+                    setEntities(data || []);
+                } else if (type === 'spa_list') {
+                    let query = supabase.from('spa_services').select('*').eq('status', 'available');
                     if (hotelId) {
                         query = query.eq('hotel_id', hotelId);
                     }
@@ -462,6 +473,45 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                                     }}
                                 >
                                     {t('chat.actionRenderer.bookEvent', 'Book Event')}
+                                </Button>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Action: Display spa list
+    if (type === 'spa_list') {
+        return (
+            <div className="flex flex-col gap-3 mt-2 animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground px-1">
+                    <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+                    {t('chat.actionRenderer.spaServices', 'Spa Services')}
+                </div>
+                <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
+                    {entities.map((s) => (
+                        <Card key={s.id} className="min-w-[240px] max-w-[85vw] flex-shrink-0 snap-center overflow-hidden border-border bg-card shadow-md">
+                            {s.image && (
+                                <div className="h-24 w-full">
+                                    <img src={s.image} alt={s.name} className="h-full w-full object-cover" />
+                                </div>
+                            )}
+                            <div className="p-3">
+                                <h5 className="font-bold text-sm mb-1 line-clamp-1">{s.name}</h5>
+                                <p className="text-[10px] text-muted-foreground mb-3 line-clamp-1">
+                                    {s.duration} min • {s.price} TND
+                                </p>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="w-full text-[10px] h-7"
+                                    onClick={() => {
+                                        window.dispatchEvent(new CustomEvent('ai_trigger_form', { detail: { type: 'spa', id: s.id } }));
+                                    }}
+                                >
+                                    {t('chat.actionRenderer.bookTreatmentShort', 'Book Treatment')}
                                 </Button>
                             </div>
                         </Card>

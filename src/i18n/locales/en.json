@@ -342,7 +342,9 @@
       "requestSentDesc": "Your request for \"{{name}}\" was sent successfully.",
       "requestError": "Error",
       "requestErrorDesc": "Could not send the request. Please try again.",
-      "openSearch": "Open service search"
+      "openSearch": "Open service search",
+      "noteLabel": "Add a note (optional)",
+      "notePlaceholder": "E.g., Special instructions, specific details, or preferences..."
     },
     "requestHistory": {
       "title": "Request History",
@@ -1248,6 +1250,8 @@
       "persons": "{{guests}} Person(s)",
       "featuredDining": "Our Featured Dining",
       "viewMenuBook": "View Menu / Book",
+      "spaServices": "Spa & Wellness Services",
+      "bookTreatmentShort": "Book Treatment",
       "requestCompleted": "Request Completed",
       "requestProcessedSuccess": "Your request has been processed successfully."
     },
