@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, Brush,
   Wrench, Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, MapPin, 
   FileText, ImageIcon, Globe, Settings, Building2, UserCog, Bot,
-  CreditCard, LayoutTemplate, Coins, Calendar
+  CreditCard, LayoutTemplate, Coins, Calendar, Phone
 } from 'lucide-react';
 import React from 'react';
 
@@ -126,6 +126,7 @@ export const settingsNavigation = [
       { title: 'Hotel Profile', url: '/admin/settings/hotel-profile', icon: ImageIcon },
       { title: 'Home Page', url: '/admin/settings/home-page', icon: LayoutDashboard },
       { title: 'About Editor', url: '/admin/settings/about', icon: FileText },
+      { title: 'Contact Page', url: '/admin/settings/contact', icon: Phone },
       { title: 'AI Content Import', url: '/admin/settings/ai-import', icon: Sparkles },
       { title: 'Destinations', url: '/admin/settings/destinations', icon: MapPin },
     ]

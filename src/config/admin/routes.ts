@@ -49,6 +49,7 @@ export const DestinationManager = React.lazy(() => import('@/pages/admin/setting
 export const AboutEditor = React.lazy(() => import('@/pages/admin/settings/AboutEditor'));
 export const BillingManager = React.lazy(() => import('@/pages/admin/settings/BillingManager'));
 export const DemoManager = React.lazy(() => import('@/pages/admin/settings/DemoManager'));
+export const ContactSettings = React.lazy(() => import('@/pages/admin/settings/ContactSettings'));
 
 // Miscellaneous
 export const HotelsManager = React.lazy(() => import('@/pages/admin/HotelsManager'));
@@ -102,6 +103,7 @@ export const adminRoutes: AdminRouteConfig[] = [
       { path: 'hotel-profile', component: HotelProfile },
       { path: 'home-page', component: HomePageEditor },
       { path: 'about', component: AboutEditor },
+      { path: 'contact', component: ContactSettings },
       { path: 'destinations', component: DestinationAdmin },
       { path: 'destinations/:id', component: DestinationManager },
       { path: 'ai-import', component: AISetupPage },
