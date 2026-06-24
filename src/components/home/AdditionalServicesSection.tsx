@@ -33,12 +33,11 @@ const AdditionalServicesSection = () => {
 
         <ServiceCard
           icon={<Compass className="w-6 h-6 text-primary" />}
-          title={t('home.additionalServices.destination')}
-          description={t('home.additionalServices.destinationDescription')}
+          title={t('home.additionalServices.activities')}
+          description={t('home.additionalServices.activitiesDescription')}
           actionText={t('common.explore')}
-          actionLink={resolvePath("/destination")}
+          actionLink={resolvePath("/activities")}
           status={t('common.available')}
-          disabled={true}
         />
 
         <ServiceCard

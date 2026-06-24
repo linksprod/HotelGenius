@@ -182,6 +182,8 @@
       "shopsDescription": "Discover local shops and points of interest around the hotel",
       "hotelMap": "Hotel Map",
       "hotelMapDescription": "Interactive indoor navigation",
+      "activities": "Daily Activities",
+      "activitiesDescription": "Check the daily hotel schedule and activities",
       "destination": "Destination",
       "destinationDescription": "Things to do nearby",
       "feedback": "Feedback",
