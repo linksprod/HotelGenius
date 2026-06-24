@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
@@ -10,13 +9,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { RegistrationFormValues } from '../../hooks/useRegistrationForm';
 
 // Complete list of world nationalities (alphabetical)
@@ -46,7 +43,7 @@ const NATIONALITIES = [
   "Palestinian", "Panamanian", "Papua New Guinean", "Paraguayan", "Peruvian",
   "Philippine", "Polish", "Portuguese", "Qatari", "Romanian", "Russian",
   "Rwandan", "Saint Kitts and Nevis", "Saint Lucian", "Saint Vincentian",
-  "Samoam", "San Marinese", "São Toméan", "Saudi Arabian", "Senegalese",
+  "Samoan", "San Marinese", "São Toméan", "Saudi Arabian", "Senegalese",
   "Serbian", "Seychellois", "Sierra Leonean", "Singaporean", "Slovak",
   "Slovenian", "Solomon Islander", "Somali", "South African", "South Korean",
   "South Sudanese", "Spanish", "Sri Lankan", "Sudanese", "Surinamese",
@@ -63,6 +60,8 @@ interface AdditionalFieldsProps {
 
 const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       {(step === undefined || step === 1) && (
@@ -70,28 +69,64 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
           control={form.control}
           name="nationality"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>{t('auth.nationality', 'Nationality')}</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t('auth.nationalityPlaceholder', 'Select your nationality')} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="max-h-60">
-                  {NATIONALITIES.map((nat) => (
-                    <SelectItem key={nat} value={nat}>
-                      {nat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={open}
+                      className={cn(
+                        "w-full justify-between font-normal h-10",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value || t('auth.nationalityPlaceholder', 'Select your nationality')}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="p-0 w-[var(--radix-popover-trigger-width)]" align="start">
+                  <Command>
+                    <CommandInput placeholder="Type to search..." className="h-9" />
+                    <CommandList className="max-h-52">
+                      <CommandEmpty>No nationality found.</CommandEmpty>
+                      <CommandGroup>
+                        {NATIONALITIES.map((nat) => (
+                          <CommandItem
+                            key={nat}
+                            value={nat}
+                            onSelect={(val) => {
+                              // CommandItem lowercases the value, restore original casing
+                              const original = NATIONALITIES.find(
+                                (n) => n.toLowerCase() === val.toLowerCase()
+                              ) || val;
+                              field.onChange(original);
+                              setOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4 shrink-0",
+                                field.value === nat ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            {nat}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}
         />
       )}
-      
+
       {(step === undefined || step === 2) && (
         <FormField
           control={form.control}
@@ -107,7 +142,7 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
           )}
         />
       )}
-      
+
       {(step === undefined || step === 3) && (
         <FormField
           control={form.control}
@@ -128,4 +163,3 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
 };
 
 export default AdditionalFields;
-
