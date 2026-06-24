@@ -60,35 +60,25 @@ const Contact = () => {
 
     setIsSubmitting(true);
     try {
-      // 1. Create a conversation
-      const { data: conv, error: convError } = await supabase
-        .from('conversations')
-        .insert({
-          guest_name: name,
-          guest_email: email,
-          status: 'active',
-          current_handler: 'human',
-          conversation_type: 'concierge',
-          hotel_id: hotel?.id
-        })
-        .select()
-        .single();
+      // Get current user id (if logged in)
+      const { data: { user } } = await supabase.auth.getUser();
 
-      if (convError) throw convError;
+      // Use SECURITY DEFINER RPC to bypass RLS on conversations/messages
+      const { data, error } = await supabase.rpc('submit_contact_message', {
+        p_guest_name: name,
+        p_guest_email: email,
+        p_subject: subject || null,
+        p_message: message,
+        p_hotel_id: hotel?.id || null,
+        p_guest_id: user?.id || null
+      });
 
-      // 2. Insert message
-      const { error: msgError } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conv.id,
-          sender_type: 'guest',
-          sender_name: name,
-          content: `[Contact Form - Subject: ${subject || 'No Subject'}]\n\n${message}`,
-          message_type: 'text',
-          hotel_id: hotel?.id
-        });
+      if (error) throw error;
 
-      if (msgError) throw msgError;
+      const response = data as { status: string; message?: string };
+      if (response?.status === 'error') {
+        throw new Error(response.message || 'Error submitting contact message');
+      }
 
       toast({
         title: t('feedback.thankYou'),
