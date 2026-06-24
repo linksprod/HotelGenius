@@ -56,7 +56,7 @@ const Layout = ({
                 className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
               >
                 {hotel?.logo_url ? (
-                  <img src={hotel.logo_url} alt={hotel.name} className="h-11 w-auto object-contain max-w-[180px]" />
+                  <img src={hotel.logo_url} alt={hotel.name} className="h-11 w-auto object-contain max-w-[180px] dark:brightness-0 dark:invert" />
                 ) : (
                   <span className={cn(
                     "font-qurova font-light tracking-wide text-foreground transition-colors",
