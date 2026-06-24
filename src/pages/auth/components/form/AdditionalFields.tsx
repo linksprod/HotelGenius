@@ -133,7 +133,7 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
           name="roomNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Room Number (Optional)</FormLabel>
+              <FormLabel>Room Number</FormLabel>
               <FormControl>
                 <Input placeholder="Room Number" {...field} />
               </FormControl>

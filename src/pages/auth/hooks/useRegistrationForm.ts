@@ -29,7 +29,7 @@ export const registerSchema = z.object({
       message: "You must be at least 18 years old",
     }),
   nationality: z.string().min(2, { message: "Nationality is required" }),
-  roomNumber: z.string().optional().or(z.literal("")),
+  roomNumber: z.string().min(1, { message: "Room number is required" }),
   checkInDate: z.date({ required_error: "Check-in date is required" })
     .refine((date) => {
       const now = new Date();
