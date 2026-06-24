@@ -183,7 +183,7 @@ const AdminDashboard = () => {
           sub={unanswered > 0 ? `${unanswered} unanswered` : 'all answered'}
           subColor={unanswered > 0 ? 'text-orange-500' : 'text-emerald-500'}
           loading={isLoading} delay={0.2} />
-        <KpiCard label="Guest Satisfaction" value={stats?.guestSatisfaction ?? 0} decimals={1} suffix="/10"
+        <KpiCard label="Guest Satisfaction" value={stats?.guestSatisfaction ?? 0} decimals={1} suffix="/5"
           icon={Star} glowClass="icon-glow-amber"
           sub={`${stats?.feedbackCount ?? 0} reviews`}
           subColor="text-muted-foreground"

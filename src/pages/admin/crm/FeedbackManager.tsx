@@ -89,7 +89,7 @@ export const FeedbackManager = () => {
 
   const renderStars = (rating: number) => {
     return Array(5).fill(0).map((_, i) => (
-      <Star key={i} className={`h-3 w-3 ${i < Math.round(rating / 2) ? 'fill-amber-400 text-amber-400' : 'text-zinc-700'}`} />
+      <Star key={i} className={`h-3 w-3 ${i < rating ? 'fill-amber-400 text-amber-400' : 'text-zinc-700'}`} />
     ));
   };
 
@@ -101,8 +101,8 @@ export const FeedbackManager = () => {
   };
 
   const getSentimentText = (rating: number) => {
-    if (rating >= 9) return { text: 'Delighted', class: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' };
-    if (rating >= 7) return { text: 'Positive', class: 'bg-blue-500/10 text-blue-500 border-blue-500/20' };
+    if (rating >= 5) return { text: 'Delighted', class: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' };
+    if (rating >= 4) return { text: 'Positive', class: 'bg-blue-500/10 text-blue-500 border-blue-500/20' };
     return { text: 'Neutral', class: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/20' };
   };
 
@@ -227,7 +227,7 @@ export const FeedbackManager = () => {
                                 <div className="flex flex-col items-end gap-1.5">
                                   <div className="flex items-center gap-0.5">
                                     {renderStars(feedback.rating)}
-                                    <span className="text-lg font-black text-foreground ml-2">{feedback.rating}<span className="text-[10px] text-muted-foreground">/10</span></span>
+                                    <span className="text-lg font-black text-foreground ml-2">{feedback.rating}<span className="text-[10px] text-muted-foreground">/5</span></span>
                                   </div>
                                   <div className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border", sentiment.class)}>
                                     {sentiment.text}

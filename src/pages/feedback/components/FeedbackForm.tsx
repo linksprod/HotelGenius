@@ -73,7 +73,7 @@ const FeedbackForm = () => {
 
       toast({
         title: t('feedback.thankYou'),
-        description: t('forms.messages.reservationSentDesc')
+        description: t('feedback.success')
       });
 
       setName('');
