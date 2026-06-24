@@ -209,14 +209,16 @@ async function sendChatMessage(message: string, userId: string, userName: string
   }
 
   // 2. Get real-time hotel data for AI context
-  const [restaurants, spaServices, events, hotelInfo] = await Promise.all([
+  const [restaurants, spaServices, events, hotelInfo, hotelRecord] = await Promise.all([
     supabase.from('restaurants').select('id, name, description, cuisine, location').eq('status', 'open').eq('hotel_id', effectiveHotelId).limit(8),
     supabase.from('spa_services').select('id, name, description, duration, price').eq('status', 'available').eq('hotel_id', effectiveHotelId).limit(8),
     supabase.from('events').select('id, title, description, date, location').gte('date', new Date().toISOString().split('T')[0]).eq('hotel_id', effectiveHotelId).limit(8),
-    supabase.from('hotel_about').select('title, description, location, contact_email, contact_phone').eq('status', 'active').eq('hotel_id', effectiveHotelId).limit(1)
+    supabase.from('hotel_about').select('title, description, location, contact_email, contact_phone').eq('status', 'active').eq('hotel_id', effectiveHotelId).limit(1),
+    supabase.from('hotels').select('name').eq('id', effectiveHotelId).single()
   ]);
 
   const hotelData = hotelInfo.data && hotelInfo.data.length > 0 ? hotelInfo.data[0] : null;
+  const hotelName = hotelRecord.data?.name || hotelData?.title || 'Our Hotel';
   const truncate = (str: string, max = 200) => str?.length > max ? str.substring(0, max) + '...' : str;
 
   const restaurantsList = (restaurants.data || []).map(r => ({ ...r, description: truncate(r.description) }));
@@ -224,7 +226,7 @@ async function sendChatMessage(message: string, userId: string, userName: string
   const eventsList = (events.data || []).map(e => ({ ...e, description: truncate(e.description) }));
 
   const systemPrompt = `CORE_VERSION: 3.2.0 (Digital Twin Integrated).
-You are a highly personalised hotel concierge AI assistant for ${hotelData?.title || 'Hotel Genius'}.
+You are a highly personalised hotel concierge AI assistant for ${hotelName}.
 You answer ANY questions from the guest, from hotel policies to booking requests.
 
 ══ GUEST DIGITAL TWIN (read before every response) ══
