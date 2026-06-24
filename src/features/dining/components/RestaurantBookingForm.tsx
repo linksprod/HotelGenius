@@ -61,7 +61,6 @@ export default function RestaurantBookingForm({
       guestName: existingBooking?.guestName || '',
       guestEmail: existingBooking?.guestEmail || '',
       guestPhone: existingBooking?.guestPhone || '',
-      roomNumber: existingBooking?.roomNumber || '',
       date: existingBooking?.date ? new Date(existingBooking.date) : undefined,
       time: existingBooking?.time || '',
       guests: existingBooking?.guests || 2,

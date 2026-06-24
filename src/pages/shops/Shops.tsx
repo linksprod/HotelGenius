@@ -38,7 +38,7 @@ const Shops = () => {
               {hotelShops.map((shop) => (
                 <Card key={shop.id} className="p-3 md:p-4 rounded-xl">
                   <div className="flex items-stretch gap-3">
-                    <div className="relative w-[150px] min-w-[150px] md:w-[160px] md:min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-[100px] min-w-[100px] sm:w-[140px] sm:min-w-[140px] md:w-[160px] md:min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
                       <img 
                         src={shop.image || "https://images.unsplash.com/photo-1612423284934-2850a4ea6b0f"}
                         alt={shop.name} 
@@ -46,8 +46,8 @@ const Shops = () => {
                         loading="lazy"
                       />
                     </div>
-                    <div className="flex-1 flex flex-col">
-                      <h3 className="font-semibold text-sm md:text-base mb-1">{t(`shops.name.${shop.id}`, shop.name)}</h3>
+                    <div className="flex-1 flex flex-col min-w-0">
+                      <h3 className="font-semibold text-sm md:text-base mb-1 line-clamp-2">{t(`shops.name.${shop.id}`, shop.name)}</h3>
                       <div className="flex items-center text-xs md:text-sm text-muted-foreground mb-1">
                         <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
                         <span className="truncate">{t(`shops.location.${shop.id}`, shop.location || t('shopsPage.hotelShops.insideHotel'))}</span>
@@ -88,7 +88,7 @@ const Shops = () => {
               {nearbyShops.map((shop) => (
                 <Card key={shop.id} className="p-3 md:p-4 rounded-xl">
                   <div className="flex items-stretch gap-3">
-                    <div className="relative w-[150px] min-w-[150px] md:w-[160px] md:min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="relative w-[100px] min-w-[100px] sm:w-[140px] sm:min-w-[140px] md:w-[160px] md:min-w-[160px] rounded-lg overflow-hidden flex-shrink-0">
                       <img 
                         src={shop.image || "https://images.unsplash.com/photo-1568254183919-78a4f43a2877"}
                         alt={shop.name} 
@@ -96,8 +96,8 @@ const Shops = () => {
                         loading="lazy"
                       />
                     </div>
-                    <div className="flex-1 flex flex-col">
-                      <h3 className="font-semibold text-sm md:text-base mb-1">{t(`shops.name.${shop.id}`, shop.name)}</h3>
+                    <div className="flex-1 flex flex-col min-w-0">
+                      <h3 className="font-semibold text-sm md:text-base mb-1 line-clamp-2">{t(`shops.name.${shop.id}`, shop.name)}</h3>
                       <div className="flex items-center text-xs md:text-sm text-muted-foreground mb-1">
                         <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
                         <span className="truncate">{t(`shops.location.${shop.id}`, shop.location)}</span>
@@ -108,13 +108,6 @@ const Shops = () => {
                           <Button size="sm" variant="outline" className="text-xs" asChild>
                             <a href={`https://maps.google.com/?q=${encodeURIComponent(shop.location)}`} target="_blank" rel="noopener noreferrer">
                               {t('shopsPage.shoppingCenters.directions')}
-                            </a>
-                          </Button>
-                        )}
-                        {shop.contact_email && (
-                          <Button size="sm" className="text-xs" asChild>
-                            <a href={`mailto:${shop.contact_email}`}>
-                              {t('shopsPage.shoppingCenters.contact')}
                             </a>
                           </Button>
                         )}

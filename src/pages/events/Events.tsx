@@ -130,12 +130,7 @@ const Events = () => {
                       </div>
                     )}
 
-                    {event.capacity && (
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Users className="h-4 w-4 mr-2 text-primary" />
-                        <span>{t('events.spotsAvailable', '{{count}} spots available', { count: event.capacity })}</span>
-                      </div>
-                    )}
+
                   </div>
 
                   {/* Description */}

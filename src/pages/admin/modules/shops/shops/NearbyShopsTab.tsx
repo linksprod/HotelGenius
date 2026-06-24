@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useShops } from '@/hooks/useShops';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2, MapPin } from 'lucide-react';
+import { Plus, Edit, Trash2, MapPin, Loader2 } from 'lucide-react';
 import { Table, TableHead, TableHeader, TableBody, TableRow, TableCell } from '@/components/ui/table';
 import { Card } from '@/components/ui/card';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -10,7 +10,7 @@ import { Shop } from '@/types/shop';
 import ShopFormDialog from './ShopFormDialog';
 
 const NearbyShopsTab = () => {
-  const { shops, deleteShop } = useShops();
+  const { shops, isLoadingShops, deleteShop } = useShops();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null);
 
@@ -42,7 +42,12 @@ const NearbyShopsTab = () => {
           </Button>
         </div>
 
-        {nearbyShops.length === 0 ? (
+        {isLoadingShops ? (
+          <div className="text-center py-8 text-muted-foreground flex flex-col items-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+            Loading nearby places...
+          </div>
+        ) : nearbyShops.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             No nearby places added yet. Add your first one!
           </div>

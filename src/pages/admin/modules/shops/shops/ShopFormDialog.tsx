@@ -26,20 +26,40 @@ const ShopFormDialog = ({ open, onClose, shop, isHotelShop = true }: ShopFormDia
 
   const form = useForm<ShopFormData>({
     defaultValues: {
-      name: shop?.name || '',
-      description: shop?.description || '',
-      short_description: shop?.short_description || '',
-      location: shop?.location || '',
-      hours: shop?.hours || '',
-      category_id: shop?.category_id || undefined,
-      image: shop?.image || '',
-      icon: shop?.icon || '',
-      contact_phone: shop?.contact_phone || '',
-      contact_email: shop?.contact_email || '',
+      name: '',
+      description: '',
+      short_description: '',
+      location: '',
+      hours: '',
+      category_id: undefined,
+      image: '',
+      icon: '',
+      contact_phone: '',
+      contact_email: '',
       is_hotel_shop: isHotelShop,
-      status: shop?.status || 'active'
-    }
+      status: 'active'
+    },
+    values: shop ? {
+      name: shop.name || '',
+      description: shop.description || '',
+      short_description: shop.short_description || '',
+      location: shop.location || '',
+      hours: shop.hours || '',
+      category_id: shop.category_id || undefined,
+      image: shop.image || '',
+      icon: shop.icon || '',
+      contact_phone: shop.contact_phone || '',
+      contact_email: shop.contact_email || '',
+      is_hotel_shop: isHotelShop,
+      status: shop.status || 'active'
+    } : undefined
   });
+
+  React.useEffect(() => {
+    if (!open) {
+      form.reset();
+    }
+  }, [open, form]);
 
   const onSubmit = async (data: ShopFormData) => {
     const dataWithHotel = {
@@ -153,35 +173,19 @@ const ShopFormDialog = ({ open, onClose, shop, isHotelShop = true }: ShopFormDia
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="contact_email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Email</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="email" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="contact_phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Phone</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="contact_phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Phone</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

@@ -45,7 +45,7 @@ const Activities = () => {
           Today's Activities
         </h1>
         <p className="text-muted-foreground text-base max-w-md mx-auto leading-relaxed">
-          Discover what's happening at the hotel today — workshops, events, and curated experiences just for you.
+          Explore today's schedule of daily hotel activities.
         </p>
       </motion.div>
 
@@ -91,37 +91,34 @@ const Activities = () => {
                 {/* Colored top accent bar */}
                 <div className="h-1 w-full bg-gradient-to-r from-primary to-primary/40" />
 
-                <div className="p-6 flex flex-col flex-1 gap-4">
-                  {/* Badge + activity number */}
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold uppercase tracking-wider">
+                <div className="p-4 flex flex-col flex-1 gap-3">
+                  {/* Badge */}
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
                       <Sparkles className="w-3 h-3" />
                       Hotel Event
-                    </span>
-                    <span className="text-3xl font-black text-border dark:text-white/10 select-none tabular-nums">
-                      {String(index + 1).padStart(2, '0')}
                     </span>
                   </div>
 
                   {/* Name */}
-                  <h3 className="text-xl font-bold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-200">
+                  <h3 className="text-lg font-bold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors duration-200">
                     {activity.name}
                   </h3>
 
                   {/* Divider */}
-                  <div className="border-t border-border/60 dark:border-white/5" />
+                  <div className="border-t border-border/60 dark:border-white/5 my-1" />
 
                   {/* Meta info */}
-                  <div className="space-y-2.5 mt-auto">
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/8 shrink-0">
-                        <MapPin className="w-4 h-4 text-primary" />
+                  <div className="space-y-2 mt-auto">
+                    <div className="flex items-center gap-2.5 text-sm">
+                      <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/8 shrink-0">
+                        <MapPin className="w-3.5 h-3.5 text-primary" />
                       </span>
                       <span className="text-muted-foreground font-medium truncate">{activity.location}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/8 shrink-0">
-                        <Clock className="w-4 h-4 text-primary" />
+                    <div className="flex items-center gap-2.5 text-sm">
+                      <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/8 shrink-0">
+                        <Clock className="w-3.5 h-3.5 text-primary" />
                       </span>
                       <span className="text-muted-foreground font-medium">{activity.time}</span>
                     </div>
