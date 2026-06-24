@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     Building2, Upload, X, Save, Loader2, Image,
-    Globe, CheckCircle2, AlertCircle, Copy,
+    Globe, CheckCircle2, AlertCircle, Copy, Mail, Phone, MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useHotel } from '@/features/hotels/context/HotelContext';
@@ -33,6 +34,66 @@ const HotelProfile: React.FC = () => {
     const [isSavingDomain, setIsSavingDomain] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const [domainVerified, setDomainVerified] = useState(hotel?.domain_verified ?? false);
+
+    // Contact details state
+    const [contactEmail, setContactEmail] = useState('');
+    const [contactPhone, setContactPhone] = useState('');
+    const [address, setAddress] = useState('');
+    const [originalContactInfo, setOriginalContactInfo] = useState({ email: '', phone: '', address: '' });
+    const [isSavingContact, setIsSavingContact] = useState(false);
+
+    useEffect(() => {
+        if (hotel?.id) {
+            supabase
+                .from('hotels')
+                .select('contact_email, contact_phone, address')
+                .eq('id', hotel.id)
+                .single()
+                .then(({ data }) => {
+                    if (data) {
+                        setContactEmail(data.contact_email || '');
+                        setContactPhone(data.contact_phone || '');
+                        setAddress(data.address || '');
+                        setOriginalContactInfo({
+                            email: data.contact_email || '',
+                            phone: data.contact_phone || '',
+                            address: data.address || ''
+                        });
+                    }
+                });
+        }
+    }, [hotel?.id]);
+
+    const handleSaveContactInfo = async () => {
+        if (!hotel?.id) return;
+        setIsSavingContact(true);
+        try {
+            const { error } = await supabaseAdmin
+                .from('hotels')
+                .update({
+                    contact_email: contactEmail,
+                    contact_phone: contactPhone,
+                    address: address,
+                })
+                .eq('id', hotel.id);
+
+            if (error) throw error;
+
+            setOriginalContactInfo({
+                email: contactEmail,
+                phone: contactPhone,
+                address: address
+            });
+
+            toast({ title: 'Success!', description: 'Contact information saved successfully.' });
+            refreshHotel();
+        } catch (error: any) {
+            console.error('Save contact error:', error);
+            toast({ title: 'Error', description: error.message || 'Failed to save contact information', variant: 'destructive' });
+        } finally {
+            setIsSavingContact(false);
+        }
+    };
 
     if (!hotel) {
         return (
@@ -402,6 +463,74 @@ const HotelProfile: React.FC = () => {
                                     <Save className="h-4 w-4 mr-2" />
                                 )}
                                 {isSaving ? 'Saving...' : 'Save Branding Colors'}
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Contact Information Card */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Mail className="h-5 w-5 text-primary" />
+                            Contact Information
+                        </CardTitle>
+                        <CardDescription>
+                            Configure the contact details shown on the guest contact page (Phone, Email, and Address).
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="contact-phone" className="flex items-center gap-2">
+                                    <Phone className="h-4 w-4 text-muted-foreground" />
+                                    Contact Phone
+                                </Label>
+                                <Input
+                                    id="contact-phone"
+                                    placeholder="+1 234 567 890"
+                                    value={contactPhone}
+                                    onChange={(e) => setContactPhone(e.target.value)}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="contact-email" className="flex items-center gap-2">
+                                    <Mail className="h-4 w-4 text-muted-foreground" />
+                                    Contact Email
+                                </Label>
+                                <Input
+                                    id="contact-email"
+                                    type="email"
+                                    placeholder="info@yourhotel.com"
+                                    value={contactEmail}
+                                    onChange={(e) => setContactEmail(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="contact-address" className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-muted-foreground" />
+                                Address
+                            </Label>
+                            <Textarea
+                                id="contact-address"
+                                placeholder="123 Luxury Avenue&#10;Paradise City, PC 12345&#10;United States"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                rows={3}
+                            />
+                        </div>
+                        <div className="pt-2">
+                            <Button
+                                onClick={handleSaveContactInfo}
+                                disabled={isSavingContact || (contactEmail === originalContactInfo.email && contactPhone === originalContactInfo.phone && address === originalContactInfo.address)}
+                            >
+                                {isSavingContact ? (
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                ) : (
+                                    <Save className="h-4 w-4 mr-2" />
+                                )}
+                                {isSavingContact ? 'Saving...' : 'Save Contact Information'}
                             </Button>
                         </div>
                     </CardContent>

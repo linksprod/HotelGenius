@@ -1,15 +1,119 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PhoneCall, Mail, MapPin } from 'lucide-react';
+import { PhoneCall, Mail, MapPin, Loader2 } from 'lucide-react';
 import Layout from '@/components/Layout';
+import { useHotel } from '@/features/hotels/context/HotelContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Contact = () => {
   const { t } = useTranslation();
+  const { hotel } = useHotel();
+  const { toast } = useToast();
+
+  const [contactInfo, setContactInfo] = useState({
+    phone: '',
+    email: '',
+    address: ''
+  });
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (hotel?.id) {
+      supabase
+        .from('hotels')
+        .select('contact_email, contact_phone, address')
+        .eq('id', hotel.id)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setContactInfo({
+              phone: data.contact_phone || '',
+              email: data.contact_email || '',
+              address: data.address || ''
+            });
+          }
+        });
+    }
+  }, [hotel?.id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !message) {
+      toast({
+        title: t('common.error'),
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // 1. Create a conversation
+      const { data: conv, error: convError } = await supabase
+        .from('conversations')
+        .insert({
+          guest_name: name,
+          guest_email: email,
+          status: 'active',
+          current_handler: 'human',
+          conversation_type: 'concierge',
+          hotel_id: hotel?.id
+        })
+        .select()
+        .single();
+
+      if (convError) throw convError;
+
+      // 2. Insert message
+      const { error: msgError } = await supabase
+        .from('messages')
+        .insert({
+          conversation_id: conv.id,
+          sender_type: 'guest',
+          sender_name: name,
+          content: `[Contact Form - Subject: ${subject || 'No Subject'}]\n\n${message}`,
+          message_type: 'text',
+          hotel_id: hotel?.id
+        });
+
+      if (msgError) throw msgError;
+
+      toast({
+        title: t('feedback.thankYou'),
+        description: t('feedback.success')
+      });
+
+      setName('');
+      setEmail('');
+      setSubject('');
+      setMessage('');
+    } catch (error: any) {
+      console.error("Error sending contact message:", error);
+      toast({
+        title: t('common.error'),
+        description: error.message || "Failed to send message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const displayPhone = contactInfo.phone || t('contact.info.phoneNumber');
+  const displayEmail = contactInfo.email || t('contact.info.primaryEmail');
+  const displayAddress = contactInfo.address || t('contact.info.fullAddress');
 
   return (
     <Layout>
@@ -19,23 +123,53 @@ const Contact = () => {
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="p-6 animate-in fade-in-50 duration-500">
             <h2 className="text-xl font-semibold mb-6">{t('contact.form.title')}</h2>
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Input placeholder={t('contact.form.yourName')} className="bg-gray-50/50" />
+                <Input 
+                  placeholder={t('contact.form.yourName')} 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
+                  className="bg-gray-50/50" 
+                  required 
+                />
               </div>
               <div>
-                <Input type="email" placeholder={t('contact.form.yourEmail')} className="bg-gray-50/50" />
+                <Input 
+                  type="email" 
+                  placeholder={t('contact.form.yourEmail')} 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  className="bg-gray-50/50" 
+                  required 
+                />
               </div>
               <div>
-                <Input placeholder={t('contact.form.subject')} className="bg-gray-50/50" />
+                <Input 
+                  placeholder={t('contact.form.subject')} 
+                  value={subject} 
+                  onChange={(e) => setSubject(e.target.value)} 
+                  className="bg-gray-50/50" 
+                />
               </div>
               <div>
                 <Textarea 
                   placeholder={t('contact.form.yourMessage')}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="min-h-[150px] bg-gray-50/50"
+                  required
                 />
               </div>
-              <Button className="w-full">{t('contact.form.sendMessage')}</Button>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  t('contact.form.sendMessage')
+                )}
+              </Button>
             </form>
           </Card>
 
@@ -45,7 +179,7 @@ const Contact = () => {
                 <PhoneCall className="w-5 h-5 text-primary mt-1" />
                 <div>
                   <h3 className="font-medium mb-2">{t('contact.info.phone')}</h3>
-                  <p className="text-gray-600">{t('contact.info.phoneNumber')}</p>
+                  <p className="text-gray-600">{displayPhone}</p>
                   <p className="text-gray-600">{t('contact.info.available247')}</p>
                 </div>
               </div>
@@ -56,8 +190,7 @@ const Contact = () => {
                 <Mail className="w-5 h-5 text-primary mt-1" />
                 <div>
                   <h3 className="font-medium mb-2">{t('contact.info.email')}</h3>
-                  <p className="text-gray-600">{t('contact.info.primaryEmail')}</p>
-                  <p className="text-gray-600">{t('contact.info.supportEmail')}</p>
+                  <p className="text-gray-600">{displayEmail}</p>
                 </div>
               </div>
             </Card>
@@ -68,10 +201,10 @@ const Contact = () => {
                 <div>
                   <h3 className="font-medium mb-2">{t('contact.info.address')}</h3>
                   <p className="text-gray-600">
-                    {t('contact.info.fullAddress').split('\n').map((line, index) => (
+                    {displayAddress.split('\n').map((line, index) => (
                       <span key={index}>
                         {line}
-                        {index < t('contact.info.fullAddress').split('\n').length - 1 && <br />}
+                        {index < displayAddress.split('\n').length - 1 && <br />}
                       </span>
                     ))}
                   </p>
