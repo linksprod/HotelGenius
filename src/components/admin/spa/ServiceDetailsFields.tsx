@@ -36,7 +36,7 @@ const ServiceDetailsFields = ({ form, facilities }: ServiceDetailsFieldsProps) =
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Prix (€)</FormLabel>
+              <FormLabel>Prix (DT)</FormLabel>
               <FormControl>
                 <Input
                   type="number"

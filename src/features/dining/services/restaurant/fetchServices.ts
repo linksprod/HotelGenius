@@ -40,7 +40,8 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
     location: item.location,
     status: item.status as 'open' | 'closed',
     actionText: item.action_text || null,
-    isFeatured: item.is_featured || false
+    isFeatured: item.is_featured || false,
+    bookingEnabled: item.booking_enabled !== false
   }));
 };
 /**
@@ -69,7 +70,8 @@ export const fetchRestaurantById = async (id: string): Promise<Restaurant> => {
     location: data.location,
     status: data.status as 'open' | 'closed',
     actionText: data.action_text || null,
-    isFeatured: data.is_featured || false
+    isFeatured: data.is_featured || false,
+    bookingEnabled: data.booking_enabled !== false
   };
 };
 
@@ -112,6 +114,7 @@ export const fetchFeaturedRestaurants = async (hotelId: string | null = null, is
     location: item.location,
     status: item.status as 'open' | 'closed',
     actionText: item.action_text || null,
-    isFeatured: item.is_featured || false
+    isFeatured: item.is_featured || false,
+    bookingEnabled: item.booking_enabled !== false
   }));
 };

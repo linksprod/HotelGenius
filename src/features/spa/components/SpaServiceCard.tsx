@@ -79,7 +79,7 @@ const SpaServiceCard = ({
       <CardContent className="p-4">
         <div className="flex justify-between items-center mb-2">
           <h3 className="font-medium">{service.name}</h3>
-          <span className="text-primary font-semibold">${service.price}</span>
+          <span className="text-primary font-semibold">{service.price} DT</span>
         </div>
         {service.duration && (
           <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">

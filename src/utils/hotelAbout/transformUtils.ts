@@ -26,7 +26,36 @@ export const transformAboutData = (aboutData: any): HotelAbout => {
     updated_at: aboutData.updated_at || new Date().toISOString(),
     hero_image: aboutData.hero_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80',
     hero_title: aboutData.hero_title || 'Welcome to Our Hotel',
-    hero_subtitle: aboutData.hero_subtitle || 'Discover luxury and comfort'
+    hero_subtitle: aboutData.hero_subtitle || 'Discover luxury and comfort',
+    has_seminars: !!aboutData.has_seminars,
+    seminar_description: aboutData.seminar_description || '',
+    seminar_image: aboutData.seminar_image || '',
+    seminar_services: (() => {
+      try {
+        if (!aboutData.seminar_services) return [];
+        const raw = Array.isArray(aboutData.seminar_services)
+          ? aboutData.seminar_services
+          : (typeof aboutData.seminar_services === 'string' ? JSON.parse(aboutData.seminar_services) : []);
+        // Normalize: if items are plain strings (old format), convert to {name, icon}
+        return raw.map((item: unknown) => {
+          if (typeof item === 'string') return { name: item, icon: 'CheckCircle2' };
+          if (item && typeof item === 'object' && 'name' in item) return item;
+          return { name: String(item), icon: 'CheckCircle2' };
+        });
+      } catch (e) {
+        return [];
+      }
+    })(),
+    seminar_rooms: (() => {
+      try {
+        if (!aboutData.seminar_rooms) return [];
+        return Array.isArray(aboutData.seminar_rooms) 
+          ? aboutData.seminar_rooms 
+          : (typeof aboutData.seminar_rooms === 'string' ? JSON.parse(aboutData.seminar_rooms) : []);
+      } catch (e) {
+        return [];
+      }
+    })()
   };
 };
 
@@ -49,6 +78,12 @@ export const prepareDataForUpdate = (data: Partial<HotelAbout>) => {
   if (data.hotel_policies) updateData.hotel_policies = data.hotel_policies;
   if (data.additional_info) updateData.additional_info = data.additional_info;
   if (data.features) updateData.features = data.features;
+
+  if (data.has_seminars !== undefined) updateData.has_seminars = data.has_seminars;
+  if (data.seminar_description !== undefined) updateData.seminar_description = data.seminar_description;
+  if (data.seminar_image !== undefined) updateData.seminar_image = data.seminar_image;
+  if (data.seminar_services !== undefined) updateData.seminar_services = data.seminar_services;
+  if (data.seminar_rooms !== undefined) updateData.seminar_rooms = data.seminar_rooms;
   
   return updateData;
 };

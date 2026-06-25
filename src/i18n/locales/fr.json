@@ -691,6 +691,17 @@
     "contact": "Informations de Contact",
     "address": "Adresse",
     "facilities": "Installations & Commodités",
+    "seminars": {
+      "title": "Séminaires & Réunions",
+      "subtitle": "Organisez des réunions, conférences et banquets réussis dans nos espaces entièrement équipés.",
+      "default_desc": "L'hôtel est particulièrement adapté pour ces activités. Nos salles plénières peuvent répondre à tous vos besoins.",
+      "included_services": "Services Inclus & Équipements Techniques",
+      "rooms_specs": "Salles de Conférences : Spécifications Techniques",
+      "light": "Lumière Naturelle",
+      "surface": "Superficie",
+      "height": "Hauteur sous plafond",
+      "capacities": "Capacités Maximales"
+    },
     "content": {
       "heroTitle": {
         "f68672da-d6e4-46fd-95a5-753594a39a74": "Palais Bayram"
@@ -869,7 +880,7 @@
     },
     "summaries": {
       "spa_booking": "Réservation pour le {{date}} à {{time}}",
-      "restaurant_booking": "Réservation pour {{guests}} personne(s) le {{date}} à {{time}}",
+      "restaurant_booking": "Réservation pour {{guests}} personne(s) au restaurant {{restaurant}} le {{date}} à {{time}}",
       "service_request": "Demande de service",
       "event_booking": "Réservation pour {{guests}} personne(s) le {{date}}"
     },

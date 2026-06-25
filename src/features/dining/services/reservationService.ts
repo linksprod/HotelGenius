@@ -158,6 +158,20 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
 
     // Also trigger for Guest to appear in unified notifications
     if (userId) {
+      let restaurantName = 'the restaurant';
+      try {
+        const { data: restaurantData } = await supabase
+          .from('restaurants')
+          .select('name')
+          .eq('id', typedData.restaurant_id)
+          .single();
+        if (restaurantData?.name) {
+          restaurantName = restaurantData.name;
+        }
+      } catch (fetchErr) {
+        console.error('Error fetching restaurant name for notification:', fetchErr);
+      }
+
       const guestNotifParams = {
         hotel_id: typedData.hotel_id,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -168,7 +182,10 @@ export const createReservation = async (reservation: CreateTableReservationDTO):
         template_data: {
           date: typedData.date,
           time: typedData.time,
-          hotel_name: 'the restaurant'
+          guests: typedData.guests.toString(),
+          hotel_name: restaurantName,
+          restaurant_name: restaurantName,
+          restaurant_id: typedData.restaurant_id
         },
         source_module: 'Dining',
         source_event: 'requested',

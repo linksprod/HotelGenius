@@ -9,6 +9,43 @@ import MissionSection from '@/components/admin/about/MissionSection';
 import DirectorySection from '@/components/admin/about/DirectorySection';
 import FeaturesSection from '@/components/admin/about/FeaturesSection';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CheckCircle2, Maximize2, ArrowUpToLine, Wifi, Sun, Users, Presentation, MonitorPlay, Volume2, Video, SquarePlay, Layers, Sofa, UtensilsCrossed, GlassWater, Briefcase, Mic2, Settings, Zap, Coffee, FileText, ShieldCheck, Phone, Map, Music, Lightbulb, Tv, Printer, Thermometer, ParkingCircle, Clock, Star } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { SeminarService } from '@/lib/types';
+
+// Map icon name → Lucide component (mirrors AVAILABLE_ICONS in SeminarsSection)
+const SEMINAR_ICON_MAP: Record<string, React.ReactNode> = {
+  Wifi:            <Wifi className="h-5 w-5 text-primary" />,
+  Volume2:         <Volume2 className="h-5 w-5 text-primary" />,
+  Video:           <Video className="h-5 w-5 text-primary" />,
+  MonitorPlay:     <MonitorPlay className="h-5 w-5 text-primary" />,
+  Layers:          <Layers className="h-5 w-5 text-primary" />,
+  Sun:             <Sun className="h-5 w-5 text-primary" />,
+  Lightbulb:       <Lightbulb className="h-5 w-5 text-primary" />,
+  Thermometer:     <Thermometer className="h-5 w-5 text-primary" />,
+  GlassWater:      <GlassWater className="h-5 w-5 text-primary" />,
+  Coffee:          <Coffee className="h-5 w-5 text-primary" />,
+  UtensilsCrossed: <UtensilsCrossed className="h-5 w-5 text-primary" />,
+  Briefcase:       <Briefcase className="h-5 w-5 text-primary" />,
+  Settings:        <Settings className="h-5 w-5 text-primary" />,
+  Mic2:            <Mic2 className="h-5 w-5 text-primary" />,
+  Music:           <Music className="h-5 w-5 text-primary" />,
+  Presentation:    <Presentation className="h-5 w-5 text-primary" />,
+  Users:           <Users className="h-5 w-5 text-primary" />,
+  Zap:             <Zap className="h-5 w-5 text-primary" />,
+  FileText:        <FileText className="h-5 w-5 text-primary" />,
+  ShieldCheck:     <ShieldCheck className="h-5 w-5 text-primary" />,
+  Phone:           <Phone className="h-5 w-5 text-primary" />,
+  Map:             <Map className="h-5 w-5 text-primary" />,
+  ParkingCircle:   <ParkingCircle className="h-5 w-5 text-primary" />,
+  Clock:           <Clock className="h-5 w-5 text-primary" />,
+  Star:            <Star className="h-5 w-5 text-primary" />,
+  Tv:              <Tv className="h-5 w-5 text-primary" />,
+  Printer:         <Printer className="h-5 w-5 text-primary" />,
+  SquarePlay:      <SquarePlay className="h-5 w-5 text-primary" />,
+  CheckCircle2:    <CheckCircle2 className="h-5 w-5 text-primary" />,
+};
+const renderSeminarIcon = (iconName: string) => SEMINAR_ICON_MAP[iconName] ?? <CheckCircle2 className="h-5 w-5 text-primary" />;
 
 // Safe i18n helper: only build a dynamic key if the segment is a real non-empty string
 const safeT = (
@@ -85,6 +122,237 @@ const About = () => {
               ? t(`about.content.features.${feature.icon}.description`, feature.description || '')
               : (feature.description || '')
           }))} />
+
+        {aboutData.has_seminars && (
+          <div className="my-10 border rounded-2xl overflow-hidden shadow-sm bg-card">
+            {/* === 1. Full-width hero banner image with overlay title === */}
+            {aboutData.seminar_image ? (
+              <div className="relative w-full h-52 sm:h-64 md:h-72 overflow-hidden">
+                <img
+                  src={aboutData.seminar_image}
+                  alt="Seminars & Meetings"
+                  className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700"
+                />
+                {/* Dark gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                {/* Title on image */}
+                <div className="absolute bottom-0 left-0 p-5 md:p-8 flex items-center gap-3">
+                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 p-2 rounded-xl">
+                    <Presentation className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-white text-2xl md:text-3xl font-bold tracking-tight drop-shadow-md">
+                      {t('about.seminars.title', 'Seminars & Meetings')}
+                    </h2>
+                    <p className="text-white/80 text-xs md:text-sm mt-0.5 drop-shadow">
+                      {t('about.seminars.subtitle', 'Professional events, meetings, conferences and banquets')}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* No image: elegant text header with gradient background */
+              <div className="relative w-full py-12 px-6 md:px-10 bg-gradient-to-br from-primary/90 to-primary/60 text-white flex items-center gap-4">
+                <div className="bg-white/20 border border-white/30 p-2.5 rounded-xl shrink-0">
+                  <Presentation className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    {t('about.seminars.title', 'Seminars & Meetings')}
+                  </h2>
+                  <p className="text-white/80 text-sm mt-0.5">
+                    {t('about.seminars.subtitle', 'Professional events, meetings, conferences and banquets')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="p-6 md:p-8 lg:p-10 space-y-10">
+              {/* === 2. Description text === */}
+              {aboutData.seminar_description && (
+                <p className="text-foreground/80 leading-relaxed text-sm md:text-base max-w-4xl">
+                  {aboutData.seminar_description}
+                </p>
+              )}
+
+              {/* === 3. Services grid ("PERSONALIZED SERVICE TO GUARANTEE YOUR COMFORT") === */}
+              {aboutData.seminar_services && aboutData.seminar_services.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-px flex-1 bg-border" />
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-[0.15em] whitespace-nowrap px-2">
+                      {t('about.seminars.included_services', 'Personalized Service to Guarantee Your Comfort')}
+                    </h3>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {aboutData.seminar_services.map((service: SeminarService, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-3 p-3.5 rounded-xl border bg-muted/30 hover:bg-primary/5 hover:border-primary/20 transition-colors duration-200"
+                      >
+                        <div className="bg-primary/10 p-2 rounded-lg shrink-0">
+                          {renderSeminarIcon(service.icon)}
+                        </div>
+                        <span className="text-sm font-medium text-foreground/90 leading-snug">{service.name}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
+              )}
+
+              {/* === 4. Rooms specs table ("TAILOR-MADE PROFESSIONAL EVENTS") === */}
+              {aboutData.seminar_rooms && aboutData.seminar_rooms.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-px flex-1 bg-border" />
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-[0.15em] whitespace-nowrap px-2">
+                      {t('about.seminars.rooms_specs', 'Tailor-Made Professional Events')}
+                    </h3>
+                    <div className="h-px flex-1 bg-border" />
+                  </div>
+
+                  {/* Desktop table */}
+                  <div className="hidden md:block overflow-x-auto rounded-xl border shadow-sm">
+                    <table className="w-full text-sm border-collapse">
+                      <thead>
+                        <tr className="bg-primary/8 border-b">
+                          <th className="p-3 text-left font-semibold text-foreground">Room</th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Maximize2 className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Area</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <ArrowUpToLine className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Ceiling</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Sun className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Light</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Wifi className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">WiFi</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <SquarePlay className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Theatre</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Layers className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Classroom</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Sofa className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">U-Shape</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <GlassWater className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Cocktail</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <UtensilsCrossed className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Banquet</span>
+                            </div>
+                          </th>
+                          <th className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-1">
+                              <Briefcase className="h-4 w-4 text-primary" />
+                              <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">Boardroom</span>
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {aboutData.seminar_rooms.map((room, idx) => (
+                          <tr key={idx} className={`border-b last:border-b-0 hover:bg-muted/20 transition-colors ${idx % 2 === 0 ? '' : 'bg-muted/10'}`}>
+                            <td className="p-3 font-semibold text-foreground">{room.name}</td>
+                            <td className="p-3 text-center text-muted-foreground font-mono text-xs">{room.surface ? `${room.surface} m²` : '-'}</td>
+                            <td className="p-3 text-center text-muted-foreground font-mono text-xs">{room.height ? `${room.height} m` : '-'}</td>
+                            <td className="p-3 text-center">
+                              {room.natural_light
+                                ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />
+                                : <span className="text-muted-foreground text-xs">✕</span>}
+                            </td>
+                            <td className="p-3 text-center">
+                              {room.wifi
+                                ? <CheckCircle2 className="h-4 w-4 text-green-500 mx-auto" />
+                                : <span className="text-muted-foreground text-xs">✕</span>}
+                            </td>
+                            <td className="p-3 text-center font-mono text-sm font-bold text-foreground">{room.cap_theatre || '-'}</td>
+                            <td className="p-3 text-center font-mono text-sm font-bold text-foreground">{room.cap_classroom || '-'}</td>
+                            <td className="p-3 text-center font-mono text-sm font-bold text-foreground">{room.cap_u_shape || '-'}</td>
+                            <td className="p-3 text-center font-mono text-sm font-bold text-foreground">{room.cap_cocktail || '-'}</td>
+                            <td className="p-3 text-center font-mono text-sm font-bold text-foreground">{room.cap_banquet || '-'}</td>
+                            <td className="p-3 text-center font-mono text-sm font-bold text-foreground">{room.cap_boardroom || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile card list */}
+                  <div className="grid gap-4 md:hidden">
+                    {aboutData.seminar_rooms.map((room, idx) => (
+                      <div key={idx} className="bg-card border rounded-xl p-4 shadow-sm space-y-3">
+                        <div className="flex justify-between items-center border-b pb-2">
+                          <h4 className="font-bold text-base text-foreground">{room.name}</h4>
+                          <div className="flex gap-1.5">
+                            {room.wifi && <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1"><Wifi className="h-2.5 w-2.5" />WiFi</span>}
+                            {room.natural_light && <span className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1"><Sun className="h-2.5 w-2.5" />Light</span>}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Maximize2 className="h-3.5 w-3.5 shrink-0" />
+                            <span>Surface: <strong>{room.surface} m²</strong></span>
+                          </div>
+                          {room.height && (
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <ArrowUpToLine className="h-3.5 w-3.5 shrink-0" />
+                              <span>Height: <strong>{room.height} m</strong></span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="border-t pt-2 space-y-2">
+                          <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">Capacities (Max Pax)</span>
+                          <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
+                            {room.cap_theatre && <div className="bg-muted/50 rounded p-1.5"><span className="text-[9px] text-muted-foreground block">Theatre</span><span className="font-bold font-mono">{room.cap_theatre}</span></div>}
+                            {room.cap_classroom && <div className="bg-muted/50 rounded p-1.5"><span className="text-[9px] text-muted-foreground block">Classroom</span><span className="font-bold font-mono">{room.cap_classroom}</span></div>}
+                            {room.cap_u_shape && <div className="bg-muted/50 rounded p-1.5"><span className="text-[9px] text-muted-foreground block">U-Shape</span><span className="font-bold font-mono">{room.cap_u_shape}</span></div>}
+                            {room.cap_banquet && <div className="bg-muted/50 rounded p-1.5"><span className="text-[9px] text-muted-foreground block">Banquet</span><span className="font-bold font-mono">{room.cap_banquet}</span></div>}
+                            {room.cap_cocktail && <div className="bg-muted/50 rounded p-1.5"><span className="text-[9px] text-muted-foreground block">Cocktail</span><span className="font-bold font-mono">{room.cap_cocktail}</span></div>}
+                            {room.cap_boardroom && <div className="bg-muted/50 rounded p-1.5"><span className="text-[9px] text-muted-foreground block">Boardroom</span><span className="font-bold font-mono">{room.cap_boardroom}</span></div>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <DirectorySection
           directoryTitle={

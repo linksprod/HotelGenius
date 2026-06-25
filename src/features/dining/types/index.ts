@@ -11,6 +11,7 @@ export interface Restaurant {
   actionText?: string | null;
   isFeatured?: boolean;
   is_published?: boolean;
+  bookingEnabled?: boolean;
   menuPdf?: string;
 }
 

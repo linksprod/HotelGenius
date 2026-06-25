@@ -28,6 +28,7 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Prom
         status: restaurant.status,
         action_text: restaurant.actionText,
         is_featured: restaurant.isFeatured,
+        booking_enabled: restaurant.bookingEnabled !== false,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         hotel_id: (restaurant as any).hotel_id
       })
@@ -54,7 +55,8 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Prom
       location: data[0].location,
       status: data[0].status as 'open' | 'closed',
       actionText: data[0].action_text || "Book a Table",
-      isFeatured: data[0].is_featured || false
+      isFeatured: data[0].is_featured || false,
+      bookingEnabled: data[0].booking_enabled !== false
     };
   } catch (error) {
     console.error('Error in createRestaurant:', error);
@@ -87,7 +89,8 @@ export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaura
         location: restaurant.location,
         status: restaurant.status,
         action_text: restaurant.actionText,
-        is_featured: restaurant.isFeatured || false
+        is_featured: restaurant.isFeatured || false,
+        booking_enabled: restaurant.bookingEnabled !== false
       })
       .eq('id', restaurant.id)
       .select();
@@ -121,7 +124,8 @@ export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaura
         location: fetchedData.location,
         status: fetchedData.status as 'open' | 'closed',
         actionText: fetchedData.action_text || "Book a Table",
-        isFeatured: fetchedData.is_featured || false
+        isFeatured: fetchedData.is_featured || false,
+        bookingEnabled: fetchedData.booking_enabled !== false
       };
     }
 
@@ -137,7 +141,8 @@ export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaura
       location: data[0].location,
       status: data[0].status as 'open' | 'closed',
       actionText: data[0].action_text || "Book a Table",
-      isFeatured: data[0].is_featured || false
+      isFeatured: data[0].is_featured || false,
+      bookingEnabled: data[0].booking_enabled !== false
     };
   } catch (error) {
     console.error('Error in updateRestaurant:', error);

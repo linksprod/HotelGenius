@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -11,31 +11,6 @@ export type Database = {
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
   }
   public: {
     Tables: {
@@ -1517,6 +1492,7 @@ export type Database = {
       restaurants: {
         Row: {
           action_text: string | null
+          booking_enabled: boolean | null
           created_at: string | null
           cuisine: string
           description: string
@@ -1533,6 +1509,7 @@ export type Database = {
         }
         Insert: {
           action_text?: string | null
+          booking_enabled?: boolean | null
           created_at?: string | null
           cuisine: string
           description: string
@@ -1549,6 +1526,7 @@ export type Database = {
         }
         Update: {
           action_text?: string | null
+          booking_enabled?: boolean | null
           created_at?: string | null
           cuisine?: string
           description?: string
@@ -2346,6 +2324,17 @@ export type Database = {
         Args: { _guest_id: string; _user_id: string }
         Returns: boolean
       }
+      submit_contact_message: {
+        Args: {
+          p_guest_email: string
+          p_guest_id?: string
+          p_guest_name: string
+          p_hotel_id?: string
+          p_message?: string
+          p_subject?: string
+        }
+        Returns: Json
+      }
       submit_guest_feedback: {
         Args: {
           p_comment?: string
@@ -2536,9 +2525,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       app_role: [

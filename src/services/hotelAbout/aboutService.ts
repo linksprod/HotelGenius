@@ -39,6 +39,11 @@ export const updateAboutData = async (updatedData: Partial<HotelAbout>) => {
   const updatePayload = prepareDataForUpdate(updatedData);
   const id = updatedData.id;
 
+  console.log("=== updateAboutData ===");
+  console.log("updatedData passed:", updatedData);
+  console.log("updatePayload prepared:", updatePayload);
+  console.log("id:", id);
+
   if (!id) {
     throw new Error('No ID provided for update');
   }
@@ -51,10 +56,11 @@ export const updateAboutData = async (updatedData: Partial<HotelAbout>) => {
     .single();
 
   if (error) {
-    console.error('Error updating hotel about data:', error);
+    console.error('Error updating hotel about data in service:', error);
     throw error;
   }
 
+  console.log("responseData returned from DB:", responseData);
   return responseData;
 };
 

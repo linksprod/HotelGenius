@@ -6,7 +6,7 @@ const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-const sql = readFileSync('./supabase/migrations/20260622130000_admin_guest_preferences_rls.sql', 'utf8');
+const sql = readFileSync('./supabase/migrations/20260625123600_add_seminars_to_hotel_about.sql', 'utf8');
 
 // Split SQL into individual statements
 const statements = sql

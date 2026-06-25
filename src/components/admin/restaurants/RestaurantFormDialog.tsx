@@ -47,6 +47,7 @@ const RestaurantFormDialog = ({
       status: "open",
       actionText: "Book a Table",
       isFeatured: false,
+      bookingEnabled: true,
       images: [],
     },
   });
@@ -63,6 +64,7 @@ const RestaurantFormDialog = ({
         status: restaurant.status,
         actionText: restaurant.actionText || "Book a Table",
         isFeatured: restaurant.isFeatured || false,
+        bookingEnabled: restaurant.bookingEnabled !== false,
         images: restaurant.images,
       });
     } else if (isOpen && !restaurant) {
@@ -76,6 +78,7 @@ const RestaurantFormDialog = ({
         status: "open",
         actionText: "Book a Table",
         isFeatured: false,
+        bookingEnabled: true,
         images: [],
       });
     }
@@ -101,6 +104,7 @@ const RestaurantFormDialog = ({
           status: values.status,
           actionText: values.actionText,
           isFeatured: values.isFeatured,
+          bookingEnabled: values.bookingEnabled,
           images: values.images,
         });
         toast.success('Restaurant created successfully');

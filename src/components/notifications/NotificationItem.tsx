@@ -112,11 +112,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         defaultValue: `Booking for ${data?.date || ''} at ${data?.time || ''}`
       });
     } else if (type === 'reservation') {
+      const restaurantName = data?.restaurant_name || data?.restaurantName || t('notifications.type.restaurant', 'restaurant');
       return t('notifications.summaries.restaurant_booking', {
         guests: data?.guests || '',
         date: data?.date || '',
         time: data?.time || '',
-        defaultValue: `Reservation for ${data?.guests || ''} person(s) on ${data?.date || ''} at ${data?.time || ''}`
+        restaurant: restaurantName,
+        defaultValue: `Reservation for ${data?.guests || ''} person(s) at ${restaurantName} on ${data?.date || ''} at ${data?.time || ''}`
       });
     } else if (type === 'request') {
       return description || t('notifications.summaries.service_request', 'Service request');

@@ -105,10 +105,12 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         defaultValue: desc
       });
     } else if (type === 'reservation') {
+      const restaurantName = data?.restaurant_name || data?.restaurantName || t('notifications.type.restaurant', 'restaurant');
       return t('notifications.summaries.restaurant_booking', {
         guests: data?.guests || '',
         date: data?.date || '',
         time: data?.time || '',
+        restaurant: restaurantName,
         defaultValue: desc
       });
     } else if (type === 'request') {
@@ -153,6 +155,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             <p className="text-foreground/80">
               {getTranslatedDescription(notification.description, notification.type, notification.data)}
             </p>
+            {notification.type === 'reservation' && (notification.data?.restaurant_name || notification.data?.restaurantName) && (
+              <div className="mt-2 mr-2 text-xs font-semibold text-primary bg-primary/5 rounded px-2.5 py-1.5 inline-block">
+                🍽️ {currentLang === 'fr' ? 'Restaurant :' : 'Restaurant:'} {notification.data.restaurant_name || notification.data.restaurantName}
+              </div>
+            )}
             {notification.type === 'reservation' && notification.data?.restaurant_location && (
               <div className="mt-2 text-xs font-semibold text-primary bg-primary/5 rounded px-2.5 py-1.5 inline-block">
                 📍 {currentLang === 'fr' ? 'Emplacement :' : 'Location:'} {notification.data.restaurant_location}

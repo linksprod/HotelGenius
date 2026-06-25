@@ -17,7 +17,7 @@ const BookingServiceInfo: React.FC<BookingServiceInfoProps> = ({ service }) => {
           <Clock className="h-4 w-4 mr-1" />
           {service.duration}
         </div>
-        <span className="font-semibold">${service.price}</span>
+        <span className="font-semibold">{service.price} DT</span>
       </div>
     </div>
   );

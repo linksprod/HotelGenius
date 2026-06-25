@@ -8,7 +8,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 async function applyMigration() {
     console.log("Reading migration file...");
-    const sql = fs.readFileSync('supabase/migrations/20260309113000_fix_effective_channels_matrix.sql', 'utf8');
+    const sql = fs.readFileSync('supabase/migrations/20260625123600_add_seminars_to_hotel_about.sql', 'utf8');
 
     console.log("Executing run_sql RPC...");
     const { data, error } = await supabase.rpc('run_sql', { sql });

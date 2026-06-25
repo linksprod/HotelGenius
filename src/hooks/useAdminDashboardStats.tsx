@@ -62,7 +62,14 @@ const fetchDashboardStats = async (hotelId: string | null): Promise<AdminDashboa
 
   const serviceRequestsQuery = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const q = supabase.from('service_requests' as any).select('status');
+    let q = supabase.from('service_requests' as any).select('status');
+    if (hotelId) {
+      if (userIds.length > 0) {
+        q = q.or(`hotel_id.eq.${hotelId},guest_id.in.(${userIds.join(',')})`);
+      } else {
+        q = q.eq('hotel_id', hotelId);
+      }
+    }
     return q;
   };
 

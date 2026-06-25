@@ -698,6 +698,17 @@
     "contact": "Contact Information",
     "address": "Address",
     "facilities": "Facilities & Amenities",
+    "seminars": {
+      "title": "Seminars & Meetings",
+      "subtitle": "Host successful meetings, conferences, and banquets in our fully equipped spaces.",
+      "default_desc": "The hotel is particularly suitable for these activities. Our plenary rooms can accommodate all your needs.",
+      "included_services": "Included Services & Technical Amenities",
+      "rooms_specs": "Conference Rooms: Technical Specifications",
+      "light": "Natural Light",
+      "surface": "Surface",
+      "height": "Ceiling Height",
+      "capacities": "Max Capacities"
+    },
     "content": {
       "heroTitle": {
         "f68672da-d6e4-46fd-95a5-753594a39a74": "Palais Bayram"
@@ -876,7 +887,7 @@
     },
     "summaries": {
       "spa_booking": "Booking for {{date}} at {{time}}",
-      "restaurant_booking": "Reservation for {{guests}} person(s) on {{date}} at {{time}}",
+      "restaurant_booking": "Reservation for {{guests}} person(s) at {{restaurant}} on {{date}} at {{time}}",
       "service_request": "Service request",
       "event_booking": "Reservation for {{guests}} person(s) on {{date}}"
     },

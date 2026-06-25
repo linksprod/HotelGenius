@@ -13,6 +13,7 @@ import { Loader2, FileText } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
+import SeminarsSection from '@/components/admin/about/SeminarsSection';
 
 const AboutEditor = () => {
   const { aboutData, isLoadingAbout, aboutError, updateAboutData, createInitialAboutData } = useAboutData();
@@ -20,6 +21,10 @@ const AboutEditor = () => {
   const [activeTab, setActiveTab] = useState('hero');
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    console.log("AboutEditor loaded aboutData:", aboutData);
+  }, [aboutData]);
 
   if (isLoadingAbout) {
     return (
@@ -84,7 +89,12 @@ const AboutEditor = () => {
       directory_title: 'Hotel Directory & Information',
       hero_image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80',
       hero_title: `Welcome to ${hotelName}`,
-      hero_subtitle: 'Discover luxury and comfort'
+      hero_subtitle: 'Discover luxury and comfort',
+      has_seminars: false,
+      seminar_description: 'The hotel is particularly suitable for seminars, conferences, and banquets. Our plenary rooms can accommodate all your needs.',
+      seminar_image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=2070&q=80',
+      seminar_services: ['WiFi', 'Sound System', 'Projector', 'Paperboard'],
+      seminar_rooms: []
     };
 
     try {
@@ -145,6 +155,7 @@ const AboutEditor = () => {
           <TabsTrigger value="mission">Mission</TabsTrigger>
           <TabsTrigger value="features">Features</TabsTrigger>
           <TabsTrigger value="directory">Directory</TabsTrigger>
+          <TabsTrigger value="seminars">Seminars</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero" className="space-y-6">
@@ -204,6 +215,18 @@ const AboutEditor = () => {
             onSaveFacilities={(items) => updateAboutData({ ...aboutData, facilities: items })}
             onSaveHotelPolicies={(items) => updateAboutData({ ...aboutData, hotel_policies: items })}
             onSaveAdditionalInfo={(items) => updateAboutData({ ...aboutData, additional_info: items })}
+          />
+        </TabsContent>
+
+        <TabsContent value="seminars">
+          <SeminarsSection
+            key={aboutData.id}
+            hasSeminars={!!aboutData.has_seminars}
+            seminarDescription={aboutData.seminar_description || ''}
+            seminarImage={aboutData.seminar_image || ''}
+            seminarServices={aboutData.seminar_services || []}
+            seminarRooms={aboutData.seminar_rooms || []}
+            onSave={(seminarData) => updateAboutData({ ...aboutData, ...seminarData })}
           />
         </TabsContent>
       </Tabs>

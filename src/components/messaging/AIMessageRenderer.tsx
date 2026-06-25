@@ -79,13 +79,27 @@ const AIMessageRenderer: React.FC<AIMessageRendererProps> = ({ message, onQuickA
     const services = spaText.split(/\*\*/).filter(s => s.includes('(') && s.includes(')')).map(service => {
       const nameMatch = service.match(/([^(]+)/);
       const durationMatch = service.match(/\(([^)]+)\)/);
-      const descMatch = service.match(/-\s*([^$]+)/);
+      
+      // Match price pattern like $50, 50€, 50 DT, etc.
+      const priceRegex = /(?:\$|€|DT|TND)?\s*(\d+)\s*(?:\$|€|DT|TND|dinar|dinars)?/i;
+      const priceMatch = service.match(priceRegex);
+      const numericPrice = priceMatch ? priceMatch[1] : '';
+      const formattedPrice = numericPrice ? `${numericPrice} DT` : '';
+      
+      // Extract and clean description
+      const descMatch = service.match(/-\s*(.+)$/);
+      let description = descMatch?.[1]?.trim() || '';
+      if (description) {
+        description = description
+          .replace(/(?:\$|€|DT|TND)?\s*\d+\s*(?:\$|€|DT|TND|dinar|dinars)?/gi, '')
+          .trim();
+      }
       
       return {
         name: nameMatch?.[1]?.trim(),
         duration: durationMatch?.[1]?.trim(),
-        description: descMatch?.[1]?.trim()?.replace(/\$\d+/, ''),
-        price: service.match(/\$(\d+)/)?.[0]
+        description: description,
+        price: formattedPrice
       };
     }).filter(s => s.name);
     
@@ -217,7 +231,13 @@ const AIMessageRenderer: React.FC<AIMessageRendererProps> = ({ message, onQuickA
                         <h4 className="font-medium">{service.name}</h4>
                         <div className="flex items-center gap-2">
                           {service.price && (
-                            <Badge variant="outline">{service.price}</Badge>
+                            <Badge variant="outline">
+                              {typeof service.price === 'number' || !isNaN(Number(service.price))
+                                ? `${service.price} DT`
+                                : service.price.toString().includes('DT')
+                                  ? service.price
+                                  : `${service.price} DT`}
+                            </Badge>
                           )}
                           <Button 
                             size="sm" 

@@ -28,34 +28,30 @@ export const useServiceRequests = () => {
 
       console.log('Admin view: Fetching service requests', hotelId ? `for hotel ${hotelId}` : 'all hotels');
 
-      let userIds: string[] = [];
-
-      if (hotelId) {
-        // Double fetch: first get all guest user_ids for this hotel
-        const { data: guests, error: guestsError } = await supabase
-          .from('guests')
-          .select('user_id')
-          .eq('hotel_id', hotelId);
-
-        if (guestsError) {
-          console.error('Error fetching guests for hotel:', guestsError);
-          throw guestsError;
-        }
-
-        userIds = guests.map(g => g.user_id).filter(Boolean) as string[];
-
-        if (userIds.length === 0) {
-          console.log('No guests found for this hotel, returning empty requests');
-          return [];
-        }
-      }
-
       let query = supabase
         .from('service_requests')
         .select('*, request_items(*)');
 
-      if (hotelId && userIds.length > 0) {
-        query = query.in('guest_id', userIds);
+      if (hotelId) {
+        // Double fetch fallback: get all guest user_ids for this hotel to include legacy/mismatched requests
+        let userIds: string[] = [];
+        try {
+          const { data: guests } = await supabase
+            .from('guests')
+            .select('user_id')
+            .eq('hotel_id', hotelId);
+          if (guests) {
+            userIds = guests.map(g => g.user_id).filter(Boolean) as string[];
+          }
+        } catch (err) {
+          console.error('Error fetching guests for hotel fallback:', err);
+        }
+
+        if (userIds.length > 0) {
+          query = query.or(`hotel_id.eq.${hotelId},guest_id.in.(${userIds.join(',')})`);
+        } else {
+          query = query.eq('hotel_id', hotelId);
+        }
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });

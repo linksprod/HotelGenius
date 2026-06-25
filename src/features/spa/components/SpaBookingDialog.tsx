@@ -54,7 +54,7 @@ const SpaBookingDialog = ({
       )}
       <Dialog open={isOpen} onOpenChange={onOpenChange} modal={false}>
         <DialogContent className="sm:max-w-[500px] p-0">
-          <DialogHeader className="p-6 pb-2">
+          <DialogHeader className="p-4 sm:p-6 pb-2">
             <DialogTitle>
               {isEditing 
                 ? t('spa.edit_booking_title', 'Edit Your Booking - {{serviceName}}', { serviceName: service?.name }) 
@@ -67,7 +67,7 @@ const SpaBookingDialog = ({
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[80vh]">
-            <div className="p-6 pt-2">
+            <div className="p-4 sm:p-6 pt-2">
               {!loading && service && (
                 <SpaBookingForm
                   service={service}

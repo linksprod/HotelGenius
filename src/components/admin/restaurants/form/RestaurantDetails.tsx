@@ -114,6 +114,25 @@ const RestaurantDetails = ({ form }: RestaurantDetailsProps) => {
           </FormItem>
         )}
       />
+      <FormField
+        control={form.control}
+        name="bookingEnabled"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+            <div className="space-y-0.5">
+              <FormLabel>Enable Bookings</FormLabel>
+              <div className="text-xs text-muted-foreground">Show "Book a Table" button on guest side</div>
+              <FormMessage />
+            </div>
+            <FormControl>
+              <Switch
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
     </>
   );
 };

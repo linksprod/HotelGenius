@@ -150,7 +150,7 @@ export default function SpaBookingForm({
             variant: "destructive"
           });
         })} 
-        className="space-y-4"
+        className="space-y-3"
       >
         <GuestInfoFields
           form={form}
@@ -159,7 +159,7 @@ export default function SpaBookingForm({
           t={t}
         />
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 grid-cols-2">
           <FormField
             control={form.control}
             name="date"

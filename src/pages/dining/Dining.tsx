@@ -106,14 +106,16 @@ const Dining = () => {
                   <span>{t(`restaurants.location.${restaurant.location?.trim()}`, restaurant.location)}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{t(`restaurants.description.${restaurant.id}`, restaurant.description)}</p>
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <Button
-                    onClick={() => handleBookTable(restaurant.id)}
-                    className="w-full flex items-center justify-center gap-1"
-                  >
-                    <Calendar size={16} />
-                    {restaurant.actionText ? t(`restaurants.action.${restaurant.actionText}`, restaurant.actionText) : t('dining.bookTable')}
-                  </Button>
+                <div className={restaurant.bookingEnabled !== false ? "grid grid-cols-2 gap-2 mb-2" : "flex gap-2 mb-2"}>
+                  {restaurant.bookingEnabled !== false && (
+                    <Button
+                      onClick={() => handleBookTable(restaurant.id)}
+                      className="w-full flex items-center justify-center gap-1"
+                    >
+                      <Calendar size={16} />
+                      {restaurant.actionText ? t(`restaurants.action.${restaurant.actionText}`, restaurant.actionText) : t('dining.bookTable')}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
                     className="w-full flex items-center justify-center gap-1 border-border/50 hover:bg-accent"

@@ -81,34 +81,8 @@ const AdminTopBar: React.FC<AdminTopBarProps> = ({ sectionLabel, onOpenCommandPa
           )}
         </div>
 
-        {/* Center: Global Search */}
-        <button
-          onClick={() => setCmdOpen(true)}
-          className={cn(
-            'flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm',
-            'text-muted-foreground',
-            'bg-muted/60 hover:bg-muted transition-colors',
-            'border border-border/60 hover:border-border',
-            'cursor-pointer group w-full max-w-xs hidden md:flex'
-          )}
-        >
-          <Search className="w-3.5 h-3.5 shrink-0" />
-          <span className="flex-1 text-left">Search anything...</span>
-          <kbd className="hidden lg:flex items-center gap-0.5 text-[10px] text-muted-foreground/70 bg-background/80 rounded px-1 py-0.5 border border-border/50">
-            <Command className="w-2.5 h-2.5" />K
-          </kbd>
-        </button>
-
         {/* Right: Actions */}
         <div className="flex items-center gap-1 shrink-0">
-          {/* Mobile search button */}
-          <button
-            onClick={() => setCmdOpen(true)}
-            className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors text-muted-foreground"
-          >
-            <Search className="w-4 h-4" />
-          </button>
-
           <ThemeToggle />
           <StaffNotificationBell />
 

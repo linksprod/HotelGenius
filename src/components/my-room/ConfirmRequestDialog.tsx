@@ -46,7 +46,7 @@ const ConfirmRequestDialog = ({
   return (
     <Dialog open={open} onOpenChange={onCancel}>
       <DialogContent 
-        className="sm:max-w-md mx-4 rounded-2xl animate-fade-in" 
+        className="w-[calc(100%-32px)] sm:max-w-md rounded-2xl animate-fade-in" 
         aria-labelledby="confirmation-dialog-title"
         aria-describedby="confirmation-dialog-description"
       >

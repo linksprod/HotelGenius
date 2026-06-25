@@ -173,7 +173,7 @@ export const requestService = async (
           .maybeSingle();
 
         if (existingGuest) {
-          if (!existingGuest.hotel_id || existingGuest.hotel_id === '00000000-0000-0000-0000-000000000000') {
+          if (existingGuest.hotel_id !== resolvedHotelId) {
             await supabase
               .from('guests')
               // eslint-disable-next-line @typescript-eslint/no-explicit-any

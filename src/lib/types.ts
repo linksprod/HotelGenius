@@ -57,6 +57,30 @@ export interface HotelAbout {
   hero_image: string;
   hero_title: string;
   hero_subtitle: string;
+  has_seminars?: boolean;
+  seminar_description?: string;
+  seminar_image?: string;
+  seminar_services?: SeminarService[];
+  seminar_rooms?: SeminarRoom[];
+}
+
+export interface SeminarService {
+  name: string;
+  icon: string; // lucide icon name, e.g. 'Wifi', 'Volume2'
+}
+
+export interface SeminarRoom {
+  name: string;
+  surface: number;
+  height?: number;
+  natural_light: boolean;
+  wifi: boolean;
+  cap_u_shape?: number;
+  cap_classroom?: number;
+  cap_theatre?: number;
+  cap_banquet?: number;
+  cap_cocktail?: number;
+  cap_boardroom?: number;
 }
 
 export interface InfoItem {

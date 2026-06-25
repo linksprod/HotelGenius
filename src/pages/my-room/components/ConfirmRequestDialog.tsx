@@ -49,7 +49,7 @@ const ConfirmRequestDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent className="sm:max-w-md mx-4 rounded-2xl">
+      <DialogContent className="w-[calc(100%-32px)] sm:max-w-md rounded-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl">{t('myRoom.request.confirmTitle', 'Confirm Service Request')}</DialogTitle>
           <DialogDescription className="text-gray-500">

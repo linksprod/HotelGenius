@@ -122,7 +122,7 @@ const RestaurantDetail = () => {
                       <span>{t(`restaurants.location.${restaurant.location?.trim()}`, restaurant.location)}</span>
                     </div>
                     <p className="text-muted-foreground mb-6">{t(`restaurants.description.${restaurant.id}`, restaurant.description)}</p>
-                    {hotel?.plan !== 'essential' && (
+                    {hotel?.plan !== 'essential' && restaurant.bookingEnabled !== false && (
                       <Button onClick={handleBookTable}>
                         {restaurant.actionText ? t(`restaurants.action.${restaurant.actionText}`, restaurant.actionText) : t('dining.bookTable')}
                       </Button>
@@ -148,7 +148,7 @@ const RestaurantDetail = () => {
                       restaurant={restaurant}
                       onBookingClick={handleBookTable}
                       onViewMenuClick={() => setActiveTab("menu")}
-                      showBookingButton={hotel?.plan !== 'essential'}
+                      showBookingButton={hotel?.plan !== 'essential' && restaurant.bookingEnabled !== false}
                     />
                   </TabsContent>
                   <TabsContent value="menu" className="p-4">

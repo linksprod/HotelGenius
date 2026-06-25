@@ -75,7 +75,7 @@ const SearchDialog: React.FC<Props> = ({
             </button>
           )}
         </div>
-        <CommandList className="max-h-[65vh] overflow-y-auto">
+        <CommandList className="max-h-[50vh] sm:max-h-[65vh] overflow-y-auto">
           {!isLoading && (
             <CommandEmpty>
               <div className="py-6 text-center flex flex-col items-center">

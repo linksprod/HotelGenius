@@ -172,6 +172,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({ notification
         <div className="mt-1.5">
           <p className="text-sm text-gray-800">{t('notifications.summary.title')}:</p>
           <ul className="text-xs text-gray-600 list-disc pl-5 mt-1 space-y-1">
+            {(notification.data?.restaurant_name || notification.data?.restaurantName) && (
+              <li>Restaurant: {notification.data.restaurant_name || notification.data.restaurantName}</li>
+            )}
             <li>{t('notifications.summary.date')}: {notification.data?.date}</li>
             <li>{t('notifications.summary.time')}: {notification.data?.time}</li>
             <li>{t('notifications.summary.people')}: {notification.data?.guests}</li>

@@ -175,7 +175,7 @@ export default function SpaServicesTab() {
             <h4 className="text-sm font-bold text-foreground">Details</h4>
             <div className="text-sm text-muted-foreground space-y-1 mt-1">
               <p><span className="font-medium">Duration:</span> {service.duration}</p>
-              <p><span className="font-medium">Price:</span> {service.price} €</p>
+              <p><span className="font-medium">Price:</span> {service.price} DT</p>
               <p><span className="font-medium">Category:</span> {getCategoryLabel(service.category)}</p>
               <p><span className="font-medium">Status:</span> <span className={service.status === 'available' ? 'text-emerald-500' : 'text-rose-500'}>
                 {service.status === 'available' ? 'Available' : 'Unavailable'}

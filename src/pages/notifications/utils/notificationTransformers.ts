@@ -65,6 +65,8 @@ export const transformTableReservations = (reservations: TableReservation[]): No
         date: reservation.date,
         time: reservation.time,
         room_number: reservation.room_number,
+        restaurant_name: reservation.restaurant?.name,
+        restaurant_location: reservation.restaurant?.location
       }
     };
   });

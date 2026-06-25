@@ -143,7 +143,8 @@ export const useNotificationsData = () => {
         room_number: res.roomNumber,
         special_requests: res.specialRequests,
         status: res.status,
-        created_at: res.createdAt
+        created_at: res.createdAt,
+        restaurant: res.restaurant
       }));
 
       // Combine and sort legacy notifications
