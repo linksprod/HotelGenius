@@ -32,6 +32,7 @@ export const useUnifiedChat = ({
   });
 
   const [inputMessage, setInputMessage] = useState('');
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
@@ -366,11 +367,16 @@ export const useUnifiedChat = ({
 
   // Send message
   const sendMessage = async () => {
-    if (!inputMessage.trim() || !chatState.conversation) return;
+    if (!inputMessage.trim()) return;
 
     try {
       const { data: user } = await supabase.auth.getUser();
-      if (!user.user) return;
+      if (!user.user) {
+        setShowAuthDialog(true);
+        return;
+      }
+
+      if (!chatState.conversation) return;
 
       const messageContent = inputMessage.trim();
       setInputMessage('');
@@ -650,6 +656,8 @@ export const useUnifiedChat = ({
     startNewConversation,
     deleteConversation,
     messagesEndRef,
-    inputRef
+    inputRef,
+    showAuthDialog,
+    setShowAuthDialog
   };
 };

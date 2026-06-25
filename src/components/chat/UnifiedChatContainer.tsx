@@ -5,6 +5,8 @@ import { UnifiedChatInput } from './UnifiedChatInput';
 import { useUnifiedChat } from '@/hooks/useUnifiedChat';
 import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Clock, X, Plus, MessageSquare, Trash2 } from 'lucide-react';
@@ -46,6 +48,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   onDeleteSuccess
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { resolvePath } = useHotelPath();
   const { hotelId: contextHotelId } = useCurrentHotelId();
   const hotelId = propHotelId || contextHotelId;
 
@@ -70,7 +74,9 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     startNewConversation,
     deleteConversation,
     messagesEndRef,
-    inputRef
+    inputRef,
+    showAuthDialog,
+    setShowAuthDialog
   } = useUnifiedChat({ 
     userInfo, 
     isAdmin, 
@@ -311,6 +317,29 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('chat.authRequired.title', 'Account required to continue')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('chat.authRequired.description', 'Please log in or sign up to send messages and interact with our AI concierge.')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowAuthDialog(false)}>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                setShowAuthDialog(false);
+                navigate(resolvePath('/guests/auth/login') + `?redirect=${encodeURIComponent(window.location.pathname)}`);
+              }}
+              className="bg-[#82A691] text-white hover:bg-[#6D8E7B]"
+            >
+              {t('chat.authRequired.loginButton', 'Log In / Sign Up')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
