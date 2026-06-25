@@ -46,10 +46,7 @@ const ThemeCustomizer = () => {
         const root = document.documentElement;
 
         // Determine if dark mode is active
-        const isDark = resolvedTheme === 'dark' || 
-                       root.classList.contains('dark') || 
-                       document.body.classList.contains('dark') ||
-                       localStorage.getItem('theme') === 'dark';
+        const isDark = resolvedTheme === 'dark';
 
         // Define default colors if not provided or if too dark/generic
         const primaryHex = (isDark ? hotel.dark_primary_color : hotel.primary_color) || hotel.primary_color || '#94b3a3';
