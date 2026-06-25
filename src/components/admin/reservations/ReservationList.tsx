@@ -13,7 +13,7 @@ const ReservationList = ({ reservations, onOpenStatusDialog, restaurantMap }: Re
   if (!reservations || reservations.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground mb-4">Aucune réservation pour ce restaurant</p>
+        <p className="text-muted-foreground mb-4">No reservations for this restaurant</p>
       </div>
     );
   }

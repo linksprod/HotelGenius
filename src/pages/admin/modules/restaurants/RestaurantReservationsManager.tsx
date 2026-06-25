@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
@@ -96,7 +96,7 @@ const RestaurantReservationsManager = () => {
 
   const formatDate = (dateStr: string) => {
     try {
-      return format(new Date(dateStr), 'dd MMM yyyy', { locale: fr });
+      return format(new Date(dateStr), 'dd MMM yyyy', { locale: enUS });
     } catch {
       return dateStr;
     }
@@ -105,11 +105,11 @@ const RestaurantReservationsManager = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <Badge className="bg-green-100 text-green-800 border-green-200">Confirmée</Badge>;
+        return <Badge className="bg-green-100 text-green-800 border-green-200">Confirmed</Badge>;
       case 'cancelled':
-        return <Badge className="bg-red-100 text-red-800 border-red-200">Annulée</Badge>;
+        return <Badge className="bg-red-100 text-red-800 border-red-200">Cancelled</Badge>;
       default:
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">En attente</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>;
     }
   };
 
@@ -162,11 +162,11 @@ const RestaurantReservationsManager = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Client</TableHead>
+                  <TableHead>Guest</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Heure</TableHead>
-                  <TableHead>Couverts</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Time</TableHead>
+                  <TableHead>Guests</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -178,7 +178,7 @@ const RestaurantReservationsManager = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span className="font-medium cursor-default">
-                              {reservation.guestName || 'Client'}
+                              {reservation.guestName || 'Guest'}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="space-y-1 text-xs">
@@ -194,7 +194,7 @@ const RestaurantReservationsManager = () => {
                         {reservation.roomNumber && (
                           <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Home className="h-3 w-3" />
-                            Ch. {reservation.roomNumber}
+                            Rm. {reservation.roomNumber}
                           </div>
                         )}
                         {reservation.specialRequests && (
@@ -215,7 +215,7 @@ const RestaurantReservationsManager = () => {
                         size="sm"
                         onClick={() => handleOpenStatusDialog(reservation)}
                       >
-                        Modifier
+                        Edit
                       </Button>
                     </TableCell>
                   </TableRow>

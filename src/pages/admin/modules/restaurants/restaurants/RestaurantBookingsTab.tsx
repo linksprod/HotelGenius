@@ -138,7 +138,7 @@ const RestaurantBookingsTab = () => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <span className="font-medium cursor-default">
-                              {reservation.guestName || 'Client'}
+                              {reservation.guestName || 'Guest'}
                             </span>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" className="space-y-1 text-xs">

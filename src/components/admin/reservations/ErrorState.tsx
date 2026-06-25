@@ -14,13 +14,13 @@ const ErrorState = ({ errorMessage, onBackClick }: ErrorStateProps) => {
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center mb-4">
         <Button variant="outline" size="sm" onClick={onBackClick}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Retour
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
       </div>
       
       <Alert variant="destructive" className="mb-6">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Erreur</AlertTitle>
+        <AlertTitle>Error</AlertTitle>
         <AlertDescription>{errorMessage}</AlertDescription>
       </Alert>
     </div>

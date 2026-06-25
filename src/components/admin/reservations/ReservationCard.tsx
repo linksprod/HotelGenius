@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Users, MessageSquare, CheckCircle, XCircle, Clock3, Home, UtensilsCrossed } from 'lucide-react';
@@ -16,7 +16,7 @@ interface ReservationCardProps {
 const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: ReservationCardProps) => {
   const formatDate = (dateStr: string) => {
     try {
-      return format(new Date(dateStr), 'dd MMMM yyyy', { locale: fr });
+      return format(new Date(dateStr), 'dd MMMM yyyy', { locale: enUS });
     } catch (e) {
       return dateStr;
     }
@@ -36,11 +36,11 @@ const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: Re
   const getStatusText = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'Confirmée';
+        return 'Confirmed';
       case 'cancelled':
-        return 'Annulée';
+        return 'Cancelled';
       default:
-        return 'En attente';
+        return 'Pending';
     }
   };
 
@@ -60,7 +60,7 @@ const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: Re
       <CardHeader>
         <div className="flex justify-between items-start">
           <CardTitle>
-            {reservation.guestName || 'Client'}
+            {reservation.guestName || 'Guest'}
           </CardTitle>
           <div className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusBadgeClasses(reservation.status)}`}>
             {getStatusIcon(reservation.status)}
@@ -74,7 +74,7 @@ const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: Re
           </div>
         )}
         <CardDescription>
-          Réservation #{reservation.id.substring(0, 8)}
+          Reservation #{reservation.id.substring(0, 8)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -88,14 +88,14 @@ const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: Re
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Users className="h-4 w-4 text-muted-foreground" />
-          <span>{reservation.guests} personnes</span>
+          <span>{reservation.guests} guests</span>
         </div>
         
-        {/* Affichage du numéro de chambre */}
+        {/* Room number display */}
         {reservation.roomNumber && (
           <div className="flex items-center gap-2 text-sm">
             <Home className="h-4 w-4 text-muted-foreground" />
-            <span>Chambre: {reservation.roomNumber}</span>
+            <span>Room: {reservation.roomNumber}</span>
           </div>
         )}
         
@@ -107,12 +107,12 @@ const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: Re
         )}
         
         <div className="space-y-2">
-          <p className="text-sm font-medium">Informations de contact:</p>
+          <p className="text-sm font-medium">Contact Information:</p>
           {reservation.guestEmail && (
             <p className="text-sm text-muted-foreground">Email: {reservation.guestEmail}</p>
           )}
           {reservation.guestPhone && (
-            <p className="text-sm text-muted-foreground">Téléphone: {reservation.guestPhone}</p>
+            <p className="text-sm text-muted-foreground">Phone: {reservation.guestPhone}</p>
           )}
         </div>
         
@@ -121,7 +121,7 @@ const ReservationCard = ({ reservation, onOpenStatusDialog, restaurantName }: Re
           className="w-full"
           variant="outline"
         >
-          Modifier le statut
+          Edit Status
         </Button>
       </CardContent>
     </Card>

@@ -42,9 +42,9 @@ const StatusDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Modifier le statut de la réservation</DialogTitle>
+          <DialogTitle>Update Reservation Status</DialogTitle>
           <DialogDescription>
-            Changer le statut de la réservation pour {reservation?.guestName || 'ce client'}.
+            Change the reservation status for {reservation?.guestName || 'this guest'}.
           </DialogDescription>
         </DialogHeader>
         
@@ -54,19 +54,19 @@ const StatusDialog = ({
             onValueChange={(value: 'pending' | 'confirmed' | 'cancelled') => setNewStatus(value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionnez un statut" />
+              <SelectValue placeholder="Select a status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="pending">En attente</SelectItem>
-              <SelectItem value="confirmed">Confirmée</SelectItem>
-              <SelectItem value="cancelled">Annulée</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
         
         <DialogFooter>
           <Button onClick={onUpdateStatus}>
-            Enregistrer
+            Save
           </Button>
         </DialogFooter>
       </DialogContent>

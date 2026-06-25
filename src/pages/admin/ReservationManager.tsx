@@ -33,12 +33,12 @@ const ReservationManager = () => {
       fetchRestaurantById(id)
         .then(data => setRestaurant(data))
         .catch(err => {
-          console.error("Erreur lors du chargement du restaurant:", err);
-          setLoadingError("Impossible de charger le restaurant. Veuillez vérifier l'identifiant.");
-          toast.error("Erreur lors du chargement du restaurant");
+          console.error("Error loading restaurant:", err);
+          setLoadingError("Unable to load restaurant details. Please check the restaurant ID.");
+          toast.error("Error loading restaurant");
         });
     } else {
-      setLoadingError("ID de restaurant invalide. Veuillez sélectionner un restaurant valide.");
+      setLoadingError("Invalid restaurant ID. Please select a valid restaurant.");
     }
   }, [id, fetchRestaurantById]);
 
@@ -63,28 +63,28 @@ const ReservationManager = () => {
   }
 
   if (isLoading || !restaurant) {
-    return <div className="p-8 text-center">Chargement des réservations...</div>;
+    return <div className="p-8 text-center">Loading reservations...</div>;
   }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center mb-4">
         <Button variant="outline" size="sm" onClick={() => navigate(resolvePath('/admin/restaurants'))}>
-          <ArrowLeft className="mr-2 h-4 w-4" /> Retour
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
       </div>
 
       <div className="mb-6">
         <AdminPageHeader
           title={restaurant.name}
-          description="Gestion des Réservations"
+          description="Manage Reservations"
           icon={<Calendar className="h-5 w-5 text-primary" />}
         />
       </div>
 
       {error && (
         <ErrorState
-          errorMessage={`Impossible de charger les réservations: ${error instanceof Error ? error.message : 'Erreur inconnue'}`}
+          errorMessage={`Unable to load reservations: ${error instanceof Error ? error.message : 'Unknown error'}`}
           onBackClick={() => navigate(resolvePath('/admin/restaurants'))}
         />
       )}
