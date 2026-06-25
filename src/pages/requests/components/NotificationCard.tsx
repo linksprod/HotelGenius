@@ -173,18 +173,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             {getStatusIcon(notification.status)}
             <span className="text-sm font-medium">{getStatusText(notification.status)}</span>
           </div>
-          
           <div className="flex gap-2">
-            {notification.type !== 'reservation' && (
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => navigate(getDetailLink())}
-              >
-                {t('notifications.action.viewDetails', 'View Details')}
-              </Button>
-            )}
-            
             {canCancel && (
               <Button 
                 variant="destructive" 
