@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import SwipeIndicator from '@/components/ui/swipe-indicator';
 import { motion } from 'framer-motion';
-import useEmblaCarousel from 'embla-carousel-react';
 import { useNavigate } from 'react-router-dom';
 import { useHotelPath } from '@/hooks/useHotelPath';
 
@@ -17,22 +16,23 @@ const FeaturedExperienceSection = () => {
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [api, setApi] = React.useState<any>(null);
   const { config, isLoading } = useHotelConfig();
 
   React.useEffect(() => {
-    if (!emblaApi) return;
+    if (!api) return;
 
     const onSelect = () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
+      setSelectedIndex(api.selectedScrollSnap());
     };
 
-    emblaApi.on('select', onSelect);
+    api.on('select', onSelect);
+    setSelectedIndex(api.selectedScrollSnap());
 
     return () => {
-      emblaApi.off('select', onSelect);
+      api.off('select', onSelect);
     };
-  }, [emblaApi]);
+  }, [api]);
 
   const defaultExperiences = [
     {
@@ -92,8 +92,8 @@ const FeaturedExperienceSection = () => {
   return (
     <section className="px-6 mb-10">
       <h2 className="text-2xl font-bold text-foreground mb-4">{t('home.featuredExperience.title')}</h2>
-      <Carousel className="w-full">
-        <CarouselContent ref={emblaRef}>
+      <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
+        <CarouselContent>
           {featuredExperiences.map((experience, index) => (
             <CarouselItem key={experience.id}>
               <motion.div

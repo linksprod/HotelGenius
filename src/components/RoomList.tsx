@@ -4,11 +4,10 @@ import RoomCard from './RoomCard';
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/components/ui/carousel';
 import { ChevronRight } from 'lucide-react';
 import SwipeIndicator from './ui/swipe-indicator';
-import useEmblaCarousel from 'embla-carousel-react';
 
 const RoomList = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [api, setApi] = React.useState<any>(null);
 
   const rooms = [
     {
@@ -38,16 +37,18 @@ const RoomList = () => {
   ];
 
   React.useEffect(() => {
-    if (!emblaApi) return;
+    if (!api) return;
 
-    emblaApi.on('select', () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
+    api.on('select', () => {
+      setSelectedIndex(api.selectedScrollSnap());
     });
-  }, [emblaApi]);
+    setSelectedIndex(api.selectedScrollSnap());
+  }, [api]);
 
   return (
     <div className="relative w-full overflow-x-hidden">
       <Carousel
+        setApi={setApi}
         opts={{
           align: "start",
           loop: true,
@@ -59,7 +60,7 @@ const RoomList = () => {
             <ChevronRight className="w-6 h-6" />
           </div>
         </div>
-        <CarouselContent ref={emblaRef} className="-ml-4">
+        <CarouselContent className="-ml-4">
           {rooms.map((room) => (
             <CarouselItem key={room.id} className="md:basis-2/5 lg:basis-[30%] pl-4">
               <div className="px-2">

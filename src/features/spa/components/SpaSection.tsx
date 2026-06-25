@@ -6,7 +6,6 @@ import SpaServiceCard from './SpaServiceCard';
 import { useSpaServices } from '@/hooks/useSpaServices';
 import { ChevronRight } from 'lucide-react';
 import SwipeIndicator from '@/components/ui/swipe-indicator';
-import useEmblaCarousel from 'embla-carousel-react';
 
 interface SpaSectionProps {
   onBookService: (serviceId: string) => void;
@@ -18,16 +17,15 @@ const SpaSection = ({
   const { t } = useTranslation();
   const { services, isLoading } = useSpaServices();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true
-  });
+  const [api, setApi] = React.useState<any>(null);
 
   React.useEffect(() => {
-    if (!emblaApi) return;
-    emblaApi.on('select', () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
+    if (!api) return;
+    api.on('select', () => {
+      setSelectedIndex(api.selectedScrollSnap());
     });
-  }, [emblaApi]);
+    setSelectedIndex(api.selectedScrollSnap());
+  }, [api]);
 
   if (isLoading) {
     return <div className="text-center py-8">{t('spa.loading_services', 'Loading services...')}</div>;
@@ -45,6 +43,7 @@ const SpaSection = ({
       </div>
 
       <Carousel
+        setApi={setApi}
         opts={{
           align: 'start',
           loop: true
