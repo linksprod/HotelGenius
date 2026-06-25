@@ -25,10 +25,10 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
         <FormField
           control={form.control}
           name="shop_id"
-          rules={{ required: 'La boutique est requise' }}
+          rules={{ required: 'Shop is required' }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Boutique</FormLabel>
+              <FormLabel>Shop</FormLabel>
               <Select 
                 value={field.value} 
                 onValueChange={field.onChange}
@@ -36,7 +36,7 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une boutique" />
+                    <SelectValue placeholder="Select a shop" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -56,12 +56,12 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
           <FormField
             control={form.control}
             name="name"
-            rules={{ required: 'Le nom est requis' }}
+            rules={{ required: 'Name is required' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nom</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nom du produit" {...field} />
+                  <Input placeholder="Product name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -73,9 +73,9 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Catégorie</FormLabel>
+                <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Input placeholder="Catégorie du produit" {...field} />
+                  <Input placeholder="Product category" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -87,12 +87,12 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
             name="price"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Prix (€)</FormLabel>
+                <FormLabel>Price (€)</FormLabel>
                 <FormControl>
                   <Input 
                     type="number" 
                     step="0.01"
-                    placeholder="Prix" 
+                    placeholder="Price" 
                     {...field}
                     value={field.value || ''}
                     onChange={e => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
@@ -108,20 +108,20 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
             name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Statut</FormLabel>
+                <FormLabel>Status</FormLabel>
                 <Select 
                   value={field.value} 
                   onValueChange={field.onChange}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un statut" />
+                      <SelectValue placeholder="Select a status" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="available">Disponible</SelectItem>
-                    <SelectItem value="out_of_stock">Rupture de stock</SelectItem>
-                    <SelectItem value="coming_soon">Bientôt disponible</SelectItem>
+                    <SelectItem value="available">Available</SelectItem>
+                    <SelectItem value="out_of_stock">Out of stock</SelectItem>
+                    <SelectItem value="coming_soon">Coming soon</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -138,7 +138,7 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Description du produit" 
+                  placeholder="Product description" 
                   className="min-h-[80px]" 
                   {...field} 
                 />
@@ -168,9 +168,9 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between p-4 border rounded-lg">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Produit mis en avant</FormLabel>
+                <FormLabel className="text-base">Featured Product</FormLabel>
                 <p className="text-sm text-muted-foreground">
-                  Ce produit doit-il apparaître en premier ?
+                  Should this product appear first?
                 </p>
               </div>
               <FormControl>
@@ -185,10 +185,10 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
 
         <div className="flex justify-end gap-2 sticky bottom-0 bg-background py-4 border-t">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Annuler
+            Cancel
           </Button>
           <Button type="submit">
-            {isEditing ? 'Mettre à jour' : 'Créer'}
+            {isEditing ? 'Update' : 'Create'}
           </Button>
         </div>
       </form>

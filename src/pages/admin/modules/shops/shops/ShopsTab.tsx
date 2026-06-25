@@ -38,33 +38,33 @@ const ShopsTab = () => {
   };
 
   if (isLoadingShops) {
-    return <div className="flex justify-center p-6">Chargement des boutiques...</div>;
+    return <div className="flex justify-center p-6">Loading shops...</div>;
   }
 
   return (
     <>
       <Card className="p-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-medium">Liste des boutiques</h2>
+          <h2 className="text-xl font-medium">Shops List</h2>
           <Button onClick={handleCreateShop} size="sm">
-            <Plus className="h-4 w-4 mr-2" /> Ajouter une boutique
+            <Plus className="h-4 w-4 mr-2" /> Add Shop
           </Button>
         </div>
 
         {hotelShops.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            Aucune boutique disponible. Créez votre première boutique !
+            No shops available. Create your first shop!
           </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nom</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Emplacement</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -79,7 +79,7 @@ const ShopsTab = () => {
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         shop.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                       }`}>
-                        {shop.status === 'active' ? 'Actif' : shop.status}
+                        {shop.status === 'active' ? 'Active' : shop.status}
                       </span>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
@@ -94,14 +94,14 @@ const ShopsTab = () => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer la boutique ?</AlertDialogTitle>
+                            <AlertDialogTitle>Delete Shop?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Cette action est irréversible. La boutique "{shop.name}" et tous ses produits associés seront supprimés définitivement.
+                              This action cannot be undone. The shop "{shop.name}" and all of its associated products will be permanently deleted.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteShop(shop.id)}>Supprimer</AlertDialogAction>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteShop(shop.id)}>Delete</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

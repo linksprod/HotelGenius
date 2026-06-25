@@ -40,7 +40,7 @@ const ProductsTab = () => {
 
   const getShopName = (shopId: string) => {
     const shop = shops.find(s => s.id === shopId);
-    return shop ? shop.name : 'Boutique inconnue';
+    return shop ? shop.name : 'Unknown shop';
   };
 
   return (
@@ -71,21 +71,21 @@ const ProductsTab = () => {
         </div>
 
         {isLoadingProducts ? (
-          <div className="flex justify-center p-6">Chargement des produits...</div>
+          <div className="flex justify-center p-6">Loading products...</div>
         ) : products.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            Aucun produit disponible. Ajoutez votre premier produit !
+            No products available. Add your first product!
           </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Boutique</TableHead>
-                  <TableHead>Prix</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Shop</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -100,7 +100,13 @@ const ProductsTab = () => {
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         product.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                       }`}>
-                        {product.status === 'available' ? 'Disponible' : product.status}
+                        {product.status === 'available' 
+                          ? 'Available' 
+                          : product.status === 'out_of_stock' 
+                          ? 'Out of stock' 
+                          : product.status === 'coming_soon' 
+                          ? 'Coming soon' 
+                          : product.status}
                       </span>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
@@ -115,14 +121,14 @@ const ProductsTab = () => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer le produit ?</AlertDialogTitle>
+                            <AlertDialogTitle>Delete Product?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Cette action est irréversible. Le produit "{product.name}" sera supprimé définitivement.
+                              This action cannot be undone. The product "{product.name}" will be permanently deleted.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteProduct(product.id)}>Supprimer</AlertDialogAction>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteProduct(product.id)}>Delete</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>

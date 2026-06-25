@@ -74,7 +74,7 @@ const ProductFormDialog = ({ open, onClose, product, preselectedShopId }: Produc
       <DialogContent className="sm:max-w-[600px] h-[90vh]">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? `Modifier le produit: ${product?.name}` : 'Ajouter un nouveau produit'}
+            {isEditing ? `Edit Product: ${product?.name}` : 'Add New Product'}
           </DialogTitle>
         </DialogHeader>
 
