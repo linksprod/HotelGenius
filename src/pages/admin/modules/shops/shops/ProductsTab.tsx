@@ -105,7 +105,7 @@ const ProductsTab = () => {
                           : product.status === 'out_of_stock' 
                           ? 'Out of stock' 
                           : product.status === 'coming_soon' 
-                          ? 'Coming soon' 
+                          ? 'On request' 
                           : product.status}
                       </span>
                     </TableCell>

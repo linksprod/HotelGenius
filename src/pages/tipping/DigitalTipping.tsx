@@ -15,9 +15,9 @@ const DigitalTipping = () => {
         <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
           <Coins className="w-10 h-10 text-primary" />
         </div>
-        <h1 className="text-3xl font-bold mb-2 text-foreground">Soon available</h1>
+        <h1 className="text-3xl font-bold mb-2 text-foreground">On request</h1>
         <p className="text-muted-foreground max-w-sm mb-8">
-          This module is currently under development.
+          This service is available on request. Please contact the front desk.
         </p>
         <Button 
           onClick={() => navigate(resolvePath('/'))}

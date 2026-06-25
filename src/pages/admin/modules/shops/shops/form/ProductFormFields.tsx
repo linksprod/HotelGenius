@@ -121,7 +121,7 @@ const ProductFormFields = ({ form, shops, onSubmit, onCancel, isEditing }: Produ
                   <SelectContent>
                     <SelectItem value="available">Available</SelectItem>
                     <SelectItem value="out_of_stock">Out of stock</SelectItem>
-                    <SelectItem value="coming_soon">Coming soon</SelectItem>
+                    <SelectItem value="coming_soon">On request</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
