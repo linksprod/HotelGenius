@@ -14,6 +14,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { hexToHSL } from '@/lib/colors';
+import { useTheme } from 'next-themes';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ const Layout = ({
   const { t } = useTranslation();
   const location = useLocation();
   const { hotel } = useHotel();
+  const { resolvedTheme } = useTheme();
 
   const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
@@ -33,10 +35,13 @@ const Layout = ({
 
   const homeLink = hotel ? `/${hotel.slug}` : "/";
 
+  const isDark = resolvedTheme === 'dark';
+  const resolvedPrimaryColor = (isDark ? hotel?.dark_primary_color : hotel?.primary_color) || hotel?.primary_color;
+
   // Prepare dynamic theme styles
-  const dynamicStyles = hotel?.primary_color ? {
-    '--primary': hexToHSL(hotel.primary_color),
-    '--ring': hexToHSL(hotel.primary_color),
+  const dynamicStyles = resolvedPrimaryColor ? {
+    '--primary': hexToHSL(resolvedPrimaryColor),
+    '--ring': hexToHSL(resolvedPrimaryColor),
   } as React.CSSProperties : {};
 
   return (

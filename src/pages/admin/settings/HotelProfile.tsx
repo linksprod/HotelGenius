@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
     Building2, Upload, X, Save, Loader2, Image,
-    Globe, CheckCircle2, AlertCircle, Copy, Mail, Phone, MapPin
+    Globe, CheckCircle2, AlertCircle, Copy, Mail, Phone, MapPin,
+    Sun, Moon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { supabase } from '@/integrations/supabase/client';
 import { supabaseAdmin } from '@/integrations/supabase/adminClient';
@@ -26,6 +28,8 @@ const HotelProfile: React.FC = () => {
     const [logoPreview, setLogoPreview] = useState(hotel?.logo_url || '');
     const [primaryColor, setPrimaryColor] = useState(hotel?.primary_color || '#94b3a3');
     const [secondaryColor, setSecondaryColor] = useState(hotel?.secondary_color || '#1a1a1a');
+    const [darkPrimaryColor, setDarkPrimaryColor] = useState(hotel?.dark_primary_color || hotel?.primary_color || '#94b3a3');
+    const [darkSecondaryColor, setDarkSecondaryColor] = useState(hotel?.dark_secondary_color || hotel?.secondary_color || '#1a1a1a');
     const [isUploading, setIsUploading] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -114,6 +118,8 @@ const HotelProfile: React.FC = () => {
                     logo_url: logoUrl,
                     primary_color: primaryColor,
                     secondary_color: secondaryColor,
+                    dark_primary_color: darkPrimaryColor,
+                    dark_secondary_color: darkSecondaryColor,
                 })
                 .eq('id', hotel.id);
 
@@ -334,69 +340,147 @@ const HotelProfile: React.FC = () => {
                     <CardHeader>
                         <CardTitle>Branding &amp; Colors</CardTitle>
                         <CardDescription>
-                            Personalize your hotel's application with your brand colors. These will be applied to buttons, icons, and navigation elements.
+                            Personalize your hotel's application with your brand colors for both Light Mode and Dark Mode.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Primary Color */}
-                            <div className="space-y-3">
-                                <Label htmlFor="primary-color">Primary Color (Guest &amp; Admin)</Label>
-                                <div className="flex gap-3 items-center">
-                                    <div
-                                        className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
-                                        style={{ backgroundColor: primaryColor }}
-                                    />
-                                    <Input
-                                        id="primary-color"
-                                        type="color"
-                                        value={primaryColor}
-                                        onChange={(e) => setPrimaryColor(e.target.value)}
-                                        className="h-10 p-1 w-20 cursor-pointer"
-                                    />
-                                    <Input
-                                        type="text"
-                                        value={primaryColor}
-                                        onChange={(e) => setPrimaryColor(e.target.value)}
-                                        className="font-mono text-xs uppercase"
-                                        placeholder="#94B3A3"
-                                    />
-                                </div>
-                                <p className="text-xs text-muted-foreground">Used for buttons, active states, and primary accents.</p>
-                            </div>
+                        <Tabs defaultValue="light" className="w-full">
+                            <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-6">
+                                <TabsTrigger value="light" className="flex items-center gap-2">
+                                    <Sun className="h-4 w-4" />
+                                    Light Mode (White)
+                                </TabsTrigger>
+                                <TabsTrigger value="dark" className="flex items-center gap-2">
+                                    <Moon className="h-4 w-4" />
+                                    Dark Mode
+                                </TabsTrigger>
+                            </TabsList>
 
-                            {/* Secondary Color */}
-                            <div className="space-y-3">
-                                <Label htmlFor="secondary-color">Secondary/Accent Color</Label>
-                                <div className="flex gap-3 items-center">
-                                    <div
-                                        className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
-                                        style={{ backgroundColor: secondaryColor }}
-                                    />
-                                    <Input
-                                        id="secondary-color"
-                                        type="color"
-                                        value={secondaryColor}
-                                        onChange={(e) => setSecondaryColor(e.target.value)}
-                                        className="h-10 p-1 w-20 cursor-pointer"
-                                    />
-                                    <Input
-                                        type="text"
-                                        value={secondaryColor}
-                                        onChange={(e) => setSecondaryColor(e.target.value)}
-                                        className="font-mono text-xs uppercase"
-                                        placeholder="#1A1A1A"
-                                    />
+                            <TabsContent value="light" className="space-y-6 mt-0">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Primary Color */}
+                                    <div className="space-y-3">
+                                        <Label htmlFor="primary-color">Primary Color (Light Mode)</Label>
+                                        <div className="flex gap-3 items-center">
+                                            <div
+                                                className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
+                                                style={{ backgroundColor: primaryColor }}
+                                            />
+                                            <Input
+                                                id="primary-color"
+                                                type="color"
+                                                value={primaryColor}
+                                                onChange={(e) => setPrimaryColor(e.target.value)}
+                                                className="h-10 p-1 w-20 cursor-pointer"
+                                            />
+                                            <Input
+                                                type="text"
+                                                value={primaryColor}
+                                                onChange={(e) => setPrimaryColor(e.target.value)}
+                                                className="font-mono text-xs uppercase"
+                                                placeholder="#94B3A3"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Used for buttons, active states, and primary accents in Light Mode.</p>
+                                    </div>
+
+                                    {/* Secondary Color */}
+                                    <div className="space-y-3">
+                                        <Label htmlFor="secondary-color">Secondary/Accent Color (Light Mode)</Label>
+                                        <div className="flex gap-3 items-center">
+                                            <div
+                                                className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
+                                                style={{ backgroundColor: secondaryColor }}
+                                            />
+                                            <Input
+                                                id="secondary-color"
+                                                type="color"
+                                                value={secondaryColor}
+                                                onChange={(e) => setSecondaryColor(e.target.value)}
+                                                className="h-10 p-1 w-20 cursor-pointer"
+                                            />
+                                            <Input
+                                                type="text"
+                                                value={secondaryColor}
+                                                onChange={(e) => setSecondaryColor(e.target.value)}
+                                                className="font-mono text-xs uppercase"
+                                                placeholder="#1A1A1A"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Used for secondary backgrounds and subtle accents in Light Mode.</p>
+                                    </div>
                                 </div>
-                                <p className="text-xs text-muted-foreground">Used for secondary backgrounds and subtle accents.</p>
-                            </div>
-                        </div>
+                            </TabsContent>
+
+                            <TabsContent value="dark" className="space-y-6 mt-0">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Dark Primary Color */}
+                                    <div className="space-y-3">
+                                        <Label htmlFor="dark-primary-color">Primary Color (Dark Mode)</Label>
+                                        <div className="flex gap-3 items-center">
+                                            <div
+                                                className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
+                                                style={{ backgroundColor: darkPrimaryColor }}
+                                            />
+                                            <Input
+                                                id="dark-primary-color"
+                                                type="color"
+                                                value={darkPrimaryColor}
+                                                onChange={(e) => setDarkPrimaryColor(e.target.value)}
+                                                className="h-10 p-1 w-20 cursor-pointer"
+                                            />
+                                            <Input
+                                                type="text"
+                                                value={darkPrimaryColor}
+                                                onChange={(e) => setDarkPrimaryColor(e.target.value)}
+                                                className="font-mono text-xs uppercase"
+                                                placeholder="#94B3A3"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Used for buttons, active states, and primary accents in Dark Mode.</p>
+                                    </div>
+
+                                    {/* Dark Secondary Color */}
+                                    <div className="space-y-3">
+                                        <Label htmlFor="dark-secondary-color">Secondary/Accent Color (Dark Mode)</Label>
+                                        <div className="flex gap-3 items-center">
+                                            <div
+                                                className="h-10 w-10 rounded-lg border shadow-sm shrink-0"
+                                                style={{ backgroundColor: darkSecondaryColor }}
+                                            />
+                                            <Input
+                                                id="dark-secondary-color"
+                                                type="color"
+                                                value={darkSecondaryColor}
+                                                onChange={(e) => setDarkSecondaryColor(e.target.value)}
+                                                className="h-10 p-1 w-20 cursor-pointer"
+                                            />
+                                            <Input
+                                                type="text"
+                                                value={darkSecondaryColor}
+                                                onChange={(e) => setDarkSecondaryColor(e.target.value)}
+                                                className="font-mono text-xs uppercase"
+                                                placeholder="#1A1A1A"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-muted-foreground">Used for secondary backgrounds and subtle accents in Dark Mode.</p>
+                                    </div>
+                                </div>
+                            </TabsContent>
+                        </Tabs>
 
                         {/* Save Colors */}
                         <div className="pt-4 border-t">
                             <Button
                                 onClick={handleSave}
-                                disabled={isSaving || (primaryColor === hotel.primary_color && secondaryColor === hotel.secondary_color)}
+                                disabled={
+                                    isSaving || (
+                                        primaryColor === hotel.primary_color &&
+                                        secondaryColor === hotel.secondary_color &&
+                                        darkPrimaryColor === (hotel.dark_primary_color || hotel.primary_color || '#94b3a3') &&
+                                        darkSecondaryColor === (hotel.dark_secondary_color || hotel.secondary_color || '#1a1a1a')
+                                    )
+                                }
                             >
                                 {isSaving ? (
                                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />

@@ -178,12 +178,12 @@ const About = () => {
               {/* === 3. Services grid ("PERSONALIZED SERVICE TO GUARANTEE YOUR COMFORT") === */}
               {aboutData.seminar_services && aboutData.seminar_services.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-px flex-1 bg-border" />
-                    <h3 className="text-xs font-bold text-foreground uppercase tracking-[0.15em] whitespace-nowrap px-2">
+                  <div className="flex items-center gap-3 mb-6 w-full">
+                    <div className="h-px flex-1 bg-border hidden sm:block" />
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-[0.15em] text-center px-2 w-full sm:w-auto break-words sm:whitespace-nowrap">
                       {t('about.seminars.included_services', 'Personalized Service to Guarantee Your Comfort')}
                     </h3>
-                    <div className="h-px flex-1 bg-border" />
+                    <div className="h-px flex-1 bg-border hidden sm:block" />
                   </div>
                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {aboutData.seminar_services.map((service: SeminarService, idx: number) => (
@@ -205,12 +205,12 @@ const About = () => {
               {/* === 4. Rooms specs table ("TAILOR-MADE PROFESSIONAL EVENTS") === */}
               {aboutData.seminar_rooms && aboutData.seminar_rooms.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-px flex-1 bg-border" />
-                    <h3 className="text-xs font-bold text-foreground uppercase tracking-[0.15em] whitespace-nowrap px-2">
+                  <div className="flex items-center gap-3 mb-6 w-full">
+                    <div className="h-px flex-1 bg-border hidden sm:block" />
+                    <h3 className="text-xs font-bold text-foreground uppercase tracking-[0.15em] text-center px-2 w-full sm:w-auto break-words sm:whitespace-nowrap">
                       {t('about.seminars.rooms_specs', 'Tailor-Made Professional Events')}
                     </h3>
-                    <div className="h-px flex-1 bg-border" />
+                    <div className="h-px flex-1 bg-border hidden sm:block" />
                   </div>
 
                   {/* Desktop table */}

@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
 import { useHotel } from '@/features/hotels/context/HotelContext';
+import { useTheme } from 'next-themes';
 
 /**
  * Utility to convert Hex color to HSL components
@@ -37,15 +38,22 @@ const hexToHslComponents = (hex: string): { h: number; s: number; l: number } =>
 
 const ThemeCustomizer = () => {
     const { hotel } = useHotel();
+    const { theme, resolvedTheme } = useTheme();
 
     useEffect(() => {
         if (!hotel) return;
 
         const root = document.documentElement;
 
+        // Determine if dark mode is active
+        const isDark = resolvedTheme === 'dark' || 
+                       root.classList.contains('dark') || 
+                       document.body.classList.contains('dark') ||
+                       localStorage.getItem('theme') === 'dark';
+
         // Define default colors if not provided or if too dark/generic
-        const primaryHex = hotel.primary_color || '#94b3a3';
-        let secondaryHex = hotel.secondary_color || '#8b5cf6';
+        const primaryHex = (isDark ? hotel.dark_primary_color : hotel.primary_color) || hotel.primary_color || '#94b3a3';
+        let secondaryHex = (isDark ? hotel.dark_secondary_color : hotel.secondary_color) || hotel.secondary_color || '#8b5cf6';
         
         // If secondary color is black/near-black, fallback to a matching theme color
         if (secondaryHex === '#000000' || secondaryHex === '#1a1a1a' || secondaryHex === '#111111') {
@@ -60,11 +68,6 @@ const ThemeCustomizer = () => {
         try {
             const p = hexToHslComponents(primaryHex);
             const s = hexToHslComponents(secondaryHex);
-
-            // Determine if dark mode is active
-            const isDark = root.classList.contains('dark') || 
-                           document.body.classList.contains('dark') ||
-                           localStorage.getItem('theme') === 'dark';
 
             // Enhance secondary color visibility depending on contrast needs
             let adjustedL = s.l;
@@ -112,7 +115,7 @@ const ThemeCustomizer = () => {
         } catch (error) {
             console.error('Error applying theme colors:', error);
         }
-    }, [hotel]);
+    }, [hotel, theme, resolvedTheme]);
 
     return null;
 };

@@ -11,6 +11,8 @@ interface Hotel {
     logo_url?: string;
     primary_color?: string;
     secondary_color?: string;
+    dark_primary_color?: string;
+    dark_secondary_color?: string;
     custom_domain?: string;
     domain_verified?: boolean;
     plan?: string;
