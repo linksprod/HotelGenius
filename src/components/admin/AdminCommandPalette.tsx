@@ -28,7 +28,7 @@ const ALL_COMMANDS: CommandItem[] = [
   { id: 'it', label: 'IT Support', description: 'Tech & network issues', icon: Wifi, path: '/admin/information-technology', group: 'Operations', keywords: ['wifi', 'tech'] },
   { id: 'restaurants', label: 'Dining', description: 'Restaurants & reservations', icon: Utensils, path: '/admin/restaurants', group: 'Revenue', keywords: ['food', 'dining', 'restaurant'] },
   { id: 'spa', label: 'Wellness & Spa', description: 'Treatments & bookings', icon: Sparkles, path: '/admin/spa', group: 'Revenue', keywords: ['spa', 'wellness', 'treatments'] },
-  { id: 'events', label: 'Events', description: 'Events & promotions', icon: PartyPopper, path: '/admin/events', group: 'Revenue', keywords: ['events'] },
+  { id: 'events', label: 'Explore & Discover', description: 'Explore & Discover', icon: PartyPopper, path: '/admin/events', group: 'Revenue', keywords: ['events', 'explore', 'discover'] },
   { id: 'shops', label: 'Shops', description: 'Retail & products', icon: Store, path: '/admin/shops', group: 'Revenue', keywords: ['shop', 'store', 'retail'] },
   { id: 'ai', label: 'AI Concierge', description: 'Configure the AI agent', icon: Bot, path: '/admin/agent/concierge', group: 'AI', keywords: ['ai', 'bot', 'concierge'] },
   { id: 'settings', label: 'Settings', description: 'Hotel profile & modules', icon: Settings, path: '/admin/settings', group: 'Settings', keywords: ['config', 'setup', 'modules'] },

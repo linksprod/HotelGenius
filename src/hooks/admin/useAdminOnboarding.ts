@@ -125,7 +125,7 @@ const SECTION_STEPS: Record<string, AdminOnboardingStep[]> = {
             id: 'events-header',
             targetSelector: '#admin-ob-events-header',
             placement: 'bottom',
-            title: 'Events & Promotions',
+            title: 'Explore & Discover',
             description: 'Create and manage hotel events, special offers, and promotions',
             icon: 'party',
         },
