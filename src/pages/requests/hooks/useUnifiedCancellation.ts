@@ -40,21 +40,23 @@ export const useUnifiedCancellation = (
     
     setIsUpdating(true);
     try {
+      const targetId = selectedNotification.data?.reference_id || selectedNotification.id;
+      
       switch (selectedNotification.type) {
         case 'request':
-          await cancelRequest(selectedNotification.id);
+          await cancelRequest(targetId);
           refetchServices();
           break;
         case 'spa_booking':
-          await cancelSpaBooking(selectedNotification.id);
+          await cancelSpaBooking(targetId);
           refetchSpaBookings();
           break;
         case 'reservation':
-          cancelTableReservation(selectedNotification.id);
+          cancelTableReservation(targetId);
           refetchReservations();
           break;
         case 'event_reservation':
-          cancelEventReservation(selectedNotification.id);
+          cancelEventReservation(targetId);
           refetchEventReservations();
           break;
         default:
