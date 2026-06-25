@@ -76,7 +76,7 @@ export const adminNavigation: NavSectionConfig[] = [
       { title: 'Events', url: '/admin/events', icon: PartyPopper, notificationKey: 'events', requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'], requiredModules: ['events'] },
       { title: 'Shops', url: '/admin/shops', icon: Store, requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'], requiredModules: ['shops'] },
       { title: 'Daily Activities', url: '/admin/activities', icon: Calendar, requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'staff'] },
-      { title: 'Booking Engine', url: '/admin/booking-engine', icon: CreditCard, requiredPlan: 'elite' },
+      { title: 'Booking Engine', url: '/admin/booking-engine', icon: CreditCard },
       { title: 'Smart Upselling', url: '/admin/upselling', icon: Sparkles, requiredPlan: 'elite' },
       { title: 'Social Ads', url: '/admin/ads', icon: Globe, requiredPlan: 'elite' },
     ],

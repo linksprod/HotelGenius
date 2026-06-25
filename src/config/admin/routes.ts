@@ -36,6 +36,7 @@ export const MaintenanceManager = React.lazy(() => import('@/pages/admin/operati
 export const SecurityManager = React.lazy(() => import('@/pages/admin/operations/SecurityManager'));
 export const InformationTechnologyManager = React.lazy(() => import('@/pages/admin/operations/InformationTechnologyManager'));
 export const TippingManager = React.lazy(() => import('@/pages/admin/operations/TippingManager'));
+export const BookingEngineManager = React.lazy(() => import('@/pages/admin/operations/BookingEngineManager'));
 
 // Settings
 export const UnifiedSettingsLayout = React.lazy(() => import('@/pages/admin/settings/UnifiedSettingsLayout'));
@@ -79,6 +80,7 @@ export const adminRoutes: AdminRouteConfig[] = [
   { path: 'security', component: SecurityManager },
   { path: 'information-technology', component: InformationTechnologyManager },
   { path: 'tipping', component: TippingManager },
+  { path: 'booking-engine', component: BookingEngineManager },
 
   // Revenue Centers
   { path: 'restaurants', component: RestaurantManager, requiredModules: ['restaurants'] },
