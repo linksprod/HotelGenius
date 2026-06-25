@@ -17,19 +17,19 @@ const DestinationAdmin = () => {
     <div className="p-6">
       <div id="admin-ob-destination-header" className="mb-6">
         <AdminPageHeader
-          title="Administration - Destination"
+          title="Destination Administration"
           description="Manage destinations, attractions and activities"
           icon={<MapPin className="h-5 w-5 text-primary" />}
         />
       </div>
       <Tabs defaultValue="categories" className="w-full">
         <TabsList className="grid grid-cols-6 mb-6">
-          <TabsTrigger value="categories">Catégories</TabsTrigger>
+          <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="attractions">Attractions</TabsTrigger>
-          <TabsTrigger value="activities">Activités</TabsTrigger>
+          <TabsTrigger value="activities">Activities</TabsTrigger>
           <TabsTrigger value="nearby">Nearby Places</TabsTrigger>
-          <TabsTrigger value="carRentals">Locations Voiture</TabsTrigger>
-          <TabsTrigger value="transports">Transports</TabsTrigger>
+          <TabsTrigger value="carRentals">Car Rentals</TabsTrigger>
+          <TabsTrigger value="transports">Transportation</TabsTrigger>
         </TabsList>
 
         <TabsContent value="categories">

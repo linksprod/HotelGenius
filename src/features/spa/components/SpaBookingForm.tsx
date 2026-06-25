@@ -165,7 +165,7 @@ export default function SpaBookingForm({
             name="date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>{t('spa.booking.dateLabel', 'Date de réservation')}</FormLabel>
+                <FormLabel>{t('spa.booking_date', 'Booking Date')}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />

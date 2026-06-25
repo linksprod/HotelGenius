@@ -14,18 +14,18 @@ interface CarRentalsListProps {
 
 const CarRentalsList = ({ carRentals, isLoading, onEdit, onDelete }: CarRentalsListProps) => {
   if (isLoading) {
-    return <p>Chargement des services de location de voiture...</p>;
+    return <p>Loading car rental services...</p>;
   }
 
   return (
     <div>
-      <h3 className="text-lg font-medium mb-4">Liste des services de location de voiture</h3>
+      <h3 className="text-lg font-medium mb-4">Car Rental Services List</h3>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nom</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
-            <TableHead>Site Web</TableHead>
+            <TableHead>Website</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -68,7 +68,7 @@ const CarRentalsList = ({ carRentals, isLoading, onEdit, onDelete }: CarRentalsL
           ) : (
             <TableRow>
               <TableCell colSpan={4} className="text-center">
-                Aucun service de location de voiture trouvé. Ajoutez-en un !
+                No car rental services found. Add one!
               </TableCell>
             </TableRow>
           )}

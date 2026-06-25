@@ -14,18 +14,18 @@ interface PublicTransportsListProps {
 
 const PublicTransportsList = ({ transports, isLoading, onEdit, onDelete }: PublicTransportsListProps) => {
   if (isLoading) {
-    return <p>Chargement des transports publics...</p>;
+    return <p>Loading public transports...</p>;
   }
 
   return (
     <div>
-      <h3 className="text-lg font-medium mb-4">Liste des transports publics</h3>
+      <h3 className="text-lg font-medium mb-4">Public Transports List</h3>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Nom</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
-            <TableHead>Site Web</TableHead>
+            <TableHead>Website</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -68,7 +68,7 @@ const PublicTransportsList = ({ transports, isLoading, onEdit, onDelete }: Publi
           ) : (
             <TableRow>
               <TableCell colSpan={4} className="text-center">
-                Aucun transport public trouvé. Ajoutez-en un !
+                No public transports found. Add one!
               </TableCell>
             </TableRow>
           )}
