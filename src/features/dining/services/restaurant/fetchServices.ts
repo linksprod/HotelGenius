@@ -30,7 +30,7 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
   }
 
   // Convert from snake_case to camelCase
-  return data.map(item => ({
+  const mapped = data.map(item => ({
     id: item.id,
     name: item.name,
     description: item.description,
@@ -43,6 +43,15 @@ export const fetchRestaurants = async (hotelId: string | null = null, isSuperAdm
     isFeatured: item.is_featured || false,
     bookingEnabled: item.booking_enabled !== false
   }));
+
+  // Sort to place Portofino Restaurant first
+  return mapped.sort((a, b) => {
+    const aIsPortofino = a.name.toLowerCase().includes('portofino');
+    const bIsPortofino = b.name.toLowerCase().includes('portofino');
+    if (aIsPortofino && !bIsPortofino) return -1;
+    if (!aIsPortofino && bIsPortofino) return 1;
+    return 0;
+  });
 };
 /**
  * Fetches a restaurant by its ID
