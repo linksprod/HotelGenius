@@ -10,7 +10,7 @@ import { requestService } from '@/features/rooms/controllers/roomService';
 import {
     Utensils, Info, Calendar, CheckCircle, Sparkles,
     Wrench, Trash2, Monitor, Shield, ChevronRight,
-    Loader2, Check, Settings
+    Loader2, Check, Settings, MapPin, Clock
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
@@ -227,6 +227,7 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
         (type === 'booking_form' && (metadata?.entity_type === 'restaurant' || metadata?.entity_type === 'event' || metadata?.entity_type === 'spa')) ||
         type === 'restaurant_list' ||
         type === 'event_list' ||
+        type === 'activity_list' ||
         type === 'spa_list'
     );
 
@@ -277,6 +278,15 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                         query = query.eq('hotel_id', hotelId);
                     }
                     const { data, error } = await query.limit(5);
+
+                    if (error) throw error;
+                    setEntities(data || []);
+                } else if (type === 'activity_list') {
+                    let query = supabase.from('hotel_activities').select('*');
+                    if (hotelId) {
+                        query = query.eq('hotel_id', hotelId);
+                    }
+                    const { data, error } = await query.limit(12);
 
                     if (error) throw error;
                     setEntities(data || []);
@@ -492,6 +502,43 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
                                 >
                                     {t('chat.actionRenderer.bookEvent', 'Book Event')}
                                 </Button>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Action: Display daily activity list
+    if (type === 'activity_list') {
+        return (
+            <div className="flex flex-col gap-3 mt-2 animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground px-1">
+                    <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+                    {t('chat.actionRenderer.dailyActivities', 'Today\'s Activities')}
+                </div>
+                <div className="flex overflow-x-auto pb-4 gap-4 snap-x no-scrollbar">
+                    {entities.map((act) => (
+                        <Card key={act.id} className="min-w-[200px] max-w-[80vw] flex-shrink-0 snap-center overflow-hidden border-border bg-card shadow-md flex flex-col">
+                            {/* Colored top accent bar */}
+                            <div className="h-1 w-full bg-gradient-to-r from-primary to-primary/40" />
+                            <div className="p-3 flex flex-col flex-1 gap-2">
+                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[8px] font-bold uppercase tracking-wider w-max">
+                                    Hotel Event
+                                </span>
+                                <h5 className="font-bold text-xs line-clamp-2 leading-tight min-h-[2rem]">{act.name}</h5>
+                                <div className="border-t border-border/40 my-0.5" />
+                                <div className="space-y-1 text-[10px] text-muted-foreground mt-auto">
+                                    <div className="flex items-center gap-1.5">
+                                        <MapPin className="w-3 h-3 text-primary shrink-0" />
+                                        <span className="truncate">{act.location}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1.5">
+                                        <Clock className="w-3 h-3 text-primary shrink-0" />
+                                        <span>{act.time}</span>
+                                    </div>
+                                </div>
                             </div>
                         </Card>
                     ))}

@@ -209,10 +209,11 @@ async function sendChatMessage(message: string, userId: string, userName: string
   }
 
   // 2. Get real-time hotel data for AI context
-  const [restaurants, spaServices, events, hotelInfo, hotelRecord] = await Promise.all([
+  const [restaurants, spaServices, events, hotelActivities, hotelInfo, hotelRecord] = await Promise.all([
     supabase.from('restaurants').select('id, name, description, cuisine, location').eq('status', 'open').eq('hotel_id', effectiveHotelId).limit(8),
     supabase.from('spa_services').select('id, name, description, duration, price').eq('status', 'available').eq('hotel_id', effectiveHotelId).limit(8),
     supabase.from('events').select('id, title, description, date, location').gte('date', new Date().toISOString().split('T')[0]).eq('hotel_id', effectiveHotelId).limit(8),
+    supabase.from('hotel_activities').select('id, name, time, location').eq('hotel_id', effectiveHotelId).limit(12),
     supabase.from('hotel_about').select('title, description, location, contact_email, contact_phone').eq('status', 'active').eq('hotel_id', effectiveHotelId).limit(1),
     supabase.from('hotels').select('name').eq('id', effectiveHotelId).single()
   ]);
@@ -224,8 +225,9 @@ async function sendChatMessage(message: string, userId: string, userName: string
   const restaurantsList = (restaurants.data || []).map(r => ({ ...r, description: truncate(r.description) }));
   const spaList = (spaServices.data || []).map(s => ({ ...s, description: truncate(s.description) }));
   const eventsList = (events.data || []).map(e => ({ ...e, description: truncate(e.description) }));
+  const activitiesList = hotelActivities.data || [];
 
-  const systemPrompt = `CORE_VERSION: 3.2.0 (Digital Twin Integrated).
+  const systemPrompt = `CORE_VERSION: 3.2.1 (Digital Twin & Activities Integrated).
 You are a highly personalised hotel concierge AI assistant for ${hotelName}.
 You answer ANY questions from the guest, from hotel policies to booking requests.
 
@@ -241,6 +243,7 @@ AVAILABLE SERVICES:
 Available restaurants: ${JSON.stringify(restaurantsList)}
 Available spa services: ${JSON.stringify(spaList)}
 Upcoming events: ${JSON.stringify(eventsList)}
+Daily activities schedule: ${JSON.stringify(activitiesList)}
 Hotel information: ${JSON.stringify(hotelData)}
 
 IMPORTANT BOOKING RULES:
@@ -249,6 +252,7 @@ IMPORTANT BOOKING RULES:
 - The form is the FASTEST way for guests to book. Use it immediately to collect missing information (date, time, etc.) visually.
 - After triggering the form, your response should invite the guest to fill it out and offer help with any specific questions.
 - If the guest wants to browse or book spa services/treatments in general, or asks what spa services are available, you MUST call 'show_spa_list'.
+- If the guest asks about daily activities, animation, today's schedule, sports, games, fitness, gymnastics, pool activities, entertainment or things to do at the hotel, you MUST call 'show_activity_list'. Do NOT list them in text.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
 
 CRITICAL CONCIERGE RULES:
@@ -348,6 +352,13 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
       function: {
         name: "show_event_list",
         description: "Display a visual list of all upcoming events to the guest."
+      }
+    },
+    {
+      type: "function",
+      function: {
+        name: "show_activity_list",
+        description: "Display today's schedule of daily hotel activities/animation program to the guest."
       }
     },
     {
@@ -457,6 +468,14 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
             : "I've opened the event list for you."
         };
         break;
+      case 'show_activity_list':
+        bookingResult = { 
+          success: true, 
+          message: detectedLang === 'fr'
+            ? "J'ai ouvert le programme des activités d'aujourd'hui pour vous."
+            : "I've opened today's activities schedule for you."
+        };
+        break;
       case 'show_spa_list':
         bookingResult = { 
           success: true, 
@@ -487,7 +506,7 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
     }
 
     // For visual tools, we return immediately to prevent the follow-up text from overriding cards
-    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list', 'show_spa_list'].includes(functionName)) {
+    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list', 'show_activity_list', 'show_spa_list'].includes(functionName)) {
       if (conversationId) {
         let actionType = 'booking_form';
         let metadataObj: any = {};
@@ -507,6 +526,11 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
           actionType = 'event_list';
           metadataObj = {
             action_type: 'event_list'
+          };
+        } else if (functionName === 'show_activity_list') {
+          actionType = 'activity_list';
+          metadataObj = {
+            action_type: 'activity_list'
           };
         } else if (functionName === 'show_spa_list') {
           actionType = 'spa_list';
