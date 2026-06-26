@@ -18,10 +18,12 @@ import { useTheme } from 'next-themes';
 
 interface LayoutProps {
   children: React.ReactNode;
+  hideBottomNav?: boolean;
 }
 
 const Layout = ({
-  children
+  children,
+  hideBottomNav = false
 }: LayoutProps) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -87,7 +89,8 @@ const Layout = ({
       <main className={cn(
         "container mx-auto px-[9px] pt-16 pb-24",
         isSpaManagerPage && "h-screen flex flex-col",
-        isMessagesPage && "fixed inset-0 pt-16 pb-16 flex flex-col max-w-none px-0 z-0 bg-background"
+        isMessagesPage && "fixed inset-0 pt-16 flex flex-col max-w-none px-0 z-0 bg-background",
+        isMessagesPage && !hideBottomNav && "pb-16"
       )}>
         {isSpaManagerPage ? (
           <ScrollArea className="flex-1 overflow-y-auto h-full">
@@ -106,7 +109,7 @@ const Layout = ({
         )}
       </main>
 
-      <BottomNav />
+      {!hideBottomNav && <BottomNav />}
     </div >
   );
 };
