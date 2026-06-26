@@ -167,7 +167,7 @@ export default function SpaBookingForm({
               <FormItem className="flex flex-col">
                 <FormLabel>{t('spa.booking_date', 'Booking Date')}</FormLabel>
                 <FormControl>
-                  <div className="relative">
+                  <div className="relative w-full min-w-0">
                     <CalendarIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                     <input
                       type="date"
@@ -185,7 +185,7 @@ export default function SpaBookingForm({
                       }}
                       min={formatDateLocal(new Date())}
                       max={formatDateLocal(addDays(new Date(), 365 * 5))}
-                      className="w-full pl-10 pr-3 flex h-9 rounded-md border border-input bg-background py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
+                      className="w-full max-w-full min-w-0 pl-10 pr-3 block h-9 rounded-md border border-input bg-background py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer text-foreground dark:[color-scheme:dark]"
                     />
                   </div>
                 </FormControl>
