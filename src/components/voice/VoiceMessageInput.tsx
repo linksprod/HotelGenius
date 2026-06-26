@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Mic, Send, MessageSquare, Paperclip, MicOff } from 'lucide-react';
+import { Send, MessageSquare, Paperclip } from 'lucide-react';
 import { VoiceInterface } from './VoiceInterface';
 import UserQuickTemplates from '@/components/messaging/UserQuickTemplates';
+import { useTranslation } from 'react-i18next';
 
 interface VoiceMessageInputProps {
   inputMessage: string;
@@ -24,6 +25,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
   inputRef,
   userInfo
 }) => {
+  const { t } = useTranslation();
   const [showTemplates, setShowTemplates] = useState(false);
   const [isVoiceMode, setIsVoiceMode] = useState(false);
   const [aiTranscript, setAiTranscript] = useState('');
@@ -93,16 +95,6 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
               <MessageSquare className="h-5 w-5" />
             </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`rounded-full h-10 w-10 flex-shrink-0 mb-0.5 ${isSpeaking ? 'bg-primary/10 text-primary' : ''}`}
-              onClick={() => setIsVoiceMode(!isVoiceMode)}
-              type="button"
-            >
-              {isSpeaking ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-            </Button>
-
             <Textarea
               ref={inputRef}
               value={inputMessage}
@@ -113,7 +105,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
                   onSendMessage();
                 }
               }}
-              placeholder="Type or speak your message..."
+              placeholder={t('messages.typeMessage', 'Type a message...')}
               className="resize-none min-h-[40px] max-h-32 py-2.5 px-4 rounded-2xl border border-border/50 focus-visible:ring-1 bg-muted/50 text-[15px] leading-tight flex-1"
             />
 
