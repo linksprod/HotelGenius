@@ -153,7 +153,7 @@ const Messages = () => {
   // Show concierge chat or AI chat if selected
   if (selectedChatType) {
     return (
-      <Layout hideBottomNav={true}>
+      <Layout hideBottomNav={true} hideHeader={true}>
         <div className="flex flex-col h-full w-full">
           <UnifiedChatContainer
             key={chatKey}

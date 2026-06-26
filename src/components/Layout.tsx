@@ -19,11 +19,13 @@ import { useTheme } from 'next-themes';
 interface LayoutProps {
   children: React.ReactNode;
   hideBottomNav?: boolean;
+  hideHeader?: boolean;
 }
 
 const Layout = ({
   children,
-  hideBottomNav = false
+  hideBottomNav = false,
+  hideHeader = false
 }: LayoutProps) => {
   const { t } = useTranslation();
   const location = useLocation();
@@ -48,49 +50,52 @@ const Layout = ({
 
   return (
     <div className="min-h-screen bg-background" style={dynamicStyles}>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* Left section - Menu */}
-            <div className="flex items-center flex-1">
-              <MainMenu />
-            </div>
+      {!hideHeader && (
+        <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-lg">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between h-16">
+              {/* Left section - Menu */}
+              <div className="flex items-center flex-1">
+                <MainMenu />
+              </div>
 
-            {/* Center section - Official Logo */}
-            <div id="main-header-logo" className="flex justify-center items-center flex-1">
-              <Link 
-                to={homeLink} 
-                className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
-              >
-                {hotel?.logo_url ? (
-                  <img src={hotel.logo_url} alt={hotel.name} className="h-11 w-auto object-contain max-w-[180px] dark:brightness-0 dark:invert" />
-                ) : (
-                  <span className={cn(
-                    "font-qurova font-light tracking-wide text-foreground transition-colors",
-                    isMobile ? "text-xl" : "text-2xl"
-                  )}>
-                    {hotel?.name ?? "HotelGenius"}
-                  </span>
-                )}
-              </Link>
-            </div>
+              {/* Center section - Official Logo */}
+              <div id="main-header-logo" className="flex justify-center items-center flex-1">
+                <Link 
+                  to={homeLink} 
+                  className="main-header-logo absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                  {hotel?.logo_url ? (
+                    <img src={hotel.logo_url} alt={hotel.name} className="h-11 w-auto object-contain max-w-[180px] dark:brightness-0 dark:invert" />
+                  ) : (
+                    <span className={cn(
+                      "font-qurova font-light tracking-wide text-foreground transition-colors",
+                      isMobile ? "text-xl" : "text-2xl"
+                    )}>
+                      {hotel?.name ?? "HotelGenius"}
+                    </span>
+                  )}
+                </Link>
+              </div>
 
 
-            {/* Right section - Notifications and User Menu */}
-            <div className="flex items-center justify-end gap-1 flex-1">
-              <ThemeToggle />
-              <NotificationMenu />
-              <UserMenu />
+              {/* Right section - Notifications and User Menu */}
+              <div className="flex items-center justify-end gap-1 flex-1">
+                <ThemeToggle />
+                <NotificationMenu />
+                <UserMenu />
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       <main className={cn(
         "container mx-auto px-[9px] pt-16 pb-24",
         isSpaManagerPage && "h-screen flex flex-col",
-        isMessagesPage && "fixed inset-0 pt-16 flex flex-col max-w-none px-0 z-0 bg-background",
-        isMessagesPage && !hideBottomNav && "pb-16"
+        isMessagesPage && "fixed inset-0 flex flex-col max-w-none px-0 z-0 bg-background",
+        isMessagesPage && (hideHeader ? "pt-0" : "pt-16"),
+        isMessagesPage && (hideBottomNav ? "pb-0" : "pb-16")
       )}>
         {isSpaManagerPage ? (
           <ScrollArea className="flex-1 overflow-y-auto h-full">

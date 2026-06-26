@@ -116,6 +116,51 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     setSelectedConversationId(conversationId);
   }, [conversationId]);
 
+  // Lock body/html scroll on mobile and set full viewport height
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    
+    // Save original styles
+    const originalHtmlOverflow = html.style.overflowY;
+    const originalHtmlHeight = html.style.height;
+    const originalBodyOverflow = body.style.overflow;
+    const originalBodyHeight = body.style.height;
+
+    // Apply scroll lock styles with !important override via setProperty
+    html.style.setProperty('overflow-y', 'hidden', 'important');
+    html.style.setProperty('height', '100%', 'important');
+    body.style.setProperty('overflow', 'hidden', 'important');
+    body.style.setProperty('height', '100%', 'important');
+    
+    return () => {
+      // Restore original styles
+      if (originalHtmlOverflow) {
+        html.style.setProperty('overflow-y', originalHtmlOverflow, 'important');
+      } else {
+        html.style.removeProperty('overflow-y');
+      }
+      
+      if (originalHtmlHeight) {
+        html.style.setProperty('height', originalHtmlHeight);
+      } else {
+        html.style.removeProperty('height');
+      }
+
+      if (originalBodyOverflow) {
+        body.style.setProperty('overflow', originalBodyOverflow, 'important');
+      } else {
+        body.style.removeProperty('overflow');
+      }
+
+      if (originalBodyHeight) {
+        body.style.setProperty('height', originalBodyHeight);
+      } else {
+        body.style.removeProperty('height');
+      }
+    };
+  }, []);
+
   const handleNewConversation = async () => {
     if (conversation && (conversation.status === 'active' || conversation.status === 'escalated')) {
       await startNewConversation();
