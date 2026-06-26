@@ -1,7 +1,10 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { MessageCircle } from 'lucide-react';
+import { useMessageBadge } from '@/hooks/useMessageBadge';
+import { useHotelPath } from '@/hooks/useHotelPath';
 import MainMenu from './MainMenu';
 import UserMenu from './UserMenu';
 import NotificationMenu from './NotificationMenu';
@@ -29,13 +32,19 @@ const Layout = ({
 }: LayoutProps) => {
   const { t } = useTranslation();
   const location = useLocation();
+  const navigate = useNavigate();
   const { hotel } = useHotel();
   const { resolvedTheme } = useTheme();
+  const { unreadCount } = useMessageBadge();
+  const { resolvePath } = useHotelPath();
 
   const isHomePage = hotel ? location.pathname === `/${hotel.slug}` || location.pathname === `/${hotel.slug}/` : false;
   const isSpaManagerPage = hotel ? location.pathname === `/${hotel.slug}/admin/spa` : location.pathname === '/admin/spa';
   const isMessagesPage = hotel ? location.pathname === `/${hotel.slug}/messages` : location.pathname === '/messages';
   const isMobile = useIsMobile();
+
+  const isAdminPage = location.pathname.includes('/admin');
+  const showFloatingChat = !isAdminPage && !isMessagesPage && !hideBottomNav;
 
   const homeLink = hotel ? `/${hotel.slug}` : "/";
 
@@ -113,6 +122,26 @@ const Layout = ({
           </div>
         )}
       </main>
+
+      {showFloatingChat && (
+        <button
+          onClick={() => navigate(resolvePath('/messages'), { state: { from: location.pathname } })}
+          className={cn(
+            "fixed bottom-20 right-6 z-40 flex items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 border-2 border-background",
+            isMobile ? "w-12 h-12" : "w-14 h-14"
+          )}
+          aria-label={t('nav.messages', 'Messages')}
+        >
+          <div className="relative flex items-center justify-center">
+            <MessageCircle className={cn(isMobile ? "h-5.5 w-5.5" : "h-6 w-6")} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-2.5 -right-2.5 h-5 min-w-[20px] px-1.5 bg-destructive text-destructive-foreground rounded-full text-[10px] flex items-center justify-center font-bold border-2 border-background animate-pulse">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </div>
+        </button>
+      )}
 
       {!hideBottomNav && <BottomNav />}
     </div >
