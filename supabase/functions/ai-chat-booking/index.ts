@@ -351,14 +351,14 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
       type: "function",
       function: {
         name: "show_event_list",
-        description: "Display a visual list of all upcoming events to the guest."
+        description: "Display a visual list of all upcoming special events (like concerts, shows, themed nights, exhibitions) to the guest."
       }
     },
     {
       type: "function",
       function: {
         name: "show_activity_list",
-        description: "Display today's schedule of daily hotel activities/animation program to the guest."
+        description: "Display today's schedule of daily hotel activities and animation program (like darts, zumba, aerobics, water polo, board games, mini disco) to the guest. Use this whenever they ask for activities, schedule, or animation."
       }
     },
     {
