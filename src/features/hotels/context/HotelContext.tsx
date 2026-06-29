@@ -17,6 +17,7 @@ interface Hotel {
     domain_verified?: boolean;
     plan?: string;
     active_modules?: string[];
+    is_chain?: boolean;
 }
 
 interface HotelContextType {

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import HotelOrChainIndex from '@/pages/chain/HotelOrChainIndex';
 import Index from '@/pages/Index';
 import Login from '@/pages/auth/Login';
 import GuestLogin from '@/pages/auth/GuestLogin';
@@ -31,7 +32,7 @@ import NotFound from '@/pages/NotFound';
 const PublicRoutes = () => {
   return (
     <Routes>
-      <Route index element={<Index />} />
+      <Route index element={<HotelOrChainIndex />} />
       <Route path="auth/login" element={<Login />} />
       <Route path="guests/auth/login" element={<GuestLogin />} />
       <Route path="rooms" element={<Rooms />} />
