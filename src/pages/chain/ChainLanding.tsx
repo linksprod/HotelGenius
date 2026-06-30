@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Building2, MapPin, Star, Utensils, Heart, Waves } from 'lucide-react';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
@@ -11,10 +12,10 @@ import { useHotel } from '@/features/hotels/context/HotelContext';
 const HOTELS = [
   {
     slug: 'zahra-hotel',
-    name: 'Zahra Hotel',
+    name: 'Dar Jerba Zahra',
     tagline: 'Resort Balnéaire & Spa Thalasso',
-    location: 'Midoun, Jerba',
-    stars: 5,
+    location: 'Djerba, Tunisie Station touristique',
+    stars: 3,
     description:
       "Niché sur la plage dorée de Midoun, le Zahra Hotel vous offre une expérience de luxe incomparable face à la Méditerranée. Spa thalasso, 3 restaurants gastronomiques et suites vue mer.",
     highlights: [
@@ -22,14 +23,15 @@ const HOTELS = [
       { icon: <Utensils className="w-4 h-4" />, label: '3 Restaurants' },
       { icon: <Waves className="w-4 h-4" />, label: 'Plage privée' },
     ],
+    vibeTags: ['Famille', 'Animation', 'Piscines & Clubs'],
     image: '/zahra-hotel.png',
-    badge: '5 Étoiles',
+    badge: '3 Étoiles',
   },
   {
     slug: 'narjes-hotel',
-    name: 'Narjes Hotel',
+    name: 'Dar Jerba Narjess',
     tagline: 'Riad Traditionnel & Golf',
-    location: 'Houmt Souk, Jerba',
+    location: 'Djerba, Tunisie',
     stars: 4,
     description:
       "Au cœur de la médina de Houmt Souk, le Narjes Hotel mêle charme traditionnel et confort moderne. Hammam oriental, 2 restaurants et accès privatif au golf 18 trous.",
@@ -38,6 +40,7 @@ const HOTELS = [
       { icon: <Utensils className="w-4 h-4" />, label: '2 Restaurants' },
       { icon: <Building2 className="w-4 h-4" />, label: 'Golf 18 trous' },
     ],
+    vibeTags: ['Confort 4*', 'Calme & Détente', 'Premium'],
     image: '/narjes-hotel.png',
     badge: '4 Étoiles',
   },
@@ -71,12 +74,18 @@ const ChainLanding: React.FC = () => {
 
       {/* ── Minimal Header: logo only ── */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-lg">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-center">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          {/* Empty spacer to keep logo centered */}
+          <div className="w-8" />
+          
           <img
             src="/dar-jerba-logo.png"
             alt="Dar Jerba Hotels"
             className="h-16 w-auto object-contain max-w-[260px]"
           />
+
+          {/* Theme switcher on the right */}
+          <ThemeToggle />
         </div>
       </header>
 
@@ -114,7 +123,7 @@ const ChainLanding: React.FC = () => {
                   Bienvenue à Dar Jerba Hotels
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Niché au cœur d’un domaine verdoyant de 45 hectares et bordé par une magnifique plage de sable doré à Midoun, le complexe Dar Jerba vous invite à vivre une expérience tunisienne authentique. Depuis 1972, ce havre de tranquillité combine charme traditionnel, farniente, animations dynamiques et une formule « Tout Compris » idéale pour des vacances inoubliables en famille ou entre amis.
+                  Un domaine de 45 hectares au bord d'une plage dorée à Midoun. Profitez de notre formule Tout Compris, de nos 4 piscines, de nos animations et du charme tunisien authentique.
                 </p>
               </div>
             </div>
@@ -137,7 +146,7 @@ const ChainLanding: React.FC = () => {
             {HOTELS.map((hotel) => (
               <Card
                 key={hotel.slug}
-                className="overflow-hidden rounded-2xl border-border hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer bg-card"
+                className="overflow-hidden rounded-2xl border-border hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer bg-card flex flex-col h-full"
                 onClick={() => navigate(`/${hotel.slug}/`)}
               >
                 {/* Image */}
@@ -157,21 +166,33 @@ const ChainLanding: React.FC = () => {
                   {/* Stars + location */}
                   <div className="absolute bottom-2 left-2 flex flex-col gap-0.5">
                     <Stars count={hotel.stars} />
-                    <div className="flex items-center gap-0.5 text-white/80 text-[10px]">
-                      <MapPin className="w-2.5 h-2.5" />
+                    <div className="flex items-center gap-0.5 text-white/80 text-[9px] leading-tight">
+                      <MapPin className="w-2.5 h-2.5 shrink-0" />
                       {hotel.location}
                     </div>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-2.5">
+                <div className="p-2.5 flex flex-col flex-1">
                   <h3 className="text-sm font-bold text-card-foreground mb-0.5 leading-tight">
                     {hotel.name}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground mb-2 leading-snug">
+                  <p className="text-[10px] text-muted-foreground mb-1 leading-snug">
                     {hotel.tagline}
                   </p>
+
+                  {/* Vibe Tags Indicator */}
+                  <div className="flex flex-wrap gap-1 mb-2.5">
+                    {hotel.vibeTags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[9px] font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded-md"
+                      >
+                        • {tag}
+                      </span>
+                    ))}
+                  </div>
 
                   {/* Highlights compact */}
                   <div className="flex flex-col gap-0.5 mb-2.5">
@@ -187,16 +208,18 @@ const ChainLanding: React.FC = () => {
                   </div>
 
                   {/* CTA */}
-                  <Button
-                    size="sm"
-                    className="w-full text-[11px]"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/${hotel.slug}/`);
-                    }}
-                  >
-                    Découvrir {hotel.name}
-                  </Button>
+                  <div className="mt-auto pt-2">
+                    <Button
+                      size="sm"
+                      className="w-full text-[11px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/${hotel.slug}/`);
+                      }}
+                    >
+                      Découvrir {hotel.name}
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}
