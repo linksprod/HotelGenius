@@ -21,7 +21,14 @@ const AdminRoleGuard: React.FC<AdminRoleGuardProps> = ({ children, allowedRoles,
 
   if (loading || hotelLoading) return null;
 
-  // Check role restrictions
+  // Standard guests (role = 'user') should never access the admin layout/pages
+  const adminRoles: Role[] = ['super_admin', 'hotel_admin', 'admin', 'moderator', 'staff'];
+  if (!isSuperAdmin && (!role || !adminRoles.includes(role as Role))) {
+    console.warn('Unauthorized guest role access attempt to admin:', { role });
+    return <Navigate to={resolvePath('/')} replace />;
+  }
+
+  // Check custom route role restrictions if defined
   if (allowedRoles && !isSuperAdmin) {
     if (role && !allowedRoles.includes(role as Role)) {
       console.warn('Unauthorized role access attempt:', { role, allowedRoles });

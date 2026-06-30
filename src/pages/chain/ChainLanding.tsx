@@ -102,6 +102,25 @@ const ChainLanding: React.FC = () => {
           </div>
         </div>
 
+        {/* Welcome Card — Moved from bottom to top with customized description */}
+        <section className="px-4 sm:px-6 mb-6">
+          <Card className="rounded-2xl bg-card border-border p-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-muted rounded-lg flex-shrink-0">
+                <Building2 className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold text-card-foreground mb-1 text-base">
+                  Bienvenue à Dar Jerba Hotels
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Niché au cœur d’un domaine verdoyant de 45 hectares et bordé par une magnifique plage de sable doré à Midoun, le complexe Dar Jerba vous invite à vivre une expérience tunisienne authentique. Depuis 1972, ce havre de tranquillité combine charme traditionnel, farniente, animations dynamiques et une formule « Tout Compris » idéale pour des vacances inoubliables en famille ou entre amis.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </section>
+
         {/* Section title */}
         <section className="px-4 sm:px-6 mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -182,27 +201,6 @@ const ChainLanding: React.FC = () => {
               </Card>
             ))}
           </div>
-        </section>
-
-        {/* About the chain */}
-        <section className="px-4 sm:px-6 pb-8">
-          <Card className="rounded-2xl bg-card border-border p-4">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-muted rounded-lg flex-shrink-0">
-                <Building2 className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-bold text-card-foreground mb-1">
-                  Dar Jerba Hotels
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Une collection hôtelière d'exception sur l'île de Jerba, Tunisie.
-                  Chaque établissement offre une expérience unique alliant luxe,
-                  authenticité et service personnalisé.
-                </p>
-              </div>
-            </div>
-          </Card>
         </section>
 
       </main>
