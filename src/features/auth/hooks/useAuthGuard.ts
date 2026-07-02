@@ -67,10 +67,11 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
 
   useEffect(() => {
     // Ne pas vérifier l'authentification sur les pages d'authentification
+    // NOTE: Do NOT set authorized=false here — it would wipe the state right after a successful login
+    // when the auth page is shown briefly during redirection.
     if (isAuthPage()) {
       console.log("Page d'authentification, pas de vérification nécessaire");
       setLoading(false);
-      setAuthorized(false);
       return;
     }
 
@@ -163,20 +164,59 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
         }
 
         // 3. Validation des données utilisateur dans localStorage (guests only)
-        const userDataString = localStorage.getItem('user_data');
-        const userId = localStorage.getItem('user_id');
+        let userDataString = localStorage.getItem('user_data');
+        let userId = localStorage.getItem('user_id');
 
         if (!userDataString || !userId) {
-          console.log('Données utilisateur manquantes, redirection vers login');
-          toast({
-            variant: "destructive",
-            title: "Données de session incomplètes",
-            description: "Veuillez vous reconnecter"
-          });
-          navigate(loginUrl, { replace: true });
-          setAuthorized(false);
-          setLoading(false);
-          return;
+          console.log('Données utilisateur manquantes dans localStorage, tentative de récupération depuis la DB...');
+          try {
+            const { data: guestData } = await supabase
+              .from('guests')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+
+            const userData = guestData ? {
+              id: session.user.id,
+              email: session.user.email || '',
+              first_name: guestData.first_name || session.user.user_metadata?.first_name || 'Utilisateur',
+              last_name: guestData.last_name || session.user.user_metadata?.last_name || '',
+              room_number: guestData.room_number || '',
+              birth_date: guestData.birth_date || undefined,
+              check_in_date: guestData.check_in_date || undefined,
+              check_out_date: guestData.check_out_date || undefined,
+              nationality: guestData.nationality,
+              profile_image: guestData.profile_image,
+              guest_type: guestData.guest_type || 'Standard Guest',
+              hotel_id: guestData.hotel_id || null
+            } : {
+              id: session.user.id,
+              email: session.user.email || '',
+              first_name: session.user.user_metadata?.first_name || 'Utilisateur',
+              last_name: session.user.user_metadata?.last_name || '',
+              room_number: '',
+              guest_type: 'Standard Guest',
+              hotel_id: null
+            };
+
+            localStorage.setItem('user_data', JSON.stringify(userData));
+            localStorage.setItem('user_id', session.user.id);
+            userDataString = JSON.stringify(userData);
+            userId = session.user.id;
+            console.log('Données utilisateur restaurées avec succès dans localStorage !');
+          } catch (restoreError) {
+            console.error('Échec de la restauration des données utilisateur:', restoreError);
+            console.log('Redirection vers login');
+            toast({
+              variant: "destructive",
+              title: "Données de session incomplètes",
+              description: "Veuillez vous reconnecter"
+            });
+            navigate(loginUrl, { replace: true });
+            setAuthorized(false);
+            setLoading(false);
+            return;
+          }
         }
 
         try {
@@ -249,7 +289,11 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [navigate, toast, location.pathname, adminRequired]);
+  // IMPORTANT: Do NOT include location.pathname in deps — it causes the effect to re-run on
+  // every navigation, which creates an infinite redirect loop (auth check → redirect → auth check...).
+  // Auth state is managed reactively via onAuthStateChange. checkAuth() only runs once on mount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminRequired]);
 
   return {
     loading,
