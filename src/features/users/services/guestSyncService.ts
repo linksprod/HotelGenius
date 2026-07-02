@@ -64,7 +64,7 @@ export const syncGuestData = async (userId: string, userData: UserData): Promise
 
     const { error } = await supabase
       .from('guests')
-      .upsert(guestData, { onConflict: guestData.id ? 'id' : 'user_id' });
+      .upsert(guestData, { onConflict: guestData.id ? 'id' : 'user_id,hotel_id' });
 
     if (error) {
       console.error('[guestSyncService] Database error during sync:', {

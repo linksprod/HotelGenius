@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Building2, MapPin, Star, Utensils, Heart, Waves } from 'lucide-react';
+import { Building2, MapPin, Star, Utensils, Heart, Waves, Phone, Plane, Compass } from 'lucide-react';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
 /* ─────────────────────────────────────────────────────────────────
    Static data for the two member hotels
-───────────────────────────────────────────────────────────────── */
+   ───────────────────────────────────────────────────────────────── */
 const HOTELS = [
   {
     slug: 'zahra-hotel',
@@ -41,14 +41,14 @@ const HOTELS = [
       { icon: <Building2 className="w-4 h-4" />, label: 'Golf 18 trous' },
     ],
     vibeTags: ['Confort 4*', 'Calme & Détente', 'Premium'],
-    image: '/narjes-hotel.png',
+    image: '/narjess-hotel-pool.jpg',
     badge: '4 Étoiles',
   },
 ];
 
 /* ─────────────────────────────────────────────────────────────────
    Stars renderer
-───────────────────────────────────────────────────────────────── */
+   ───────────────────────────────────────────────────────────────── */
 const Stars = ({ count }: { count: number }) => (
   <div className="flex gap-0.5">
     {Array.from({ length: 5 }).map((_, i) => (
@@ -64,7 +64,7 @@ const Stars = ({ count }: { count: number }) => (
    Chain Landing Page
    — Uses a minimal custom header (logo only, no menu/notif/user)
    — No bottom nav, no floating chat bubble
-───────────────────────────────────────────────────────────────── */
+   ───────────────────────────────────────────────────────────────── */
 const ChainLanding: React.FC = () => {
   const navigate = useNavigate();
   const { hotel } = useHotel();
@@ -120,10 +120,10 @@ const ChainLanding: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-bold text-card-foreground mb-1 text-base">
-                  Bienvenue à Dar Jerba Hotels
+                  À propos de Dar Jerba
                 </h3>
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Un domaine de 45 hectares au bord d'une plage dorée à Midoun. Profitez de notre formule Tout Compris, de nos 4 piscines, de nos animations et du charme tunisien authentique.
+                  DAR JERBA : un complexe hôtelier construit sur 45 hectares de terrain le long d'une plage de sable doré sur l'île de Djerba. C'est un havre de tranquillité et de raffinement situé sur l'île, imprégné de charme oriental, offrant une expérience unique qui allie confort et élégance.
                 </p>
               </div>
             </div>
@@ -223,6 +223,97 @@ const ChainLanding: React.FC = () => {
                 </div>
               </Card>
             ))}
+          </div>
+        </section>
+
+        {/* Informations Pratiques & Accès */}
+        <section className="px-4 sm:px-6 mt-8 mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+            Informations Pratiques & Accès
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            {/* Adresse */}
+            <Card className="p-4 rounded-2xl bg-card border-border flex items-start gap-3 hover:shadow-md transition-all duration-300">
+              <div className="p-3 bg-primary/10 rounded-xl flex-shrink-0 text-primary">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm text-foreground mb-1">Adresse</h4>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Zone Touristique, Midoun, Île de Djerba, 4199
+                </p>
+                <a 
+                  href="https://maps.google.com/?q=Dar+Jerba+Midoun" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block mt-1 text-xs text-primary hover:underline font-medium"
+                >
+                  Voir sur la carte →
+                </a>
+              </div>
+            </Card>
+
+            {/* Téléphone */}
+            <Card className="p-4 rounded-2xl bg-card border-border flex items-start gap-3 hover:shadow-md transition-all duration-300">
+              <div className="p-3 bg-primary/10 rounded-xl flex-shrink-0 text-primary">
+                <Phone className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm text-foreground mb-1">Téléphone</h4>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  (+216) 75 745 181
+                </p>
+                <a 
+                  href="tel:+21675745181" 
+                  className="inline-block mt-1 text-xs text-primary hover:underline font-medium"
+                >
+                  Appeler l'hôtel →
+                </a>
+              </div>
+            </Card>
+          </div>
+
+          {/* Distances Grid */}
+          <div className="grid grid-cols-3 gap-3">
+            {/* Distance 1 */}
+            <Card className="p-3 rounded-2xl bg-card border-border flex flex-col items-center text-center justify-between h-full hover:shadow-md transition-all duration-300">
+              <div className="p-2 bg-primary/5 rounded-full text-primary mb-2">
+                <Compass className="w-4 h-4" />
+              </div>
+              <div className="flex-1 flex flex-col justify-center">
+                <span className="text-base sm:text-lg font-extrabold text-primary leading-tight">500 km</span>
+                <p className="text-[9px] sm:text-xs text-muted-foreground mt-1 leading-snug">
+                  au sud de la capitale, Tunis
+                </p>
+              </div>
+            </Card>
+
+            {/* Distance 2 */}
+            <Card className="p-3 rounded-2xl bg-card border-border flex flex-col items-center text-center justify-between h-full hover:shadow-md transition-all duration-300">
+              <div className="p-2 bg-primary/5 rounded-full text-primary mb-2">
+                <Plane className="w-4 h-4" />
+              </div>
+              <div className="flex-1 flex flex-col justify-center">
+                <span className="text-base sm:text-lg font-extrabold text-primary leading-tight">30 km</span>
+                <p className="text-[9px] sm:text-xs text-muted-foreground mt-1 leading-snug">
+                  de l'Aéroport de Djerba-Zarzis
+                </p>
+              </div>
+            </Card>
+
+            {/* Distance 3 */}
+            <Card className="p-3 rounded-2xl bg-card border-border flex flex-col items-center text-center justify-between h-full hover:shadow-md transition-all duration-300">
+              <div className="p-2 bg-primary/5 rounded-full text-primary mb-2">
+                <MapPin className="w-4 h-4" />
+              </div>
+              <div className="flex-1 flex flex-col justify-center">
+                <span className="text-base sm:text-lg font-extrabold text-primary leading-tight">19 km</span>
+                <p className="text-[9px] sm:text-xs text-muted-foreground mt-1 leading-snug">
+                  de Houmt Souk (6 km de Midoun)
+                </p>
+              </div>
+            </Card>
           </div>
         </section>
 

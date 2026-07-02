@@ -6,7 +6,7 @@ import { validateGuestId } from './guestValidation';
 /**
  * Récupère les données d'un invité depuis Supabase
  */
-export const getGuestData = async (userId: string): Promise<UserData | null> => {
+export const getGuestData = async (userId: string, hotelId?: string | null): Promise<UserData | null> => {
   try {
     console.log('Fetching guest data for user ID:', userId);
 
@@ -14,10 +14,18 @@ export const getGuestData = async (userId: string): Promise<UserData | null> => 
       return null;
     }
 
-    const { data, error } = await supabase
+    const activeHotelId = hotelId || localStorage.getItem('current_hotel_id');
+
+    let query = supabase
       .from('guests')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', userId);
+
+    if (activeHotelId) {
+      query = query.eq('hotel_id', activeHotelId);
+    }
+
+    const { data, error } = await query
       .order('updated_at', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(1)
