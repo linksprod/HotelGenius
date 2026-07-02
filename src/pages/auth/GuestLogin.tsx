@@ -13,7 +13,12 @@ const GuestLogin = () => {
   const { hotel } = useHotel();
   const { t } = useTranslation();
 
+  const hasChecked = React.useRef(false);
+
   useEffect(() => {
+    if (hasChecked.current) return;
+    hasChecked.current = true;
+
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -31,7 +36,9 @@ const GuestLogin = () => {
       }
     };
     checkSession();
-  }, [navigate, resolvePath]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   return (
     <div className="min-h-screen flex overflow-hidden relative bg-background">

@@ -15,7 +15,12 @@ const Login = () => {
   const onCustomDomain = isCustomDomain();
   const { t } = useTranslation();
 
+  const hasChecked = React.useRef(false);
+
   useEffect(() => {
+    if (hasChecked.current) return;
+    hasChecked.current = true;
+
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -52,7 +57,9 @@ const Login = () => {
       }
     };
     checkSession();
-  }, [navigate, resolvePath]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   // On custom domains: show a clean centered login page with hotel branding only
   if (onCustomDomain) {

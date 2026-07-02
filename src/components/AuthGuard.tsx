@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useAuthGuard } from '@/features/auth/hooks/useAuthGuard';
 import LoadingSpinner from './auth/LoadingSpinner';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -14,7 +14,7 @@ interface AuthGuardProps {
   publicAccess?: boolean;
 }
 
-// Public routes that should always be accessible
+// Public routes that should always be accessible (defined outside component to be stable)
 const PUBLIC_ROUTES = [
   '/',
   '/about',
@@ -29,63 +29,69 @@ const AuthGuard = ({
   adminRequired = false,
   publicAccess = false
 }: AuthGuardProps) => {
-  const { loading, authorized, isAuthPage } = useAuthGuard(adminRequired);
+  const { loading, authorized } = useAuthGuard(adminRequired);
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
   const { resolvePath } = useHotelPath();
+  // Guard: only fire the redirect toast once per unauthorized state
+  const redirectedRef = useRef(false);
+
+  // Inline helper — NOT a dependency because it uses location.pathname from closure
+  const pathname = location.pathname;
+  const isOnAuthPage = pathname.includes('/auth/');
+
+  const isPublicRoute = PUBLIC_ROUTES.some(route => {
+    const resolved = resolvePath(route);
+    return pathname === resolved || pathname.startsWith(resolved + '/');
+  });
 
   useEffect(() => {
-    // Check if the current route is a public route
-    const isPublicRoute = PUBLIC_ROUTES.some(route => {
-      const resolved = resolvePath(route);
-      return location.pathname === resolved || location.pathname.startsWith(resolved + '/');
-    });
-
-    // If it's a public route or explicitly marked for public access, allow access
-    if (isPublicRoute || publicAccess || isAuthPage()) {
-      return;
+    // Reset redirect guard when we become authorized again
+    if (authorized) {
+      redirectedRef.current = false;
     }
 
-    // 1. Super Admin Redirection (Isolation)
+    // Don't do anything on auth pages or public routes
+    if (isOnAuthPage || isPublicRoute || publicAccess) return;
+
+    // Super Admin isolation: redirect to platform dashboard
     const isSuperAdminEmail = user?.email === 'projects@hotelgenius.app';
-    const isGuestPath = !location.pathname.includes('/admin') && !location.pathname.startsWith('/administration');
-    
-    if (isSuperAdminEmail && isGuestPath && !isAuthPage() && !isPublicRoute) {
-      console.log('Super Admin detected on guest route, redirecting to platform dashboard');
+    const isGuestPath = !pathname.includes('/admin') && !pathname.startsWith('/administration');
+    if (isSuperAdminEmail && isGuestPath) {
       navigate('/administration/super/dashboard', { replace: true });
       return;
     }
 
-    // 2. Standard Auth Check
-    if (!isAuthPage() && !authorized && !loading) {
-      console.log(t('auth.loginRedirectMessage'), location.pathname);
-
+    // Standard unauthorized redirect — only fire once per session
+    if (!authorized && !loading && !redirectedRef.current) {
+      redirectedRef.current = true;
       toast({
         title: t('auth.authRequired'),
         description: t('auth.authRequiredDesc'),
-        variant: "destructive"
+        variant: 'destructive',
       });
-
-      // Rediriger vers la page de connexion
-      const loginTarget = adminRequired ? resolvePath('/auth/login') : resolvePath('/guests/auth/login');
-      navigate(loginTarget, { state: { from: location.pathname } });
+      const loginTarget = adminRequired
+        ? resolvePath('/auth/login')
+        : resolvePath('/guests/auth/login');
+      navigate(loginTarget, { state: { from: pathname } });
     }
-  }, [authorized, isAuthPage, loading, navigate, toast, location, PUBLIC_ROUTES, publicAccess]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authorized, loading]);
 
-  // Only show full-page spinner on initial load, not during navigation when already authorized
+  // Show spinner only during initial load
   if (loading && !authorized) {
     return <LoadingSpinner />;
   }
 
-  // Allow access if authorized or on auth page or public route
-  return (isAuthPage() || authorized || PUBLIC_ROUTES.some(route => {
-    const resolved = resolvePath(route);
-    return location.pathname === resolved || location.pathname.startsWith(resolved + '/');
-  }) ||
-    publicAccess) ? <>{children}</> : null;
+  // Render children if authorized, on auth page, or on a public route
+  if (authorized || isOnAuthPage || isPublicRoute || publicAccess) {
+    return <>{children}</>;
+  }
+
+  return null;
 };
 
 export default AuthGuard;
