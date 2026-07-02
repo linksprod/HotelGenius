@@ -56,6 +56,7 @@ export const createRestaurant = async (restaurant: Omit<Restaurant, 'id'>): Prom
       status: data[0].status as 'open' | 'closed',
       actionText: data[0].action_text || "Book a Table",
       isFeatured: data[0].is_featured || false,
+      is_published: data[0].is_published || false,
       bookingEnabled: data[0].booking_enabled !== false
     };
   } catch (error) {
@@ -125,6 +126,7 @@ export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaura
         status: fetchedData.status as 'open' | 'closed',
         actionText: fetchedData.action_text || "Book a Table",
         isFeatured: fetchedData.is_featured || false,
+        is_published: fetchedData.is_published || false,
         bookingEnabled: fetchedData.booking_enabled !== false
       };
     }
@@ -142,6 +144,7 @@ export const updateRestaurant = async (restaurant: Restaurant): Promise<Restaura
       status: data[0].status as 'open' | 'closed',
       actionText: data[0].action_text || "Book a Table",
       isFeatured: data[0].is_featured || false,
+      is_published: data[0].is_published || false,
       bookingEnabled: data[0].booking_enabled !== false
     };
   } catch (error) {
