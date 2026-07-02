@@ -119,8 +119,8 @@ const InfoItemSection = ({
       <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1 text-sm">
         {items.filter(item => item.label || item.value).map((item, index) => (
           <div key={index} className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline py-2.5 border-b border-border/50 gap-1 sm:gap-4">
-            <dt className="text-muted-foreground text-xs sm:text-sm font-medium">{item.label}</dt>
-            <dd className="font-semibold text-foreground text-sm sm:text-right">{item.value}</dd>
+            <dt className="text-foreground text-xs sm:text-sm font-bold">{item.label}</dt>
+            <dd className="font-medium text-muted-foreground text-sm sm:text-right">{item.value}</dd>
           </div>
         ))}
       </dl>
