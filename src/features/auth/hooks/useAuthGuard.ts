@@ -18,23 +18,16 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
   const { toast } = useToast();
   const { resolvePath } = useHotelPath();
   const [loading, setLoading] = useState<boolean>(() => {
+    // For admin routes we MUST verify server-side (user_data in localStorage stores
+    // guest info, not admin roles). Always start loading to prevent a premature redirect
+    // that fires before checkAuth() has time to call is_staff_member().
+    if (adminRequired) return true;
     return !localStorage.getItem('user_id');
   });
   const [authorized, setAuthorized] = useState<boolean>(() => {
-    if (!adminRequired) {
-      return !!localStorage.getItem('user_id');
-    }
-    const cached = localStorage.getItem('user_data');
-    if (cached) {
-      try {
-        const data = JSON.parse(cached);
-        const role = data.role || data.guest_type;
-        return role === 'admin' || role === 'hotel_admin' || role === 'super_admin' || role === 'staff';
-      } catch (e) {
-        return false;
-      }
-    }
-    return false;
+    // Admin routes: never trust localStorage for authorization — always verify async
+    if (adminRequired) return false;
+    return !!localStorage.getItem('user_id');
   });
   const loginUrl = adminRequired ? resolvePath('/auth/login') : resolvePath('/guests/auth/login');
 
