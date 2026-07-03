@@ -7,8 +7,9 @@ import {
   ExternalLink,
   Settings,
   Calendar,
-  Users,
   Hotel,
+  Edit3,
+  Network,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { toast } from '@/hooks/use-toast';
 import CreateHotelDialog from './hotels/CreateHotelDialog';
+import EditHotelDialog from './hotels/EditHotelDialog';
 import { useUserRole } from '@/hooks/useUserRole';
 import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
 
@@ -31,15 +33,20 @@ interface Hotel {
   primary_color: string | null;
   secondary_color: string | null;
   logo_url: string | null;
+  custom_domain: string | null;
+  is_chain?: boolean;
+  parent_hotel_id?: string | null;
 }
 
 // ─── Hotel Card ───────────────────────────────────────────────────────────────
 
 interface HotelCardProps {
   hotel: Hotel;
+  parentName: string | null;
+  onEdit: (hotel: Hotel) => void;
 }
 
-const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
+const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
   const primary = hotel.primary_color || '#6366f1';
   const secondary = hotel.secondary_color || '#8b5cf6';
   const initial = (hotel.name?.[0] || 'H').toUpperCase();
@@ -56,7 +63,7 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8, scale: 0.97 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group relative flex flex-col rounded-2xl border bg-card shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+      className="group relative flex flex-col rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
     >
       {/* Gradient top bar */}
       <div
@@ -72,25 +79,57 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
         >
           {initial}
         </div>
+
+        {/* Badges for chain/sub-hotel */}
+        <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-end">
+          {hotel.is_chain && (
+            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-md font-semibold text-[10px] uppercase tracking-wider">
+              Chain / Group
+            </Badge>
+          )}
+          {parentName && (
+            <Badge className="bg-primary/95 text-primary-foreground border-primary/20 text-[10px] font-medium shadow-sm">
+              Sub-hotel
+            </Badge>
+          )}
+        </div>
       </div>
 
       {/* Card body */}
       <div className="pt-8 px-5 pb-5 flex flex-col gap-3 flex-1">
         {/* Name & slug */}
         <div>
-          <h3 className="font-semibold text-base leading-tight truncate">{hotel.name}</h3>
-          <div className="flex items-center gap-1.5 mt-1">
+          <h3 className="font-bold text-base leading-tight text-foreground truncate group-hover:text-primary transition-colors">
+            {hotel.name}
+          </h3>
+          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
             <Badge
               variant="secondary"
-              className="text-[11px] font-mono px-2 py-0.5 rounded-full"
+              className="text-[10px] font-mono px-2 py-0.5 rounded-full"
             >
               {hotel.slug}
             </Badge>
+            {hotel.custom_domain && (
+              <Badge
+                variant="outline"
+                className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-background"
+              >
+                {hotel.custom_domain}
+              </Badge>
+            )}
           </div>
         </div>
 
+        {/* Parent relation details */}
+        {parentName && (
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/40 p-2 rounded-lg border border-border/40">
+            <Network className="h-3.5 w-3.5 text-primary/80 shrink-0" />
+            <span className="truncate">Part of: <strong className="text-foreground">{parentName}</strong></span>
+          </div>
+        )}
+
         {/* Meta */}
-        <div className="flex flex-col gap-1.5 text-xs text-muted-foreground">
+        <div className="flex flex-col gap-1.5 text-xs text-muted-foreground mt-1">
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 shrink-0" />
             <span>Created {formattedDate}</span>
@@ -106,42 +145,51 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
         {/* Color swatches */}
         <div className="flex items-center gap-1.5">
           <div
-            className="h-4 w-4 rounded-full border-2 border-card shadow-sm"
+            className="h-4 w-4 rounded-full border border-border shadow-sm"
             style={{ backgroundColor: primary }}
             title="Primary color"
           />
           <div
-            className="h-4 w-4 rounded-full border-2 border-card shadow-sm -ml-1.5"
+            className="h-4 w-4 rounded-full border border-border shadow-sm -ml-1.5"
             style={{ backgroundColor: secondary }}
             title="Secondary color"
           />
-          <span className="text-[11px] text-muted-foreground ml-1 font-mono">{primary}</span>
+          <span className="text-[10px] text-muted-foreground ml-1 font-mono">{primary}</span>
         </div>
 
         {/* Spacer */}
         <div className="flex-1" />
 
         {/* Action buttons */}
-        <div className="flex gap-2 pt-1 border-t">
+        <div className="flex gap-2 pt-2 border-t mt-1">
           <Button
             variant="ghost"
             size="sm"
-            className="flex-1 h-8 text-xs gap-1.5"
+            className="flex-1 h-8 text-xs gap-1"
             asChild
           >
             <a
-              href={`https://hotelgenius.online/${hotel.slug}`}
+              href={`https://${hotel.custom_domain || `hotelgenius.online/${hotel.slug}`}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <ExternalLink className="h-3.5 w-3.5" />
+              <ExternalLink className="h-3 w-3" />
               Visit
             </a>
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 h-8 text-xs gap-1.5"
+            className="flex-1 h-8 text-xs gap-1"
+            onClick={() => onEdit(hotel)}
+          >
+            <Edit3 className="h-3 w-3" />
+            Edit
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            className="flex-1 h-8 text-xs gap-1"
             asChild
           >
             <a
@@ -149,7 +197,7 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Settings className="h-3.5 w-3.5" />
+              <Settings className="h-3 w-3" />
               Admin
             </a>
           </Button>
@@ -189,6 +237,7 @@ const HotelsManager: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
+  const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
 
   // Hard guard — this page is for super admins only
   if (!isSuperAdmin) {
@@ -230,6 +279,12 @@ const HotelsManager: React.FC = () => {
     fetchHotels();
   }, []);
 
+  const getParentName = (parentId: string | null | undefined): string | null => {
+    if (!parentId) return null;
+    const parent = hotels.find((h) => h.id === parentId);
+    return parent ? parent.name : null;
+  };
+
   const filteredHotels = hotels.filter(
     (hotel) =>
       hotel.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -242,7 +297,7 @@ const HotelsManager: React.FC = () => {
       <div id="admin-ob-hotels-header" className="mb-6">
         <AdminPageHeader
           title="Hotels Management"
-          description="Manage hotel instances and their admins"
+          description="Manage hotel instances, branding, custom domains and chain relations"
           icon={<Building2 className="h-5 w-5 text-primary" />}
           actions={
             <>
@@ -328,16 +383,29 @@ const HotelsManager: React.FC = () => {
         >
           <AnimatePresence>
             {filteredHotels.map((hotel) => (
-              <HotelCard key={hotel.id} hotel={hotel} />
+              <HotelCard
+                key={hotel.id}
+                hotel={hotel}
+                parentName={getParentName(hotel.parent_hotel_id)}
+                onEdit={setEditingHotel}
+              />
             ))}
           </AnimatePresence>
         </motion.div>
       )}
 
-      {/* ── Dialog ── */}
+      {/* ── Dialogs ── */}
       <CreateHotelDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
+        onSuccess={fetchHotels}
+      />
+
+      <EditHotelDialog
+        hotel={editingHotel}
+        allHotels={hotels}
+        open={!!editingHotel}
+        onOpenChange={(open) => !open && setEditingHotel(null)}
         onSuccess={fetchHotels}
       />
     </div>
