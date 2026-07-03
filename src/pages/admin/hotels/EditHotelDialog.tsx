@@ -125,10 +125,9 @@ const EditHotelDialog: React.FC<EditHotelDialogProps> = ({
 
     setIsDeleting(true);
     try {
-      const { error } = await supabaseAdmin
-        .from('hotels')
-        .delete()
-        .eq('id', hotel.id);
+      const { error } = await supabaseAdmin.rpc('delete_hotel_cascade', {
+        target_hotel_id: hotel.id
+      });
 
       if (error) throw error;
 
