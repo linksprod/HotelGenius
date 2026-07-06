@@ -10,7 +10,11 @@ import { useHotel } from '@/features/hotels/context/HotelContext';
 const HOTEL_MAP_URLS: Record<string, string> = {
   'hotel-palais-bayram': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.9428852768983!2d10.168363375302805!3d36.79591976794172!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd340a8d8d3e11%3A0x5b1adb83eaf0389c!2sBayram%20Palace%20-%20Palais%20Bayram!5e0!3m2!1sfr!2stn!4v1781701612322!5m2!1sfr!2stn',
   'palais-bayram': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3194.9428852768983!2d10.168363375302805!3d36.79591976794172!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd340a8d8d3e11%3A0x5b1adb83eaf0389c!2sBayram%20Palace%20-%20Palais%20Bayram!5e0!3m2!1sfr!2stn!4v1781701612322!5m2!1sfr!2stn',
-  'laico-hammamet': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3212.493549464204!2d10.5399995!3d36.3730444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd63000a8b995f%3A0xf3d2b54b581b9d18!2sLaico!5e0!3m2!1sfr!2stn!4v1782401460584!5m2!1sfr!2stn'
+  'laico-hammamet': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3212.493549464204!2d10.5399995!3d36.3730444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd63000a8b995f%3A0xf3d2b54b581b9d18!2sLaico!5e0!3m2!1sfr!2stn!4v1782401460584!5m2!1sfr!2stn',
+  'narjes-hotel': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3314.331824290318!2d11.0285779!3d33.8295523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13aa97ce4761a077%3A0xed78549415acafb0!2sDar%20Jerba%20Narjess!5e0!3m2!1sfr!2stn',
+  'narjes-hotels': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3314.331824290318!2d11.0285779!3d33.8295523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13aa97ce4761a077%3A0xed78549415acafb0!2sDar%20Jerba%20Narjess!5e0!3m2!1sfr!2stn',
+  'zahra-hotel': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3314.331824290318!2d11.0285779!3d33.8295523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13aa97ce4761a077%3A0xed78549415acafb0!2sDar%20Jerba%20Narjess!5e0!3m2!1sfr!2stn',
+  'zahra-hotels': 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3314.331824290318!2d11.0285779!3d33.8295523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13aa97ce4761a077%3A0xed78549415acafb0!2sDar%20Jerba%20Narjess!5e0!3m2!1sfr!2stn'
 };
 
 const HotelMap = () => {
