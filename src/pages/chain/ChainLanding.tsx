@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Building2, MapPin, Star, Utensils, Heart, Waves, Phone, Plane, Compass, ConciergeBell, Users } from 'lucide-react';
+import { Building2, MapPin, Star, Utensils, Heart, Waves, Phone, Plane, Compass, ConciergeBell, Users, Smile, Baby, Coffee } from 'lucide-react';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
 /* ─────────────────────────────────────────────────────────────────
@@ -19,9 +19,9 @@ const HOTELS = [
     description:
       "Niché sur la plage dorée de Midoun, le Zahra Hotel vous offre une expérience de luxe incomparable face à la Méditerranée. Spa thalasso, 3 restaurants gastronomiques et suites vue mer.",
     highlights: [
-      { icon: <Heart className="w-4 h-4" />, label: 'Spa Thalasso' },
-      { icon: <Utensils className="w-4 h-4" />, label: '3 Restaurants' },
-      { icon: <Waves className="w-4 h-4" />, label: 'Plage privée' },
+      { icon: <Smile className="w-4 h-4" />, label: 'Family Ambiance' },
+      { icon: <Baby className="w-4 h-4" />, label: 'Mini-Club' },
+      { icon: <Coffee className="w-4 h-4" />, label: 'Café Maure' },
     ],
     vibeTags: ['Famille', 'Animation', 'Piscines & Clubs'],
     image: '/zahra-hotel.png',
