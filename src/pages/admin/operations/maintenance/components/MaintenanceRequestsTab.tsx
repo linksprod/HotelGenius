@@ -90,7 +90,7 @@ const MaintenanceRequestsTab = ({ categoryIds }: MaintenanceRequestsTabProps) =>
     <Card className="mb-6">
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle>Maintenance & Technical Requests</CardTitle>
+          <CardTitle>Maintenance Requests</CardTitle>
           <Button onClick={handleRefresh} variant="outline">
             Refresh
           </Button>
@@ -207,7 +207,7 @@ const MaintenanceRequestsTab = ({ categoryIds }: MaintenanceRequestsTabProps) =>
           </div>
         ) : (
           <div className="text-center py-8 text-muted-foreground">
-            No maintenance or technical requests found.
+            No maintenance requests found.
           </div>
         )}
       </CardContent>

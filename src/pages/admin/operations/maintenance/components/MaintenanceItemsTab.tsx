@@ -23,7 +23,6 @@ type MaintenanceItemsTabProps = {
   openAddItemDialog: () => void;
   openEditDialog: (item: RequestItem) => void;
   categoryIds: string[];
-  getCategoryName: (categoryId: string) => string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createMaintenanceCategories: () => Promise<any>;
 };
@@ -34,7 +33,6 @@ const MaintenanceItemsTab = ({
   openAddItemDialog,
   openEditDialog,
   categoryIds,
-  getCategoryName,
   createMaintenanceCategories
 }: MaintenanceItemsTabProps) => {
   const { allItems, isLoading } = useRequestCategories();
@@ -120,7 +118,6 @@ const MaintenanceItemsTab = ({
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Category</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -130,7 +127,6 @@ const MaintenanceItemsTab = ({
                 {maintenanceItems.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.name}</TableCell>
-                    <TableCell>{getCategoryName(item.category_id)}</TableCell>
                     <TableCell>{item.description || '-'}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${item.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>

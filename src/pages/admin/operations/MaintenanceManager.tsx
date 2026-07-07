@@ -101,10 +101,11 @@ const MaintenanceManager = () => {
       return;
     }
 
-    if (!newItem.category_id) {
+    const targetCategoryId = maintenanceCat?.id;
+    if (!targetCategoryId) {
       toast({
-        title: "Validation Error",
-        description: "Please select a category",
+        title: "Error",
+        description: "Maintenance category not found. Please initialize it first.",
         variant: "destructive"
       });
       return;
@@ -112,7 +113,8 @@ const MaintenanceManager = () => {
 
     try {
       await createItem.mutateAsync({
-        ...newItem
+        ...newItem,
+        category_id: targetCategoryId
       });
 
       toast({
@@ -189,10 +191,6 @@ const MaintenanceManager = () => {
             openAddItemDialog={() => setIsAddItemDialogOpen(true)}
             openEditDialog={openEditDialog}
             categoryIds={categoryIds}
-            getCategoryName={(categoryId) => {
-              const category = categories.find(cat => cat.id === categoryId);
-              return category?.name || 'Unknown';
-            }}
             createMaintenanceCategories={createMaintenanceCategories}
           />
         </TabsContent>
@@ -210,21 +208,6 @@ const MaintenanceManager = () => {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <div className="grid gap-2">
-              <label htmlFor="category" className="text-sm font-medium">Category</label>
-              <select
-                id="category"
-                value={newItem.category_id}
-                onChange={(e) => setNewItem({ ...newItem, category_id: e.target.value })}
-                className="px-3 py-2 border rounded-md"
-              >
-                <option value="">Select Category</option>
-                {maintenanceCategory && (
-                  <option value={maintenanceCategory.id}>Maintenance</option>
-                )}
-              </select>
-            </div>
-
             <div className="grid gap-2">
               <label htmlFor="name" className="text-sm font-medium">Name</label>
               <Input
@@ -266,20 +249,6 @@ const MaintenanceManager = () => {
 
           {editingItem && (
             <div className="space-y-4 py-4">
-              <div className="grid gap-2">
-                <label htmlFor="edit-category" className="text-sm font-medium">Category</label>
-                <select
-                  id="edit-category"
-                  value={editingItem.category_id}
-                  onChange={(e) => setEditingItem({ ...editingItem, category_id: e.target.value })}
-                  className="px-3 py-2 border rounded-md"
-                >
-                  {maintenanceCategory && (
-                    <option value={maintenanceCategory.id}>Maintenance</option>
-                  )}
-                </select>
-              </div>
-
               <div className="grid gap-2">
                 <label htmlFor="edit-name" className="text-sm font-medium">Name</label>
                 <Input
