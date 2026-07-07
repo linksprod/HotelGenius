@@ -60,14 +60,12 @@ const MaintenanceManager = () => {
   const createCategory = useCreateRequestCategory();
   const updateItem = useUpdateRequestItem();
 
-  // Find the Maintenance and Technical categories
+  // Find the Maintenance category
   const maintenanceCategory = categories.find(cat => cat.name === 'Maintenance');
-  const technicalCategory = categories.find(cat => cat.name === 'Technical');
 
   const createMaintenanceCategories = async () => {
     try {
       let mCat = maintenanceCategory;
-      let tCat = technicalCategory;
 
       if (!maintenanceCategory) {
         mCat = await createCategory.mutateAsync({
@@ -77,32 +75,22 @@ const MaintenanceManager = () => {
           icon: 'Wrench'
         });
       }
-      if (!technicalCategory) {
-        tCat = await createCategory.mutateAsync({
-          name: 'Technical',
-          description: 'Technical equipment and systems',
-          is_active: true,
-          icon: 'Cpu'
-        });
-      }
-      toast({ title: "Success", description: "Maintenance categories created" });
-      return { maintenanceCategory: mCat, technicalCategory: tCat };
+      toast({ title: "Success", description: "Maintenance category created" });
+      return { maintenanceCategory: mCat };
     } catch (error) {
-      console.error("Error creating categories:", error);
-      toast({ title: "Error", description: "Failed to create categories", variant: "destructive" });
+      console.error("Error creating category:", error);
+      toast({ title: "Error", description: "Failed to create category", variant: "destructive" });
     }
   };
 
-  // Get the IDs of both categories
+  // Get the IDs of the maintenance category
   const categoryIds = [
-    maintenanceCategory?.id,
-    technicalCategory?.id
+    maintenanceCategory?.id
   ].filter(Boolean) as string[];
 
   const handleAddItem = async () => {
     const categoriesList = categories;
     const maintenanceCat = categoriesList.find(cat => cat.name === 'Maintenance');
-    const technicalCat = categoriesList.find(cat => cat.name === 'Technical');
 
     if (!newItem.name) {
       toast({
@@ -182,8 +170,8 @@ const MaintenanceManager = () => {
     <div className="p-6">
       <div id="admin-ob-maintenance-header" className="mb-6">
         <AdminPageHeader
-          title="Maintenance & Technical Items"
-          description="Manage maintenance items and technical requests"
+          title="Maintenance Items"
+          description="Manage maintenance items and requests"
           icon={<Wrench className="h-5 w-5 text-primary" />}
         />
       </div>
@@ -218,7 +206,7 @@ const MaintenanceManager = () => {
       <Dialog open={isAddItemDialogOpen} onOpenChange={setIsAddItemDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Maintenance/Technical Item</DialogTitle>
+            <DialogTitle>Add Maintenance Item</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
@@ -233,9 +221,6 @@ const MaintenanceManager = () => {
                 <option value="">Select Category</option>
                 {maintenanceCategory && (
                   <option value={maintenanceCategory.id}>Maintenance</option>
-                )}
-                {technicalCategory && (
-                  <option value={technicalCategory.id}>Technical</option>
                 )}
               </select>
             </div>
@@ -276,7 +261,7 @@ const MaintenanceManager = () => {
       <Dialog open={isEditItemDialogOpen} onOpenChange={setIsEditItemDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Maintenance/Technical Item</DialogTitle>
+            <DialogTitle>Edit Maintenance Item</DialogTitle>
           </DialogHeader>
 
           {editingItem && (
@@ -291,9 +276,6 @@ const MaintenanceManager = () => {
                 >
                   {maintenanceCategory && (
                     <option value={maintenanceCategory.id}>Maintenance</option>
-                  )}
-                  {technicalCategory && (
-                    <option value={technicalCategory.id}>Technical</option>
                   )}
                 </select>
               </div>

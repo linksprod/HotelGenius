@@ -91,7 +91,7 @@ const MaintenanceItemsTab = ({
       <Card className="mb-6">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>Maintenance & Technical Service Items</CardTitle>
+            <CardTitle>Maintenance Service Items</CardTitle>
             <Button
               onClick={handleAddItem}
             >
@@ -163,13 +163,13 @@ const MaintenanceItemsTab = ({
             <div className="text-center py-8 text-muted-foreground">
               {categoryIds.length === 0 ? (
                 <div className="space-y-4">
-                  <p>Maintenance or Technical categories not found. Please initialize them first.</p>
+                  <p>Maintenance category not found. Please initialize it first.</p>
                   <Button onClick={createMaintenanceCategories}>
                     Initialize Maintenance
                   </Button>
                 </div>
               ) : (
-                "No maintenance or technical items found."
+                "No maintenance items found."
               )}
             </div>
           )}
