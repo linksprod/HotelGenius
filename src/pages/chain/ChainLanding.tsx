@@ -13,7 +13,7 @@ const HOTELS = [
   {
     slug: 'zahra-hotel',
     name: 'Dar Jerba Zahra',
-    tagline: 'Resort Balnéaire & Spa Thalasso',
+    tagline: '',
     location: 'Djerba, Tunisie Station touristique',
     stars: 3,
     description:
@@ -30,7 +30,7 @@ const HOTELS = [
   {
     slug: 'narjes-hotel',
     name: 'Dar Jerba Narjess',
-    tagline: 'Riad Traditionnel & Golf',
+    tagline: '',
     location: 'Djerba, Tunisie',
     stars: 4,
     description:
@@ -178,9 +178,11 @@ const ChainLanding: React.FC = () => {
                   <h3 className="text-sm font-bold text-card-foreground mb-0.5 leading-tight">
                     {hotel.name}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground mb-1 leading-snug">
-                    {hotel.tagline}
-                  </p>
+                  {hotel.tagline && (
+                    <p className="text-[10px] text-muted-foreground mb-1 leading-snug">
+                      {hotel.tagline}
+                    </p>
+                  )}
 
                   {/* Vibe Tags Indicator */}
                   <div className="flex flex-wrap gap-1 mb-2.5">
