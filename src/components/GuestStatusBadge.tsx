@@ -24,11 +24,14 @@ const GuestStatusBadge: React.FC<GuestStatusBadgeProps> = ({
       case 'staff':
         return { label: 'Hotel Staff', color: 'bg-green-100 text-green-800 hover:bg-green-200' };
       default:
-        return { label: 'Premium Guest', color: 'bg-amber-100 text-amber-800 hover:bg-amber-200' };
+        return null;
     }
   };
 
-  const { label, color } = getRoleConfig();
+  const config = getRoleConfig();
+  if (!config) return null;
+
+  const { label, color } = config;
 
   return (
     <Badge
