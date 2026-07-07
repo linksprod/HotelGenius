@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Building2, MapPin, Star, Utensils, Heart, Waves, Phone, Plane, Compass } from 'lucide-react';
+import { Building2, MapPin, Star, Utensils, Heart, Waves, Phone, Plane, Compass, ConciergeBell, Users } from 'lucide-react';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 
 /* ─────────────────────────────────────────────────────────────────
@@ -36,9 +36,9 @@ const HOTELS = [
     description:
       "Au cœur de la médina de Houmt Souk, le Narjes Hotel mêle charme traditionnel et confort moderne. Hammam oriental, 2 restaurants et accès privatif au golf 18 trous.",
     highlights: [
-      { icon: <Heart className="w-4 h-4" />, label: 'Hammam Oriental' },
-      { icon: <Utensils className="w-4 h-4" />, label: '2 Restaurants' },
-      { icon: <Building2 className="w-4 h-4" />, label: 'Golf 18 trous' },
+      { icon: <ConciergeBell className="w-4 h-4" />, label: 'Services' },
+      { icon: <Utensils className="w-4 h-4" />, label: 'Restaurants' },
+      { icon: <Users className="w-4 h-4" />, label: 'Event space' },
     ],
     vibeTags: ['Confort 4*', 'Calme & Détente', 'Premium'],
     image: '/narjess-hotel-pool.jpg',
