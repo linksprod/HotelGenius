@@ -107,7 +107,7 @@ const Contact = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto pt-6 md:pt-8">
         <h1 className="text-3xl font-semibold text-secondary text-center mb-8">{t('contact.title')}</h1>
         
         <div className="grid md:grid-cols-2 gap-8">
