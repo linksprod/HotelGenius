@@ -48,14 +48,10 @@ const StaffManager: React.FC = () => {
 
       // Get guest profiles for these users
       const userIds = roles.map((r) => r.user_id);
-      let guestsQuery = supabase
+      const guestsQuery = supabase
         .from('guests')
         .select('user_id, first_name, last_name, email')
         .in('user_id', userIds);
-
-      if (hotelId) {
-        guestsQuery = guestsQuery.eq('hotel_id', hotelId);
-      }
 
       const { data: guests } = await guestsQuery;
 
