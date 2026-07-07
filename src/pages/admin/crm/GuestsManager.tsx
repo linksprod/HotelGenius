@@ -103,12 +103,26 @@ const GuestsManager: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [activeTab, setActiveTab] = useState('all'); // Added for the new UI
+  const [selectedNationality, setSelectedNationality] = useState('all');
+  const [selectedAgeRange, setSelectedAgeRange] = useState('all');
   const navigate = useNavigate();
   const { resolvePath } = useHotelPath();
   const { hotelId, isSuperAdmin } = useCurrentHotelId();
 
   const handleViewGuest = (guest: Guest) => {
     navigate(resolvePath(`/admin/guests/${guest.id}`));
+  };
+
+  const calculateAge = (birthDateString: string | null) => {
+    if (!birthDateString) return null;
+    const birthDate = new Date(birthDateString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
   };
 
   const { data: guests = [], isLoading, refetch } = useQuery({
@@ -141,6 +155,13 @@ const GuestsManager: React.FC = () => {
       );
     },
   });
+
+  const nationalities = useMemo(() => {
+    const list = guests
+      .map(g => g.nationality)
+      .filter((n): n is string => !!n && n.trim() !== '');
+    return Array.from(new Set(list)).sort();
+  }, [guests]);
 
   const today = startOfDay(new Date());
 
@@ -224,8 +245,33 @@ const GuestsManager: React.FC = () => {
       filtered = filtered.filter(guest => guest.is_vip);
     }
 
+    // Apply nationality filter
+    if (selectedNationality !== 'all') {
+      filtered = filtered.filter(guest => guest.nationality === selectedNationality);
+    }
+
+    // Apply age filter
+    if (selectedAgeRange !== 'all') {
+      filtered = filtered.filter((guest) => {
+        const age = calculateAge(guest.birth_date);
+        if (age === null) return false;
+        switch (selectedAgeRange) {
+          case 'under-18':
+            return age < 18;
+          case '18-30':
+            return age >= 18 && age <= 30;
+          case '31-50':
+            return age >= 31 && age <= 50;
+          case '51-plus':
+            return age >= 51;
+          default:
+            return true;
+        }
+      });
+    }
+
     return filtered;
-  }, [guests, activeFilter, searchQuery, activeTab]);
+  }, [guests, activeFilter, searchQuery, activeTab, selectedNationality, selectedAgeRange]);
 
   const sortedGuests = useMemo(() => {
     return [...filteredGuests].sort((a, b) => {
@@ -377,10 +423,53 @@ const GuestsManager: React.FC = () => {
             variants={itemVariants}
           >
             <Tabs defaultValue="all" onValueChange={setActiveTab} value={activeTab} className="space-y-6">
-              <TabsList className="bg-secondary/50 dark:bg-zinc-900/50 border border-border dark:border-white/5 p-1 h-12 rounded-xl">
-                <TabsTrigger value="all" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg shadow-sm">All Guests</TabsTrigger>
-                <TabsTrigger value="vip" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg shadow-sm">VIP Only</TabsTrigger>
-              </TabsList>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <TabsList className="bg-secondary/50 dark:bg-zinc-900/50 border border-border dark:border-white/5 p-1 h-12 rounded-xl">
+                  <TabsTrigger value="all" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg shadow-sm">All Guests</TabsTrigger>
+                  <TabsTrigger value="vip" className="px-6 text-xs font-bold uppercase tracking-tight data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg shadow-sm">VIP Only</TabsTrigger>
+                </TabsList>
+
+                {/* Filter controls */}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Search Input */}
+                  <div className="relative max-w-xs flex-1 min-w-[200px]">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search guests..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9 h-10 rounded-xl bg-card border-border shadow-sm text-xs"
+                    />
+                  </div>
+
+                  {/* Nationality Select */}
+                  <Select value={selectedNationality} onValueChange={setSelectedNationality}>
+                    <SelectTrigger className="w-[160px] h-10 rounded-xl bg-card border-border shadow-sm text-xs">
+                      <SelectValue placeholder="Nationality" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Nationalities</SelectItem>
+                      {nationalities.map((nat) => (
+                        <SelectItem key={nat} value={nat}>{nat}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  {/* Age Select */}
+                  <Select value={selectedAgeRange} onValueChange={setSelectedAgeRange}>
+                    <SelectTrigger className="w-[140px] h-10 rounded-xl bg-card border-border shadow-sm text-xs">
+                      <SelectValue placeholder="Age Range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Ages</SelectItem>
+                      <SelectItem value="under-18">Under 18</SelectItem>
+                      <SelectItem value="18-30">18 - 30</SelectItem>
+                      <SelectItem value="31-50">31 - 50</SelectItem>
+                      <SelectItem value="51-plus">51+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
               <TabsContent value="all" className="m-0 mt-6 focus-visible:outline-none focus-visible:ring-0">
                 <Card className="bg-card/40 dark:bg-zinc-900/30 backdrop-blur-xl border border-border dark:border-white/[0.03] rounded-[2rem] overflow-hidden shadow-sm dark:shadow-2xl">
@@ -396,6 +485,8 @@ const GuestsManager: React.FC = () => {
                           <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-14">Type</TableHead>
                           <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-14">Room</TableHead>
                           <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-14">Stay Period</TableHead>
+                          <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-14">Nationality</TableHead>
+                          <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-14">Age</TableHead>
                           <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground h-14 text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -403,6 +494,7 @@ const GuestsManager: React.FC = () => {
                         {sortedGuests.map((guest) => {
                           const statuses = getGuestStatus(guest.check_in_date, guest.check_out_date);
                           const isInHouse = statuses.includes('in-house');
+                          const guestAge = calculateAge(guest.birth_date);
 
                           return (
                             <TableRow key={guest.id} className="border-border dark:border-white/[0.03] hover:bg-muted/20 dark:hover:bg-white/[0.02] transition-colors group">
@@ -445,6 +537,12 @@ const GuestsManager: React.FC = () => {
                               </TableCell>
                               <TableCell className="text-xs text-muted-foreground dark:text-zinc-400 font-medium">
                                 {formatDate(guest.check_in_date)} — {formatDate(guest.check_out_date)}
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground dark:text-zinc-400 font-medium">
+                                {guest.nationality || 'N/A'}
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground dark:text-zinc-400 font-medium">
+                                {guestAge !== null ? `${guestAge} yrs` : 'N/A'}
                               </TableCell>
                               <TableCell className="text-right">
                                 <Button variant="ghost" size="sm" onClick={() => handleViewGuest(guest)} className="text-primary hover:bg-primary/10 font-bold h-8 px-4 rounded-lg">
