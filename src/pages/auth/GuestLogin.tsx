@@ -16,28 +16,38 @@ const GuestLogin = () => {
   const hasChecked = React.useRef(false);
 
   useEffect(() => {
-    if (hasChecked.current) return;
-    hasChecked.current = true;
-
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const isSuperAdminEmail = session.user.email === 'projects@hotelgenius.app';
-        const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
-        const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
-        
-        if (isSuperAdmin || isSuperAdminEmail) {
-          navigate('/administration/super/dashboard', { replace: true });
-        } else if (isStaff) {
-          navigate(resolvePath('/admin'), { replace: true });
-        } else {
-          navigate(resolvePath('/'), { replace: true });
-        }
+    const handleSession = async (session: any) => {
+      if (!session?.user) return;
+      
+      const isSuperAdminEmail = session.user.email === 'projects@hotelgenius.app';
+      const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
+      const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
+      
+      if (isSuperAdmin || isSuperAdminEmail) {
+        navigate('/administration/super/dashboard', { replace: true });
+      } else if (isStaff) {
+        navigate(resolvePath('/admin'), { replace: true });
+      } else {
+        navigate(resolvePath('/'), { replace: true });
       }
     };
-    checkSession();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) handleSession(session);
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        handleSession(session);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate, resolvePath]);
 
 
   return (

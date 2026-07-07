@@ -15,50 +15,58 @@ const Login = () => {
   const onCustomDomain = isCustomDomain();
   const { t } = useTranslation();
 
-  const hasChecked = React.useRef(false);
-
   useEffect(() => {
-    if (hasChecked.current) return;
-    hasChecked.current = true;
+    const handleSession = async (session: any) => {
+      if (!session?.user) return;
+      
+      const isSuperAdminEmail = session.user.email === 'projects@hotelgenius.app';
+      const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
+      const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
+      
+      if (isSuperAdmin || isSuperAdminEmail) {
+        navigate('/administration/super/dashboard', { replace: true });
+      } else if (isStaff) {
+        navigate(resolvePath('/admin'), { replace: true });
+      } else {
+        const { data: guestData } = await supabase
+          .from('guests')
+          .select('hotel_id, hotels(slug)')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
 
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const isSuperAdminEmail = session.user.email === 'projects@hotelgenius.app';
-        const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
-        const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
-        
-        if (isSuperAdmin || isSuperAdminEmail) {
-          navigate('/administration/super/dashboard', { replace: true });
-        } else if (isStaff) {
-          navigate(resolvePath('/admin'), { replace: true });
+        // @ts-ignore
+        const hotelSlug = guestData?.hotels?.slug;
+        if (hotelSlug) {
+          navigate(`/${hotelSlug}`, { replace: true });
         } else {
-          const { data: guestData } = await supabase
-            .from('guests')
-            .select('hotel_id, hotels(slug)')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-
-          // @ts-ignore
-          const hotelSlug = guestData?.hotels?.slug;
-          if (hotelSlug) {
-            navigate(`/${hotelSlug}`, { replace: true });
+          const targetPath = resolvePath('/');
+          if (targetPath !== '/') {
+            navigate(targetPath, { replace: true });
           } else {
-            const targetPath = resolvePath('/');
-            if (targetPath !== '/') {
-              navigate(targetPath, { replace: true });
-            } else {
-              console.warn("Guest user has no associated hotel. Signing out to prevent loop.");
-              await supabase.auth.signOut();
-              localStorage.clear();
-            }
+            console.warn("Guest user has no associated hotel. Signing out to prevent loop.");
+            await supabase.auth.signOut();
+            localStorage.clear();
           }
         }
       }
     };
-    checkSession();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) handleSession(session);
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        handleSession(session);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate, resolvePath]);
 
 
   // On custom domains: show a clean centered login page with hotel branding only
