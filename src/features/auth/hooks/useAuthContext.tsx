@@ -100,6 +100,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return guestData;
       } else {
         console.warn(`[AuthContext] No guest data found in DB for ${userId}`);
+        // Auto-create guest profile in DB using auth metadata
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession?.user) {
+          const fallbackUserData: UserData = {
+            id: currentSession.user.id,
+            email: currentSession.user.email || '',
+            first_name: currentSession.user.user_metadata?.first_name || 'Utilisateur',
+            last_name: currentSession.user.user_metadata?.last_name || '',
+            room_number: '',
+            guest_type: 'Standard Guest',
+            hotel_id: null
+          };
+          await syncGuestData(userId, fallbackUserData);
+          setUserData(fallbackUserData);
+          return fallbackUserData;
+        }
       }
 
       // 3. Fallback to local data if guestData is not in DB but we had local data
