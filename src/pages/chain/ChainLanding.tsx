@@ -158,11 +158,6 @@ const ChainLanding: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
 
-                  {/* Badge */}
-                  <span className="absolute top-2 right-2 text-[10px] font-medium bg-primary/80 backdrop-blur-sm text-primary-foreground px-2 py-0.5 rounded-full">
-                    {hotel.badge}
-                  </span>
-
                   {/* Stars + location */}
                   <div className="absolute bottom-2 left-2 flex flex-col gap-0.5">
                     <Stars count={hotel.stars} />
