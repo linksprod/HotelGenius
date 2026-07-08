@@ -20,6 +20,7 @@ const HotelsManager = React.lazy(() => import('@/pages/admin/HotelsManager'));
 const StaffManager = React.lazy(() => import('@/pages/admin/settings/StaffManager'));
 const SuperAIInfrastructure = React.lazy(() => import('@/pages/admin/super/SuperAIInfrastructure'));
 const NotificationCentre = React.lazy(() => import('@/pages/admin/overview/NotificationCentre'));
+const SuperLoyaltyManager = React.lazy(() => import('@/pages/admin/super/SuperLoyaltyManager'));
 import TenantGuard from './components/TenantGuard';
 import ThemeCustomizer from './components/ThemeCustomizer';
 import PWAInstallBanner from './components/PWAInstallBanner';
@@ -97,6 +98,7 @@ function App() {
                             <Route path="super/users" element={<StaffManager />} />
                             <Route path="super/ai" element={<SuperAIInfrastructure />} />
                             <Route path="super/notifications" element={<NotificationCentre />} />
+                            <Route path="super/loyalty" element={<SuperLoyaltyManager />} />
                             <Route path="super/settings" element={<HotelsManager />} />
                             <Route path="super/destinations" element={<HotelsManager />} />
                             <Route path="*" element={<Navigate to="super/dashboard" replace />} />

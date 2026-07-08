@@ -55,6 +55,29 @@ export const transformAboutData = (aboutData: any): HotelAbout => {
       } catch (e) {
         return [];
       }
+    })(),
+    loyalty_enabled: !!aboutData.loyalty_enabled,
+    loyalty_title: aboutData.loyalty_title || 'Loyalty Program',
+    loyalty_description: aboutData.loyalty_description || '',
+    loyalty_tiers: (() => {
+      try {
+        if (!aboutData.loyalty_tiers) return [];
+        return Array.isArray(aboutData.loyalty_tiers) 
+          ? aboutData.loyalty_tiers 
+          : (typeof aboutData.loyalty_tiers === 'string' ? JSON.parse(aboutData.loyalty_tiers) : []);
+      } catch (e) {
+        return [];
+      }
+    })(),
+    loyalty_benefits: (() => {
+      try {
+        if (!aboutData.loyalty_benefits) return [];
+        return Array.isArray(aboutData.loyalty_benefits) 
+          ? aboutData.loyalty_benefits 
+          : (typeof aboutData.loyalty_benefits === 'string' ? JSON.parse(aboutData.loyalty_benefits) : []);
+      } catch (e) {
+        return [];
+      }
     })()
   };
 };
@@ -84,6 +107,13 @@ export const prepareDataForUpdate = (data: Partial<HotelAbout>) => {
   if (data.seminar_image !== undefined) updateData.seminar_image = data.seminar_image;
   if (data.seminar_services !== undefined) updateData.seminar_services = data.seminar_services;
   if (data.seminar_rooms !== undefined) updateData.seminar_rooms = data.seminar_rooms;
+
+  if (data.loyalty_enabled !== undefined) updateData.loyalty_enabled = data.loyalty_enabled;
+  if (data.loyalty_title !== undefined) updateData.loyalty_title = data.loyalty_title;
+  if (data.loyalty_description !== undefined) updateData.loyalty_description = data.loyalty_description;
+  if (data.loyalty_tiers !== undefined) updateData.loyalty_tiers = data.loyalty_tiers;
+  if (data.loyalty_benefits !== undefined) updateData.loyalty_benefits = data.loyalty_benefits;
   
   return updateData;
+
 };

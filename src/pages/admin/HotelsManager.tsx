@@ -239,21 +239,6 @@ const HotelsManager: React.FC = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
 
-  // Hard guard — this page is for super admins only
-  if (!isSuperAdmin) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
-          <Building2 className="w-8 h-8 text-destructive" />
-        </div>
-        <h2 className="text-lg font-semibold text-foreground">Access Restricted</h2>
-        <p className="text-sm text-muted-foreground max-w-sm">
-          This section is only available to HotelGenius platform administrators.
-        </p>
-      </div>
-    );
-  }
-
   const fetchHotels = async () => {
     setIsLoading(true);
     try {
@@ -275,9 +260,27 @@ const HotelsManager: React.FC = () => {
     }
   };
 
+  // All hooks must be declared before any conditional return (Rules of Hooks)
   useEffect(() => {
-    fetchHotels();
-  }, []);
+    if (isSuperAdmin) {
+      fetchHotels();
+    }
+  }, [isSuperAdmin]);
+
+  // Hard guard — this page is for super admins only
+  if (!isSuperAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
+          <Building2 className="w-8 h-8 text-destructive" />
+        </div>
+        <h2 className="text-lg font-semibold text-foreground">Access Restricted</h2>
+        <p className="text-sm text-muted-foreground max-w-sm">
+          This section is only available to HotelGenius platform administrators.
+        </p>
+      </div>
+    );
+  }
 
   const getParentName = (parentId: string | null | undefined): string | null => {
     if (!parentId) return null;

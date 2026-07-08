@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, Brush,
   Wrench, Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, MapPin, 
   FileText, ImageIcon, Globe, Settings, Building2, UserCog, Bot,
-  CreditCard, LayoutTemplate, Coins, Calendar, Phone
+  CreditCard, LayoutTemplate, Coins, Calendar, Phone, Award
 } from 'lucide-react';
 import React from 'react';
 
@@ -97,6 +97,7 @@ export const globalNavigation: NavSectionConfig[] = [
     items: [
       { title: 'Global Insights', url: '/administration/super/dashboard', icon: Globe, requiredRoles: ['super_admin'] },
       { title: 'Hotels Portfolio', url: '/administration/super/hotels', icon: Building2, requiredRoles: ['super_admin'] },
+      { title: 'Loyalty Program', url: '/administration/super/loyalty', icon: Award, requiredRoles: ['super_admin'] },
       { title: 'System Users', url: '/administration/super/users', icon: UserCog, requiredRoles: ['super_admin'] },
     ],
   },
@@ -128,6 +129,7 @@ export const settingsNavigation = [
       { title: 'About Editor', url: '/admin/settings/about', icon: FileText },
       { title: 'Contact Page', url: '/admin/settings/contact', icon: Phone },
       { title: 'AI Content Import', url: '/admin/settings/ai-import', icon: Sparkles },
+      { title: 'Loyalty Program', url: '/admin/settings/loyalty', icon: Award },
       { title: 'Destinations', url: '/admin/settings/destinations', icon: MapPin },
     ]
   },

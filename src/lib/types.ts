@@ -62,7 +62,23 @@ export interface HotelAbout {
   seminar_image?: string;
   seminar_services?: SeminarService[];
   seminar_rooms?: SeminarRoom[];
+  loyalty_enabled?: boolean;
+  loyalty_title?: string;
+  loyalty_description?: string;
+  loyalty_tiers?: LoyaltyTier[];
+  loyalty_benefits?: LoyaltyBenefit[];
 }
+
+export interface LoyaltyTier {
+  name: string;
+  points: string;
+}
+
+export interface LoyaltyBenefit {
+  name: string;
+  values: string[];
+}
+
 
 export interface SeminarService {
   name: string;

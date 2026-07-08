@@ -9,7 +9,7 @@ import MissionSection from '@/components/admin/about/MissionSection';
 import DirectorySection from '@/components/admin/about/DirectorySection';
 import FeaturesSection from '@/components/admin/about/FeaturesSection';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CheckCircle2, Maximize2, ArrowUpToLine, Wifi, Sun, Users, Presentation, MonitorPlay, Volume2, Video, SquarePlay, Layers, Sofa, UtensilsCrossed, GlassWater, Briefcase, Mic2, Settings, Zap, Coffee, FileText, ShieldCheck, Phone, Map, Music, Lightbulb, Tv, Printer, Thermometer, ParkingCircle, Clock, Star } from 'lucide-react';
+import { CheckCircle2, Maximize2, ArrowUpToLine, Wifi, Sun, Users, Presentation, MonitorPlay, Volume2, Video, SquarePlay, Layers, Sofa, UtensilsCrossed, GlassWater, Briefcase, Mic2, Settings, Zap, Coffee, FileText, ShieldCheck, Phone, Map, Music, Lightbulb, Tv, Printer, Thermometer, ParkingCircle, Clock, Star, Award } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { SeminarService } from '@/lib/types';
 
@@ -350,6 +350,97 @@ const About = () => {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {aboutData.loyalty_enabled && aboutData.loyalty_tiers && aboutData.loyalty_tiers.length > 0 && (
+          <div className="my-10 border rounded-2xl overflow-hidden shadow-sm bg-card">
+            {/* Header / Banner */}
+            <div className="relative w-full py-12 px-6 md:px-10 bg-gradient-to-br from-primary/95 via-primary/85 to-primary/70 text-white flex items-center gap-4">
+              <div className="bg-white/20 border border-white/30 p-2.5 rounded-xl shrink-0">
+                <Award className="h-6 w-6 text-white animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                  {aboutData.loyalty_title || t('about.loyalty.title', 'Loyalty Program')}
+                </h2>
+                <p className="text-white/80 text-sm mt-0.5">
+                  {aboutData.loyalty_description || t('about.loyalty.subtitle', 'Unlock exclusive benefits and privileges throughout your stays')}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 md:p-8 lg:p-10 space-y-8">
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto rounded-xl border shadow-sm">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="bg-primary/5 border-b">
+                      <th className="p-4 text-left font-semibold text-foreground w-[300px]">Benefits</th>
+                      {aboutData.loyalty_tiers.map((tier, idx) => (
+                        <th key={idx} className="p-4 text-center font-bold text-foreground min-w-[120px]">
+                          <span className="block text-base text-primary font-bold">{tier.name}</span>
+                          <span className="block text-xs text-muted-foreground font-normal mt-0.5">{tier.points}</span>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(aboutData.loyalty_benefits || []).map((benefit, idx) => (
+                      <tr key={idx} className={`border-b last:border-b-0 hover:bg-muted/10 transition-colors ${idx % 2 === 0 ? '' : 'bg-muted/5'}`}>
+                        <td className="p-4 font-medium text-foreground">{benefit.name}</td>
+                        {aboutData.loyalty_tiers.map((_, tierIdx) => {
+                          const val = benefit.values[tierIdx] || '—';
+                          return (
+                            <td key={tierIdx} className="p-4 text-center font-semibold">
+                              {val === '✓' ? (
+                                <CheckCircle2 className="h-5 w-5 text-green-500 mx-auto" />
+                              ) : val === '—' ? (
+                                <span className="text-muted-foreground/45 font-normal">—</span>
+                              ) : (
+                                <span className="text-primary font-bold text-sm bg-primary/5 px-2.5 py-1 rounded-full border border-primary/10 inline-block">{val}</span>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card Grid View */}
+              <div className="grid gap-6 md:hidden">
+                {aboutData.loyalty_tiers.map((tier, tierIdx) => (
+                  <div key={tierIdx} className="bg-card border rounded-xl p-5 shadow-sm space-y-4 relative overflow-hidden">
+                    {/* Top Accent Gradient Line */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/80 to-primary" />
+                    
+                    <div className="flex justify-between items-baseline">
+                      <h4 className="font-bold text-xl text-primary">{tier.name}</h4>
+                      <span className="text-xs bg-primary/10 text-primary px-2.5 py-0.5 rounded-full font-bold">{tier.points}</span>
+                    </div>
+
+                    <div className="space-y-2.5 pt-2 border-t text-sm">
+                      {(aboutData.loyalty_benefits || []).map((benefit, idx) => {
+                        const val = benefit.values[tierIdx] || '—';
+                        if (val === '—') return null; // Don't show inactive benefits on mobile to keep it concise and clean
+                        return (
+                          <div key={idx} className="flex justify-between items-center py-1">
+                            <span className="text-muted-foreground text-xs pr-4">{benefit.name}</span>
+                            {val === '✓' ? (
+                              <CheckCircle2 className="h-4.5 w-4.5 text-green-500 shrink-0" />
+                            ) : (
+                              <span className="font-bold text-primary text-xs bg-primary/5 px-2 py-0.5 rounded-md border border-primary/10 shrink-0">{val}</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
