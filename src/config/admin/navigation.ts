@@ -2,7 +2,7 @@ import {
   LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, Brush,
   Wrench, Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, MapPin, 
   FileText, ImageIcon, Globe, Settings, Building2, UserCog, Bot,
-  CreditCard, LayoutTemplate, Coins, Calendar, Phone, Award
+  CreditCard, LayoutTemplate, Coins, Calendar, Phone, Award, Megaphone
 } from 'lucide-react';
 import React from 'react';
 
@@ -34,6 +34,7 @@ export const adminNavigation: NavSectionConfig[] = [
       { title: 'Live Dashboard', url: '/admin', icon: LayoutDashboard },
       { title: 'Unified Inbox', url: '/admin/chat', icon: MessageCircle, notificationKey: 'chat', requiredRoles: ['super_admin', 'hotel_admin', 'admin', 'moderator'] },
       { title: 'Advanced Console', url: '/admin/console', icon: LayoutTemplate, requiredPlan: 'experience' },
+      { title: 'Platform Info', url: '/admin/bulletins', icon: Megaphone, requiredRoles: ['super_admin', 'hotel_admin', 'admin'] },
       { title: 'Multi-property', url: '/admin/multi-property', icon: Building2, requiredPlan: 'elite' },
       { title: 'Revenue Analytics', url: '/admin/analytics', icon: Globe, requiredPlan: 'elite' },
     ],
@@ -98,6 +99,7 @@ export const globalNavigation: NavSectionConfig[] = [
       { title: 'Global Insights', url: '/administration/super/dashboard', icon: Globe, requiredRoles: ['super_admin'] },
       { title: 'Hotels Portfolio', url: '/administration/super/hotels', icon: Building2, requiredRoles: ['super_admin'] },
       { title: 'Loyalty Program', url: '/administration/super/loyalty', icon: Award, requiredRoles: ['super_admin'] },
+      { title: 'Platform Bulletins', url: '/administration/super/bulletins', icon: Megaphone, requiredRoles: ['super_admin'] },
       { title: 'System Users', url: '/administration/super/users', icon: UserCog, requiredRoles: ['super_admin'] },
     ],
   },

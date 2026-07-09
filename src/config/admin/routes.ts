@@ -14,6 +14,7 @@ export interface AdminRouteConfig {
 // Overview
 export const Dashboard = React.lazy(() => import('@/pages/admin/overview/Dashboard'));
 export const NotificationCentre = React.lazy(() => import('@/pages/admin/overview/NotificationCentre'));
+export const PlatformBulletins = React.lazy(() => import('@/pages/admin/overview/PlatformBulletins'));
 
 // CRM (Guest Relations)
 export const GuestsManager = React.lazy(() => import('@/pages/admin/crm/GuestsManager'));
@@ -68,6 +69,7 @@ export const adminRoutes: AdminRouteConfig[] = [
   // Overview
   { path: '', component: Dashboard },
   { path: 'notifications', component: NotificationCentre },
+  { path: 'bulletins', component: PlatformBulletins, requiredRoles: ['super_admin', 'hotel_admin', 'admin'] },
 
   // CRM
   { path: 'guests', component: GuestsManager },
