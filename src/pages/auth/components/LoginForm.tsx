@@ -57,6 +57,20 @@ const LoginForm: React.FC = () => {
         const { data: { session } } = await supabase.auth.getSession();
 
         if (session?.user?.id) {
+          // ── Step 1: Always check the role first to avoid misrouting ──────────
+          const { data: rolesData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', session.user.id);
+
+          const roles = (rolesData || []).map((r: any) => r.role);
+
+          if (roles.includes('account_executive')) {
+            toast({ title: t('auth.welcomeToast', 'Welcome!'), description: 'Connecté à l\'espace Account Executive.' });
+            navigate('/ae/dashboard', { replace: true });
+            return;
+          }
+
           const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
           const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
 
@@ -81,12 +95,12 @@ const LoginForm: React.FC = () => {
           }
 
           if (isStaff) {
-            const { data: roleData } = await supabase
+            const { data: staffRoleData } = await supabase
               .from('user_roles')
               .select('hotels(slug)')
               .eq('user_id', session.user.id)
               .maybeSingle();
-            const slug = roleData?.hotels?.slug;
+            const slug = staffRoleData?.hotels?.slug;
             navigate(slug ? `/${slug}/admin` : resolvePath('/admin'), { replace: true });
             return;
           }

@@ -22,6 +22,13 @@ const SuperAIInfrastructure = React.lazy(() => import('@/pages/admin/super/Super
 const NotificationCentre = React.lazy(() => import('@/pages/admin/overview/NotificationCentre'));
 const SuperLoyaltyManager = React.lazy(() => import('@/pages/admin/super/SuperLoyaltyManager'));
 const PlatformBulletinsManager = React.lazy(() => import('@/pages/admin/super/PlatformBulletinsManager'));
+const SuperAEManager = React.lazy(() => import('@/pages/admin/super/SuperAEManager'));
+const AEDetailPage = React.lazy(() => import('@/pages/admin/super/AEDetailPage'));
+// AE workspace
+const AELayout = React.lazy(() => import('@/components/ae/AELayout'));
+const AERoleGuard = React.lazy(() => import('@/components/ae/AERoleGuard'));
+const AEDashboard = React.lazy(() => import('@/pages/ae/AEDashboard'));
+const AEHotelManagement = React.lazy(() => import('@/pages/ae/AEHotelManagement'));
 import TenantGuard from './components/TenantGuard';
 import ThemeCustomizer from './components/ThemeCustomizer';
 import PWAInstallBanner from './components/PWAInstallBanner';
@@ -103,6 +110,8 @@ function App() {
                             <Route path="super/bulletins" element={<PlatformBulletinsManager />} />
                             <Route path="super/settings" element={<HotelsManager />} />
                             <Route path="super/destinations" element={<HotelsManager />} />
+                            <Route path="super/account-executives" element={<SuperAEManager />} />
+                            <Route path="super/account-executives/:aeId" element={<AEDetailPage />} />
                             <Route path="*" element={<Navigate to="super/dashboard" replace />} />
                           </Routes>
                         </AdminLayout>
@@ -114,6 +123,29 @@ function App() {
 
               {/* Fallback for any other path */}
               <Route path="*" element={<Navigate to="/demo" replace />} />
+
+              {/* ─── Account Executive Workspace ─────────────────────────────────── */}
+              <Route path="/ae/*" element={
+                <HotelProvider>
+                  <AuthGuard adminRequired={true}>
+                    <React.Suspense fallback={
+                      <div className="h-screen w-full flex items-center justify-center bg-background">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      </div>
+                    }>
+                      <AERoleGuard>
+                        <AELayout>
+                          <Routes>
+                            <Route path="dashboard" element={<AEDashboard />} />
+                            <Route path="hotels" element={<AEHotelManagement />} />
+                            <Route path="*" element={<Navigate to="dashboard" replace />} />
+                          </Routes>
+                        </AELayout>
+                      </AERoleGuard>
+                    </React.Suspense>
+                  </AuthGuard>
+                </HotelProvider>
+              } />
             </Routes>
             <Toaster richColors position="top-right" closeButton />
             <ShadcnToaster />

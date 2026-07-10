@@ -2,11 +2,11 @@ import {
   LayoutDashboard, Bell, Users, MessageCircle, MessageSquare, Trash2, Brush,
   Wrench, Shield, Wifi, Utensils, Sparkles, PartyPopper, Store, MapPin, 
   FileText, ImageIcon, Globe, Settings, Building2, UserCog, Bot,
-  CreditCard, LayoutTemplate, Coins, Calendar, Phone, Award, Megaphone
+  CreditCard, LayoutTemplate, Coins, Calendar, Phone, Award, Megaphone, Briefcase
 } from 'lucide-react';
 import React from 'react';
 
-export type Role = 'super_admin' | 'hotel_admin' | 'admin' | 'moderator' | 'staff' | 'user';
+export type Role = 'super_admin' | 'hotel_admin' | 'admin' | 'moderator' | 'staff' | 'user' | 'account_executive';
 
 export type PlanTier = 'essential' | 'experience' | 'elite';
 
@@ -98,6 +98,7 @@ export const globalNavigation: NavSectionConfig[] = [
     items: [
       { title: 'Global Insights', url: '/administration/super/dashboard', icon: Globe, requiredRoles: ['super_admin'] },
       { title: 'Hotels Portfolio', url: '/administration/super/hotels', icon: Building2, requiredRoles: ['super_admin'] },
+      { title: 'Account Executives', url: '/administration/super/account-executives', icon: Briefcase, requiredRoles: ['super_admin'] },
       { title: 'Loyalty Program', url: '/administration/super/loyalty', icon: Award, requiredRoles: ['super_admin'] },
       { title: 'Platform Bulletins', url: '/administration/super/bulletins', icon: Megaphone, requiredRoles: ['super_admin'] },
       { title: 'System Users', url: '/administration/super/users', icon: UserCog, requiredRoles: ['super_admin'] },

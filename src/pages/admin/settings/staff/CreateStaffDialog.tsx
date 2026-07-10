@@ -37,7 +37,7 @@ const createStaffSchema = z
     first_name: z.string().min(2, 'First name is required').max(50),
     last_name: z.string().min(2, 'Last name is required').max(50),
     email: z.string().email('Invalid email address').max(255),
-    role: z.enum(['staff', 'moderator', 'admin'], {
+    role: z.enum(['staff', 'moderator', 'admin', 'account_executive'], {
       required_error: 'Please select a role',
     }),
     service_type: z.enum(['housekeeping', 'maintenance', 'security', 'it_support']).optional(),
@@ -210,6 +210,7 @@ const CreateStaffDialog: React.FC<CreateStaffDialogProps> = ({
                         <SelectItem value="staff">Staff</SelectItem>
                         <SelectItem value="moderator">Moderator</SelectItem>
                         <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="account_executive">Account Executive</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

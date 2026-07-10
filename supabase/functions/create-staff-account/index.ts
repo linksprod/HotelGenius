@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const validRoles = ["admin", "moderator", "staff"];
+    const validRoles = ["admin", "moderator", "staff", "account_executive"];
     if (!validRoles.includes(role)) {
       return new Response(JSON.stringify({ error: "Invalid role" }), {
         status: 400,
@@ -139,6 +139,32 @@ Deno.serve(async (req) => {
       .delete()
       .eq("user_id", newUser.user.id)
       .eq("role", "user");
+
+    // Insert Account Executive profile if applicable
+    if (role === "account_executive") {
+      const cleanFirst = first_name.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 3);
+      const cleanLast = last_name.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 4);
+      const random = Math.floor(100 + Math.random() * 900);
+      const affiliateCode = `${cleanFirst}${cleanLast}_${random}`;
+
+      const { error: aeError } = await supabaseAdmin
+        .from("account_executives")
+        .insert({
+          user_id: newUser.user.id,
+          first_name,
+          last_name,
+          email,
+          affiliate_code: affiliateCode,
+          status: "active"
+        });
+
+      if (aeError) {
+        return new Response(JSON.stringify({ error: "Failed to create Account Executive profile: " + aeError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     // Insert moderator service type if applicable
     if (role === "moderator" && service_type) {

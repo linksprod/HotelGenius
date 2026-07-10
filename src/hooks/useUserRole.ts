@@ -36,7 +36,7 @@ export const useUserRole = () => {
           setRole(null);
         } else {
           // Pick the highest-priority role
-          const priority: string[] = ['super_admin', 'admin', 'moderator', 'hotel_admin', 'staff', 'user'];
+          const priority: string[] = ['super_admin', 'admin', 'moderator', 'account_executive', 'hotel_admin', 'staff', 'user'];
           const roles = (data || []).map(r => r.role as string);
           const highest = priority.find(p => roles.includes(p)) || null;
           setRole(highest);

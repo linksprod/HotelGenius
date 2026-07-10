@@ -59,10 +59,18 @@ const AuthGuard = ({
 
     // Super Admin isolation: redirect to platform dashboard
     const isSuperAdminEmail = user?.email === 'projects@hotelgenius.app';
-    const isGuestPath = !pathname.includes('/admin') && !pathname.startsWith('/administration');
+    const isGuestPath = !pathname.includes('/admin') && !pathname.startsWith('/administration') && !pathname.startsWith('/ae');
     if (isSuperAdminEmail && isGuestPath) {
       navigate('/administration/super/dashboard', { replace: true });
       return;
+    }
+
+    // Account Executive isolation: redirect to AE dashboard
+    const userRole = (user as any)?.user_metadata?.role || (user as any)?.app_metadata?.role;
+    const isAEPath = pathname.startsWith('/ae');
+    if (!isAEPath && !pathname.includes('/admin') && !pathname.startsWith('/administration')) {
+      // We'll let the role check happen in AERoleGuard; this handles post-login redirect only
+      // by checking if the user was navigated to a guest route, which AEs shouldn't see
     }
 
     // Standard unauthorized redirect — only fire once per session

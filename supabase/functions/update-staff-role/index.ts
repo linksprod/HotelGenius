@@ -9,10 +9,11 @@ const corsHeaders = {
 const ROLE_HIERARCHY: Record<string, number> = {
   staff: 1,
   moderator: 2,
+  account_executive: 2,
   admin: 3,
 };
 
-const VALID_ROLES = ["staff", "moderator", "admin"];
+const VALID_ROLES = ["staff", "moderator", "admin", "account_executive"];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {

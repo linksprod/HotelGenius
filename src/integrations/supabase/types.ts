@@ -2542,6 +2542,7 @@ export const Constants = {
         "staff",
         "super_admin",
         "hotel_admin",
+        "account_executive",
       ],
       notification_channel: ["in_app", "email", "push", "sms", "whatsapp"],
       notification_priority: ["low", "normal", "high", "critical"],

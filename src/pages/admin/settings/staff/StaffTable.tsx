@@ -15,7 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Shield, UserCog, Users } from 'lucide-react';
+import { MoreHorizontal, Shield, UserCog, Users, Briefcase } from 'lucide-react';
 import { format } from 'date-fns';
 
 export interface StaffMember {
@@ -50,6 +50,8 @@ const roleBadgeVariant = (role: string) => {
       return 'default';
     case 'staff':
       return 'secondary';
+    case 'account_executive':
+      return 'secondary';
     default:
       return 'outline';
   }
@@ -61,6 +63,8 @@ const roleIcon = (role: string) => {
       return <Shield className="h-3 w-3 mr-1" />;
     case 'moderator':
       return <UserCog className="h-3 w-3 mr-1" />;
+    case 'account_executive':
+      return <Briefcase className="h-3 w-3 mr-1" />;
     default:
       return <Users className="h-3 w-3 mr-1" />;
   }

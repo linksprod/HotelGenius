@@ -20,12 +20,32 @@ const Login = () => {
       if (!session?.user) return;
       
       const isSuperAdminEmail = session.user.email === 'projects@hotelgenius.app';
-      const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
+
+      // ── Step 1: Always check the role first to avoid misrouting ──────────
+      const { data: rolesData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id);
+
+      const roles = (rolesData || []).map((r: any) => r.role);
+
+      // ── Step 2: Route by role priority ───────────────────────────────────
+      if (roles.includes('account_executive')) {
+        // AEs go directly to their own workspace
+        navigate('/ae/dashboard', { replace: true });
+        return;
+      }
+
       const { data: isSuperAdmin } = await supabase.rpc('is_super_admin', { user_id: session.user.id });
-      
+
       if (isSuperAdmin || isSuperAdminEmail) {
         navigate('/administration/super/dashboard', { replace: true });
-      } else if (isStaff) {
+        return;
+      }
+
+      const { data: isStaff } = await supabase.rpc('is_staff_member', { _user_id: session.user.id });
+
+      if (isStaff) {
         navigate(resolvePath('/admin'), { replace: true });
       } else {
         const { data: guestData } = await supabase

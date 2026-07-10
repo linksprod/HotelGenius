@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Shield, UserCog, Users } from 'lucide-react';
+import { Shield, UserCog, Users, Briefcase } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
@@ -34,6 +34,7 @@ const ROLES = [
   { value: 'admin', label: 'Admin', icon: Shield, description: 'Full access to all features' },
   { value: 'moderator', label: 'Moderator', icon: UserCog, description: 'Dashboard, Chat & Services' },
   { value: 'staff', label: 'Staff', icon: Users, description: 'Dashboard & Restaurants' },
+  { value: 'account_executive', label: 'Account Executive', icon: Briefcase, description: 'Client relations and sales' },
 ] as const;
 
 const EditRoleDialog: React.FC<EditRoleDialogProps> = ({
