@@ -17,6 +17,7 @@ const SuperDashboard = React.lazy(() => import('@/pages/admin/super/SuperDashboa
 const AdminLayout = React.lazy(() => import('@/components/admin/AdminLayout'));
 const AdminRoleGuard = React.lazy(() => import('@/components/admin/AdminRoleGuard'));
 const HotelsManager = React.lazy(() => import('@/pages/admin/HotelsManager'));
+const SuperHotelDetails = React.lazy(() => import('@/pages/admin/super/SuperHotelDetails'));
 const StaffManager = React.lazy(() => import('@/pages/admin/settings/StaffManager'));
 const SuperAIInfrastructure = React.lazy(() => import('@/pages/admin/super/SuperAIInfrastructure'));
 const NotificationCentre = React.lazy(() => import('@/pages/admin/overview/NotificationCentre'));
@@ -103,6 +104,7 @@ function App() {
                           <Routes>
                             <Route path="super/dashboard" element={<SuperDashboard />} />
                             <Route path="super/hotels" element={<HotelsManager />} />
+                            <Route path="super/hotels/:hotelId" element={<SuperHotelDetails />} />
                             <Route path="super/users" element={<StaffManager />} />
                             <Route path="super/ai" element={<SuperAIInfrastructure />} />
                             <Route path="super/notifications" element={<NotificationCentre />} />

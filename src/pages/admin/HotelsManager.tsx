@@ -10,11 +10,22 @@ import {
   Hotel,
   Edit3,
   Network,
+  Users,
+  Zap,
+  AlertCircle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { supabaseAdmin } from '@/integrations/supabase/adminClient';
 import { toast } from '@/hooks/use-toast';
 import CreateHotelDialog from './hotels/CreateHotelDialog';
@@ -36,6 +47,8 @@ interface Hotel {
   custom_domain: string | null;
   is_chain?: boolean;
   parent_hotel_id?: string | null;
+  active_modules?: string[] | null;
+  plan?: string;
 }
 
 // ─── Hotel Card ───────────────────────────────────────────────────────────────
@@ -56,14 +69,17 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
     day: 'numeric',
   });
 
+  const navigate = useNavigate();
+
   return (
     <motion.div
       layout
+      onClick={() => navigate(`/administration/super/hotels/${hotel.id}`)}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8, scale: 0.97 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="group relative flex flex-col rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+      className="group relative flex flex-col rounded-2xl border bg-card shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer"
     >
       {/* Gradient top bar */}
       <div
@@ -72,6 +88,17 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
           background: `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`,
         }}
       >
+        {/* Status Badge */}
+        <div className="absolute top-3 left-3">
+          <Badge className={`backdrop-blur-md font-semibold text-[10px] uppercase tracking-wider border ${
+            (hotel.active_modules && hotel.active_modules.length > 0) || hotel.custom_domain
+              ? 'bg-emerald-500/20 text-emerald-100 border-emerald-500/30'
+              : 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30'
+          }`}>
+            {(hotel.active_modules && hotel.active_modules.length > 0) || hotel.custom_domain ? 'Active' : 'Inactive'}
+          </Badge>
+        </div>
+
         {/* Avatar */}
         <div
           className="absolute -bottom-5 left-5 h-14 w-14 rounded-xl border-4 border-card flex items-center justify-center text-white font-bold text-xl shadow-lg"
@@ -118,6 +145,12 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
               </Badge>
             )}
           </div>
+          {(!hotel.address || hotel.address.toUpperCase() === 'TBD') && (
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-destructive mt-1.5">
+              <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded border border-destructive bg-destructive/10 text-destructive text-[9px] font-bold">?</span>
+              <span>Région manquante</span>
+            </div>
+          )}
         </div>
 
         {/* Parent relation details */}
@@ -136,8 +169,10 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
           </div>
           {hotel.address && (
             <div className="flex items-center gap-1.5 truncate">
-              <Building2 className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate">{hotel.address}</span>
+              <Building2 className={`h-3.5 w-3.5 shrink-0 ${hotel.address.toUpperCase() === 'TBD' ? 'text-amber-500' : ''}`} />
+              <span className={`truncate ${hotel.address.toUpperCase() === 'TBD' ? 'text-amber-500 font-semibold' : ''}`}>
+                {hotel.address}
+              </span>
             </div>
           )}
         </div>
@@ -167,11 +202,13 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
             size="sm"
             className="flex-1 h-8 text-xs gap-1"
             asChild
+            onClick={(e) => e.stopPropagation()}
           >
             <a
               href={`https://${hotel.custom_domain || `hotelgenius.online/${hotel.slug}`}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
             >
               <ExternalLink className="h-3 w-3" />
               Visit
@@ -181,7 +218,10 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
             variant="outline"
             size="sm"
             className="flex-1 h-8 text-xs gap-1"
-            onClick={() => onEdit(hotel)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(hotel);
+            }}
           >
             <Edit3 className="h-3 w-3" />
             Edit
@@ -191,11 +231,13 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
             size="sm"
             className="flex-1 h-8 text-xs gap-1"
             asChild
+            onClick={(e) => e.stopPropagation()}
           >
             <a
               href={`/${hotel.slug}/admin`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
             >
               <Settings className="h-3 w-3" />
               Admin
@@ -236,8 +278,34 @@ const HotelsManager: React.FC = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [filterChain, setFilterChain] = useState<string>('all');
+  const [filterRegion, setFilterRegion] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [totalGuests, setTotalGuests] = useState(0);
   const [createOpen, setCreateOpen] = useState(false);
   const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
+
+  const getRegion = (address: string | null): string => {
+    if (!address) return 'TBD';
+    const parts = address.split(',');
+    const lastPart = parts[parts.length - 1].trim();
+    if (/\d/.test(lastPart) && parts.length > 1) {
+      return parts[parts.length - 2].trim();
+    }
+    return lastPart || 'TBD';
+  };
+
+  const getHotelStatus = (hotel: Hotel) => {
+    return (hotel.active_modules && hotel.active_modules.length > 0) || hotel.custom_domain ? 'active' : 'inactive';
+  };
+
+  const uniqueRegions = Array.from(
+    new Set(
+      hotels
+        .map((h) => (h.address ? getRegion(h.address) : null))
+        .filter((r): r is string => !!r && r !== 'TBD')
+    )
+  ).sort();
 
   const fetchHotels = async () => {
     setIsLoading(true);
@@ -249,6 +317,11 @@ const HotelsManager: React.FC = () => {
 
       if (error) throw error;
       setHotels(data || []);
+
+      const { count: guestsCount } = await supabaseAdmin
+        .from('guests')
+        .select('*', { count: 'exact', head: true });
+      setTotalGuests(guestsCount || 0);
     } catch {
       toast({
         title: 'Error',
@@ -288,11 +361,36 @@ const HotelsManager: React.FC = () => {
     return parent ? parent.name : null;
   };
 
-  const filteredHotels = hotels.filter(
-    (hotel) =>
+  const filteredHotels = hotels.filter((hotel) => {
+    // Search
+    const matchesSearch =
       hotel.name.toLowerCase().includes(search.toLowerCase()) ||
-      hotel.slug.toLowerCase().includes(search.toLowerCase())
-  );
+      hotel.slug.toLowerCase().includes(search.toLowerCase());
+
+    // Chain/Group
+    let matchesChain = true;
+    if (filterChain === 'chain') {
+      matchesChain = !!hotel.is_chain;
+    } else if (filterChain === 'independent') {
+      matchesChain = !hotel.is_chain && !hotel.parent_hotel_id;
+    } else if (filterChain === 'sub_hotel') {
+      matchesChain = !hotel.is_chain && !!hotel.parent_hotel_id;
+    }
+
+    // Region
+    let matchesRegion = true;
+    if (filterRegion !== 'all') {
+      matchesRegion = getRegion(hotel.address) === filterRegion;
+    }
+
+    // Status
+    let matchesStatus = true;
+    if (filterStatus !== 'all') {
+      matchesStatus = getHotelStatus(hotel) === filterStatus;
+    }
+
+    return matchesSearch && matchesChain && matchesRegion && matchesStatus;
+  });
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -322,6 +420,57 @@ const HotelsManager: React.FC = () => {
         />
       </div>
 
+      {/* ── KPIs Banner ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Total Hotels */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-200">
+          <div>
+            <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Hôtels Total</p>
+            <h3 className="text-2xl font-bold mt-1 tracking-tight">{hotels.length}</h3>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            <Hotel className="h-5 w-5" />
+          </div>
+        </div>
+
+        {/* Active Guests */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-200">
+          <div>
+            <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Clients Actifs</p>
+            <h3 className="text-2xl font-bold mt-1 tracking-tight">{totalGuests}</h3>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+            <Users className="h-5 w-5" />
+          </div>
+        </div>
+
+        {/* POC en cours */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-200">
+          <div>
+            <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">POC en cours</p>
+            <h3 className="text-2xl font-bold mt-1 tracking-tight">
+              {hotels.filter(h => h.plan === 'essential').length}
+            </h3>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
+            <Zap className="h-5 w-5" />
+          </div>
+        </div>
+
+        {/* Configurations incomplètes */}
+        <div className="bg-card/50 backdrop-blur-sm border border-border/60 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-200">
+          <div>
+            <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Fiches Incomplètes</p>
+            <h3 className="text-2xl font-bold mt-1 tracking-tight text-destructive">
+              {hotels.filter(h => !h.address || h.address.toUpperCase() === 'TBD').length}
+            </h3>
+          </div>
+          <div className="h-10 w-10 rounded-xl bg-destructive/10 flex items-center justify-center text-destructive">
+            <AlertCircle className="h-5 w-5" />
+          </div>
+        </div>
+      </div>
+
       {/* ── Stats bar ── */}
       {!isLoading && hotels.length > 0 && (
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -332,7 +481,7 @@ const HotelsManager: React.FC = () => {
               {hotels.length === 1 ? 'hotel' : 'hotels'}
             </span>
           </div>
-          {search && (
+          {(search || filterChain !== 'all' || filterRegion !== 'all' || filterStatus !== 'all') && (
             <div className="flex items-center gap-1.5">
               <span>·</span>
               <span>
@@ -344,15 +493,76 @@ const HotelsManager: React.FC = () => {
         </div>
       )}
 
-      {/* ── Search ── */}
-      <div className="max-w-sm relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <Input
-          placeholder="Search hotels…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
-        />
+      {/* ── Search & Filters ── */}
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-card p-4 rounded-xl border border-border/60">
+        <div className="relative w-full md:max-w-xs">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            placeholder="Search hotels…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 bg-background"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          {/* Chain/Group Filter */}
+          <Select value={filterChain} onValueChange={setFilterChain}>
+            <SelectTrigger className="w-full sm:w-[160px] bg-background">
+              <SelectValue placeholder="Type de propriété" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous types</SelectItem>
+              <SelectItem value="chain">Chaînes / Groupes</SelectItem>
+              <SelectItem value="independent">Indépendants</SelectItem>
+              <SelectItem value="sub_hotel">Sous-hôtels</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Region Filter */}
+          <Select value={filterRegion} onValueChange={setFilterRegion}>
+            <SelectTrigger className="w-full sm:w-[160px] bg-background">
+              <SelectValue placeholder="Région" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Toutes régions</SelectItem>
+              {uniqueRegions.map((region) => (
+                <SelectItem key={region} value={region}>
+                  {region}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Status Filter */}
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-full sm:w-[160px] bg-background">
+              <SelectValue placeholder="Statut" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tous statuts</SelectItem>
+              <SelectItem value="active">Actif</SelectItem>
+              <SelectItem value="inactive">Inactif</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Reset button */}
+          {(filterChain !== 'all' || filterRegion !== 'all' || filterStatus !== 'all' || search !== '') && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setFilterChain('all');
+                setFilterRegion('all');
+                setFilterStatus('all');
+                setSearch('');
+              }}
+              className="h-9 px-2 text-muted-foreground hover:text-foreground text-xs"
+            >
+              Réinitialiser
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* ── Content ── */}
@@ -370,11 +580,11 @@ const HotelsManager: React.FC = () => {
           ))}
         </div>
       ) : filteredHotels.length === 0 ? (
-        search ? (
-          <div className="text-center py-20 text-muted-foreground">
+        (search || filterChain !== 'all' || filterRegion !== 'all' || filterStatus !== 'all') ? (
+          <div className="text-center py-20 text-muted-foreground bg-card border border-dashed rounded-2xl">
             <Search className="h-10 w-10 mx-auto mb-3 opacity-40" />
-            <p className="font-medium">No results for "{search}"</p>
-            <p className="text-sm mt-1">Try a different search term</p>
+            <p className="font-medium">No results found</p>
+            <p className="text-sm mt-1">Try adjusting your filters or search query</p>
           </div>
         ) : (
           <EmptyState onCreate={() => setCreateOpen(true)} />

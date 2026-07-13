@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/features/auth/hooks/useAuthContext';
-import { useUserRole } from '@/hooks/useUserRole';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 export interface StaffNotification {
   id: string;
@@ -17,8 +17,8 @@ export interface StaffNotification {
 
 export const useStaffNotifications = () => {
   const { user } = useAuth();
-  // Get the hotel ID from the staff user's role — safe, no context dependency
-  const { hotelId } = useUserRole();
+  // Get the hotel ID from current context to correctly scope notifications
+  const { hotelId } = useCurrentHotelId();
   const [notifications, setNotifications] = useState<StaffNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -35,8 +35,9 @@ export const useStaffNotifications = () => {
       .order('created_at', { ascending: false })
       .limit(50);
 
-    // Filter by current hotel — each hotel sees only its own notifications
-    const finalQuery = hotelId ? query.eq('hotel_id', hotelId) : query;
+    // Filter by current hotel — each hotel sees only its own notifications.
+    // If no hotel is selected (e.g. global super admin dashboard), only show global notifications (hotel_id is null).
+    const finalQuery = hotelId ? query.eq('hotel_id', hotelId) : query.is('hotel_id', null);
 
     const { data } = await finalQuery;
 
@@ -82,7 +83,7 @@ export const useStaffNotifications = () => {
           const n = payload.new as any;
           // Filter in JS: must match user and hotel
           const matchesUser = n.recipient_id === user.id || n.recipient_id === '00000000-0000-0000-0000-000000000000';
-          const matchesHotel = !hotelId || n.hotel_id === hotelId;
+          const matchesHotel = hotelId ? n.hotel_id === hotelId : n.hotel_id === null;
 
           if (matchesUser && matchesHotel) {
             const newNotif: StaffNotification = {
@@ -134,8 +135,8 @@ export const useStaffNotifications = () => {
       .or(`recipient_id.eq.${user.id},recipient_id.eq.00000000-0000-0000-0000-000000000000`)
       .neq('status', 'read');
 
-    // Scope update to current hotel only
-    const finalQuery = hotelId ? baseQuery.eq('hotel_id', hotelId) : baseQuery;
+    // Scope update to current hotel only, or global if no hotel
+    const finalQuery = hotelId ? baseQuery.eq('hotel_id', hotelId) : baseQuery.is('hotel_id', null);
     await finalQuery;
 
     setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));

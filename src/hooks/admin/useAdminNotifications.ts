@@ -60,6 +60,12 @@ async function fetchCounts(hotelId: string | null): Promise<{ counts: Record<Sec
     return { counts: counts as Record<SectionKey, number>, restaurantCounts: {}, spaServiceCounts: {} };
   }
 
+  // If there's no hotel context (e.g. Super Admin global dashboard), we don't query 
+  // hotel-specific table reservations, spa bookings, etc.
+  if (!hotelId) {
+    return { counts: counts as Record<SectionKey, number>, restaurantCounts: {}, spaServiceCounts: {} };
+  }
+
   const lastSeenMap: Record<string, string> = {};
   for (const row of seenRows) {
     lastSeenMap[row.section_key] = row.last_seen_at;
