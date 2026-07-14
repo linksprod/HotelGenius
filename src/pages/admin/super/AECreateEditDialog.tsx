@@ -110,13 +110,13 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
 
         // Also update status in auth user metadata if needed (or keep it simple)
         toast({
-          title: 'Account Executive mis à jour',
-          description: `${formData.first_name} ${formData.last_name} a été modifié avec succès.`,
+          title: 'Account Executive updated',
+          description: `${formData.first_name} ${formData.last_name} has been updated successfully.`,
         });
       } else {
         // Create Mode:
         if (!formData.password || formData.password.length < 6) {
-          throw new Error('Le mot de passe doit faire au moins 6 caractères.');
+          throw new Error('Password must be at least 6 characters.');
         }
 
         // 1. Create Auth User
@@ -173,8 +173,8 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
         }
 
         toast({
-          title: 'Account Executive créé',
-          description: `${formData.first_name} ${formData.last_name} a été créé avec le code ${affiliateCode}.`,
+          title: 'Account Executive created',
+          description: `${formData.first_name} ${formData.last_name} was created with code ${affiliateCode}.`,
         });
       }
 
@@ -183,8 +183,8 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
     } catch (err: any) {
       console.error('Error saving AE:', err);
       toast({
-        title: 'Erreur',
-        description: err.message || 'Une erreur est survenue lors de l\'enregistrement.',
+        title: 'Error',
+        description: err.message || 'An error occurred while saving.',
         variant: 'destructive',
       });
     } finally {
@@ -196,18 +196,18 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{ae ? 'Modifier' : 'Créer'} un Account Executive</DialogTitle>
+          <DialogTitle>{ae ? 'Edit' : 'Create'} Account Executive</DialogTitle>
           <DialogDescription>
             {ae 
-              ? 'Mettez à jour les informations du partenaire.' 
-              : 'Remplissez ce formulaire pour créer un nouvel apporteur d\'affaires.'
+              ? 'Update the partner\'s information.' 
+              : 'Fill in this form to create a new business partner.'
             }
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Prénom <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">First Name <span className="text-red-500">*</span></label>
               <Input
                 required
                 value={formData.first_name}
@@ -216,7 +216,7 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Nom <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">Last Name <span className="text-red-500">*</span></label>
               <Input
                 required
                 value={formData.last_name}
@@ -227,7 +227,7 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Adresse email <span className="text-red-500">*</span></label>
+            <label className="text-sm font-medium">Email Address <span className="text-red-500">*</span></label>
             <Input
               required
               type="email"
@@ -240,7 +240,7 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
 
           {!ae && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Mot de passe temporaire <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">Temporary Password <span className="text-red-500">*</span></label>
               <Input
                 required
                 type="password"
@@ -253,7 +253,7 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Téléphone</label>
+              <label className="text-sm font-medium">Phone</label>
               <Input
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -261,7 +261,7 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Société</label>
+              <label className="text-sm font-medium">Company</label>
               <Input
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
@@ -271,38 +271,38 @@ const AECreateEditDialog: React.FC<AECreateEditDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Statut</label>
+            <label className="text-sm font-medium">Status</label>
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               className="w-full bg-background border rounded-lg px-3 py-2 text-sm outline-none"
             >
-              <option value="active">Actif</option>
-              <option value="inactive">Inactif</option>
-              <option value="suspended">Suspendu</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
             </select>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Notes administratives</label>
+            <label className="text-sm font-medium">Administrative Notes</label>
             <Textarea
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Notes concernant ce partenaire..."
+              placeholder="Notes about this partner..."
               rows={3}
             />
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
-              Annuler
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" /> Enregistrement...
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving...
                 </>
-              ) : ae ? 'Mettre à jour' : 'Créer le compte'}
+              ) : ae ? 'Update' : 'Create Account'}
             </Button>
           </DialogFooter>
         </form>

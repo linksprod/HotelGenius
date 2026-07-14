@@ -302,20 +302,20 @@ const SuperAEManager: React.FC = () => {
   const totalCommissionsAmount = leads.reduce((sum, l) => sum + Number(l.commission_amount || 0), 0);
 
   return (
-    <div className="space-y-6">
+    <div className="flex-1 space-y-6 p-6">
       {/* Title */}
       <AdminPageHeader 
-        title="Gestion des Account Executives"
-        description="Créez, modifiez et analysez les performances de vos apporteurs d'affaires d'affiliation."
+        title="Account Executives Management"
+        description="Create, edit and analyze the performance of your affiliate business partners."
         actions={
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleManageRulesClick} className="gap-2">
               <Settings className="h-4 w-4" />
-              Gérer les taux
+              Manage Rates
             </Button>
             <Button onClick={handleCreateAE} className="gap-2">
               <Plus className="h-4 w-4" />
-              Créer un AE
+              Create AE
             </Button>
           </div>
         }
@@ -332,43 +332,43 @@ const SuperAEManager: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">{activeAECount} comptes actifs</p>
+            <p className="text-xs text-muted-foreground">{activeAECount} active account{activeAECount !== 1 ? 's' : ''}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider">Hôtels signés via AE</CardDescription>
+            <CardDescription className="text-xs font-semibold uppercase tracking-wider">Hotels Signed via AE</CardDescription>
             <CardTitle className="text-2xl font-bold flex items-center justify-between">
               {totalSignedCount}
               <Check className="h-5 w-5 text-emerald-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Taux de conversion global optimal</p>
+            <p className="text-xs text-muted-foreground">Optimal global conversion rate</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider">Commissions AE cumulées</CardDescription>
+            <CardDescription className="text-xs font-semibold uppercase tracking-wider">Cumulative AE Commissions</CardDescription>
             <CardTitle className="text-2xl font-bold flex items-center justify-between">
               {totalCommissionsAmount.toLocaleString()} €
               <Coins className="h-5 w-5 text-amber-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Revenus redistribués aux affiliés</p>
+            <p className="text-xs text-muted-foreground">Revenue redistributed to affiliates</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider">Règles de Palier</CardDescription>
+            <CardDescription className="text-xs font-semibold uppercase tracking-wider">Commission Tier Rules</CardDescription>
             <CardTitle className="text-base font-bold flex items-center justify-between">
               10% / 15% / 20%
               <TrendingUp className="h-5 w-5 text-purple-500" />
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">{rules.length} paliers configurés</p>
+            <p className="text-xs text-muted-foreground">{rules.length} tier{rules.length !== 1 ? 's' : ''} configured</p>
           </CardContent>
         </Card>
       </div>
@@ -379,7 +379,7 @@ const SuperAEManager: React.FC = () => {
           <Search className="h-4 w-4 text-muted-foreground shrink-0" />
           <input 
             type="text" 
-            placeholder="Rechercher par nom, email, code d'affilié..." 
+            placeholder="Search by name, email, affiliate code..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-transparent text-sm w-full outline-none"
@@ -393,10 +393,10 @@ const SuperAEManager: React.FC = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="bg-background border rounded-lg px-3 py-1.5 text-sm outline-none w-full md:w-48"
           >
-            <option value="all">Tous les statuts</option>
-            <option value="active">Actif</option>
-            <option value="inactive">Inactif</option>
-            <option value="suspended">Suspendu</option>
+            <option value="all">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="suspended">Suspended</option>
           </select>
         </div>
       </div>
@@ -407,25 +407,25 @@ const SuperAEManager: React.FC = () => {
           {loading ? (
             <div className="flex items-center justify-center py-12 text-muted-foreground">
               <Loader2 className="h-6 w-6 animate-spin mr-2" />
-              Chargement des Account Executives...
+              Loading Account Executives...
             </div>
           ) : filteredAEs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Users className="h-12 w-12 mb-4 opacity-30" />
-              <p className="text-lg font-medium">Aucun Account Executive trouvé</p>
+              <p className="text-lg font-medium">No Account Executives found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nom</TableHead>
-                    <TableHead>Email / Société</TableHead>
-                    <TableHead>Code d'Affilié</TableHead>
-                    <TableHead>Hôtels Apportés (Signés)</TableHead>
-                    <TableHead>CA Généré</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email / Company</TableHead>
+                    <TableHead>Affiliate Code</TableHead>
+                    <TableHead>Hotels Brought (Signed)</TableHead>
+                    <TableHead>Revenue Generated</TableHead>
                     <TableHead>Commissions</TableHead>
-                    <TableHead>Statut</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -449,7 +449,7 @@ const SuperAEManager: React.FC = () => {
                           <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{ae.affiliate_code}</code>
                         </TableCell>
                         <TableCell>
-                          <span className="font-semibold">{stats.totalLeads}</span> ({stats.signedCount} signé{stats.signedCount > 1 ? 's' : ''})
+                          <span className="font-semibold">{stats.totalLeads}</span> ({stats.signedCount} signed)
                         </TableCell>
                         <TableCell className="font-medium text-emerald-600 dark:text-emerald-400">
                           {stats.totalContractVal.toLocaleString()} €
@@ -459,7 +459,7 @@ const SuperAEManager: React.FC = () => {
                         </TableCell>
                         <TableCell>
                           <Badge variant={getStatusBadgeVariant(ae.status) as any} className="capitalize">
-                            {ae.status === 'active' ? 'Actif' : ae.status === 'inactive' ? 'Inactif' : 'Suspendu'}
+                            {ae.status === 'active' ? 'Active' : ae.status === 'inactive' ? 'Inactive' : 'Suspended'}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
@@ -494,16 +494,16 @@ const SuperAEManager: React.FC = () => {
       <Dialog open={isRulesDialogOpen} onOpenChange={setIsRulesDialogOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Configurer les taux de commissions</DialogTitle>
+            <DialogTitle>Configure Commission Rates</DialogTitle>
             <DialogDescription>
-              Modifiez les paliers de recommandation. Le taux de commission est appliqué dynamiquement selon le nombre de contrats signés par l'AE.
+              Edit the commission tiers. The commission rate is applied dynamically based on the number of contracts signed by the AE.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
             <div className="grid grid-cols-12 gap-2 text-sm font-medium border-b pb-2">
-              <div className="col-span-3">Min Hôtels</div>
-              <div className="col-span-3">Max Hôtels</div>
-              <div className="col-span-4">Taux (%)</div>
+              <div className="col-span-3">Min Hotels</div>
+              <div className="col-span-3">Max Hotels</div>
+              <div className="col-span-4">Rate (%)</div>
               <div className="col-span-2"></div>
             </div>
             {editingRules.map((rule, idx) => (
@@ -521,7 +521,7 @@ const SuperAEManager: React.FC = () => {
                     type="number"
                     value={rule.max_hotels === null ? '' : rule.max_hotels}
                     onChange={(e) => handleRuleChange(idx, 'max_hotels', e.target.value)}
-                    placeholder="Infini"
+                    placeholder="Unlimited"
                   />
                 </div>
                 <div className="col-span-4">
@@ -546,19 +546,19 @@ const SuperAEManager: React.FC = () => {
               </div>
             ))}
             <Button type="button" variant="outline" size="sm" onClick={handleAddRule} className="w-full gap-1">
-              <Plus className="h-4 w-4" /> Ajouter un palier
+              <Plus className="h-4 w-4" /> Add Tier
             </Button>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setIsRulesDialogOpen(false)} disabled={savingRules}>
-              Annuler
+              Cancel
             </Button>
             <Button type="button" onClick={handleSaveRules} disabled={savingRules}>
               {savingRules ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" /> Sauvegarde...
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving...
                 </>
-              ) : 'Sauvegarder les règles'}
+              ) : 'Save Rules'}
             </Button>
           </DialogFooter>
         </DialogContent>

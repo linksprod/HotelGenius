@@ -13,6 +13,9 @@ import {
   Users,
   Zap,
   AlertCircle,
+  Activity,
+  Clock,
+  UserCheck,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +35,8 @@ import CreateHotelDialog from './hotels/CreateHotelDialog';
 import EditHotelDialog from './hotels/EditHotelDialog';
 import { useUserRole } from '@/hooks/useUserRole';
 import AdminPageHeader from '@/components/admin/layout/AdminPageHeader';
+import { formatDistanceToNow } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,6 +54,47 @@ interface Hotel {
   parent_hotel_id?: string | null;
   active_modules?: string[] | null;
   plan?: string;
+  status?: string | null;
+}
+
+const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
+  essai_en_cours: {
+    label: 'Essai en cours',
+    className: 'bg-amber-500/20 text-amber-200 border-amber-500/30',
+  },
+  contrat_signe: {
+    label: 'Contrat signé',
+    className: 'bg-emerald-500/20 text-emerald-100 border-emerald-500/30',
+  },
+  negociation: {
+    label: 'Négociation',
+    className: 'bg-blue-500/20 text-blue-200 border-blue-400/30',
+  },
+  refuse: {
+    label: 'Refusé',
+    className: 'bg-rose-500/20 text-rose-200 border-rose-500/30',
+  },
+};
+
+function getStatusConfig(status?: string | null) {
+  return STATUS_CONFIG[status || 'essai_en_cours'] ?? STATUS_CONFIG['essai_en_cours'];
+}
+
+interface HotelStats {
+  activeUsers: number;
+  lastAdminActivity: string | null; // ISO date string
+  isAdminOnline: boolean;
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatRelativeTime(isoDate: string | null): string | null {
+  if (!isoDate) return null;
+  try {
+    return formatDistanceToNow(new Date(isoDate), { addSuffix: true, locale: fr });
+  } catch {
+    return null;
+  }
 }
 
 // ─── Hotel Card ───────────────────────────────────────────────────────────────
@@ -56,10 +102,11 @@ interface Hotel {
 interface HotelCardProps {
   hotel: Hotel;
   parentName: string | null;
+  stats: HotelStats | undefined;
   onEdit: (hotel: Hotel) => void;
 }
 
-const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
+const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, stats, onEdit }) => {
   const primary = hotel.primary_color || '#6366f1';
   const secondary = hotel.secondary_color || '#8b5cf6';
   const initial = (hotel.name?.[0] || 'H').toUpperCase();
@@ -70,6 +117,11 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
   });
 
   const navigate = useNavigate();
+  const hasActiveUsers = (stats?.activeUsers ?? 0) > 0;
+  const lastActivity = formatRelativeTime(stats?.lastAdminActivity ?? null);
+  
+  // A hotel is considered "Client actif" only if it has guests AND an admin is currently active/online
+  const isClientActif = hasActiveUsers && (stats?.isAdminOnline ?? false);
 
   return (
     <motion.div
@@ -88,15 +140,28 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
           background: `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`,
         }}
       >
-        {/* Status Badge */}
-        <div className="absolute top-3 left-3">
-          <Badge className={`backdrop-blur-md font-semibold text-[10px] uppercase tracking-wider border ${
-            (hotel.active_modules && hotel.active_modules.length > 0) || hotel.custom_domain
-              ? 'bg-emerald-500/20 text-emerald-100 border-emerald-500/30'
-              : 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30'
-          }`}>
-            {(hotel.active_modules && hotel.active_modules.length > 0) || hotel.custom_domain ? 'Active' : 'Inactive'}
-          </Badge>
+        {/* Badges Container */}
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          {/* Status Badge — contract stage */}
+          {(() => {
+            const cfg = getStatusConfig(hotel.status);
+            return (
+              <Badge className={`backdrop-blur-md font-semibold text-[10px] uppercase tracking-wider border ${cfg.className}`}>
+                {cfg.label}
+              </Badge>
+            );
+          })()}
+
+          {/* "Client actif" indicator — shown when guests are present and admin has logged in recently */}
+          {isClientActif && (
+            <Badge className="backdrop-blur-md font-semibold text-[10px] uppercase tracking-wider border bg-blue-500/25 text-blue-100 border-blue-400/40 flex items-center gap-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-200" />
+              </span>
+              Client actif
+            </Badge>
+          )}
         </div>
 
         {/* Avatar */}
@@ -175,6 +240,34 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, parentName, onEdit }) => {
               </span>
             </div>
           )}
+        </div>
+
+        {/* ── Activity Indicators ───────────────────────────────── */}
+        <div className="flex items-center gap-3 py-2 px-3 rounded-lg bg-muted/30 border border-border/40">
+          {/* Active users */}
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <UserCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />
+            <span className="text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">{stats?.activeUsers ?? '—'}</span>
+              {' '}utilisateur{(stats?.activeUsers ?? 0) !== 1 ? 's' : ''}
+            </span>
+          </div>
+          {/* Separator */}
+          <div className="h-3.5 w-px bg-border/60" />
+          {/* Last admin activity */}
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <Activity className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
+            <span className="text-xs text-muted-foreground truncate">
+              {lastActivity ? (
+                <span title={stats?.lastAdminActivity ?? ''}>
+                  <span className="font-medium text-foreground">Admin</span>{' '}
+                  {lastActivity}
+                </span>
+              ) : (
+                <span className="italic">Aucune activité</span>
+              )}
+            </span>
+          </div>
         </div>
 
         {/* Color swatches */}
@@ -284,6 +377,7 @@ const HotelsManager: React.FC = () => {
   const [totalGuests, setTotalGuests] = useState(0);
   const [createOpen, setCreateOpen] = useState(false);
   const [editingHotel, setEditingHotel] = useState<Hotel | null>(null);
+  const [hotelStatsMap, setHotelStatsMap] = useState<Record<string, HotelStats>>({});
 
   const getRegion = (address: string | null): string => {
     if (!address) return 'TBD';
@@ -307,6 +401,91 @@ const HotelsManager: React.FC = () => {
     )
   ).sort();
 
+  const fetchHotelStats = async (hotelIds: string[]) => {
+    if (hotelIds.length === 0) return;
+
+    try {
+      // 1. Fetch all users from supabase auth to get actual last_sign_in_at
+      const { data: userData, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
+      const userSignInMap = new Map<string, string>();
+      if (!usersError && userData?.users) {
+        for (const u of userData.users) {
+          if (u.id && u.last_sign_in_at) {
+            userSignInMap.set(u.id, u.last_sign_in_at);
+          }
+        }
+      }
+
+      // Count guests per hotel and get their status
+      const { data: guestsData } = await supabaseAdmin
+        .from('guests')
+        .select('hotel_id, user_id, status, updated_at')
+        .in('hotel_id', hotelIds);
+
+      // Last admin activity: get admins of the hotels
+      const { data: adminRoles } = await supabaseAdmin
+        .from('user_roles')
+        .select('hotel_id, user_id')
+        .in('hotel_id', hotelIds)
+        .in('role', ['admin', 'hotel_admin']);
+
+      // Build stats map
+      const statsMap: Record<string, HotelStats> = {};
+
+      // Initialize all to 0 / null
+      for (const id of hotelIds) {
+        statsMap[id] = { activeUsers: 0, lastAdminActivity: null, isAdminOnline: false };
+      }
+
+      // Count active users per hotel and map guest details by user_id
+      const guestUserMap = new Map<string, { status: string | null; updated_at: string | null }>();
+      for (const g of guestsData || []) {
+        if (g.hotel_id && statsMap[g.hotel_id] !== undefined) {
+          statsMap[g.hotel_id].activeUsers += 1;
+        }
+        if (g.user_id) {
+          guestUserMap.set(g.user_id, { status: g.status, updated_at: g.updated_at });
+        }
+      }
+
+      // Find the most recent last_sign_in_at for each hotel and check if any admin is online
+      const latestSignInByHotel = new Map<string, string>();
+      for (const r of adminRoles || []) {
+        if (r.hotel_id && r.user_id) {
+          const signInTime = userSignInMap.get(r.user_id);
+          if (signInTime) {
+            const existing = latestSignInByHotel.get(r.hotel_id);
+            if (!existing || new Date(signInTime) > new Date(existing)) {
+              latestSignInByHotel.set(r.hotel_id, signInTime);
+            }
+          }
+
+          // Check if this admin is online (status === 'online' and updated_at within last 2 hours)
+          const profile = guestUserMap.get(r.user_id);
+          if (profile && profile.status === 'online') {
+            const isRecent = profile.updated_at
+              ? (new Date().getTime() - new Date(profile.updated_at).getTime()) < 2 * 60 * 60 * 1000
+              : false;
+            if (isRecent) {
+              statsMap[r.hotel_id].isAdminOnline = true;
+            }
+          }
+        }
+      }
+
+      // Map back to statsMap
+      for (const [hId, time] of latestSignInByHotel.entries()) {
+        if (statsMap[hId]) {
+          statsMap[hId].lastAdminActivity = time;
+        }
+      }
+
+      setHotelStatsMap(statsMap);
+    } catch {
+      // Non-critical — silently ignore
+    }
+  };
+
   const fetchHotels = async () => {
     setIsLoading(true);
     try {
@@ -316,12 +495,16 @@ const HotelsManager: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setHotels(data || []);
+      const hotelList = data || [];
+      setHotels(hotelList);
 
       const { count: guestsCount } = await supabaseAdmin
         .from('guests')
         .select('*', { count: 'exact', head: true });
       setTotalGuests(guestsCount || 0);
+
+      // Fetch per-hotel stats
+      await fetchHotelStats(hotelList.map((h) => h.id));
     } catch {
       toast({
         title: 'Error',
@@ -575,6 +758,7 @@ const HotelsManager: React.FC = () => {
                 <div className="h-5 w-3/4 bg-muted rounded" />
                 <div className="h-4 w-1/2 bg-muted rounded" />
                 <div className="h-4 w-2/3 bg-muted rounded" />
+                <div className="h-8 w-full bg-muted rounded-lg" />
               </div>
             </div>
           ))}
@@ -600,6 +784,7 @@ const HotelsManager: React.FC = () => {
                 key={hotel.id}
                 hotel={hotel}
                 parentName={getParentName(hotel.parent_hotel_id)}
+                stats={hotelStatsMap[hotel.id]}
                 onEdit={setEditingHotel}
               />
             ))}

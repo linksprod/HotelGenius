@@ -20,6 +20,7 @@ interface Hotel {
   custom_domain: string | null;
   is_chain?: boolean;
   parent_hotel_id?: string | null;
+  status?: string | null;
 }
 
 interface EditHotelDialogProps {
@@ -46,6 +47,7 @@ const EditHotelDialog: React.FC<EditHotelDialogProps> = ({
   const [customDomain, setCustomDomain] = useState('');
   const [isChain, setIsChain] = useState(false);
   const [parentHotelId, setParentHotelId] = useState<string | null>(null);
+  const [status, setStatus] = useState('essai_en_cours');
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -61,6 +63,7 @@ const EditHotelDialog: React.FC<EditHotelDialogProps> = ({
       setCustomDomain(hotel.custom_domain || '');
       setIsChain(hotel.is_chain || false);
       setParentHotelId(hotel.parent_hotel_id || null);
+      setStatus(hotel.status || 'essai_en_cours');
       setConfirmDelete(false);
     }
   }, [hotel, open]);
@@ -94,6 +97,7 @@ const EditHotelDialog: React.FC<EditHotelDialogProps> = ({
           custom_domain: customDomain || null,
           is_chain: isChain,
           parent_hotel_id: parentHotelId || null,
+          status: status,
           updated_at: new Date().toISOString(),
         })
         .eq('id', hotel.id);
@@ -208,6 +212,23 @@ const EditHotelDialog: React.FC<EditHotelDialogProps> = ({
               onChange={(e) => setCustomDomain(e.target.value)}
               className="col-span-3 text-sm"
             />
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="status" className="text-right">Status</Label>
+            <div className="col-span-3">
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger id="status">
+                  <SelectValue placeholder="Select status..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="essai_en_cours">Essai en cours</SelectItem>
+                  <SelectItem value="contrat_signe">Contrat signé</SelectItem>
+                  <SelectItem value="negociation">Négociation</SelectItem>
+                  <SelectItem value="refuse">Refusé</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="grid grid-cols-4 items-center gap-4">

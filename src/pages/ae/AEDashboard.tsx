@@ -263,12 +263,12 @@ const AEDashboard: React.FC = () => {
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
       prospect: 'Prospect',
-      en_discussion: 'En discussion',
-      demo_planifiee: 'Démo planifiée',
-      contrat_envoye: 'Contrat envoyé',
-      signe: 'Signé',
-      refuse: 'Refusé',
-      perdu: 'Perdu'
+      en_discussion: 'In Discussion',
+      demo_planifiee: 'Demo Scheduled',
+      contrat_envoye: 'Proposal Sent',
+      signe: 'Signed',
+      refuse: 'Refused',
+      perdu: 'Lost'
     };
     return labels[status] || status;
   };
@@ -278,10 +278,10 @@ const AEDashboard: React.FC = () => {
       {/* Title */}
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          Bonjour, {profile?.first_name || 'Account Executive'}
+          Hello, {profile?.first_name || 'Account Executive'}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Suivez vos recommandations, vos prospects et vos commissions d'affiliation.
+          Track your referrals, prospects and affiliate commissions.
         </p>
       </div>
 
@@ -292,10 +292,10 @@ const AEDashboard: React.FC = () => {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Award className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-lg">Votre lien d'affiliation unique</span>
+                <span className="font-semibold text-lg">Your unique affiliate link</span>
               </div>
               <p className="text-sm text-muted-foreground max-w-xl">
-                Partagez ce lien avec des directeurs d'hôtels. Lorsqu'ils s'enregistrent et souscrivent à un abonnement Hotel Genius via ce lien, vous recevez une commission.
+                Share this link with hotel managers. When they sign up and subscribe to Hotel Genius via this link, you earn a commission.
               </p>
             </div>
             <div className="flex items-center gap-2 bg-background border rounded-lg p-1.5 w-full md:max-w-md">
@@ -307,7 +307,7 @@ const AEDashboard: React.FC = () => {
               />
               <Button onClick={handleCopy} size="sm" className="shrink-0 gap-1.5">
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {copied ? 'Copié' : 'Copier'}
+                {copied ? 'Copied' : 'Copy'}
               </Button>
             </div>
           </div>
@@ -317,37 +317,37 @@ const AEDashboard: React.FC = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatisticCard 
-          title="Total Recommandations" 
+          title="Total Referrals" 
           value={stats.totalLeads} 
           icon={Building2} 
           iconColor="blue"
-          subtitle="Hôtels apportés au total"
+          subtitle="Hotels referred in total"
           loading={loading}
         />
         <StatisticCard 
-          title="Hôtels Signés" 
+          title="Signed Hotels" 
           value={stats.signedCount} 
           icon={CheckCircle} 
           iconColor="emerald"
-          subtitle={`${stats.conversionRate}% de taux de conversion`}
+          subtitle={`${stats.conversionRate}% conversion rate`}
           loading={loading}
         />
         <StatisticCard 
-          title="Commissions Payées" 
+          title="Paid Commissions" 
           value={stats.paidCommissions} 
           suffix=" €"
           icon={Coins} 
           iconColor="amber"
-          subtitle="Montant perçu à ce jour"
+          subtitle="Amount received to date"
           loading={loading}
         />
         <StatisticCard 
-          title="Commissions en Attente" 
+          title="Pending Commissions" 
           value={stats.pendingCommissions} 
           suffix=" €"
           icon={Clock} 
           iconColor="purple"
-          subtitle="Approuvées ou en attente"
+          subtitle="Approved or awaiting payment"
           loading={loading}
         />
       </div>
@@ -358,20 +358,20 @@ const AEDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-lg font-medium flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Niveau de Commission
+              Commission Level
             </CardTitle>
             <CardDescription>
-              Votre pourcentage de commission augmente selon le nombre de contrats d'hôtels signés.
+              Your commission percentage increases based on the number of signed hotel contracts.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-between items-baseline">
               <div>
-                <span className="text-sm text-muted-foreground">Palier Actuel</span>
+                <span className="text-sm text-muted-foreground">Current Tier</span>
                 <p className="text-xl font-semibold text-primary">{commissionTier.name}</p>
               </div>
               <div className="text-right">
-                <span className="text-sm text-muted-foreground">Prochain Palier</span>
+                <span className="text-sm text-muted-foreground">Next Tier</span>
                 <p className="text-base font-medium">{commissionTier.nextTier}</p>
               </div>
             </div>
@@ -386,11 +386,11 @@ const AEDashboard: React.FC = () => {
               </div>
               {commissionTier.signedNeededForNext > 0 ? (
                 <p className="text-xs text-muted-foreground">
-                  Plus que <strong>{commissionTier.signedNeededForNext}</strong> contrat{commissionTier.signedNeededForNext > 1 ? 's' : ''} signé{commissionTier.signedNeededForNext > 1 ? 's' : ''} pour passer au prochain niveau.
+                  Only <strong>{commissionTier.signedNeededForNext}</strong> more signed contract{commissionTier.signedNeededForNext > 1 ? 's' : ''} to reach the next tier.
                 </p>
               ) : (
                 <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                  Vous avez atteint le niveau maximal de commission d'affiliation ! ({commissionTier.rate}%)
+                  You've reached the maximum affiliate commission level! ({commissionTier.rate}%)
                 </p>
               )}
             </div>
@@ -398,8 +398,8 @@ const AEDashboard: React.FC = () => {
             {/* Commission Rules Table */}
             <div className="border rounded-lg overflow-hidden text-sm">
               <div className="grid grid-cols-2 bg-slate-50 dark:bg-slate-900 p-2 font-medium border-b">
-                <div>Nombre d'hôtels signés</div>
-                <div>Taux de commission</div>
+                <div>Hotels Signed</div>
+                <div>Commission Rate</div>
               </div>
               {rules.map((rule, idx) => (
                 <div 
@@ -412,8 +412,8 @@ const AEDashboard: React.FC = () => {
                 >
                   <div>
                     {rule.max_hotels === null 
-                      ? `${rule.min_hotels}+ hôtels` 
-                      : `${rule.min_hotels} à ${rule.max_hotels} hôtels`
+                      ? `${rule.min_hotels}+ hotels` 
+                      : `${rule.min_hotels} to ${rule.max_hotels} hotels`
                     }
                   </div>
                   <div className={stats.signedCount >= rule.min_hotels && (rule.max_hotels === null || stats.signedCount <= rule.max_hotels) ? 'font-bold' : 'font-semibold'}>
@@ -430,16 +430,16 @@ const AEDashboard: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-lg font-medium flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary" />
-              Recommandations Récentes
+              Recent Referrals
             </CardTitle>
             <CardDescription>
-              Derniers prospects apportés.
+              Latest prospects submitted.
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {recentLeads.length === 0 ? (
               <div className="p-6 text-center text-muted-foreground text-sm">
-                Aucune recommandation récente.
+                No recent referrals.
               </div>
             ) : (
               <div className="divide-y max-h-[300px] overflow-y-auto">
@@ -447,7 +447,7 @@ const AEDashboard: React.FC = () => {
                   <div key={lead.id} className="p-4 flex items-center justify-between text-sm hover:bg-slate-50/50 dark:hover:bg-slate-900/10">
                     <div className="space-y-1 min-w-0">
                       <p className="font-medium text-foreground truncate">{lead.hotel_name}</p>
-                      <p className="text-xs text-muted-foreground truncate">{lead.contact_name || 'Contact inconnu'}</p>
+                      <p className="text-xs text-muted-foreground truncate">{lead.contact_name || 'Unknown contact'}</p>
                     </div>
                     <div className="text-right shrink-0">
                       <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusBadgeVariant(lead.status)}`}>

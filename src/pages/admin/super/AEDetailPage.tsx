@@ -307,15 +307,15 @@ const AEDetailPage: React.FC = () => {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      nouveau_lead: 'Nouveau lead',
-      premier_contact: 'Premier contact',
-      en_discussion: 'En discussion',
-      demo_planifiee: 'Démonstration planifiée',
-      proposition_envoyee: 'Proposition envoyée',
-      negociation: 'Négociation',
-      signe: 'Contrat signé',
-      refuse: 'Refusé',
-      perdu: 'Perdu'
+      nouveau_lead: 'New Lead',
+      premier_contact: 'First Contact',
+      en_discussion: 'In Discussion',
+      demo_planifiee: 'Demo Scheduled',
+      proposition_envoyee: 'Proposal Sent',
+      negociation: 'Negotiation',
+      signe: 'Contract Signed',
+      refuse: 'Refused',
+      perdu: 'Lost'
     };
     return labels[status] || status;
   };
@@ -323,9 +323,9 @@ const AEDetailPage: React.FC = () => {
   const getPaymentTypeLabel = (pt: string | null) => {
     if (!pt) return '—';
     const labels: Record<string, string> = {
-      mensuel: 'Mensuel',
-      trimestriel: 'Trimestriel',
-      annuel: 'Annuel'
+      mensuel: 'Monthly',
+      trimestriel: 'Quarterly',
+      annuel: 'Annual'
     };
     return labels[pt] || pt;
   };
@@ -334,7 +334,7 @@ const AEDetailPage: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <span className="ml-2">Chargement du profil...</span>
+        <span className="ml-2">Loading profile...</span>
       </div>
     );
   }
@@ -343,9 +343,9 @@ const AEDetailPage: React.FC = () => {
     return (
       <div className="space-y-4">
         <Button variant="ghost" onClick={() => navigate('/administration/super/account-executives')} className="gap-2">
-          <ArrowLeft className="h-4 w-4" /> Retour
+          <ArrowLeft className="h-4 w-4" /> Back
         </Button>
-        <div className="p-8 text-center text-muted-foreground">Account Executive introuvable.</div>
+        <div className="p-8 text-center text-muted-foreground">Account Executive not found.</div>
       </div>
     );
   }
@@ -364,12 +364,12 @@ const AEDetailPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={() => navigate('/administration/super/account-executives')} className="gap-2">
-          <ArrowLeft className="h-4 w-4" /> Retour
+          <ArrowLeft className="h-4 w-4" /> Back
         </Button>
         <div className="h-5 w-px bg-border" />
         <div className="flex-1">
           <h1 className="text-xl font-semibold">{ae.first_name} {ae.last_name}</h1>
-          <p className="text-sm text-muted-foreground">Apporteur d'affaires · Code : <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{ae.affiliate_code}</code></p>
+          <p className="text-sm text-muted-foreground">Business Partner · Code: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">{ae.affiliate_code}</code></p>
         </div>
       </div>
 
@@ -378,7 +378,7 @@ const AEDetailPage: React.FC = () => {
         <Card className="col-span-1">
           <CardHeader>
             <CardTitle className="text-lg font-medium flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" /> Informations Personnelles
+              <User className="h-5 w-5 text-primary" /> Personal Information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -387,24 +387,24 @@ const AEDetailPage: React.FC = () => {
               <p className="text-sm font-medium flex items-center gap-1.5"><Mail className="h-4 w-4 text-muted-foreground" /> {ae.email}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Téléphone</span>
-              <p className="text-sm font-medium flex items-center gap-1.5"><Phone className="h-4 w-4 text-muted-foreground" /> {ae.phone || 'Non renseigné'}</p>
+              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Phone</span>
+              <p className="text-sm font-medium flex items-center gap-1.5"><Phone className="h-4 w-4 text-muted-foreground" /> {ae.phone || 'Not provided'}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Société</span>
-              <p className="text-sm font-medium flex items-center gap-1.5"><Building2 className="h-4 w-4 text-muted-foreground" /> {ae.company || 'Aucune'}</p>
+              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Company</span>
+              <p className="text-sm font-medium flex items-center gap-1.5"><Building2 className="h-4 w-4 text-muted-foreground" /> {ae.company || 'None'}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Statut du compte</span>
+              <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Account Status</span>
               <div>
                 <Badge variant={ae.status === 'active' ? 'default' : 'destructive'} className="capitalize">
-                  {ae.status === 'active' ? 'Actif' : ae.status === 'inactive' ? 'Inactif' : 'Suspendu'}
+                  {ae.status === 'active' ? 'Active' : ae.status === 'inactive' ? 'Inactive' : 'Suspended'}
                 </Badge>
               </div>
             </div>
             <div className="space-y-1">
               <span className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Notes</span>
-              <p className="text-sm text-muted-foreground italic">{ae.notes || 'Aucune note administrative.'}</p>
+              <p className="text-sm text-muted-foreground italic">{ae.notes || 'No administrative notes.'}</p>
             </div>
           </CardContent>
         </Card>
@@ -413,20 +413,20 @@ const AEDetailPage: React.FC = () => {
         <Card className="col-span-1 lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg font-medium flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" /> Synthèse des Performances
+              <TrendingUp className="h-5 w-5 text-primary" /> Performance Summary
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-6">
             <div className="border rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/10 space-y-1">
-              <span className="text-xs text-muted-foreground">Prospects apportés</span>
+              <span className="text-xs text-muted-foreground">Prospects Brought</span>
               <p className="text-2xl font-bold text-foreground">{totalLeads}</p>
             </div>
             <div className="border rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/10 space-y-1">
-              <span className="text-xs text-muted-foreground">Contrats signés</span>
+              <span className="text-xs text-muted-foreground">Contracts Signed</span>
               <p className="text-2xl font-bold text-foreground">{signedCount}</p>
             </div>
             <div className="border rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/10 space-y-1">
-              <span className="text-xs text-muted-foreground">CA Généré</span>
+              <span className="text-xs text-muted-foreground">Revenue Generated</span>
               <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{totalContractVal.toLocaleString()} €</p>
             </div>
             <div className="border rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/10 space-y-1">
@@ -434,11 +434,11 @@ const AEDetailPage: React.FC = () => {
               <p className="text-2xl font-bold text-primary">{totalComms.toLocaleString()} €</p>
             </div>
             <div className="border rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/10 space-y-1">
-              <span className="text-xs text-muted-foreground">Commissions Payées</span>
+              <span className="text-xs text-muted-foreground">Paid Commissions</span>
               <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{paidComms.toLocaleString()} €</p>
             </div>
             <div className="border rounded-xl p-4 bg-slate-50/50 dark:bg-slate-900/10 space-y-1">
-              <span className="text-xs text-muted-foreground">Commissions Restantes</span>
+              <span className="text-xs text-muted-foreground">Outstanding Commissions</span>
               <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{pendingComms.toLocaleString()} €</p>
             </div>
           </CardContent>
@@ -449,28 +449,28 @@ const AEDetailPage: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-medium flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-primary" /> Hôtels apportés par ce partenaire
+            <Building2 className="h-5 w-5 text-primary" /> Hotels brought by this partner
           </CardTitle>
           <CardDescription>
-            Gérez le statut de ses prospects, entrez les valeurs de contrat et validez les commissions.
+            Manage the status of their prospects, enter contract values and validate commissions.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {leads.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">Aucun hôtel apporté par cet AE.</div>
+            <div className="p-8 text-center text-muted-foreground">No hotels brought by this AE.</div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nom de l'hôtel</TableHead>
+                    <TableHead>Hotel Name</TableHead>
                     <TableHead>Contact</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead>Valeur Contrat</TableHead>
-                    <TableHead>Type Paiement</TableHead>
-                    <TableHead>Commission AE</TableHead>
-                    <TableHead>Statut Commission</TableHead>
-                    <TableHead>Date d'ajout</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Contract Value</TableHead>
+                    <TableHead>Payment Type</TableHead>
+                    <TableHead>AE Commission</TableHead>
+                    <TableHead>Commission Status</TableHead>
+                    <TableHead>Date Added</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -502,11 +502,11 @@ const AEDetailPage: React.FC = () => {
                         {lead.status === 'signe' ? (
                           lead.commission_paid ? (
                             <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 gap-1">
-                              <Check className="h-3 w-3" /> Payée
+                              <Check className="h-3 w-3" /> Paid
                             </Badge>
                           ) : (
                             <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 gap-1 border-amber-300">
-                              En attente
+                              Pending
                             </Badge>
                           )
                         ) : (
@@ -518,7 +518,7 @@ const AEDetailPage: React.FC = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="sm" className="gap-1" onClick={() => handleEditLeadClick(lead)}>
-                          <Edit className="h-3.5 w-3.5" /> Gérer
+                          <Edit className="h-3.5 w-3.5" /> Manage
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -534,14 +534,14 @@ const AEDetailPage: React.FC = () => {
       <Dialog open={isEditLeadOpen} onOpenChange={setIsEditLeadOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Gérer la recommandation : {selectedLead?.hotel_name}</DialogTitle>
+            <DialogTitle>Manage lead: {selectedLead?.hotel_name}</DialogTitle>
             <DialogDescription>
-              Gérez les informations financières, le type de paiement et validez le paiement des commissions.
+              Manage the financial details, payment type and validate commission payment.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleLeadSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">Statut du lead (Géré par l'AE)</label>
+              <label className="text-sm font-medium text-muted-foreground">Lead Status (Managed by AE)</label>
               <div className="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-lg border font-medium text-sm text-foreground capitalize">
                 {getStatusLabel(editStatus)}
               </div>
@@ -552,7 +552,7 @@ const AEDetailPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium flex items-center gap-1">
-                      Valeur du contrat (€) <span className="text-red-500">*</span>
+                      Contract Value (€) <span className="text-red-500">*</span>
                     </label>
                     <Input
                       required
@@ -563,28 +563,28 @@ const AEDetailPage: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Type de paiement <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-medium">Payment Type <span className="text-red-500">*</span></label>
                     <select
                       value={editPaymentType}
                       onChange={(e) => setEditPaymentType(e.target.value)}
                       className="w-full bg-background border rounded-lg px-3 py-2 text-sm outline-none"
                     >
-                      <option value="mensuel">Mensuel</option>
-                      <option value="trimestriel">Trimestriel</option>
-                      <option value="annuel">Annuel</option>
+                      <option value="mensuel">Monthly</option>
+                      <option value="trimestriel">Quarterly</option>
+                      <option value="annuel">Annual</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-primary">
-                    Commission suggérée (€)
+                    Suggested Commission (€)
                   </label>
                   <Input
                     type="number"
                     value={editCommissionAmount}
                     onChange={(e) => setEditCommissionAmount(e.target.value)}
-                    placeholder="Calcul automatique..."
+                    placeholder="Auto-calculated..."
                   />
                 </div>
               </div>
@@ -600,31 +600,31 @@ const AEDetailPage: React.FC = () => {
                   className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                 />
                 <label htmlFor="paid-checkbox" className="text-sm font-medium cursor-pointer">
-                  Marquer la commission comme déjà payée à l'AE
+                  Mark commission as already paid to AE
                 </label>
               </div>
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Notes / Suivi administratif</label>
+              <label className="text-sm font-medium">Notes / Administrative Follow-up</label>
               <Textarea
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
-                placeholder="Historique des discussions, détails du contrat..."
+                placeholder="Discussion history, contract details..."
                 rows={3}
               />
             </div>
 
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsEditLeadOpen(false)} disabled={savingLead}>
-                Annuler
+                Cancel
               </Button>
               <Button type="submit" disabled={savingLead}>
                 {savingLead ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Enregistrement...
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving...
                   </>
-                ) : 'Enregistrer'}
+                ) : 'Save'}
               </Button>
             </DialogFooter>
           </form>

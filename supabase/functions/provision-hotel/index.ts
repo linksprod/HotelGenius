@@ -58,6 +58,7 @@ serve(async (req) => {
         secondary_color: secondaryColor,
         logo_url: logoUrl || null,
         languages: languages || ['en'],
+        status: 'essai_en_cours',
       })
       .select()
       .single()

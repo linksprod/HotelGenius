@@ -214,8 +214,8 @@ const AEHotelManagement: React.FC = () => {
       setLeads(updatedLeads);
       setIsEditOpen(false);
       toast({
-        title: 'Lead mis à jour',
-        description: `Le statut de ${selectedLead.hotel_name} a été modifié (Mode Démo).`,
+        title: 'Lead updated',
+        description: `Status of ${selectedLead.hotel_name} has been changed (Demo Mode).`,
       });
       return;
     }
@@ -234,8 +234,8 @@ const AEHotelManagement: React.FC = () => {
       if (error) throw error;
 
       toast({
-        title: 'Lead mis à jour',
-        description: `Le statut de ${selectedLead.hotel_name} a été modifié avec succès.`,
+        title: 'Lead updated',
+        description: `Status of ${selectedLead.hotel_name} has been updated successfully.`,
       });
       setIsEditOpen(false);
       fetchLeads();
@@ -267,15 +267,15 @@ const AEHotelManagement: React.FC = () => {
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      nouveau_lead: 'Nouveau lead',
-      premier_contact: 'Premier contact',
-      en_discussion: 'En discussion',
-      demo_planifiee: 'Démonstration planifiée',
-      proposition_envoyee: 'Proposition envoyée',
-      negociation: 'Négociation',
-      signe: 'Contrat signé',
-      refuse: 'Refusé',
-      perdu: 'Perdu'
+      nouveau_lead: 'New Lead',
+      premier_contact: 'First Contact',
+      en_discussion: 'In Discussion',
+      demo_planifiee: 'Demo Scheduled',
+      proposition_envoyee: 'Proposal Sent',
+      negociation: 'Negotiation',
+      signe: 'Contract Signed',
+      refuse: 'Refused',
+      perdu: 'Lost'
     };
     return labels[status] || status;
   };
@@ -283,9 +283,9 @@ const AEHotelManagement: React.FC = () => {
   const getPaymentTypeLabel = (pt: string | null) => {
     if (!pt) return '—';
     const labels: Record<string, string> = {
-      mensuel: 'Mensuel',
-      trimestriel: 'Trimestriel',
-      annuel: 'Annuel'
+      mensuel: 'Monthly',
+      trimestriel: 'Quarterly',
+      annuel: 'Annual'
     };
     return labels[pt] || pt;
   };
@@ -306,12 +306,12 @@ const AEHotelManagement: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Gestion des Hôtels</h1>
-          <p className="text-sm text-muted-foreground">Déclarez vos opportunités et suivez l'avancement de vos recommandations.</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Hotel Management</h1>
+          <p className="text-sm text-muted-foreground">Declare your opportunities and track the progress of your referrals.</p>
         </div>
         <Button onClick={() => setIsAddOpen(true)} className="gap-2 shrink-0">
           <Plus className="h-4 w-4" />
-          Déclarer un hôtel
+          Add a Hotel
         </Button>
       </div>
 
@@ -321,7 +321,7 @@ const AEHotelManagement: React.FC = () => {
           <Search className="h-4 w-4 text-muted-foreground shrink-0" />
           <input 
             type="text" 
-            placeholder="Rechercher par hôtel, contact, email..." 
+            placeholder="Search by hotel, contact, email..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-transparent text-sm w-full outline-none"
@@ -335,16 +335,16 @@ const AEHotelManagement: React.FC = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="bg-background border rounded-lg px-3 py-1.5 text-sm outline-none w-full md:w-48"
           >
-            <option value="all">Tous les statuts</option>
-            <option value="nouveau_lead">Nouveau lead</option>
-            <option value="premier_contact">Premier contact</option>
-            <option value="en_discussion">En discussion</option>
-            <option value="demo_planifiee">Démonstration planifiée</option>
-            <option value="proposition_envoyee">Proposition envoyée</option>
-            <option value="negociation">Négociation</option>
-            <option value="signe">Contrat signé</option>
-            <option value="refuse">Refusé</option>
-            <option value="perdu">Perdu</option>
+            <option value="all">All statuses</option>
+            <option value="nouveau_lead">New Lead</option>
+            <option value="premier_contact">First Contact</option>
+            <option value="en_discussion">In Discussion</option>
+            <option value="demo_planifiee">Demo Scheduled</option>
+            <option value="proposition_envoyee">Proposal Sent</option>
+            <option value="negociation">Negotiation</option>
+            <option value="signe">Contract Signed</option>
+            <option value="refuse">Refused</option>
+            <option value="perdu">Lost</option>
           </select>
         </div>
       </div>
@@ -355,27 +355,27 @@ const AEHotelManagement: React.FC = () => {
           {loading ? (
             <div className="flex items-center justify-center py-12 text-muted-foreground">
               <Loader2 className="h-6 w-6 animate-spin mr-2" />
-              Chargement des recommandations...
+              Loading referrals...
             </div>
           ) : filteredLeads.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
               <Building2 className="h-12 w-12 mb-4 opacity-30" />
-              <p className="text-lg font-medium">Aucun hôtel trouvé</p>
-              <p className="text-sm">Commencez par ajouter une nouvelle recommandation.</p>
+              <p className="text-lg font-medium">No hotels found</p>
+              <p className="text-sm">Start by adding a new referral.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nom de l'hôtel</TableHead>
-                    <TableHead>Contact principal</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead>Valeur Contrat</TableHead>
-                    <TableHead>Type Paiement</TableHead>
-                    <TableHead>Commission AE</TableHead>
-                    <TableHead>Statut Commission</TableHead>
-                    <TableHead>Date d'ajout</TableHead>
+                    <TableHead>Hotel Name</TableHead>
+                    <TableHead>Main Contact</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Contract Value</TableHead>
+                    <TableHead>Payment Type</TableHead>
+                    <TableHead>AE Commission</TableHead>
+                    <TableHead>Commission Status</TableHead>
+                    <TableHead>Date Added</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -412,11 +412,11 @@ const AEHotelManagement: React.FC = () => {
                         {lead.status === 'signe' ? (
                           lead.commission_paid ? (
                             <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 gap-1">
-                              <Check className="h-3 w-3" /> Payée
+                              <Check className="h-3 w-3" /> Paid
                             </Badge>
                           ) : (
                             <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 gap-1 border-amber-300">
-                              En attente
+                              Pending
                             </Badge>
                           )
                         ) : (
@@ -433,7 +433,7 @@ const AEHotelManagement: React.FC = () => {
                           className="gap-1.5" 
                           onClick={() => handleEditClick(lead)}
                         >
-                          <Edit className="h-3.5 w-3.5" /> Gérer
+                          <Edit className="h-3.5 w-3.5" /> Manage
                         </Button>
                       </TableCell>
                     </TableRow>
@@ -449,14 +449,14 @@ const AEHotelManagement: React.FC = () => {
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Déclarer un hôtel / Prospect</DialogTitle>
+            <DialogTitle>Add a Hotel / Prospect</DialogTitle>
             <DialogDescription>
-              Entrez les informations de l'hôtel que vous souhaitez ajouter.
+              Enter the information of the hotel you want to add.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleAddSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Nom de l'hôtel <span className="text-red-500">*</span></label>
+              <label className="text-sm font-medium">Hotel Name <span className="text-red-500">*</span></label>
               <Input 
                 required 
                 placeholder="Ex: Ritz Paris, Hotel Majestic"
@@ -466,7 +466,7 @@ const AEHotelManagement: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Contact principal</label>
+                <label className="text-sm font-medium">Main Contact</label>
                 <Input 
                   placeholder="Jean Dupont"
                   value={formData.contact_name}
@@ -474,7 +474,7 @@ const AEHotelManagement: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Téléphone</label>
+                <label className="text-sm font-medium">Phone</label>
                 <Input 
                   placeholder="+33 6..."
                   value={formData.contact_phone}
@@ -483,7 +483,7 @@ const AEHotelManagement: React.FC = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Adresse email du contact</label>
+              <label className="text-sm font-medium">Contact Email Address</label>
               <Input 
                 type="email"
                 placeholder="email@hotel.com"
@@ -492,9 +492,9 @@ const AEHotelManagement: React.FC = () => {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Notes / Informations complémentaires</label>
+              <label className="text-sm font-medium">Notes / Additional Information</label>
               <Textarea 
-                placeholder="Ex: Très intéressé par les modules Dining et AI Concierge. Souhaite une démo rapidement."
+                placeholder="e.g.: Very interested in Dining and AI Concierge modules. Wants a demo soon."
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 rows={3}
@@ -502,14 +502,14 @@ const AEHotelManagement: React.FC = () => {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)} disabled={isSubmitting}>
-                Annuler
+                Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Enregistrement...
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving...
                   </>
-                ) : 'Déclarer le prospect'}
+                ) : 'Submit Referral'}
               </Button>
             </DialogFooter>
           </form>
@@ -520,49 +520,49 @@ const AEHotelManagement: React.FC = () => {
       <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Mettre à jour le lead : {selectedLead?.hotel_name}</DialogTitle>
+            <DialogTitle>Update Lead: {selectedLead?.hotel_name}</DialogTitle>
             <DialogDescription>
-              Faites évoluer le statut commercial et ajoutez des notes de suivi.
+              Update the sales status and add follow-up notes.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Statut du lead</label>
+              <label className="text-sm font-medium">Lead Status</label>
               <select
                 value={editStatus}
                 onChange={(e) => setEditStatus(e.target.value)}
                 className="w-full bg-background border rounded-lg px-3 py-2 text-sm outline-none"
               >
-                <option value="nouveau_lead">Nouveau lead</option>
-                <option value="premier_contact">Premier contact</option>
-                <option value="en_discussion">En discussion</option>
-                <option value="demo_planifiee">Démonstration planifiée</option>
-                <option value="proposition_envoyee">Proposition envoyée</option>
-                <option value="negociation">Négociation</option>
-                <option value="signe">Contrat signé</option>
-                <option value="refuse">Refusé</option>
-                <option value="perdu">Perdu</option>
+                <option value="nouveau_lead">New Lead</option>
+                <option value="premier_contact">First Contact</option>
+                <option value="en_discussion">In Discussion</option>
+                <option value="demo_planifiee">Demo Scheduled</option>
+                <option value="proposition_envoyee">Proposal Sent</option>
+                <option value="negociation">Negotiation</option>
+                <option value="signe">Contract Signed</option>
+                <option value="refuse">Refused</option>
+                <option value="perdu">Lost</option>
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Notes / Suivi commercial</label>
+              <label className="text-sm font-medium">Notes / Sales Follow-up</label>
               <Textarea 
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
-                placeholder="Détaillez les derniers échanges..."
+                placeholder="Detail the latest discussions..."
                 rows={4}
               />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)} disabled={isSubmittingEdit}>
-                Annuler
+                Cancel
               </Button>
               <Button type="submit" disabled={isSubmittingEdit}>
                 {isSubmittingEdit ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Enregistrement...
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving...
                   </>
-                ) : 'Enregistrer'}
+                ) : 'Save'}
               </Button>
             </DialogFooter>
           </form>
