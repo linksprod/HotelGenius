@@ -76,7 +76,7 @@ async function importReservations() {
     // Check if guest already exists for this specific hotel
     const { data: existingGuests, error: searchError } = await supabase
       .from('guests')
-      .select('id, user_id')
+      .select('id, user_id, checkin_status')
       .eq('email', email)
       .eq('hotel_id', hotelId);
 
@@ -88,6 +88,12 @@ async function importReservations() {
     const existingGuest = existingGuests?.[0];
 
     if (existingGuest) {
+      // If the guest has already completed check-in or created an account, do not overwrite their status/token
+      if (existingGuest.user_id || existingGuest.checkin_status === 'completed') {
+        console.log(`Guest ${email} has already completed check-in. Skipping status/token reset.`);
+        continue;
+      }
+
       // Update existing record
       const updateData = {
         first_name: firstName,
@@ -146,6 +152,33 @@ async function importReservations() {
   console.log(`\nImport summary:`);
   console.log(`- New guests imported: ${importedCount}`);
   console.log(`- Existing guests updated: ${updatedCount}`);
+
+  // Trigger the Edge Function to send emails to all pending guests
+  if (importedCount > 0 || updatedCount > 0) {
+    console.log("\nTriggering Edge Function to send check-in emails to pending guests...");
+    try {
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/send-checkin-link`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`
+        },
+        body: JSON.stringify({ action: 'send_all' })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Edge Function executed successfully! Result:");
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        console.error("Failed to trigger Edge Function:", await response.text());
+      }
+    } catch (err) {
+      console.error("Error triggering Edge Function:", err.message);
+    }
+  } else {
+    console.log("\nNo new or pending guests to email.");
+  }
 }
 
 importReservations();
