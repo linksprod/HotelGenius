@@ -39,12 +39,13 @@ serve(async (req) => {
       if (error) throw error;
       guestsToProcess = data || [];
     } else if (action === "send_all") {
-      console.log("Fetching all pending guests...");
+      console.log("Fetching all pending guests who have NOT yet received an email...");
       const { data, error } = await supabaseClient
         .from("guests")
         .select("*, hotels(name, slug, logo_url, primary_color, secondary_color, address, contact_email, contact_phone, hotel_about(hero_image))")
         .eq("checkin_status", "pending")
-        .not("checkin_token", "is", null);
+        .not("checkin_token", "is", null)
+        .is("email_sent_at", null);
       if (error) throw error;
       guestsToProcess = data || [];
     } else {
@@ -59,7 +60,8 @@ serve(async (req) => {
         .select("*, hotels(name, slug, logo_url, primary_color, secondary_color, address, contact_email, contact_phone, hotel_about(hero_image))")
         .eq("check_in_date", targetDateString)
         .eq("checkin_status", "pending")
-        .not("checkin_token", "is", null);
+        .not("checkin_token", "is", null)
+        .is("email_sent_at", null);
       if (error) throw error;
       guestsToProcess = data || [];
     }
@@ -86,7 +88,7 @@ serve(async (req) => {
       const platformUrl = Deno.env.get("PLATFORM_URL") || "https://hotelgenius.world";
       const checkinLink = `${platformUrl}/${hotelSlug}/guests/auth/login?token=${token}`;
 
-      const subject = `Votre séjour à l'hôtel ${hotelName} approche — Préparez votre arrivée 🏨`;
+      const subject = `Bonjour ${guest.first_name}, votre séjour à l'hôtel ${hotelName} approche 🏨`;
       
       // Header branding: Gmail/Outlook block inline base64 images, so we fall back to stylized text if it's a data URI.
       const isBase64Logo = logoUrl && logoUrl.startsWith("data:image");
@@ -188,6 +190,17 @@ serve(async (req) => {
         const data = await response.json();
         console.log(`Email successfully sent to ${guest.email}, Resend ID: ${data.id}`);
         results.push({ email: guest.email, success: true, id: data.id });
+
+        // ✅ Mark email as sent — prevents any future duplicate sends
+        const { error: markError } = await supabaseClient
+          .from("guests")
+          .update({ email_sent_at: new Date().toISOString() })
+          .eq("id", guest.id);
+        if (markError) {
+          console.error(`Failed to mark email_sent_at for ${guest.email}:`, markError.message);
+        } else {
+          console.log(`Marked email_sent_at for ${guest.email}`);
+        }
       }
     }
 

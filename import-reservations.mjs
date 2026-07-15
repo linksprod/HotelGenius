@@ -76,7 +76,7 @@ async function importReservations() {
     // Check if guest already exists for this specific hotel
     const { data: existingGuests, error: searchError } = await supabase
       .from('guests')
-      .select('id, user_id, checkin_status')
+      .select('id, user_id, checkin_status, email_sent_at')
       .eq('email', email)
       .eq('hotel_id', hotelId);
 
@@ -88,9 +88,30 @@ async function importReservations() {
     const existingGuest = existingGuests?.[0];
 
     if (existingGuest) {
-      // If the guest has already completed check-in or created an account, do not overwrite their status/token
+      // If the guest has already completed check-in or created an account, do not overwrite
       if (existingGuest.user_id || existingGuest.checkin_status === 'completed') {
-        console.log(`Guest ${email} has already completed check-in. Skipping status/token reset.`);
+        console.log(`Guest ${email} has already completed check-in. Skipping.`);
+        continue;
+      }
+
+      // If email was already sent, only update non-critical fields (no token reset, no new email)
+      if (existingGuest.email_sent_at) {
+        console.log(`Guest ${email} already received their email. Updating info only (no new email).`);
+        const { error: updateError } = await supabase
+          .from('guests')
+          .update({
+            first_name: firstName,
+            last_name: lastName,
+            birth_date: birthDate,
+            nationality: nationality,
+            check_in_date: checkInDate,
+            check_out_date: checkOutDate,
+            room_type: roomType
+            // NOTE: token and checkin_status are NOT reset — no duplicate email will be triggered
+          })
+          .eq('id', existingGuest.id);
+        if (updateError) console.error(`Failed to update guest ${email}:`, updateError.message);
+        else { console.log(`Info updated (no email) : ${email}`); updatedCount++; }
         continue;
       }
 

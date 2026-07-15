@@ -107,7 +107,7 @@ async function runImport() {
     const token = crypto.randomBytes(8).toString('hex');
 
     const { data: existing } = await supabase
-      .from('guests').select('id, user_id, checkin_status')
+      .from('guests').select('id, user_id, checkin_status, email_sent_at')
       .eq('email', email).eq('hotel_id', hotelId);
 
     const guest = existing?.[0];
@@ -118,6 +118,22 @@ async function runImport() {
         skippedCount++;
         continue;
       }
+
+      // Email already sent → update info ONLY, no token reset, no new email
+      if (guest.email_sent_at) {
+        info(`${email} a déjà reçu son email → mise à jour infos seulement.`);
+        const { error: upErr } = await supabase.from('guests').update({
+          first_name: firstName, last_name: lastName,
+          birth_date: birthDate, nationality, check_in_date: checkInDate,
+          check_out_date: checkOutDate, room_type: roomType
+          // token & checkin_status non modifiés → pas de doublon d'email
+        }).eq('id', guest.id);
+        if (upErr) err(`Mise à jour échouée pour ${email} : ${upErr.message}`);
+        else { log(`Info mis à jour (sans email) : ${email}`); updatedCount++; }
+        continue;
+      }
+
+      // Email not yet sent → full update with new token so Edge Function will send it
       const { error: upErr } = await supabase.from('guests').update({
         first_name: firstName, last_name: lastName,
         birth_date: birthDate, nationality, check_in_date: checkInDate,
@@ -148,8 +164,8 @@ async function runImport() {
   console.log(`      Ignorés (déjà OK) : ${COLORS.dim}${skippedCount}${COLORS.reset}`);
   console.log('─'.repeat(55));
 
-  // Envoi des e-mails si nécessaire
-  if (importedCount > 0 || updatedCount > 0) {
+  // Envoi des e-mails uniquement si nouveaux guests ou guests sans email envoyé
+  if (importedCount > 0) {
     info(`Envoi des e-mails de check-in aux guests en attente...`);
     try {
       const res = await fetch(`${SUPABASE_URL}/functions/v1/send-checkin-link`, {
