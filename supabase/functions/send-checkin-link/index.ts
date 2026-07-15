@@ -83,7 +83,7 @@ serve(async (req) => {
                        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&h=400&q=80";
 
       // Generate clean pre-filled registration link
-      const platformUrl = Deno.env.get("PLATFORM_URL") || "http://localhost:5173";
+      const platformUrl = Deno.env.get("PLATFORM_URL") || "https://hotelgenius.world";
       const checkinLink = `${platformUrl}/${hotelSlug}/guests/auth/login?token=${token}`;
 
       const subject = `Votre séjour à l'hôtel ${hotelName} approche — Préparez votre arrivée 🏨`;
