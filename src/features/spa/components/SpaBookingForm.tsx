@@ -60,7 +60,7 @@ export default function SpaBookingForm({
       guestName: existingBooking?.guest_name || '',
       guestEmail: existingBooking?.guest_email || '',
       guestPhone: existingBooking?.guest_phone || '',
-      roomNumber: existingBooking?.room_number || userData?.room_number || localStorage.getItem('user_room_number') || '406',
+      roomNumber: existingBooking?.room_number || userData?.room_number || localStorage.getItem('user_room_number') || '',
       date: existingBooking?.date ? new Date(existingBooking.date) : undefined,
       time: existingBooking?.time || '',
       specialRequests: existingBooking?.special_requests || ''
@@ -73,7 +73,7 @@ export default function SpaBookingForm({
       form.setValue('guestName', fullName || 'Guest');
       form.setValue('guestEmail', userData.email || '');
       form.setValue('guestPhone', userData.phone || '');
-      const rNum = userData.room_number || localStorage.getItem('user_room_number') || '406';
+      const rNum = userData.room_number || localStorage.getItem('user_room_number') || '';
       form.setValue('roomNumber', rNum);
     }
   }, [userData, existingBooking, form]);

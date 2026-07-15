@@ -13,7 +13,7 @@ import CustomRequestForm from './components/CustomRequestForm';
 const MyRoom = () => {
   const { t } = useTranslation();
   // Use room number stored in localStorage to avoid extra requests
-  const roomNumber = localStorage.getItem('user_room_number') || '406';
+  const roomNumber = localStorage.getItem('user_room_number') || '';
   
   // Memoize requests to avoid unnecessary re-renders
   const { data: room, isLoading } = useRoom(roomNumber);

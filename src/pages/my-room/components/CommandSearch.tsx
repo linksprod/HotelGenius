@@ -87,7 +87,7 @@ const CommandSearch = ({ room, onRequestSuccess }: CommandSearchProps) => {
     try {
       const roomInfo = room || { id: '' };
       let roomId = roomInfo.id;
-      let roomNumber = room?.room_number || userData?.room_number || localStorage.getItem('user_room_number') || '406';
+      let roomNumber = room?.room_number || userData?.room_number || localStorage.getItem('user_room_number') || '';
 
       if (!roomId) {
         roomId = roomNumber;

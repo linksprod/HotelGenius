@@ -34,7 +34,7 @@ const CurrentStay = ({ userData, stayDuration }: CurrentStayProps) => {
               <Key className="h-5 w-5 text-gray-500 shrink-0" />
               <div>
                 <p className="font-medium">{t('profilePage.currentStay.room')}</p>
-                <p className="text-sm text-muted-foreground">{userData?.room_number || localStorage.getItem('user_room_number') || '406'}</p>
+                <p className="text-sm text-muted-foreground">{userData?.room_number || localStorage.getItem('user_room_number') || ''}</p>
               </div>
             </div>
             <div className="flex gap-2">

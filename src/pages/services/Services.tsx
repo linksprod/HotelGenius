@@ -26,7 +26,7 @@ const Services = () => {
   const { toast } = useToast();
   const { userData } = useAuth();
 
-  const roomNumber = userInfo.roomNumber || userData?.room_number || localStorage.getItem('user_room_number') || '406';
+  const roomNumber = userInfo.roomNumber || userData?.room_number || localStorage.getItem('user_room_number') || '';
   const { data: room } = useRoom(roomNumber);
 
   useEffect(() => {
