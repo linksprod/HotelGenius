@@ -24,9 +24,10 @@ import { BirthDatePicker } from '@/components/ui/date-picker-birth';
 interface DateFieldsProps {
   form: UseFormReturn<RegistrationFormValues>;
   step?: number;
+  disabled?: boolean;
 }
 
-const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
+const DateFields: React.FC<DateFieldsProps> = ({ form, step, disabled }) => {
   const { t } = useTranslation();
   // Get today's date for validation
   const today = new Date();
@@ -67,6 +68,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
                     <FormControl>
                       <Button
                         variant={"outline"}
+                        disabled={disabled}
                         className={cn(
                           "pl-3 text-left font-normal w-full",
                           !field.value && "text-muted-foreground"
@@ -123,6 +125,7 @@ const DateFields: React.FC<DateFieldsProps> = ({ form, step }) => {
                     <FormControl>
                       <Button
                         variant={"outline"}
+                        disabled={disabled}
                         className={cn(
                           "pl-3 text-left font-normal w-full",
                           !field.value && "text-muted-foreground"

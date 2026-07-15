@@ -11,6 +11,13 @@ const GuestLoginCard: React.FC = () => {
   const { hotel } = useHotel();
   const { t } = useTranslation();
 
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('token')) {
+      setActiveTab('register');
+    }
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}

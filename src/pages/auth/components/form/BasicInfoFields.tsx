@@ -14,9 +14,10 @@ import { RegistrationFormValues } from '../../hooks/useRegistrationForm';
 
 interface BasicInfoFieldsProps {
   form: UseFormReturn<RegistrationFormValues>;
+  disabled?: boolean;
 }
 
-const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form }) => {
+const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form, disabled }) => {
   const { t } = useTranslation();
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -27,7 +28,7 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form }) => {
           <FormItem>
             <FormLabel>{t('auth.firstName', 'First Name')}</FormLabel>
             <FormControl>
-              <Input placeholder={t('auth.firstName', 'First Name')} {...field} />
+              <Input placeholder={t('auth.firstName', 'First Name')} {...field} disabled={disabled} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -41,7 +42,7 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ form }) => {
           <FormItem>
             <FormLabel>{t('auth.lastName', 'Last Name')}</FormLabel>
             <FormControl>
-              <Input placeholder={t('auth.lastName', 'Last Name')} {...field} />
+              <Input placeholder={t('auth.lastName', 'Last Name')} {...field} disabled={disabled} />
             </FormControl>
             <FormMessage />
           </FormItem>

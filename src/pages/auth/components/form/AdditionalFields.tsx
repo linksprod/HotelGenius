@@ -56,9 +56,10 @@ const NATIONALITIES = [
 interface AdditionalFieldsProps {
   form: UseFormReturn<RegistrationFormValues>;
   step?: number;
+  disabled?: boolean;
 }
 
-const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
+const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step, disabled }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
@@ -135,7 +136,7 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
             <FormItem>
               <FormLabel>Room Number</FormLabel>
               <FormControl>
-                <Input placeholder="Room Number" {...field} />
+                <Input placeholder="Room Number" {...field} disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -151,7 +152,7 @@ const AdditionalFields: React.FC<AdditionalFieldsProps> = ({ form, step }) => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" {...field} type="email" />
+                <Input placeholder="Email" {...field} type="email" disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>

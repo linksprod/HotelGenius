@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +29,7 @@ export const registerSchema = z.object({
       message: "You must be at least 18 years old",
     }),
   nationality: z.string().min(2, { message: "Nationality is required" }),
-  roomNumber: z.string().min(1, { message: "Room number is required" }),
+  roomNumber: z.string().optional(),
   checkInDate: z.date({ required_error: "Check-in date is required" })
     .refine((date) => {
       const now = new Date();
@@ -71,6 +71,7 @@ export const useRegistrationForm = () => {
   const { hotelId } = useHotel();
   const { resolvePath } = useHotelPath();
   const [companions, setCompanions] = useState<CompanionType[]>([]);
+  const [prefilledGuest, setPrefilledGuest] = useState<any>(null);
   const { setUserData } = useAuth();
 
   // Formulaire d'inscription
@@ -87,6 +88,43 @@ export const useRegistrationForm = () => {
     },
     mode: "onChange"
   });
+
+  // Fetch guest data if token is provided
+  useEffect(() => {
+    const fetchPrefilledGuest = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      if (!token) return;
+
+      console.log("Checking token:", token);
+      const { data, error } = await supabase.rpc('get_guest_by_token', { p_token: token });
+      
+      if (error) {
+        console.error("Error fetching prefilled guest:", error.message);
+        return;
+      }
+
+      if (data) {
+        console.log("Found guest details for prefill:", data);
+        setPrefilledGuest(data);
+        
+        registerForm.reset({
+          email: data.email || "",
+          firstName: data.first_name || "",
+          lastName: data.last_name || "",
+          nationality: data.nationality || "",
+          roomNumber: data.room_number || "",
+          checkInDate: data.check_in_date ? new Date(data.check_in_date) : undefined,
+          checkOutDate: data.check_out_date ? new Date(data.check_out_date) : undefined,
+          birthDate: data.birth_date ? new Date(data.birth_date) : undefined,
+          password: "",
+          confirmPassword: "",
+        });
+      }
+    };
+
+    fetchPrefilledGuest();
+  }, [registerForm]);
 
   const nextStep = async () => {
     let fields: (keyof RegistrationFormValues)[] = [];
@@ -125,7 +163,8 @@ export const useRegistrationForm = () => {
         check_in_date: values.checkInDate,
         check_out_date: values.checkOutDate,
         companions: mapCompanionsToCompanionData(companions),
-        hotel_id: hotelId || null,
+        hotel_id: hotelId || prefilledGuest?.hotel_id || null,
+        internal_id: prefilledGuest?.id || undefined,
       };
 
       const result = await registerUser(values.email, values.password, userData);
@@ -142,6 +181,20 @@ export const useRegistrationForm = () => {
         };
         await syncUserData(fullUserData);
         setUserData(fullUserData);
+
+        // Update checkin status if prefilled
+        if (prefilledGuest?.id) {
+          const { error: updateError } = await supabase
+            .from('guests')
+            .update({ checkin_status: 'checked_in' })
+            .eq('id', prefilledGuest.id);
+          
+          if (updateError) {
+            console.error("Error updating checkin status:", updateError.message);
+          } else {
+            console.log("Checkin status updated to checked_in for guest", prefilledGuest.id);
+          }
+        }
       }
 
       toast({
@@ -179,6 +232,7 @@ export const useRegistrationForm = () => {
     handleRegister,
     currentStep,
     nextStep,
-    prevStep
+    prevStep,
+    prefilledGuest
   };
 };

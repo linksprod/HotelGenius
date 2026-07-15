@@ -21,7 +21,8 @@ const RegistrationForm: React.FC = () => {
     handleRegister,
     currentStep,
     nextStep,
-    prevStep
+    prevStep,
+    prefilledGuest
   } = useRegistrationForm();
   const { t } = useTranslation();
 
@@ -76,22 +77,22 @@ const RegistrationForm: React.FC = () => {
             >
               {currentStep === 1 && (
                 <div className="space-y-4">
-                  <BasicInfoFields form={registerForm} />
-                  <AdditionalFields form={registerForm} step={1} />
-                  <DateFields form={registerForm} step={1} />
+                  <BasicInfoFields form={registerForm} disabled={!!prefilledGuest} />
+                  <AdditionalFields form={registerForm} step={1} disabled={!!prefilledGuest} />
+                  <DateFields form={registerForm} step={1} disabled={!!prefilledGuest} />
                 </div>
               )}
 
               {currentStep === 2 && (
                 <div className="space-y-4">
-                  <DateFields form={registerForm} step={2} />
-                  <AdditionalFields form={registerForm} step={2} />
+                  <DateFields form={registerForm} step={2} disabled={!!prefilledGuest} />
+                  <AdditionalFields form={registerForm} step={2} disabled={!!prefilledGuest} />
                 </div>
               )}
 
               {currentStep === 3 && (
                 <div className="space-y-4">
-                  <AdditionalFields form={registerForm} step={3} />
+                  <AdditionalFields form={registerForm} step={3} disabled={!!prefilledGuest} />
                   <PasswordField form={registerForm} />
                   <CompanionsList
                     companions={companions}
