@@ -143,6 +143,15 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
             }
 
             console.log('Droits admin confirmés');
+            if (session?.user?.id) {
+              supabase
+                .from('guests')
+                .update({ status: 'online', updated_at: new Date().toISOString() })
+                .eq('user_id', session.user.id)
+                .then(({ error }) => {
+                  if (error) console.error("Error setting guest status to online:", error);
+                });
+            }
             setAuthorized(true);
             initialAuthDone.current = true;
             setLoading(false);
@@ -171,6 +180,7 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
 
             const userData = guestData ? {
               id: session.user.id,
+              internal_id: guestData.id,
               email: session.user.email || '',
               first_name: guestData.first_name || session.user.user_metadata?.first_name || 'Utilisateur',
               last_name: guestData.last_name || session.user.user_metadata?.last_name || '',
@@ -232,6 +242,16 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
             }
           });
 
+          if (session?.user?.id) {
+            supabase
+              .from('guests')
+              .update({ status: 'online', updated_at: new Date().toISOString() })
+              .eq('user_id', session.user.id)
+              .then(({ error }) => {
+                if (error) console.error("Error setting guest status to online:", error);
+              });
+          }
+
           setAuthorized(true);
           initialAuthDone.current = true;
         } catch (parseError) {
@@ -271,6 +291,13 @@ export const useAuthGuard = (adminRequired: boolean = false) => {
         // Nettoyer les doublons potentiels lors de la connexion
         if (session.user) {
           cleanupDuplicateGuestRecords(session.user.id);
+          supabase
+            .from('guests')
+            .update({ status: 'online', updated_at: new Date().toISOString() })
+            .eq('user_id', session.user.id)
+            .then(({ error }) => {
+              if (error) console.error("Error setting guest status to online:", error);
+            });
         }
         setAuthorized(true);
       }

@@ -55,6 +55,22 @@ export const syncGuestData = async (userId: string, userData: UserData): Promise
       guestData.id = (userData as any).internal_id;
     }
 
+    // CRITICAL BUGFIX: If no ID is present, search for an existing record by user_id
+    // to prevent duplicates when hotel_id is NULL (PostgreSQL unique constraint allows duplicate NULLs)
+    if (!guestData.id) {
+      const { data: existingRecord } = await supabase
+        .from('guests')
+        .select('id')
+        .eq('user_id', userId)
+        .limit(1)
+        .maybeSingle();
+      
+      if (existingRecord) {
+        console.log('[guestSyncService] Found existing guest record by user_id, setting ID to update:', existingRecord.id);
+        guestData.id = existingRecord.id;
+      }
+    }
+
     console.log('[guestSyncService] Attempting upsert with payload:', {
       id: guestData.id,
       user_id: guestData.user_id,
