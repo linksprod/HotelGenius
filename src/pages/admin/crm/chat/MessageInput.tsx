@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Paperclip, MessageSquare } from 'lucide-react';
+import { Send, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Chat } from './types';
@@ -47,14 +47,7 @@ const MessageInput = ({ chat, onSendMessage, isSending }: MessageInputProps) => 
       />
       
       <div className="flex space-x-2">
-        <Button
-          size="icon"
-          variant="outline"
-          className="shrink-0"
-          disabled={isSending}
-        >
-          <Paperclip className="h-5 w-5" />
-        </Button>
+
         <Button
           size="icon"
           variant="outline"

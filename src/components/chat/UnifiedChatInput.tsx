@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Bot, User, MessageSquare, Paperclip } from 'lucide-react';
+import { Send, Bot, User, MessageSquare } from 'lucide-react';
 import { VoiceMessageInput } from '@/components/voice/VoiceMessageInput';
 import UserQuickTemplates from '@/components/messaging/UserQuickTemplates';
 import { useTranslation } from 'react-i18next';
@@ -59,14 +59,7 @@ const ConciergeMessageInput = ({
       />
 
       <div className="flex items-end gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full h-10 w-10 flex-shrink-0 text-muted-foreground hover:bg-muted mb-0.5"
-          type="button"
-        >
-          <Paperclip className="h-5 w-5" />
-        </Button>
+
 
         <Button
           variant="ghost"

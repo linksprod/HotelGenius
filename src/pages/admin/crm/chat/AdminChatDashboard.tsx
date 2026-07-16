@@ -694,9 +694,7 @@ export const AdminChatDashboard: React.FC = () => {
                 <Button variant="ghost" size="icon" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 hover:bg-zinc-300/20 shrink-0">
                   <Smile className="h-5 w-5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 hover:bg-zinc-300/20 shrink-0">
-                  <Paperclip className="h-5 w-5" />
-                </Button>
+
                 
                 <input 
                   type="text" 

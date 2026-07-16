@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, MessageSquare, Paperclip } from 'lucide-react';
+import { Send, MessageSquare } from 'lucide-react';
 import { VoiceInterface } from './VoiceInterface';
 import UserQuickTemplates from '@/components/messaging/UserQuickTemplates';
 import { useTranslation } from 'react-i18next';
@@ -76,14 +76,7 @@ export const VoiceMessageInput: React.FC<VoiceMessageInputProps> = ({
           )}
 
           <div className="flex items-end gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full h-10 w-10 flex-shrink-0 mb-0.5"
-              type="button"
-            >
-              <Paperclip className="h-5 w-5" />
-            </Button>
+
 
             <Button
               variant="ghost"
