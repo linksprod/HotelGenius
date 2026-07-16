@@ -366,8 +366,9 @@ export const useUnifiedChat = ({
   }, [chatState.conversation?.id]);
 
   // Send message
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const sendMessage = async (customText?: string) => {
+    const messageContent = (typeof customText === 'string' ? customText : inputMessage).trim();
+    if (!messageContent) return;
 
     try {
       const { data: user } = await supabase.auth.getUser();
@@ -378,8 +379,11 @@ export const useUnifiedChat = ({
 
       if (!chatState.conversation) return;
 
-      const messageContent = inputMessage.trim();
-      setInputMessage('');
+      // Only clear input if we sent the message typed in the input textarea
+      if (typeof customText !== 'string') {
+        setInputMessage('');
+      }
+      
       setChatState(prev => ({ ...prev, isTyping: true }));
 
       await supabase
@@ -420,6 +424,11 @@ export const useUnifiedChat = ({
       });
       setChatState(prev => ({ ...prev, isTyping: false }));
     }
+  };
+
+  // Send message with explicit text (for programmatic triggers like QuickOptionsList)
+  const sendMessageDirect = async (text: string) => {
+    await sendMessage(text);
   };
 
   // Send message to AI
@@ -651,6 +660,7 @@ export const useUnifiedChat = ({
     inputMessage,
     setInputMessage,
     sendMessage,
+    sendMessageDirect,
     escalateToHuman,
     takeOverConversation,
     startNewConversation,

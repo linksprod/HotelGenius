@@ -8,6 +8,20 @@ export const logoutUser = async (): Promise<{ success: boolean; error?: string }
   try {
     console.log('Starting logout process in authService');
     
+    // Set status to offline in guests table before signing out
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        await supabase
+          .from('guests')
+          .update({ status: 'offline', updated_at: new Date().toISOString() })
+          .eq('user_id', session.user.id);
+        console.log('Set guest status to offline before signing out');
+      }
+    } catch (e) {
+      console.error('Error setting guest status to offline on logout:', e);
+    }
+
     // Déconnexion de Supabase Auth
     const { error } = await supabase.auth.signOut();
     

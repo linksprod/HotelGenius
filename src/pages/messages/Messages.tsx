@@ -163,6 +163,7 @@ const Messages = () => {
             hotelId={hotel?.id}
             onGoBack={handleBack}
             onDeleteSuccess={() => setChatKey(prev => prev + 1)}
+            onSwitchChatType={setSelectedChatType}
           />
         </div>
       </Layout>
