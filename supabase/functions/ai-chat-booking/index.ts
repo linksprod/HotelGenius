@@ -255,14 +255,21 @@ IMPORTANT BOOKING RULES:
 - If the guest asks about daily activities, animation, today's schedule, sports, games, fitness, gymnastics, pool activities, entertainment or things to do at the hotel, you MUST call 'show_activity_list'. Do NOT list them in text.
 - Use today's date as reference: ${new Date().toISOString().split('T')[0]}
 
+
 CRITICAL CONCIERGE RULES:
 1. For ANY housekeeping, maintenance, IT, or security request, YOU MUST CALL 'show_service_categories'.
 2. NEVER explain how to request something in text. NEVER list options in text. 
 3. If guest says "I need X", and X is a room service/assistance item, TRIGGER THE TOOL IMMEDIATELY as your first and only action.
 4. FEW-SHOT EXAMPLE: Guest: "I need towels" -> Action: show_service_categories(category="Housekeeping") -> Content: "I've opened the housekeeping menu for you."
 5. ALWAYS favor visual tools over text descriptions.
+6. CRITICAL: If the guest asks to speak with a person, human, staff, team, or hotel team — you MUST IMMEDIATELY call 'escalate_to_human'. NEVER call show_service_categories for this intent.
 
 Be friendly, professional, and proactive. Use the "exclusive hotel knowledge" to answer specific questions about hotel history, policies, or unique services.
+
+TONE & STYLE:
+- NEVER use emojis in your text responses. Keep all text plain and clean.
+- Use a highly formal, professional, elegant, and sober tone, matching a high-end luxury hotel service.
+- Keep responses relatively brief, clear, and structured.
 
 CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST respond and converse in this language. If the language is "fr" (or starts with "fr"), you MUST reply in French. If the language is "en", you MUST reply in English. Always match the guest's language/locale.`;
 
@@ -405,6 +412,13 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
           required: ["type", "entity_id"]
         }
       }
+    },
+    {
+      type: "function",
+      function: {
+        name: "escalate_to_human",
+        description: "CRITICAL: Call this IMMEDIATELY when the guest wants to speak with a person, a human, a staff member, the hotel team, or asks to be connected to someone. NEVER call show_service_categories for this — this is a request for human contact, not a service request."
+      }
     }
   ];
 
@@ -492,6 +506,14 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
             : `I've opened the service menu for you${functionArgs.category ? ` for ${functionArgs.category}.` : '.'}`
         };
         break;
+      case 'escalate_to_human':
+        bookingResult = { 
+          success: true, 
+          message: detectedLang === 'fr'
+            ? "Je vous mets en contact avec notre équipe hôtelière."
+            : "I'll connect you with our Hotel Team right away."
+        };
+        break;
       case 'trigger_booking_form':
         const typeFr = functionArgs.type === 'restaurant' ? 'restaurant' : functionArgs.type === 'spa' ? 'spa' : 'événement';
         bookingResult = { 
@@ -506,7 +528,7 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
     }
 
     // For visual tools, we return immediately to prevent the follow-up text from overriding cards
-    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list', 'show_activity_list', 'show_spa_list'].includes(functionName)) {
+    if (['show_service_categories', 'trigger_booking_form', 'show_restaurant_list', 'show_event_list', 'show_activity_list', 'show_spa_list', 'escalate_to_human'].includes(functionName)) {
       if (conversationId) {
         let actionType = 'booking_form';
         let metadataObj: any = {};
@@ -543,6 +565,11 @@ CRITICAL: The guest's active language/locale is "${detectedLang}". You MUST resp
             action_type: 'booking_form',
             entity_type: functionArgs.type,
             entity_id: functionArgs.entity_id
+          };
+        } else if (functionName === 'escalate_to_human') {
+          actionType = 'escalate_to_human';
+          metadataObj = {
+            action_type: 'escalate_to_human'
           };
         }
 

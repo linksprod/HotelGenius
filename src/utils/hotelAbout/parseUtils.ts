@@ -18,7 +18,8 @@ const normalizeFeatureItem = (item: any): FeatureItem => ({
 });
 
 export const parseJsonArray = <T,>(data: Json | null, defaultValue: T[], type: 'info' | 'feature' = 'info'): T[] => {
-  if (!data) return defaultValue;
+  // null / undefined → use hardcoded defaults
+  if (data === null || data === undefined) return defaultValue;
 
   const normalize = type === 'feature'
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,6 +28,8 @@ export const parseJsonArray = <T,>(data: Json | null, defaultValue: T[], type: '
     : (item: any) => normalizeInfoItem(item);
 
   if (Array.isArray(data)) {
+    // Empty array from DB → keep empty (don't override with defaults)
+    if (data.length === 0) return [] as unknown as T[];
     return data.map(normalize) as T[];
   }
 
@@ -34,6 +37,7 @@ export const parseJsonArray = <T,>(data: Json | null, defaultValue: T[], type: '
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed)) {
+        if (parsed.length === 0) return [] as unknown as T[];
         return parsed.map(normalize) as T[];
       }
       return defaultValue;

@@ -100,7 +100,9 @@ export const prepareDataForUpdate = (data: Partial<HotelAbout>) => {
   if (data.facilities) updateData.facilities = data.facilities;
   if (data.hotel_policies) updateData.hotel_policies = data.hotel_policies;
   if (data.additional_info) updateData.additional_info = data.additional_info;
-  if (data.features) updateData.features = data.features;
+  // Always persist features, even if it's an empty array
+  if (Array.isArray(data.features)) updateData.features = data.features;
+  else if (data.features) updateData.features = data.features;
 
   if (data.has_seminars !== undefined) updateData.has_seminars = data.has_seminars;
   if (data.seminar_description !== undefined) updateData.seminar_description = data.seminar_description;

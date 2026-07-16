@@ -35,6 +35,8 @@ interface UnifiedChatContainerProps {
   hotelId?: string; // Tenant scope
   onGoBack?: () => void;
   onDeleteSuccess?: () => void;
+  /** Called when the user requests to switch to a different chat type (e.g., concierge) */
+  onSwitchChatType?: (type: 'concierge' | 'safety_ai') => void;
 }
 
 export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
@@ -45,7 +47,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
   conversationId,
   hotelId: propHotelId,
   onGoBack,
-  onDeleteSuccess
+  onDeleteSuccess,
+  onSwitchChatType
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -69,6 +72,7 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
     inputMessage,
     setInputMessage,
     sendMessage,
+    sendMessageDirect,
     escalateToHuman,
     takeOverConversation,
     startNewConversation,
@@ -337,6 +341,8 @@ export const UnifiedChatContainer: React.FC<UnifiedChatContainerProps> = ({
           currentUser={userInfo}
           isAdmin={isAdmin}
           hotelId={hotelId}
+          onQuickOptionSelect={sendMessageDirect}
+          onSwitchChatType={onSwitchChatType}
         />
 
         <UnifiedChatInput

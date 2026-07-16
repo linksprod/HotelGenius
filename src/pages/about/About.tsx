@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle2, Maximize2, ArrowUpToLine, Wifi, Sun, Users, Presentation, MonitorPlay, Volume2, Video, SquarePlay, Layers, Sofa, UtensilsCrossed, GlassWater, Briefcase, Mic2, Settings, Zap, Coffee, FileText, ShieldCheck, Phone, Map, Music, Lightbulb, Tv, Printer, Thermometer, ParkingCircle, Clock, Star, Award } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { SeminarService } from '@/lib/types';
+import { useCurrentHotelId } from '@/hooks/useCurrentHotelId';
 
 // Map icon name → Lucide component (mirrors AVAILABLE_ICONS in SeminarsSection)
 const SEMINAR_ICON_MAP: Record<string, React.ReactNode> = {
@@ -94,7 +95,7 @@ const About = () => {
 
   return (
     <Layout>
-      <div className="pt-6 md:pt-8">
+      <div className="pt-6 md:pt-8 force-rebuild-trigger">
         <HeroSection
           heroImage={aboutData.hero_image || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2070&q=80'}
           heroTitle={safeT(t, aboutData.id, 'about.content.heroTitle', aboutData.hero_title || 'Welcome to Our Hotel')}
@@ -102,7 +103,7 @@ const About = () => {
         />
       </div>
 
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto py-8 px-4 sm:px-6">
         <WelcomeSection
           welcomeTitle={safeT(t, aboutData.id, 'about.content.welcomeTitle', aboutData.welcome_title || '')}
           welcomeDescription={safeT(t, aboutData.id, 'about.content.welcomeDescription', aboutData.welcome_description || '')}
@@ -115,12 +116,8 @@ const About = () => {
 
         <FeaturesSection features={(aboutData.features || []).map(feature => ({
             ...feature,
-            title: (feature.icon && feature.icon !== 'undefined' && feature.icon !== 'null')
-              ? t(`about.content.features.${feature.icon}.title`, feature.title || '')
-              : (feature.title || ''),
-            description: (feature.icon && feature.icon !== 'undefined' && feature.icon !== 'null')
-              ? t(`about.content.features.${feature.icon}.description`, feature.description || '')
-              : (feature.description || '')
+            title: feature.title || '',
+            description: feature.description || ''
           }))} />
 
         {aboutData.has_seminars && (

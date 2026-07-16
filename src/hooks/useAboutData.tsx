@@ -13,7 +13,10 @@ export function useAboutData() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['hotelAbout', hotelId, isSuperAdmin],
-    enabled: !!hotelId || isSuperAdmin, // Wait until hotel context is ready
+    enabled: !!hotelId || isSuperAdmin,
+    staleTime: 0,              // Always consider data stale → always refetch
+    refetchOnMount: 'always',  // Refetch every time the component mounts
+    refetchOnWindowFocus: true, // Refetch when user switches back to this tab
     queryFn: () => fetchAboutData(hotelId, isSuperAdmin)
   });
 
@@ -24,7 +27,9 @@ export function useAboutData() {
         title: "Update Successful",
         description: "Hotel information has been updated successfully",
       });
-      queryClient.invalidateQueries({ queryKey: ['hotelAbout'] });
+      // Invalidate ALL hotelAbout queries regardless of hotelId/isSuperAdmin
+      // so both admin and guest views are refreshed
+      queryClient.invalidateQueries({ queryKey: ['hotelAbout'], exact: false });
     },
     onError: (error) => {
       toast({

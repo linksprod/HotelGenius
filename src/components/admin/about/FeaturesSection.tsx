@@ -30,6 +30,13 @@ const FeaturesSection = ({
   const [editableFeatures, setEditableFeatures] = useState<FeatureItem[]>(features || []);
   const { t } = useTranslation();
 
+  // Sync local state when parent features prop changes (e.g. after initial DB load)
+  React.useEffect(() => {
+    if (!handleFeatureChange) {
+      setEditableFeatures(features || []);
+    }
+  }, [features, handleFeatureChange]);
+
   const getIconComponent = (iconName: string) => {
     if (iconName && (iconName.startsWith('http') || iconName.startsWith('data:'))) {
       return <img src={iconName} alt="icon" className="h-6 w-6 object-contain" />;

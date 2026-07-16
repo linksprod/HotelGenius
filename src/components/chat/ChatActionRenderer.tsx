@@ -608,6 +608,11 @@ export const ChatActionRenderer: React.FC<ChatActionRendererProps> = ({
         return <ServiceRequestFlow initialCategory={metadata?.category} onSuccess={onSuccess} language={language} />;
     }
 
+    // Action: Escalate to Human — handled visually by UnifiedMessagesList, nothing to render here
+    if (type === 'escalate_to_human') {
+        return null;
+    }
+
     // Action: General Message or fallback
     return null;
 };
