@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useHotel } from '@/features/hotels/context/HotelContext';
 import { useTheme } from 'next-themes';
+import { useHotelBranding } from '@/hooks/useHotelBranding';
 
 /**
  * Utility to convert Hex color to HSL components
@@ -39,6 +40,14 @@ const hexToHslComponents = (hex: string): { h: number; s: number; l: number } =>
 const ThemeCustomizer = () => {
     const { hotel } = useHotel();
     const { theme, resolvedTheme } = useTheme();
+
+    // Dynamically update favicon, apple-touch-icon, theme-color & PWA manifest
+    useHotelBranding({
+        logoUrl: hotel?.logo_url,
+        name: hotel?.name,
+        primaryColor: hotel?.primary_color,
+        slug: hotel?.slug,
+    });
 
     useEffect(() => {
         if (!hotel) return;
