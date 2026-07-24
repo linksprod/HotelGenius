@@ -12,14 +12,16 @@ interface HotelBrandingOptions {
  * always looks correct on Android/iOS home screens regardless of the logo's
  * original aspect ratio (wide, tall, square…).
  *
+ * Uses a crisp white (#ffffff) background for high contrast and maximum readability.
+ *
  * @param logoUrl  - Source URL of the hotel logo
- * @param bgColor  - Background fill color (hotel primary color or white)
+ * @param bgColor  - Background fill color (defaults to #ffffff for crisp contrast)
  * @param size     - Output canvas size in pixels (e.g. 512)
  * @returns        - A PNG data-URL of the generated icon, or the original URL on failure
  */
 async function generateSquareIcon(
   logoUrl: string,
-  bgColor: string,
+  bgColor = '#ffffff',
   size = 512
 ): Promise<string> {
   return new Promise((resolve) => {
@@ -34,15 +36,13 @@ async function generateSquareIcon(
 
     img.onload = () => {
       // ── Background ──────────────────────────────────────────────────────
-      // Use the hotel's primary color as background so the icon feels branded.
-      // For very dark colors we lighten slightly; for very light colors we darken.
+      // Clean white background ensures high contrast regardless of logo color
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, size, size);
 
       // ── Logo placement with padding ─────────────────────────────────────
-      // Reserve 18% padding on each side → logo uses max 64% of the canvas.
-      // This guarantees the logo is fully visible even inside a circular mask.
-      const padding = size * 0.18;
+      // Reserve 16% padding on each side → logo uses max 68% of the canvas.
+      const padding = size * 0.16;
       const maxW = size - padding * 2;
       const maxH = size - padding * 2;
 
@@ -69,38 +69,8 @@ async function generateSquareIcon(
 }
 
 /**
- * Picks a readable background color for the icon canvas based on the
- * hotel's primary color.  Very dark colors get a slight tint; very light
- * colors get a slight darkening; otherwise the color is used as-is.
- */
-function resolveIconBackground(primaryColor: string): string {
-  // Strip '#' and parse RGB
-  const hex = primaryColor.replace('#', '');
-  if (hex.length !== 6) return primaryColor;
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-
-  // Perceived lightness (0–255)
-  const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-
-  if (luminance < 30) {
-    // Near-black → use a dark-but-not-pure-black shade so the logo pops
-    return '#1a1a2e';
-  }
-  if (luminance > 230) {
-    // Near-white → use a subtle light grey so edges are visible
-    return '#f5f5f5';
-  }
-  return primaryColor;
-}
-
-/**
  * Dynamically updates browser/PWA branding (favicon, apple-touch-icon,
  * theme-color, web-app title, and manifest) based on the active hotel.
- *
- * Call this hook once inside a component that has access to the HotelContext
- * (e.g. ThemeCustomizer or HotelProvider children).
  */
 export function useHotelBranding({
   logoUrl,
@@ -126,7 +96,6 @@ export function useHotelBranding({
 
     const applyBranding = async () => {
       // ── 1. Favicon <link rel="icon"> ─────────────────────────────────────
-      // Use the raw logo URL for the tab favicon — browsers handle any size fine here.
       let faviconLink = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
       if (!faviconLink) {
         faviconLink = document.createElement('link');
@@ -163,19 +132,14 @@ export function useHotelBranding({
       }
       themeColorMeta.content = themeColor;
 
-      // ── 5. Generate square icon via Canvas ───────────────────────────────
-      // This is the key step: we render the logo onto a square canvas with
-      // padding so that Android's circular/rounded-square mask does not clip
-      // the logo, regardless of the original image aspect ratio.
-      const bgColor = resolveIconBackground(themeColor);
-      const squareIcon512 = await generateSquareIcon(rawLogoUrl, bgColor, 512);
-      const squareIcon192 = await generateSquareIcon(rawLogoUrl, bgColor, 192);
+      // ── 5. Generate square icon via Canvas (White background) ───────────
+      // White background ensures clear contrast for all logos (dark text, blue text, etc.)
+      const squareIcon512 = await generateSquareIcon(rawLogoUrl, '#ffffff', 512);
+      const squareIcon192 = await generateSquareIcon(rawLogoUrl, '#ffffff', 192);
 
-      if (cancelled) return; // component unmounted while we were generating
+      if (cancelled) return;
 
       // ── 6. Dynamic PWA Manifest (Blob URL) ───────────────────────────────
-      // IMPORTANT: In a Blob manifest, relative URLs resolve against blob:null/
-      // which is always invalid — we MUST use absolute URLs.
       const origin = window.location.origin;
       const startPath = slug ? `/${slug}/` : '/';
 
@@ -186,25 +150,22 @@ export function useHotelBranding({
         start_url: `${origin}${startPath}`,
         scope: `${origin}${startPath}`,
         display: 'standalone',
-        background_color: bgColor,
+        background_color: '#ffffff',
         theme_color: themeColor,
         orientation: 'portrait-primary',
         icons: [
-          // 192 × 192 — standard home-screen icon
           {
             src: squareIcon192,
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any',
           },
-          // 512 × 512 — splash screen / high-DPI home screen
           {
             src: squareIcon512,
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any',
           },
-          // Maskable variant — same padded image, safe for circular masks
           {
             src: squareIcon512,
             sizes: '512x512',
@@ -216,7 +177,6 @@ export function useHotelBranding({
         lang: 'en',
       };
 
-      // Revoke previous Blob URL to avoid memory leaks
       if (blobUrlRef.current) {
         URL.revokeObjectURL(blobUrlRef.current);
         blobUrlRef.current = null;
@@ -237,7 +197,6 @@ export function useHotelBranding({
 
     applyBranding();
 
-    // Cleanup on unmount or next hotel change
     return () => {
       cancelled = true;
       if (blobUrlRef.current) {
